@@ -1,0 +1,5 @@
+# Ignore all files in tmp
+*
+# Except, don't ignore the Readme.txt file.
+!Readme.txt
+!.gitignore
