@@ -1,7 +1,8 @@
 % v_wvfComputeConePSF
 %
 % Test the routines that compute L, M, and S cone PSFs from Zernike
-% coefficients.
+% coefficients.  Replicates figures from 
+%  Autrusseauet al., 2011, Vision Research, 51, 2282-2294.
 %
 % The diffraction limited calcs seem to match up with their
 % Figure 2 pretty well, the MTFs agree well, and Figures 4A
