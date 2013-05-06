@@ -1,8 +1,7 @@
-% s_oiCompute
+% t_oiCompute
 %
-% Walk through the calculations in oiCompute 
-% Illustrates how scene radiance is
-% converted through a lens to an optical image (irradiance)
+% Walk through the calculations in oiCompute. Illustrates how scene
+% radiance is converted through a lens to an optical image (irradiance)
 %
 % Copyright ImagEval Consultants, LLC, 2010.
 
