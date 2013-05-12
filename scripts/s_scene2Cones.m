@@ -164,8 +164,13 @@ fprintf('Scene fov: %f\n',sceneGet(scene,'fov'));
 
 %% Cone Absorptions
 
-% This is the main calculation. 
-[volts sensor] = coneAbsorptions(sensor, oi);
+% The coneAbsorptions routine handles eye movements also.  If there are
+% fields 'frames per position' and 'movement positions' then the returned
+% sensor will be a row x col x size(movement positions,1) volume.  Each
+% frame corresponds to the absorptions in one movement position.  We should
+% probably make a function to play that as a video.
+sensor = coneAbsorptions(sensor, oi);
+volts  = sensorGet(sensor,'volts');
 
 % Padd the end of the image with a constant
 p = oiGet(oi,'photons');
@@ -182,7 +187,8 @@ oiPad = oiSet(oi,'photons',p);
 sensorPad = sensor;
 sensorPad = sensorSet(sensorPad,'frames per position',20);
 sensorPad = sensorSet(sensorPad,'movement positions',[0 0]);
-[voltsPad sensorPad] = coneAbsorptions(sensorPad, oiPad);
+sensorPad = coneAbsorptions(sensorPad, oiPad);
+voltsPad = sensorGet(sensorPad,'volts');
 volts = cat(3,volts,voltsPad);
 
 
