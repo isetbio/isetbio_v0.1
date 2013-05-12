@@ -16,7 +16,7 @@ function oi = oiSet(oi,parm,val,varargin)
 % that can be set, and sometimes the derived quantities require some
 % knowledge of the optics as well.
 %
-%  Examples:
+% Examples:
 %    oi = oiSet(oi,'optics',optics);
 %    oi = oiSet(oi,'name','myName')
 %    oi = oiSet(oi,'filename','test')
@@ -54,22 +54,22 @@ function oi = oiSet(oi,parm,val,varargin)
 %
 % Optics
 %      {'optics'}  - Main optics structure
-%      {'opticsmodel'} - Optics computation
+%      {'optics model'} - Optics computation
 %         One of raytrace, diffractionlimited, or shiftinvariant 
 %         Spaces and case variation is allowed, i.e.
 %         oiSet(oi,'optics model','diffraction limited');
 %         The proper data must be loaded to run oiCompute.
 %
-%      {'diffuser Method'} - 'blur', 'birefringent' or 'skip'
-%      {'diffuser Blur'}   - FWHM blur amount (meters)
+%      {'diffuser method'} - 'blur', 'birefringent' or 'skip'
+%      {'diffuser blur'}   - FWHM blur amount (meters)
 %
 %      {'psfstruct'}        - Entire PSF structure (shift-variant)
-%       {'sampledRTpsf'}     - Precomputed shift-variant psfs
-%       {'psfSample Angles'}  - Vector of sample angle
-%       {'psfImage Heights'}  - Vector of sampled image heights
-%       {'rayTrace Optics Name'}  - Optics used to derive shift-variant psf
+%       {'sampled RT psf'}     - Precomputed shift-variant psfs
+%       {'psf sample angles'}  - Vector of sample angle
+%       {'psf image heights'}  - Vector of sampled image heights
+%       {'rayTrace optics name'}  - Optics used to derive shift-variant psf
 %
-%      {'depth Map'}         - Distance of original scene pixel (meters)
+%      {'depth map'}         - Distance of original scene pixel (meters)
 %
 % Auxiliary
 %      {'consistency'}
@@ -77,9 +77,9 @@ function oi = oiSet(oi,parm,val,varargin)
 % Private variables used by ISET but not normally set by the user
 %
 %   Used for management of compressed photons
-%      {'datamin'}
-%      {'datamax'}
-%      {'bitdepth'}
+%      {'data min'}
+%      {'data max'}
+%      {'bit depth'}
 %
 %   Used to cache optical image illuminance
 %      {'illuminance'}

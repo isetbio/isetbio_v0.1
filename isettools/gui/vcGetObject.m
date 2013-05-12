@@ -1,23 +1,22 @@
 function [sOBJECT,val] = vcGetObject(objType,val)
 %Retrieve an object from vcSESSION structure
 %
-%   [sOBJECT,val] = vcGetObject(objType,val)
+%   [sOBJECT,val] = vcGetObject(objType,[val])
 %
-%Purpose:
-%   Find the currently selected object of the various possible types:
+% Find the currently selected object of the various possible types:
 %
-%      SCENE, PIXEL, OPTICS, {OPTICALIMAGE,OI}, {IMGPROC,VCIMAGE,VCI}, GRAPHWIN,
-%      {ISA,SENSOR}
+%  SCENE, PIXEL, OPTICS, {OPTICALIMAGE,OI}, {IMGPROC,VCIMAGE,VCI},
+%  GRAPHWIN, {ISA,SENSOR}
 %
 % This routine replaces: [val,sOBJECT] = vcGetSelectedObject('SCENE');
 %
 % The new call is shorter as in:
 %
-%  obj = vcGetObject('SCENE');
+%  obj   = vcGetObject('SCENE');
 %  pixel = vcGetObject('PIXEL')
-%  vci = vcGetObject('VCIMAGE')
-%  vci = vcGetObject('IMGPROC')
-%  oi = vcGetObject('OI')
+%  vci   = vcGetObject('VCIMAGE')
+%  vci   = vcGetObject('IMGPROC')
+%  oi   = vcGetObject('OI')
 %
 %  If you need the val, you can still use
 %

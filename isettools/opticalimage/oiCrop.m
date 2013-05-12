@@ -14,7 +14,7 @@ function [oi,rect] = oiCrop(oi,rect)
 % in the scene structure.
 %
 % Example:
-%  newOI = sceneCrop(vcGetSelectedObject('oi'));
+%  newOI = oiCrop(vcGetObject('oi'));
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
@@ -31,7 +31,7 @@ end
 
 wAngular = oiGet(oi,'wangular');
 sz = oiGet(oi,'size');
-wave = oiGet(oi,'nwave');
+% wave = oiGet(oi,'nwave');
 
 % The number of selected columns and rows
 c = rect(3)+1; r = rect(4)+1;

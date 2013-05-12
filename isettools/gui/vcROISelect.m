@@ -14,12 +14,34 @@ function [roiLocs,rect] = vcROISelect(obj,objFig)
 %  [roiLocs, rect] = vcROISelect(vci);
 %  iData   = vcGetROIData(vci,roiLocs,'results');
 %
-% See also: vcRect2Locs
+% See also: ieRoi2Locs
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
+% TODO:  See proposal for ieOpenWindow below.  We should also add
+% ieRoiSelect to plan for deprecation of the vcXXX routines.
+
 if ieNotDefined('obj'), error('You must define an object (isa,oi,scene ...)'); end
-if ieNotDefined('objFig'), objFig = vcGetFigure(obj); end
+if ieNotDefined('objFig')
+    objFig = vcGetFigure(obj); 
+    if isempty(objFig)
+        % We should add ieAddAndSelect()
+        vcAddAndSelectObject(obj);
+        % Should become ieOpenWindow(obj)
+        switch obj.type
+            case 'scene'
+                objFig = sceneWindow;
+            case 'opticalimage'
+                objFig = oiWindow;
+            case 'sensor'
+                objFig = sensorWindow;
+            case 'vcimage'
+                objFig = vcimageWindow;
+            otherwise
+                error('Unknown obj type %s\n',obj.type);
+        end
+    end
+end
 
 % Select points.  
 hndl = guihandles(objFig);

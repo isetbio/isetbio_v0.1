@@ -1,9 +1,9 @@
 function [mRGB, mLocs, pSize, cornerPoints, mccRectHandles] = ...
-    ieMacbethSelect(obj,showSelection,fullData,cornerPoints)
+    macbethSelect(obj,showSelection,fullData,cornerPoints)
 %Identify Macbeth color checker RGB values and positions from window image
 %
 %  [mRGB mLocs, pSize, cornerPoints, mccRectHandles] = 
-%            ieMacbethSelect(obj,showSelection,fullData,cornerPoints)
+%            macbethSelect(obj,showSelection,fullData,cornerPoints)
 %
 % This routine normally works within an ISET window.  The first set of
 % comments explain how the routine works within ISET.  It is also possible
@@ -15,8 +15,10 @@ function [mRGB, mLocs, pSize, cornerPoints, mccRectHandles] = ...
 % The mean RGB values in a region around these locations are returned in
 % mRGB. 
 % 
-% The locations for the mean calculation are returned in the mLocs variable.
-% The size of the square region is returned in pSize.
+% The locations for the mean calculation are returned in the mLocs
+% variable. The size of the square region is returned in pSize.  This is a
+% matrix that is Nx2, where there are N (24) sample positions with a
+% (row,col) coordinate.
 %
 % By default, the obj is a vcimage.  The function also works on sensor
 % data, too. If obj is not sent in, the current default obj is used.  I
@@ -47,21 +49,21 @@ function [mRGB, mLocs, pSize, cornerPoints, mccRectHandles] = ...
 %   The blue, green, red patches are 2,6,10.
 %
 % Examples:
-%  [mRGB,locs,pSize,cornerPoints] = ieMacbethSelect;   %Defaults to vcimage
-%  [mRGB,locs,pSize] = ieMacbethSelect(vcGetObject('vcimage'));
+%  [mRGB,locs,pSize,cornerPoints] = macbethSelect;   %Defaults to vcimage
+%  [mRGB,locs,pSize] = macbethSelect(vcGetObject('vcimage'));
 %  
 % See macbethSensorValues() for this functionality.
 %  sensor = vcGetObject('sensor');
-%  [fullRGB,locs,pSize] = ieMacbethSelect(sensor,0,1);
-%  [fullRGB,locs,pSize] = ieMacbethSelect(sensor);
+%  [fullRGB,locs,pSize] = macbethSelect(sensor,0,1);
+%  [fullRGB,locs,pSize] = macbethSelect(sensor);
 %
-%  obj = vcGetObject('vcimage'); [rgb,locs] = ieMacbethSelect(obj); 
+%  obj = vcGetObject('vcimage'); [rgb,locs] = macbethSelect(obj); 
 %  dataXYZ = imageRGB2xyz(obj,rgb); whiteXYZ = dataXYZ(1,:);
 %  lab = xyz2lab(dataXYZ,whiteXYZ);
 %  plot3(lab(:,1),lab(:,2),lab(:,3),'o')
 %
 % This method is used to get the raw data of the gray series
-%   mRGB = ieMacbethSelect(obj,0,1);
+%   mRGB = macbethSelect(obj,0,1);
 %   graySeries = mRGB(1:4:24,:);
 %
 % See also:  macbethSensorValues
@@ -69,7 +71,7 @@ function [mRGB, mLocs, pSize, cornerPoints, mccRectHandles] = ...
 %  Example:
 %     showSelection = 1;
 %     obj = vcGetObject('vcimage');
-%     [mRGB mLocs, pSize, cornerPoints]= ieMacbethSelect(obj,showSelection);
+%     [mRGB mLocs, pSize, cornerPoints]= macbethSelect(obj,showSelection);
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
@@ -120,10 +122,11 @@ end
 
 % Ask the user if a change is desired.  The olds one from the structure may
 % not be satisfactory.
-if queryUser, 
-     macbethDrawRects(obj);
-     b = ieReadBoolean('Are these rects OK?');
-else          b = true; 
+if queryUser,
+    macbethDrawRects(obj);
+    b = ieReadBoolean('Are these rects OK?');
+else
+    b = true;
 end
 
 if isempty(b)
@@ -150,7 +153,8 @@ end
 
 ieInWindowMessage('',handles);
 
-% Find rect midpoints and patch size
+% Find rect midpoints and patch size.  mLocs are the 24 patch locations in
+% (row,col) format.
 [mLocs,delta,pSize] = macbethRectangles(cornerPoints);
 
 % Get the mean RGB data or the full data from the patches in a cell array

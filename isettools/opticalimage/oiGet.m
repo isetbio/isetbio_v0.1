@@ -48,12 +48,14 @@ function val = oiGet(oi,parm,varargin)
 %      {'centerpixel'}    - (row,col) of point at center of image
 %
 % Irradiance
-%      {'data'}          - Data structure
-%        {'photons'}     - Irradiance data
+%      {'data'}            - Data structure
+%        {'photons'}       - Irradiance data
+%        {'photons noise'} - Irradiance data with photon noise
 %        {'data max'}     - Used for compression, not for general users
 %        {'data min''}    - Used for compression, not for general users
 %        {'bit depth''}   - Used for compression, not for general users
-%        {'energy'}      - Energy rather than photon representation
+%        {'energy'}       - Energy rather than photon representation
+%        {'energy noise'} - Energy with photon noise
 %        {'mean illuminance'}  - Mean illuminance
 %        {'illuminance'}      - Spatial array of optical image illuminance
 %        {'xyz'}         - (row,col,3) image of the irradiance XYZ values
@@ -300,7 +302,17 @@ switch parm
            mx = oiGet(oi,'datamax');
            val = ieUncompressData(val,mn,mx,bitDepth);
        end
-    
+    case {'photonsnoise','photonswithnoise'}
+        % Return mean photons plus Poisson photon noise
+        % pn = oiGet(oi,'photons noise');
+        val = oiPhotonNoise(oi);
+         
+    case {'energynoise','energywithnoise'}
+        % Return mean energy plus Poisson photon noise
+        % val = oiGet(oi,'energy noise');
+        val = oiPhotonNoise(oi);
+        wave = oiGet(oi,'wave');
+        val = Quanta2Energy(wave(:),val);
     case {'datamax','dmax'}
         if checkfields(oi,'data','dmax'), val = oi.data.dmax; end
     case {'datamin','dmin'}
