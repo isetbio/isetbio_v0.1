@@ -23,8 +23,8 @@ z4 = -0.5:0.5:0.5; z5 = -0.5:0.5:0.5;
 [Z4,Z5] = meshgrid(z4,z5);
 Zvals = [Z4(:), Z5(:)];
 
-%% Alter defocus and astigmatism, and make a plot of the psf for
-% each case.
+%% Alter defocus and astigmatism
+% Make a plot of the psf for each case.
 vcNewGraphWin;
 wList = wvfGet(wvfParams,'wave');
 for ii=1:size(Zvals,1)

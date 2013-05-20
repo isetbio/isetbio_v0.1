@@ -10,16 +10,16 @@
 
 
 %% Initialize
-s = which('s_wvf2OIHumanSamples');
-cd(fileparts(s));
+% s = which('s_wvf2OIHumanSamples');
+% cd(fileparts(s));
 s_initISET
 maxUM = 10;
 wave = 400:10:700; wave = wave(:);
-pupilMM = 3; 
+pupilMM = 3;
 
-% Create some examples.  Can use either
-% Thibos statistical model, or read in
-% the measurements we got from Heidi Hofer
+%%  Create some examples.
+% Can use either Thibos statistical model, or read in the measurements we
+% got from Heidi Hofer
 whichTypeOfSamples = 'ThibosStatiscalModel';
 switch (whichTypeOfSamples)
     case 'ThibosStatiscalModel'
@@ -41,7 +41,7 @@ switch (whichTypeOfSamples)
     otherwise
         error('Unknown data source specified');
 end
-        nCoeffs = size(zSamples,1);
+nCoeffs = size(zSamples,1);
 
 
 %% Convert WVF human data to ISET
@@ -52,7 +52,7 @@ for ii=1:N
     name = sprintf('%d human-%d',ii,pupilMM);
     wvfP = wvfCreate('wave',wave,'name',name);
     wvfP = wvfSet(wvfP,'measured wavelength',measWavelengthNM);
-    wvfP = wvfSet(wvfP,'measured pupil size',measPupilSizeMM);    
+    wvfP = wvfSet(wvfP,'measured pupil size',measPupilSizeMM);
     wvfP = wvfSet(wvfP,'calc pupil size',pupilMM);
     
     z = wvfGet(wvfP,'zcoeffs');
@@ -64,7 +64,7 @@ for ii=1:N
     oiD{ii} = oiSet(oiD{ii},'name',name);
 end
 
-%% Now compare the slanted bar response in the OI 
+%% Now compare the slanted bar response in the OI
 % These are reasonably close for calculations separated by so many years.
 
 scene  = sceneCreate('slanted bar');

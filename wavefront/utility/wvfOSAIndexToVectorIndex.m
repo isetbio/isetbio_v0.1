@@ -1,18 +1,20 @@
 function [vectorIndex,jIndex] = wvfOSAIndexToVectorIndex(jIndex)
+% Convert a list of OSA j values to a WVF toolbox index
+%
 % [vectorIndex,jIndex] = wvfOSAIndexToVectorIndex(jIndex)
 %
-% Convert a list of OSA j values to the index
-% we need to get the right entry out of our
-% stored vector.  Since j values start at 0,
-% this consists of adding 1.
+% Convert a list of OSA j values to the index we need to get the right
+% entry out of the WVF stored vector.  Since j values start at 0, this
+% consists of adding 1.
 %
-% But we also accept a cell array of string
-% names and can convert these to the index
-% as well.  We follow the naming convention
-% provided in Figure 225 at:
+% The added value of this routine is we accept a cell array of string names
+% and can convert these to the index as well.  We follow the naming
+% convention provided in Figure 225 at:
+%
 %   http://www.telescope-optics.net/monochromatic_eye_aberrations.htm
 %
-% Table of names
+%    Table of names
+%=================================
 %     j   name
 %
 %     0  'piston'
@@ -31,10 +33,15 @@ function [vectorIndex,jIndex] = wvfOSAIndexToVectorIndex(jIndex)
 %     13 'vertical_secondary_astigmatism'
 %     14 'vertical_quadrafoil'
 %
-% See also wvfOSAIndexToZernikeNM, wvfZernikeNMToOSAIndex, zernfun
+% See also: wvfOSAIndexToZernikeNM, wvfZernikeNMToOSAIndex, zernfun
 %
 % I would add 'tip' as a synonym for one of the two tilts below, if I
 % knew which one it was.
+%
+% (DB, BW) (c) Wavefront Toolbox Team, 2012
+
+% If a single string, that's OK.  We put it to a singleton cell.
+if ischar(jIndex), jIndex = {jIndex}; end
 
 if (iscell(jIndex))
     for i = 1:length(jIndex)

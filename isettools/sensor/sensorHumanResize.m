@@ -1,17 +1,20 @@
 function sensor = sensorHumanResize(sensor,rows,cols)
-% Resize a human sensor by adding or subtracting rows and columns
+% Add or subtract rows and columns from a sensor for eye movement modeling
+%
+% sensor = sensorHumanResize(sensor,rows,cols)
 %
 % Inputs
 %   sensor:  Human sensor
 %   rows:    [topRows, bottomRows];
 %   cols:    [leftCols, bottomCols];
 %
+% This routine is written to model eye movements.
+%
 % To add and subtract rols/cols from the sensor, use positive and negative
 % numbers. The rows and cols parameters add or subtract from the top/bottom
 % (rows) and from the left/right (columns).  When a row or col is added,
 % the black (K type, number 1) sensor type is added.
 %
-% This routine is written principally to manage the case of eye movements.
 % To change the sensor size so that it has a larger field of view, use the
 % routine sensorSetSizeToFOV.
 %

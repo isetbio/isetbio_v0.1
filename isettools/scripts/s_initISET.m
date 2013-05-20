@@ -1,4 +1,4 @@
-%s_InitISET
+%s_initISET
 %
 % It is often convenient to use ISET at the head of a script, even though
 % it is not required.  This script 

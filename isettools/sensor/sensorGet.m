@@ -135,7 +135,7 @@ function val = sensorGet(sensor,param,varargin)
 %      {'column prnu'}          - The column gain parameters (std dev in Volts)
 %      {'col offset fpnvector'}  - The sensor column offset data
 %      {'col gain fpnvector'}    - The sensor column gain data
-%      {'noise Flag'}           - Governs sensorCompute noise calculations 
+%      {'noise flag'}           - Governs sensorCompute noise calculations 
 %                                 0 no noise at all
 %                                 1 shot noise, no electronics noise
 %                                 2 shot noise and electronics noise

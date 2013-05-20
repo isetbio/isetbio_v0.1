@@ -7,7 +7,7 @@ function voltImages = sensorComputeSamples(sensorNF,nSamp,noiseType,showBar)
 % free voltages are stored in the input sensor volts. 
 %
 % The number of noise samples is specified by nSamp.
-% Show the wait bar is on by default
+% The waitbar is shown by default
 %
 % The voltImages returned is (row,col,nSamp).
 %
@@ -16,11 +16,6 @@ function voltImages = sensorComputeSamples(sensorNF,nSamp,noiseType,showBar)
 %    sensorNF   = sensorComputeNoiseFree(sensor,oi);
 %    voltImages = sensorComputeSamples(sensorNF,100);
 %    imagesc(std(voltImages,0,3)); colorbar
-%
-% NOTE:
-% This routine was substantially changed in July, 2011 to use the new
-% sensorCompute, sensorComputeNoise, and sensorAddNoise.  Make sure to
-% coordinate with rgc computations.
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 

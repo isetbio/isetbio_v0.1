@@ -1,8 +1,8 @@
 function [n,m] = wvfOSAIndexToZernikeNM(j)
 % [n,m] = wvfOSAIndexToZernikeNM(j)
 %
-% Convert the OSA single Zernike index (starting at j = 0)
-% to the Zernike 2 index standard indexing.
+% Convert the OSA single Zernike index (starting at j = 0) to the Zernike
+% 2-index standard indexing.
 %
 % n is radial order
 % m is angular frequency
@@ -11,9 +11,9 @@ function [n,m] = wvfOSAIndexToZernikeNM(j)
 % 
 % j can be a vector, in which case so are m and n.
 %
-% See also wvfOSAIndexToZernikeNM, zernfun
+% See also: wvfOSAIndexToVectorIndex, wvfOSAIndexToZernikeNM, zernfun
 %
-% 7/29/12 dhb  Wrote it.
+%  DHB:  (c) Wavefront Toolbox Team, 2013
 
 % Radial order n
 n = ceil((-3 + sqrt(9 + 8*j)) / 2 );
