@@ -39,6 +39,8 @@ for ii = 1:2:length(varargin)
     end
 end
 
+sensorImageWindow;  % Refreshes the window.
+
 end
 
 
