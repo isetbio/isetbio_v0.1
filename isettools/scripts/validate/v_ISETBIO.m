@@ -38,6 +38,5 @@ h = msgbox('Human PSF','ISET Tests','replace');
 set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
 v_Human
 
-%%
-close(h)
+
 %% End
