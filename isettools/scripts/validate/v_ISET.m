@@ -1,36 +1,61 @@
-%% Validate VSET distribution
+% v_ValidateAll
 %
-% This distribution is intended to be a visual system engineering toolbox
-% (VSET). It is  useful for calculating the front end (image formation,
-% color matching, cone absorptions) for human and animal systems.
+% Run a set of scripts to check a wide variety of functions These are a
+% subset of the demonstration and tutorial scripts.  We run these whenever
+% there are significant changes to ISET and prior to checking in the new
+% code.  
 %
-% Imageval provide this subset of ISET, freely and in open-source format.
-% The full ISET distribution can be obtained from www.imageval.com.  That
-% distribution includes an array of metrics to analyze the properties of
-% the scene, optics, and sensor.  It further includes a set of Demosaicing,
-% Color Balancing, and other image processing operations - and metrics for
-% those - that are important for evaluating the digital imaging pipeline
-% but not important for the analysi sof the human visual pathways.
+% There is a plan to add more tests of 
+%  * color correction related calculations (vcimage)
+%  * zemax/optics ray-trace calculations
+%  * a way to test selective portions
+%  * quantitative unit testing
 %
-% (c) Imageval Consulting, LLC 2012
+% Copyright ImagEval Consultants, LLC, 2011.
 
-%% Prepare for the validation
+%% Initialize
 s_initISET
 
-%% validate the scene functdions
+%% Scene tests
+h = msgbox('Scene','ISET Tests','replace');
+set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
 v_Scene
 
-%% validate optics
+%% Optics tests
+h = msgbox('Optics','ISET Tests','replace');
+set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
 v_oiDemo
+v_Diffuser
 v_opticsSI
 
-%% validate sensor (retinal absorptions)
+%% Sensor tests
+h = msgbox('Sensor','ISET Tests','replace');
+set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
 v_Sensor
+
+%% Pixel tests
+h = msgbox('Pixel ','ISET Tests','replace');
+set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
+v_Pixel
+
+close all
+
+%% Human visual system tests
+h = msgbox('Human PSF','ISET Tests','replace');
+set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
 v_Human
 
-%% A few tutorials
-t_humanLineSpread
-t_airyDisk
-t_ColorMetamerism
 
+%% Image processing 
+h = msgbox('Image Processor','ISET Tests','replace');
+set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
+v_imageProcessor
+
+%% Metrics tests
+h = msgbox('Metrics','ISET Tests','replace');
+set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
+v_Metrics
+
+%%
+close(h)
 %% End

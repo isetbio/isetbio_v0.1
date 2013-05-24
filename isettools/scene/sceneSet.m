@@ -105,7 +105,7 @@ switch parm
         % When parameters are changed, the consistency flag on the optical
         % image changes.  This is irrelevant for the scene case.
         scene.consistency = val;
-
+        
     case {'distance' }
         % Positive for scenes, negative for optical images
         scene.distance = val;

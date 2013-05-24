@@ -120,6 +120,8 @@ switch oiType
         error('Unknown oiType');
 end
 
+% We may store an sRGB image of the irradiance here
+oi.sRGB = [];
 
 if addObject
     if length(vcGetObjects('OPTICALIMAGE')) < val, vcAddAndSelectObject('OPTICALIMAGE',oi);

@@ -7,14 +7,16 @@ function objType = vcEquivalentObjtype(objType)
 % have aliases such as OI and SENSOR instead of OPTICALIMAGE and ISA.  Or
 % IMGPROC instead of VCIMAGE. 
 %
-% The actual structure names are SCENE,OPTICALIMAGE,ISA, and VCIMAGE
+% The official structure names are SCENE,OPTICALIMAGE,ISA, and VCIMAGE
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
+% Get rid of case-dependence
 objType = upper(objType);
 
+% These are the aliases we use sometimes
 if strcmp(objType,'OI'), objType = 'OPTICALIMAGE';
-elseif strcmp(objType,'SENSOR') objType = 'ISA';
+elseif strcmp(objType,'SENSOR'), objType = 'ISA';
 elseif strcmp(objType,'IMGPROC'),objType = 'VCIMAGE';
 elseif strcmp(objType,'VCI'), objType = 'VCIMAGE';
     % Other translations belong here

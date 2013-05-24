@@ -105,7 +105,8 @@ function val = sceneGet(scene,parm,varargin)
 %        {'illuminant comment'} - comment
 %        {'illuminant format'}  - 'spatial spectral' or 'spectral'
 %
-%      {'rgbimage'}  - RGB image of the scene display
+% Display
+%      {'rgb image'}  - RGB image of the scene display
 %
 %
 % Copyright ImagEval Consultants, LLC, 2003.
@@ -380,25 +381,6 @@ switch parm
         val = energy*S*dWave;
         val = XW2RGBFormat(val,r,c);
         
-        % Delete these comments soon.
-        % We need to modernize this, check there is more than one
-        % wavelength, and so forth.
-        %         wave    = sceneGet(scene,'wave');
-        %         energy = Quanta2Energy(wave,sceneGet(scene,'photons'));
-        %         sz = sceneGet(scene,'size');
-        %         xwData = ieConvert2XW(energy,wave);
-        %         if size(xwData,2) ~= length(wave)
-        %             error('Problem converting input variable energy into XW format.');
-        %         end
-        %         % The spectra of the energy points are in the rows of xwData.  We
-        %         % ready the Stockmanfunctions into the columns of S.
-        %         S = ieReadSpectra('Stockman',wave);
-        %
-        %         % The return value has three columns, L,M,S.  The first row are the
-        %         % coordinates of the first row of energy, and so forth.
-        %         val = xwData*S*(wave(2) - wave(1));
-        %         % Reform
-        %         val = XW2RGBFormat(val,sz(1),sz(2));
     % Wavelength parameters
     case {'spectrum','wavespectrum'}
         if checkfields(scene,'spectrum'), val = scene.spectrum; end

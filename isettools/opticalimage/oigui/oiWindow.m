@@ -22,7 +22,7 @@ function varargout = oiWindow(varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-% Last Modified by GUIDE v2.5 03-Jul-2012 12:33:19
+% Last Modified by GUIDE v2.5 24-Mar-2013 15:46:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -259,7 +259,7 @@ return;
 
 % --- Executes on selection change in popupDisplay.
 function popupDisplay_Callback(hObject, eventdata, handles)
-% When we refresh, the rendering method is read and the sceneShowImage
+% When we refresh, the rendering method is read and the oiShowImage
 % calls the relevant rendering routine.
 %
 % Hints: contents = get(hObject,'String') returns popupDisplay contents as cell array
@@ -975,20 +975,19 @@ oi = vcGetObject('OI');
 plotOI(oi,'illuminance roi');
 return;
 
+% --------------------------------------------------------------------
+function menuPlotRGB_Callback(hObject, eventdata, handles)
+% Plot | Image (RGB)
+% Plots the current RGB image in a separate window
+imageMultiview('oi',vcGetSelectedObject('oi'));
+return;
 
 % --------------------------------------------------------------------
-% function menuAnalyzeROIMeanIrradQ_Callback(hObject, eventdata, handles)
-% % Analyze | ROI | Mean Irrad (quanta)
-% oi = vcGetObject('oi');
-% plotOI(oi,'irradiance photons roi');
-% return;
-
-% --------------------------------------------------------------------
-% function menuAnalyzeMeanIrradE_Callback(hObject, eventdata, handles)
-% % Analyze | ROI | Mean Irrad (energy)
-% oi = vcGetObject('oi');
-% plotOI(oi,'irradiance energy roi');
-% return;
+function menuPlotMultiRGB_Callback(hObject, eventdata, handles)
+% Plot | Multiple images (RGB)
+% Plots the selected RGB images from all the OIs in the session
+imageMultiview('oi');
+return;
 
 % --------------------------------------------------------------------
 function menuHline_Callback(hObject, eventdata, handles)

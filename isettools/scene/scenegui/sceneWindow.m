@@ -20,7 +20,7 @@ function varargout = sceneWindow(varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-% Last Modified by GUIDE v2.5 18-Feb-2012 21:51:00
+% Last Modified by GUIDE v2.5 24-Mar-2013 15:56:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -366,7 +366,6 @@ function menuPlotWavebandImage_Callback(hObject, eventdata, handles)
 plotScene(vcGetObject('SCENE'), 'radiance waveband image');
 return
 
-
 % --------------------------------------------------------------------
 function menuPlotImTrueSize_Callback(hObject, eventdata, handles)
 % Plot | True Size Image
@@ -398,6 +397,14 @@ if ~isempty(figNumSave), ieSessionSet('graphWinFigure',figNumSave); end
 
 return
 
+
+% --------------------------------------------------------------------
+function menuPlotMultipleRGB_Callback(hObject, eventdata, handles)
+%Plot | Multiple image (RGB)
+% Multiple figures with images of the session scene data
+imageMultiview('scene');
+return;
+
 % --------------------------------------------------------------------
 function menuPlotNewGraphWindow_Callback(hObject, eventdata, handles)
 % Plot | New Graph Window
@@ -415,7 +422,6 @@ function menuFileLoad_Callback(hObject, eventdata, handles)
 vcImportObject('SCENE');
 sceneRefresh(hObject, eventdata, handles);
 return
-
 
 % --------------------------------------------------------------------
 function menuSaveImage_Callback(hObject, eventdata, handles)
@@ -1174,3 +1180,5 @@ function menuHelpProgGuide_Callback(hObject, eventdata, handles)
 % Help | Iset Programmers (online)
 ieManualViewer('manual');
 return
+
+

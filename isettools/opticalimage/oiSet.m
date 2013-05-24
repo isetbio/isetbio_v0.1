@@ -72,7 +72,7 @@ function oi = oiSet(oi,parm,val,varargin)
 %      {'depth map'}         - Distance of original scene pixel (meters)
 %
 % Auxiliary
-%      {'consistency'}
+%      {'consistency'}       - Is the display consistent with data
 %
 % Private variables used by ISET but not normally set by the user
 %
@@ -106,7 +106,7 @@ switch parm
         % When parameters are changed, the consistency flag on the optical
         % image changes.  This is irrelevant for the scene case.
         oi.consistency = val;
-
+        
     case {'distance' }
         % Positive for scenes, negative for optical images
         oi.distance = val;

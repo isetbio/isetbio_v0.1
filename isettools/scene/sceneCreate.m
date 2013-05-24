@@ -87,6 +87,7 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %      {'checkerboard'}         - Checkerboard with equal photon spectrum
 %      {'frequencyOrientation'} - Demosaicking test pattern, equal photon spectrum
 %      {'slantedEdge'}  - Used for ISO spatial resolution, equal photon spectrum
+%      {'moire orient'} - Circular Moire pattern
 %      {'zonePlate'}   - Circular zone plot, equal photon spectrum
 %      {'starPattern'} - Radial lines used to test printers and displays
 %
@@ -116,6 +117,7 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %         scene = sceneCreate('checkerboard',pixelsPerCheck,numberOfChecks)
 %         scene = sceneCreate('gridlines',imageSize,pixelsBetweenLines);
 %         scene = sceneCreate('pointarray',imageSize,pixelsBetweenPoints);
+%         sceneCreate('moire orient',imageSize,edgeSlope);
 %
 % NOISE ANALYSIS TEST PATTERNS
 %
@@ -385,7 +387,7 @@ switch sceneName
         %   parms.freqs =  [1,2,4,8,16];
         %   parms.blockSize = 64;
         %   parms.contrast = .8;
-        % scene = sceneCreate('freqorient',parms);
+        % scene = sceneCreate('moire orient',parms);
         if isempty(varargin), scene = sceneMOTarget(scene);
         else
             % First argument is parms structure
@@ -459,6 +461,9 @@ if checkfields(scene,'data','photons') && ~isempty(scene.data.photons)
     % with the reflectance and scene photons.
     scene = sceneAdjustLuminance(scene,100);
 end
+
+% The user may store an sRGB image of the radiance here
+scene.sRGB = [];
 
 return;
 

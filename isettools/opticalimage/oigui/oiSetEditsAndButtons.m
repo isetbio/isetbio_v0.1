@@ -138,10 +138,10 @@ end
 gam = str2double(get(handles.editGamma,'String'));
 
 % For NIR, SWIR and so forth we might use a different displayFlag value.
-% See sceneShowImage.  In the future, we will read the displayFlag from
+% See oiShowImage.  In the future, we will read the displayFlag from
 % either a global or a setting in the oi GUI.
 displayFlag = get(handles.popupDisplay,'Value');
-sceneShowImage(oi,displayFlag,gam);
+oiShowImage(oi,displayFlag,gam);
 
 set(handles.txtOpticalImage,'String',oiDescription(oi));
 

@@ -26,7 +26,6 @@ function val = oiGet(oi,parm,varargin)
 %    oiGet(oi,'angularresolution')
 %    oiGet(oi,'distPerSamp','mm')
 %    oiGet(oi,'spatial support','microns');   % Meshgrid of zero-centered (x,y) values
-%    oiGet(oi,'rgb image');
 %
 %  General properties
 %      {'name'}           - optical image name
@@ -611,6 +610,7 @@ switch parm
         %
         displayFlag = -1;  % Compute rgb, but do not display
         val = imageSPD(photons,wList,gam,row,col,displayFlag);
+        
         % Depth information: The depth map in the OI domain indicates
         % locations where there were legitimate scene data for computing
         % the OI data.  Other regions are 'extrapoalted' by sceneDepthRange
