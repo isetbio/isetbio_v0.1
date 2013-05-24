@@ -140,7 +140,4 @@ vcNewGraphWin;
 plotOI(oi,'h line irradiance',[10,1]);
 title('4 cpd bar');
 
-
-
-
-
+%% END
