@@ -48,7 +48,7 @@ sz = 128;
 % It is easiest to run just one level, as per below.
 %
 % peakRadiance = [1e16 2e16 5e16 1e17 2e17 5e17 1e18];
-peakRadiance = [ 5e17 ]*(30/100);
+peakRadiance = [ 5e16, 5e17 ]*(30/100);
 
 % We will make a series of scenes at different wavelengths and peak
 % readiances. We will compute the sensor response.
