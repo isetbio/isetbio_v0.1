@@ -74,6 +74,10 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %       sFiles{2} = fullfile(isetRootPath,'data','surfaces','reflectances','Food_Vhrel.mat');
 %       sceneCreate('reflectance chart',pSize,sSamples,sFiles); 
 %
+% NARROWBAND COLOR PATCHES
+%    wave = [600, 610];  sz = 64;
+%    scene = sceneCreate('uniform monochromatic',wave,sz);
+%   
 % SPATIAL TEST PATTERNS:
 %
 %      {'ringsRays'}            - Resolution pattern
@@ -316,6 +320,7 @@ switch sceneName
         
         scene = sceneSet(scene,'wave',wavelength);
         scene = sceneUniform(scene,'equalenergy',sz);
+        scene = sceneSet(scene,'name','narrow band');
         
     case {'lined65','impulse1dd65'}
         if isempty(varargin), sz = 64;
