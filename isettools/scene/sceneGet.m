@@ -556,7 +556,7 @@ switch parm
     case {'illuminantphotons'}
         % The data field is has illuminant in photon units.
         val = illuminantGet(scene.illuminant,'photons');
-
+        
     case {'illuminantenergy'}
         % The data field is has illuminant in standard energy units.  We
         % convert from energy to photons here.  We account for the two
@@ -566,7 +566,6 @@ switch parm
             case 'spectral'
                 val = sceneGet(scene,'illuminant photons');
                 val = Quanta2Energy(W,val(:));
-                val = val(:);
             case 'spatial spectral'
                 % Spatial-spectral format.  Sorry about all the transposes.
                 val = sceneGet(scene,'illuminant photons');

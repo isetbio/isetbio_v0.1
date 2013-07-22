@@ -252,34 +252,36 @@ switch parm
         % The whole structure
         scene.illuminant = val;
     case {'illuminantdata','illuminantenergy'}
-        % This set changes the illuminant, but it does not change the
-        % radiance SPD.  Hence, changing the illuminant (implicitly)
-        % changes the reflectance. This might not be what you want.  If you
-        % want to change the scene as if it is illuminanted differently,
-        % use the function: sceneAdjustIlluminant()
+        % This only changes the illuminant, but it does not change the SPD
+        % of the radiance.  So, changing the illuminant also (implicitly)
+        % changes the reflectance.
+        % This might not be what you want.  If you want to change the scene
+        % as if it is illuminanted differently, use
+        %
+        % sceneAdjustIlluminant()
         
-        % The data are stored in energy  units, unfortunately The data can
-        % be a vector (one SPD for the whole image) or they can be a RGB
-        % format SPD with a different illuminant at each position.
+        % The data are stored in energy  units, unfortunately
+        % The data can be a vector (one SPD for the whole image) or they
+        % can be a RGB format SPD with a different illuminant at each
+        % position.  We are still storing the illuminant as double, but it
+        % may be that we will have to use ieCompress/Uncompress for this
+        % before long.
         illuminant = sceneGet(scene,'illuminant');
-        illuminant = illuminantSet(illuminant,'energy',val);
+        illuminant = illuminantSet(illuminant,'energy',val(:));
         scene = sceneSet(scene,'illuminant',illuminant);
         % scene.illuminant = illuminantSet(scene.illuminant,'energy',val(:));
     case {'illuminantphotons'}
         % See comment above about sceneAdjustIlluminant.
         %
         % sceneSet(scene,'illuminant photons',data)
-        %
-        % We have to handle the spectral and the spatial spectral cases
-        % within the illuminantSet.  At this point, val can be a vector or
-        % an RGB format matrix.
+        % Data are specified in photons, but we store in energy
         if checkfields(scene,'illuminant')
-            scene.illuminant = illuminantSet(scene.illuminant,'photons',val);
+            scene.illuminant = illuminantSet(scene.illuminant,'photons',val(:));
         else
             % We use a default d65.  The user must change to be consistent
             wave = sceneGet(scene,'wave');
             scene.illuminant = illuminantCreate('d65',wave);
-            scene.illuminant = illuminantSet(scene.illuminant,'photons',val);
+            scene.illuminant = illuminantSet(scene.illuminant,'photons',val(:));
         end
     case {'illuminantname'}
         scene.illuminant = illuminantSet(scene.illuminant,'name',val);

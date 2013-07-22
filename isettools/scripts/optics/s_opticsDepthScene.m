@@ -5,8 +5,9 @@
 %  rendering options.
 %
 % TODO:
-%   This code is being developed for integration with PBRT ray tracing by
-%   (AL).
+%   Think about better edge handling algorithms for more accurate physical
+%   stuff rendering (AL).
+%   Integrate demonstration with with Maya and RenderToolBox examples
 %
 % Copyright ImagEval Consultants, LLC, 2011
 
@@ -84,6 +85,5 @@ for ii=1:length(inFocusDepth)
 end
 
 %%
-imageMultiview('oi',[1 2], true);
+vcSaveObject(oi);
 
-%% End

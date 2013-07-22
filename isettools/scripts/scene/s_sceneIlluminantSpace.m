@@ -1,6 +1,6 @@
 %% s_sceneIlluminantSpace
 %
-% Illustrate the spatial spectral illumination representation
+% Developing the spatial spectral illumination representation
 %
 % (c) Imageval Consulting, LLC 2012
 

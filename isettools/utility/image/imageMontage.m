@@ -1,9 +1,9 @@
-function [figH,m, cbH] = imageMontage(hc, slices, numCols, figNum)
+function [figH,m] = imageMontage(hc, slices, numCols, figNum)
 %Create a window with a montage of the slices in the hypercube data
 %
 % [figH,m,cbH] = imageMontage(hc, [slices=[]],   [numCols=[]], figNum=figure )
 %
-% hc:          Hypercube data
+% hc:           Hypercube data
 % wavebands:   Indices into the cube, not the actual wavelengths
 % cmap:        Color map to use, not sure that should be here.
 % crop:        Should become a rect
@@ -11,7 +11,7 @@ function [figH,m, cbH] = imageMontage(hc, slices, numCols, figNum)
 % figNum:      Specify the figure
 % flip:        Flip the image somehow or other
 %
-% Example (requires hc data, not shipped by default):
+% Example:
 %   fname = fullfile(isetRootPath,'data','images','hyperspectral','surgicalSWIR.mat');
 %   d = load(fname,'hc');
 %   nWave = size(d.hc,3);
@@ -19,7 +19,6 @@ function [figH,m, cbH] = imageMontage(hc, slices, numCols, figNum)
 %   colormap(gray)
 %
 % See also:  imageMakeMontage, 
-%
 % (c) Imageval, 2012
 
 if ieNotDefined('slices'), slices = []; end
@@ -33,6 +32,9 @@ end
 m = imageMakeMontage(hc,slices,[],numCols);
 imagesc(double(m));
 axis image;
-cbH = colorbar;
 
-end
+cbH = colorbar;
+if(nargout<2),   clear m; end
+if(nargout<1),   clear figH; end
+
+return

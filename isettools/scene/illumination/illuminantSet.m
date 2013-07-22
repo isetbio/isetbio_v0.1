@@ -40,17 +40,14 @@ switch param
         il.data.max = val;
     case 'energy'
         % User sent in energy.  We convert to photons and set.
-        % We need to handle the spatial spectral case properly.
-        % See s_illuminantSpace
         wave = illuminantGet(il,'wave');
         if ndims(val) > 2 %#ok<ISMAT>
             [val,r,c] = RGB2XWFormat(val);
             val = Energy2Quanta(wave,val')';
             val = XW2RGBFormat(val,r,c);
-            il = illuminantSet(il,'photons',val);
+            il =illuminantSet(il,'photons',val);
         else
-            % For set of a vector to be a column vector
-            il = illuminantSet(il,'photons',Energy2Quanta(wave,val(:)));
+            il =illuminantSet(il,'photons',Energy2Quanta(wave,val(:)));
         end
     case {'wave','wavelength'}
         % il = illuminantSet(il,'wave',wave)

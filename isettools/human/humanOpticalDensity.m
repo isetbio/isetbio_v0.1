@@ -10,7 +10,8 @@ function inertP = humanOpticalDensity(visualField, wave)
 %    fovParams = humanOpticalDensity('stockman fovea',400:700)
 %    peripheryParams = humanOpticalDensity('stockman periphery',400:700)
 %
-% See also humanCones and ie.m
+% See also ieReadHumanQE.m
+%
 % 
 %  (c) VISTA lab 2012 HH
 

@@ -64,7 +64,7 @@ scene = sceneAdjustIlluminant(scene,'Horizon_Gretag.mat');
 vcAddAndSelectObject('scene',scene); sceneWindow; 
 
 %% Test imageMultiview
-imageMultiview('scene',[3 4 5]);
-imageMultiview('scene',1);
+imageMultiview('scene',[3 4 5],true);
+imageMultiview('scene',1,false);
 
 %% End
