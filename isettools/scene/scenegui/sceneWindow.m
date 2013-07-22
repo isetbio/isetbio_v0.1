@@ -52,6 +52,9 @@ if ~sceneOpen(hObject,eventdata,handles),
 else sceneRefresh(hObject, eventdata, handles); 
 end
 
+% Initialize gamma. There are other initialization steps in sceneOpen
+set(handles.editGamma,'String',num2str(1));
+
 return
 
 % --- Outputs from this function are returned to the command line.

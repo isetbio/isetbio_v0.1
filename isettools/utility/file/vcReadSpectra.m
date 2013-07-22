@@ -1,7 +1,7 @@
 function [res,wave,comment,partialName] = vcReadSpectra(fname,wave,extrapVal)
-% Deprecated.  Use ieReadSpectra
+% Deprecated.  Use
 %
-%   [res,wave,comment,partialName] = vcReadSpectra(fname,wave,extrapVal)
+%   [res,wave,comment,partialName] = ieReadSpectra(fname,wave,extrapVal)
 %
 % Read in spectral data and interpolate to the specified wavelengths
 %

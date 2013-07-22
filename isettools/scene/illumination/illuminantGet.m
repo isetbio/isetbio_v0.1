@@ -1,12 +1,34 @@
 function val = illuminantGet(il,param,varargin)
-% Get parameter value for illuminant structure
+% Get parameter value from an illuminant structure
 %
 %  val = illuminantGet(il,param,varargin)
 %
+% il: illuminant structure.
+%  This structure contains a range of information about the illuminant,
+%  including the wavelength samples and spectral power distribution.  The
+%  illuminant spectral power distribution is stored in ieCompressData
+%  format (32 uint bits).
+%
+% Parameter list:
+%   name
+%   type (always illuminant)
+%   photons
+%   energy
+%   wave
+%   comment
+%   luminance
+%   size
 %
 % See also:  illuminantCreate, illuminantSet
 %
-% Examples
+% Examples:
+%   il = illuminantCreate('blackbody',400:10:700,5000,200);
+%
+%   illuminantGet(il,'luminance')
+%   illuminantGet(il,'name')
+%   illuminantGet(il,'type')
+%   e = illuminantGet(il,'energy')
+%   p = illuminantGet(il,'photons')
 %
 % (c) Imageval Consulting, LLC, 2012
 
@@ -53,6 +75,15 @@ switch param
         end
     case 'comment'
         val = il.comment;
+    case 'luminance'
+        % Return luminance in cd/m2
+        e = illuminantGet(il,'energy');
+        wave = illuminantGet(il,'wave');
+        val = ieLuminanceFromEnergy(e(:)',wave);
+    case 'spatialsize'
+        % Needs to be worked out properly ... not working yet ...
+        if ~checkfields(il,'data','photons'), val = []; return; end
+        val = size(il.data.photons);
     otherwise
         error('Unknown illuminant parameter %s\n',param)
 end

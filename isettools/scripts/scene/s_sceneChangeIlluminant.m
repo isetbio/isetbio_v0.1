@@ -12,6 +12,9 @@
 %
 % Copyright ImagEval Consultants, LLC, 2010.
 
+%%
+s_initISET
+
 %% Create the default Macbeth Color Checker (MCC) image and plot the
 % simulated illuminant
 scene = sceneCreate;
@@ -60,5 +63,8 @@ vcAddAndSelectObject('scene',scene); sceneWindow; % display sceneWindow
 scene = sceneAdjustIlluminant(scene,'Horizon_Gretag.mat');
 vcAddAndSelectObject('scene',scene); sceneWindow; 
 
-%%
+%% Test imageMultiview
+imageMultiview('scene',[3 4 5],true);
+imageMultiview('scene',1,false);
 
+%% End

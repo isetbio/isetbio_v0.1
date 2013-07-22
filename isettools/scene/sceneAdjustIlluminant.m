@@ -79,7 +79,7 @@ mLum     = sceneGet(scene,'meanLuminance');
 illPhotons = Energy2Quanta(illEnergy,wave);
 illFactor  = illPhotons ./ curIll;
 
-% Adjust the data and the illuminant by the illFactor
+% Adjust both the radiance data and the illuminant by the illFactor
 skipIlluminant = 0;  % Don't skip changing the illuminant (do change it!)
 scene = sceneSPDScale(scene,illFactor,'*',skipIlluminant);
 

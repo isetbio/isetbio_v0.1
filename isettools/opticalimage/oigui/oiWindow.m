@@ -50,6 +50,9 @@ if ~oiOpen(hObject,eventdata,handles), return;
 else oiRefresh(hObject, eventdata, handles);
 end
 
+% Should remove this line from oiOpen
+set(handles.editGamma,'String',num2str(1));
+
 return;
 
 % --- Outputs from this function are returned to the command line.

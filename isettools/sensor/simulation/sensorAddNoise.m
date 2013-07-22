@@ -82,14 +82,13 @@ for ii=1:nExposures
     
     vImage = volts(:,:,ii);
     
-    % Add the dark current
-    % At this point the noise dark current is the same at all pixels.
-    % Later, we apply the PRNU gain factor to the sum of the signal and
-    % noise, so that the noise dark current effectively varies across
-    % pixels.  Sam Kavusi says that this variation in gain (also called
-    % PRNU) is not precisely the same for signal and noise.  But we have no
-    % way to assess this for most cases, so we treat the PRNU for noise and
-    % signal as the same until forced to do it otherwise.
+    % Add the dark current At this point the noise dark current is the same
+    % at all pixels. Later, we apply the PRNU gain factor to the sum of the
+    % signal and noise, so that the noise dark current effectively varies
+    % across pixels.  Sam Kavusi says that this variation in gain (also
+    % called PRNU) is not precisely the same for signal and noise.  But we
+    % have no way to assess this for most cases, so we treat the PRNU for
+    % noise and signal as the same until forced to do it otherwise.
     if noiseFlag > 1
         vImage = vImage + pixelGet(pixel,'dark Voltage')*eTimes(ii);
         sensor = sensorSet(sensor,'volts',vImage);
