@@ -18,9 +18,9 @@ function val = ieSessionGet(param)
 %  A list of the parameters is:
 %
 %      {'version'}
-%      {'name','sessionname'}
-%      {'dir','sessiondir'}
-%      {'help','inithelp'}
+%      {'name','session name'}
+%      {'dir','session dir'}
+%      {'help','init help'}
 %
 %     setpref variables
 %      {'detlafontsize'} -- This value determines whether we change the
@@ -33,23 +33,23 @@ function val = ieSessionGet(param)
 
 %
 %     Handles to the various windows
-%      {'mainwindowhandle'}
-%      {'scenewindowhandle'}
-%      {'oiwindowhandle'}
-%      {'sensorwindowhandle'}
-%      {'vcimagehandle'}
-%      {'metricswindowhandle'}
-%      {'graphwinhandles','graphwinhandle'}
+%      {'main window handle'}
+%      {'scene window handle'}
+%      {'oi window handle'}
+%      {'sensor window handle'}
+%      {'vcimage handle'}
+%      {'metrics window handle'}
+%      {'graphwin handles','graphwin handle'}
 %
 %     Figure numbers
-%      {'graphwinstructure'}
-%      {'graphwinfigure'}
-%      {'mainfigure'}
-%      {'scenefigure'}
-%      {'oifigure'}
-%      {'sensorfigure'}
-%      {'vcimagefigure'}
-%      {'metricsfigure',}
+%      {'graphwin structure'}
+%      {'graphwin figure'}
+%      {'main figure'}
+%      {'scene figure'}
+%      {'oi figure'}
+%      {'sensor figure'}
+%      {'vcimage figure'}
+%      {'metrics figure',}
 %
 %    ** Custom algorithms list is likely to be deprecated.
 %

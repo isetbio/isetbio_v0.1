@@ -109,7 +109,7 @@ if ~isempty(il)
     scene = sceneSet(scene,'illuminant spectrum',waveSpectrum);
     
     % Put in the new illuminant photons
-    scene = sceneSet(scene,'illuminantPhotons',newIlluminant');
+    scene = sceneSet(scene,'illuminant photons',newIlluminant);
 end
 
 %% Set and then adjust the luminance level

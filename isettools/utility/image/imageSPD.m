@@ -77,12 +77,13 @@ elseif abs(displayFlag) == 2    % Gray scale image, used for SWIR, NIR
     RGB(:,:,2) = RGB(:,:,1);
     RGB(:,:,3) = RGB(:,:,1);
 else
-    error('Display flag value: %d\n Must be +/- 1 or +/-2 ',displayFlag);
+    error('Unknown display flag value: %d\n',displayFlag);
 end
 
 % Display the rendered RGB.  Sometimes we just return the RGB
 % values. 
 if displayFlag >= 1
+    if ~isequal(gam,1), RGB = RGB.^gam; end
     if ieNotDefined('xcoords') || ieNotDefined('ycoords')
         imagescRGB(RGB); axis image; 
     else

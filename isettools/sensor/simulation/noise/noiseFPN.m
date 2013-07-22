@@ -81,7 +81,8 @@ else
     % noisyImage = (slopeImage .* prnuImage) * integrationTime + dsnuImage;
     % But it is equivalent to the simpler (fewer multiplies) formula:
     voltageImage = sensorGet(sensor,'volts');
-    noisyImage   = voltageImage .* repmat(prnuImage,[1,1,nExposures])  + repmat(dsnuImage,[1,1,nExposures]);
+    noisyImage   = voltageImage .* prnuImage  + dsnuImage;
+    % noisyImage   = voltageImage .* repmat(prnuImage,[1,1,nExposures])  + repmat(dsnuImage,[1,1,nExposures]);
     % std(dsnuImage(:))
 end
 
