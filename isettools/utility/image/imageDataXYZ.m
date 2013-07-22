@@ -3,9 +3,9 @@ function dataXYZ = imageDataXYZ(vci,roiLocs)
 %
 %    dataXYZ = imageDataXYZ(vci,[roiLocs])
 %
-%    The data are contained in the result field.  If roiLocs are passed in,
-%    the data are returned in XW format.  If roiLocs are not passed in, the
-%    data are returned in RGB (r,c,w)-format .
+% The data are contained in the result field.  If roiLocs are passed in,
+% the data are returned in XW format.  If roiLocs are not passed in, the
+% data are returned in RGB (r,c,w)-format .
 %
 % Example:
 %   [val,vci] = vcGetSelectedObject('VCIMAGE');
@@ -16,9 +16,15 @@ function dataXYZ = imageDataXYZ(vci,roiLocs)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('roiLocs'), 
+g = imageGet(vci,'display gamma');
+if ieNotDefined('roiLocs')
+    % Get the rgb data (sRGB or other nonlinear format)
     data = imageGet(vci,'result');
-    [data,r,c,w] = RGB2XWFormat(data);
+    % Apply gamma correction
+    data = dac2rgb(data,g);
+    
+    % Transform
+    [data,r,c] = RGB2XWFormat(data);
     dataXYZ = imageRGB2XYZ(vci,data);
     dataXYZ = XW2RGBFormat(dataXYZ,r,c);
 else

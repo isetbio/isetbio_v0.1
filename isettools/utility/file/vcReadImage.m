@@ -118,8 +118,8 @@ switch lower(imageType)
                 else error('Image mx is uninterprettable %f',mx);
                 end
                 
-                % Prevent DR > 10,000.  See ieCompressData.
-                xwImg = ieClip(xwImg,1e-4,1);
+                % Prevent absurd DR > 100,000. Helps with ieCompressData.
+                xwImg = ieClip(xwImg,1e-5,1);
                 
                 % The gamma table part here won't work if we scale first.
                 % The values need to be DAC values (integers) not scaled
