@@ -3,29 +3,25 @@ function [res,wave,comment,partialName] = ieReadSpectra(fname,wave,extrapVal)
 %
 %      [res,wave,comment,fName] = ieReadSpectra(fname,wave,extrapVal)
 %
-% Most spectral data are stored in files that include both the sampled data
-% and the wavelength values.  This routine reads the stored values and
-% returns them interpolated or extrapolated to the values in parameter
-% WAVE.
+%   Spectral data are stored in files that include both the sampled data
+%   and the wavelength values.  This routine reads the stored values and
+%   returns them interpolated or extrapolated to the values in parameter
+%   WAVE.  Also see ieReadColorFilter.
 %
-% Typically, the data are a matrix in which the columns are spectral
-% functions (say light sources).  We also store spectral image data for
-% some purposes (e.g., the hyperspectral photons in the face database).  In
-% that case the data are compressed photons.
+%   The spectral files are created by ieSaveSpectralFile, and the format is
+%   determined by that function.
 %
-% The spectral files are created by ieSaveSpectralFile, and the format is
-% determined by that function.
+%   ISET spectral files are generally saved in the form: save(fname,'data','wavelength')
+%   and most have comment fields:                        save(fname,'data','wavelength','comment')
+%   
+%   If the FNAME file does not exist, the return variable, res, is empty on return.
+%   If wave is specified, the returned data are interpolated to those values.
+%   If wave is not specified, the data are returned at native resolution of the data file 
+%      and the values of wavelength can be returned.
 %
-% IMPORTANT: Color filters are handled a differently because we
-%   also store the filter names. See the functions ieReadColorFilter and
+%   IMPORTANT: Color filters are handled a little differently because we
+%   also store their names. See the functions ieReadColorFilter and
 %   ieSaveColorFilter
-%
-% Inputs:
-%  If the FNAME file does not exist, the variable, res, is empty on return.
-%  If wave is specified, the returned data are interpolated to those
-%    wavelengths.
-%  If wave is not specified, the data are returned at native resolution of
-%    the data file and the values of wavelength can be returned.
 %
 % Example:
 %    fullName = vcSelectDataFile([]);
@@ -33,7 +29,8 @@ function [res,wave,comment,partialName] = ieReadSpectra(fname,wave,extrapVal)
 %    data = ieReadSpectra(fullName,wave)
 %    [data,wave] = ieReadSpectra(fullName)
 %
-% See also:  ieSaveSpectralFile
+% If you are reading a color filter, you should probably use
+% ieReadColorFilter rather than this routine
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
@@ -53,7 +50,7 @@ test = exist(partialName,'file');
 if ~test || test == 7
     partialName = sprintf('%s.mat',partialName);
     if ~exist(partialName,'file')
-        res        = []; wavelength = []; comment    = []; 
+        res        = []; wavelength = []; comment    = [];
         warning('ieReadSpectra:File','Cannot find file %s. Returning empty data.',partialName);
         return;
     end
@@ -70,26 +67,8 @@ tmp = load(partialName);
 if isfield(tmp,'data'), data = tmp.data; else data = []; end
 if isfield(tmp,'wavelength'), wavelength = tmp.wavelength; else wavelength = []; end
 if isfield(tmp,'comment'), comment = tmp.comment; else comment = []; end
-if isfield(tmp,'dFormat'), dFormat = tmp.dFormat; else dFormat = 'double'; end
-
-% RGB format data were stored and compressed.  We read and return without
-% interpolation of wavelength.
-if isstruct(data)
-    switch dFormat
-        case 'compressed32'
-            res = ieUncompressData(data.s,data.mn,data.mx,32);
-        case 'compressed16'
-            res = ieUncompressData(data.s,data.mn,data.mx,16);
-        otherwise
-            error('Unknown dFormat %s\n',dFormat);
-    end
-    % No wavelength interpolation in this case
-    return;
-end
-
-% In this case the data were columns of a matrix.
 if length(wavelength) ~= size(data,1)
-    error('Mis-match between wavelength and data in %s',partialName);
+    error('Mis-match between wavelength and data variables in %s',partialName);
 end
 
 % If wave was not sent in, return the native resolution in the file.  No
@@ -97,7 +76,6 @@ end
 if ieNotDefined('wave'),  wave = wavelength; end
 if ieNotDefined('extrapVal'),  extrapVal = 0;  end
 
-% Interpolate to requested wavelength
 res = interp1(wavelength(:), data, wave(:),'linear',extrapVal);
     
 return;

@@ -17,7 +17,7 @@ s_initISET
 
 %% Make a script/function to load the scene
 % fName = fullfile(s3dProjectRootPath,'piano_shelf','ISETSceneSmall.mat');
-fName = fullfile(isetRootPath,'data','scenes','piano3d.mat');
+fName = fullfile(isetRootPath,'data','scene3d','piano3d.mat');
 
 % If you have the goblet image, it is more fun
 % fName = fullfile(isetRootPath,'data','scenes','goblet.mat');

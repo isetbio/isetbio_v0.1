@@ -1,7 +1,7 @@
 function voltImages = sensorComputeSamples(sensorNF,nSamp,noiseType,showBar)
 %Computing multiple noise samples of the sensor voltage image
 %
-%  voltImages = sensorComputeSamples(sensorNF,oi,[nSamp = 10],[noiseType=2],[showBar = 1])
+%  voltImages = sensorComputeSamples(sensorNF,[nSamp = 10],[noiseType=2],[showBar = 1])
 %
 % Compute multiple noisy samples of the sensor voltage image.  The noise
 % free voltages are stored in the input sensor volts. 
