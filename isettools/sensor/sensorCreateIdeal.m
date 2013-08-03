@@ -3,12 +3,13 @@ function sensor = sensorCreateIdeal(sensorType,pixelSizeInMeters,varargin)
 %
 %  sensor = sensorCreateIdeal(sensorType,pixelSizeInMeters,[cfapattern])
 %
-%   Create an ideal image sensor array (DSNU and PRNU zero).  The array
-%   contains ideal monochrome pixels (no read noise, dark voltage, 100%
-%   fill-factor).  Such an array an be used, for example, to calculate 
-%   photon noise under some conditions.
+% Create an ideal image sensor array (DSNU and PRNU zero). The array
+% contains ideal  pixels (no read noise, dark voltage, 100% fill-factor).
+% Such an array an be used, for example, to calculate photon noise under
+% some conditions.
 %
-%   The sensorType can be monochrome,rgb,or human.
+% The sensorType can be monochrome,rgb,or human.  In the case of monochrome
+% the pixel is clear.  For RGB we use RGB.mat.  For human we use Stockman
 %
 % Example
 %     pixSize = 3*1e-6;
@@ -17,12 +18,14 @@ function sensor = sensorCreateIdeal(sensorType,pixelSizeInMeters,varargin)
 %
 %  Or, 3 micron, ideal, stockman, regular grid
 %     pixSize = 2*1e-6;
-%     sensor = sensorCreateIdeal('human',pixSize,'bayer'); 
+%     sensor = sensorCreateIdeal('human',pixSize); 
 %
 % Copyright ImagEval Consultants, LLC, 2005
 
 if ieNotDefined('pixelSizeInMeters'), pixelSizeInMeters = 1.5e-6; end
 if ieNotDefined('sensorType'), sensorType = 'monochrome'; end
+
+sensorType = ieParamFormat(sensorType);
 
 switch lower(sensorType)
     case 'monochrome'
@@ -52,12 +55,7 @@ switch lower(sensorType)
         sensor = sensorReadFilter('infrared',sensor,fname);
 
     case {'human'}
-        % Stockman fundamentals, 0.3 peak absorption, either a regular or
-        % random mosaic.
-        if isempty(varargin), sensorType = 'bayer'; 
-        else sensorType = varargin{1};
-        end
-        
+        % Stockman quanta fundamentals, 0.3 peak absorption
         sensor = sensorCreate(sensorType);
         sensor = sensorSet(sensor,'name','human-ideal');
         
@@ -66,7 +64,7 @@ switch lower(sensorType)
         sensor = sensorSet(sensor,'pixel',idealPixel(pixel,pixelSizeInMeters));
 
         % These are standard RGB filters
-        fname = fullfile(isetRootPath,'data','human','stockman.mat');
+        fname = fullfile(isetRootPath,'data','human','stockmanQuanta.mat');
         sensor = sensorReadFilter('colorfilter',sensor,fname);
         cf = sensorGet(sensor,'filterspectra');
         cf = cf/3;  % Human LMS peak is about 0.35 absorptions
