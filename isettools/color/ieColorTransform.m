@@ -91,7 +91,7 @@ end
 % CMF
 % figure; subplot(1,2,1), plot(sensorQE*T); subplot(1,2,2), plot(targetQE)
 
-return;
+end
 
 %----------------------------------------------
 function T = linearsrgb(sensorQE,illuminant,wave)
@@ -107,19 +107,27 @@ function T = linearsrgb(sensorQE,illuminant,wave)
 %  Instead of this code, though, we should be using xyz2srgb and then
 %  srgb2lrgb.
 
-load('MCClRGB','lrgbValuesMCC','patchOrder');
+% patchSize = 1; patchList = 1:24;
+% macbethChartObject = macbethChartCreate(patchSize,patchList);
+% load('MCClRGB','lrgbValuesMCC','patchOrder');
+wave = 400:700;    % nanometers
+load('macbethChartLinearRGB');
+idealMacbeth = mcc.lrgbValuesMCC;
 
 % Get the MCC surface spectra and the D65 illuminant.  Combine them to
 % estimate the sensor responses.
-fName = fullfile(isetRootPath,'data','surfaces','macbethChart');
+% fName = fullfile(isetRootPath,'data','surfaces','macbethChart');
+% 
+% surRef = ieReadSpectra(fName,wave);
+surRef = macbethReadReflectance(wave);
 
-surRef = ieReadSpectra(fName,wave);
-surRef = surRef(:,patchOrder);
+% surRef = surRef(:,patchOrder);
 d65    = ieReadSpectra(illuminant,wave);
 
+% Sensor RGB
 sensorMacbeth = (sensorQE'*diag(d65)*surRef)';
 
 % Solve: sensorMacbeth*T = lrgbValuesMCC
-T = pinv(sensorMacbeth)*lrgbValuesMCC;
+T = pinv(sensorMacbeth)*idealMacbeth;
 
-return;
+end
