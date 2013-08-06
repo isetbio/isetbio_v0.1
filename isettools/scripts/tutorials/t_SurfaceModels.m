@@ -1,4 +1,4 @@
-%% s_SurfaceModels
+%% t_SurfaceModels
 %
 % We create linear basis functions for the Gretag/Macbeth color checker
 % surface reflectance functions.  This script illustrates how to
@@ -11,11 +11,17 @@
 
 %% The Gretag/Macbeth ColorChecker reflectance spectra
 
-% Read
+% Create a reflectance chart made up of single pixels
 wave = 400:10:700;    % nanometers
-macbethReflectance = macbethReadReflectance(wave);
+patchSize = 1; patchList = 1:24;
+macbethChartObject = macbethChartCreate(patchSize,patchList);
 
-% Plot
+% Read the reflectance data and put them in the proper format for plotting.
+%  The chart has the data as 4 x 6 x nWave.  We convert this RGB format to
+%  XW format.  Then we transpose so that the reflectances are in the
+%  columns.
+macbethReflectance = RGB2XWFormat(macbethChartObject.data)';
+
 vcNewGraphWin;
 p = plot(wave,macbethReflectance);
 set(p,'linewidth',1);
@@ -23,7 +29,7 @@ t = xlabel('Wavelength (nm)'); set(t,'fontname','Georgia')
 t = ylabel('Reflectance'); set(t,'fontname','Georgia')
 grid on
 
-%% We can obtain an SVD linear model decomposition from the spectra
+%% We can obtain a linear model decomposition from the spectra
 %
 
 % Build the linear model using the singular value decomposition
@@ -102,8 +108,6 @@ for nDims= 1:4  %5:8 %
 
     % Pack it into an RGB format
     imRGB = xyz2srgb(XW2RGBFormat(mccXYZ',4,6));
-    imRGB = imageFlip(imRGB,'updown');
-    imRGB = imageFlip(imRGB,'leftright');
 
     % 
     subplot(3,2,nDims)
@@ -117,8 +121,6 @@ subplot(3,2,5)
 mccXYZ = XYZ'*diag(lgt)*U*W;
 mx = max(mccXYZ(2,:)); mccXYZ = 100*(mccXYZ/mx);
 imRGB = xyz2srgb(XW2RGBFormat(mccXYZ',4,6));
-imRGB = imageFlip(imRGB,'updown');
-imRGB = imageFlip(imRGB,'leftright');
 imagesc(imRGB); axis image
 set(gca,'xtick',[],'ytick',[])
 title(sprintf('Full rendering'))
@@ -126,6 +128,7 @@ title(sprintf('Full rendering'))
 % Plot the light
 subplot(3,2,6)
 plot(wave,lgt); grid on
+title('Illuminant')
 xlabel('Wavelength (nm)'); ylabel('Relative power');
 
 %% End
