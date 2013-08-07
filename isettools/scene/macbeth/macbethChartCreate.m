@@ -1,51 +1,55 @@
 function macbethChartObject = macbethChartCreate(patchSize,patchList,spectrum)
-% Create a data structure of the Gretag/Macbeth Color Chart reflectances
+% Initiate a scene structure of the Gretag/Macbeth Color Chart reflectances
 %
-%    macbethChartObject = macbethChartCreate([patchSize=12],[patchList=1:24],[spectrum={400:10:700});
+% macbethChartObject = ...
+%  macbethChartCreate([patchSize=12],[patchList=1:24],[spectrum={400:10:700});
 %
-% Create a scene of spectral reflectance functions of the Macbeth chart.
+% Initiate a scene of spectral reflectance functions of the Macbeth chart.
 % The chart is coded as if you are looking at it with four rows and six
-% columns.  The white surface is on the left, and the black surface is on
-% the right.
+% columns.  The white surface is on the lower left, and the black surface
+% is on the lower right. The 
 % 
 % The numbering of the surfaces starts at the upper left and counts down
 % the first column.  The white patch, therefore, is number 4.  The
-% achromatic series is 4:4:24.
-%
-% To read the surfaces in the standard ordering used in image processing
-% routines, like vcimageMCCXYZ, use 
-%   list = [4 3 2 1 8 7 6 5 12 11 10 9 16 15 14 13 20 19 18 17 24 23 22 21]
-%   macbethChartOther(:,list) = macbethChart;
-%   
-%   macbethChart = macbethChartOther
+% achromatic series is 4:4:24. Green, Red and Yellow are 7, 11, 15.
 %   
 % The surface reflectance function information are contained in the slot
-% macbethChartObject.data. It is possible to have spectral information
-% between 370 to 730 nm.  That is the limit of the Macbeth calibration
-% range.
+% macbethChartObject.data. The data file contains spectral information
+% between 380 to 1068 nm.  
 %
 % The default patch size is 16 pixels
-% The default patch list is all 24 macbeth surfaces, though you may create
-% a partial image.
+% The default patch list is all 24 macbeth surfaces.
 %
 % Examples:
 %    patchSize = 16;
 %    patchList = 1:24;
 %    macbethChartObject = macbethChartCreate(patchSize,patchList);
 %
+% % To read a different spectral range
 %    spectrum.wave      = (370:10:730);
 %    macbethChartObject = macbethChartCreate([],[],spectrum);
 %
-%    spectrum.wave      = (380:4:1068);
-%    macbethChartObject = macbethChartCreate([],[],spectrum);
+% % To make an image
+%    macbethChartObject = macbethChartCreate(patchSize,patchList);
+%    spd = macbethChartObject.data; imageSPD(spd);
 %
-%    spectrum.wave      = (400:5:900);
-%    macbethChartObject = macbethChartCreate([],[],spectrum);
+% % To read the chart reflectances 
+%    patchSize = 1; patchList = 1:24;
+%    macbethChartObject = macbethChartCreate(patchSize,patchList);
+%    r = macbethChartObject.data; reflectances = RGB2XWFormat(r)';
+%    vcNewGraphWin; plot(reflectances)
+%
+% % To read just the gray series
+%    patchSize = 16;
+%    patchList = 4:4:24;
+%    macbethChartObject = macbethChartCreate(patchSize,patchList);
+%    spd = macbethChartObject.data; imageSPD(spd);
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 % To be returned
 
-% The object here is basically a scene
+% The object is basically a scene, though it is missing some fields.
+% These get filled in by sceneCreate, which uses this routine.
 macbethChartObject.name = 'Macbeth Chart';
 macbethChartObject.type = 'scene';
 
@@ -71,19 +75,12 @@ nWaves = sceneGet(macbethChartObject,'nwave');
 fName = fullfile(isetRootPath,'data','surfaces','macbethChart.mat');
 macbethChart = ieReadSpectra(fName,wave);
 
-%patchList = [4 3 2 1 8 7 6 5 12 11 10 9 16 15 14 13 20 19 18 17 24 23 22 21];
-%macbethChartOther(:,list) = macbethChart;
-%   
-%macbethChart = macbethChartOther;
-%patchList = [1 7 13 19 2 8 14 20 3 9 15 21 4 10 16 22 5 11 17 23 6 12 18 24];  
-
-
 % Sort out whether we have the right set of patches
 macbethChart = macbethChart(:,patchList);
 if length(patchList) == 24
     macbethChart = reshape(transpose(macbethChart),4,6,nWaves);
 else
-    macbethChart = reshape(transpose(macbethChart),1,length(patchSize),nWaves);
+    macbethChart = reshape(transpose(macbethChart),1,length(patchList),nWaves);
 end
 
 % Make it the right patch size
