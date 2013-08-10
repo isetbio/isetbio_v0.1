@@ -64,7 +64,7 @@ switch parm
     case {'type'}
         % Type should always be 'display'
         val = d.type;
-    case {'dv2intensity','gamma'}
+    case {'dv2intensity','gamma','gammatable'}
         if checkfields(d,'gamma'), val = d.gamma; end
     case {'bits','dacsize'}
         % 8 bit, 10 bit, and so forth

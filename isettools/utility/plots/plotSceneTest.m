@@ -1,6 +1,10 @@
-% Test plotScene function.
+% Test plotScene function
 %
-% This is incomplete.  We need to make more test plots, like plotOITest
+% (BW) Imageval Consulting, 2013
+%
+
+%% TODO
+% More tests would be useful, as in plotOITest
 %
 
 %% Initialize data
@@ -34,4 +38,4 @@ roiRect = [6    51     8    12];
 uData = plotScene(scene,'reflectance',roiRect);
 plotScene(scene,'chromaticity',roiRect)
 
-%%
+%% End

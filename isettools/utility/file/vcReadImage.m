@@ -32,8 +32,15 @@ function [photons, mcCOEF, basis, comment, illuminant ] = vcReadImage(fullname,i
 %
 % Examples:
 %  photons = vcReadImage;
+%  
 %  photons = vcReadImage(vcSelectImage,'monochrome');
-%  photons = vcReadImage(imageNameFullPath,'rgb');
+%
+%  fName = fullfile(isetRootPath,'data','images','rgb','eagle.jpg');
+%  photons = vcReadImage(fName,'rgb');
+%
+%  %  fName = fullfile(isetRootPath,'data','images','rgb','eagle.jpg');
+%  photons = vcReadImage(fName,'rgb','OLED-SonyBVM.mat');
+%
 %  photons = vcReadImage(imageNameFullPath,'hyperspectral');
 %  photons = vcReadImage(imageNameFullPath,'multispectral');
 %
@@ -100,26 +107,21 @@ switch lower(imageType)
                 d      = displayCreate(dispCal);
                 wave   = displayGet(d,'wave');  % Primary wavelengths
                 spd    = displayGet(d,'spd');   % Primary SPD in energy
+                gTable = displayGet(d,'gamma table');
                 
-                % Gamma issues
-                %
-                % The display gamma might assume a 10 bit image.  But the
-                % image we read, might just be an 8-bit image.  We need to
-                % scale the image we read into 0/1.  How can we be sure
-                % that the image we read is 8 bit, when the display could
-                % be 10-bit?  We just check that the max level is less than
-                % 255.  If it is, we assume it is 8 bit.  If it is > 255
-                % and < 1024, we assume 10 bit.
-                %
-                % gTable = displayGet(d,'gamma'); % Gamma table
-                mx = max(inImg(:));
-                if mx < 256,      [xwImg,r,c,w] = RGB2XWFormat(inImg/255);
-                elseif mx < 1024, [xwImg,r,c,w] = RGB2XWFormat(inImg/1023);
-                else error('Image mx is uninterprettable %f',mx);
+                % On this path, the images should be 8 bit. Check.  
+                if max(inImg(:)) > 256, error('Img is > 8 bits'); end
+                % if the LUT is for 10 bit, compress it down to 8 bit.
+                if size(gTable,1) > 256
+                    s = size(gTable,1); skip = s/256;
+                    gTable = gTable(1:skip:end,:);
                 end
                 
+                inImg  = ieLUTDigital(inImg,gTable);
+                [xwImg,r,c] = RGB2XWFormat(inImg);
+                
                 % Prevent DR > 10,000.  See ieCompressData.
-                xwImg = ieClip(xwImg,1e-4,1);
+                % xwImg = ieClip(xwImg,1e-4,1);
                 
                 % The gamma table part here won't work if we scale first.
                 % The values need to be DAC values (integers) not scaled
@@ -129,7 +131,7 @@ switch lower(imageType)
                 %
                 % Now, we need to convert to linear values using dac2rgb
                 % xwImg = dac2rgb(xwImg,gTable);
-                xwImg = dac2rgb(xwImg);
+                % xwImg = dac2rgb(xwImg);
                 
                 % Yes, this has a lot of transposes.  Sorry.  Try not to
                 % think about it.
