@@ -67,8 +67,6 @@ idealLocs = [X(:),Y(:)]';
 % These are from white (lower left) reading up the first row, and then back
 % down to the 2nd column, starting at the gray, and reading up again
 mLocs = round(L*idealLocs + repmat(offset(:),1,24));
-flipIt = [4 3 2 1 8 7 6 5 12 11 10 9 16 15 14 13 20 19 18 17 24 23 22 21];
-mLocs = mLocs(:,flipIt);
 
 % Build a square of a certain size around the point mLocs(:,N)
 % We need to know whether the white->black is down the rows (first

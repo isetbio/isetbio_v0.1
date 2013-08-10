@@ -1,43 +1,35 @@
-function voltImages = sensorComputeSamples(sensorNF,nSamp,noiseFlag,showBar)
+function voltImages = sensorComputeSamples(sensorNF,nSamp,noiseType,showBar)
 %Computing multiple noise samples of the sensor voltage image
 %
-%  voltImages = sensorComputeSamples(sensorNF,[nSamp = 10],[noiseFlag=2],[showBar = 1])
+%  voltImages = sensorComputeSamples(sensorNF,[nSamp = 10],[noiseType=2],[showBar = 1])
 %
-% Compute multiple noisy samples of the sensor voltage image.  
+% Compute multiple noisy samples of the sensor voltage image.  The noise
+% free voltages are stored in the input sensor volts. 
 %
-% sensorNF:  Sensor struct containing noise free voltages 
-% nSamp:     Number of samples, default = 10
-% noiseFlag: photon noise only (1)  all noise (2) Default = 2
-% showBar:   Show waitbar (1) or not (0).  Default from ieSession
+% The number of noise samples is specified by nSamp.
+% The waitbar is shown by default
 %
-% The voltImages is a 3d matrix(row,col,nSamp).
+% The voltImages returned is (row,col,nSamp).
 %
-% Examples:
-%
+% Example:
 %  Compute Noise Free and then multiple samples
 %    sensorNF   = sensorComputeNoiseFree(sensor,oi);
 %    voltImages = sensorComputeSamples(sensorNF,100);
 %    imagesc(std(voltImages,0,3)); colorbar
-%
-%  To interact with a plane of the returned data you might use calls such
-%  as
-%    ii = 5
-%    tmp = sensorSet(sensorNF,'volts',voltImages(:,:,ii));
-%    e   = sensorGet(tmp,'electrons');
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
 %% Define parameters
 if ieNotDefined('sensorNF'), errordlg('Noise free image sensor array required.'); end
 if ieNotDefined('nSamp'),  nSamp = 10; end
-if ieNotDefined('noiseFlag'), noiseFlag = 2; end  % Photon and electrical
+if ieNotDefined('noiseType'), noiseType = 2; end  % Photon and electrical
 if ieNotDefined('showBar'), showBar = ieSessionGet('waitbar'); end  % Wait bar on by default
 
 %%  Get noise free values
 sz = sensorGet(sensorNF,'size');
 
 %% Loop on number of samples to compute only the noise (no reuse)
-sensorNF  = sensorSet(sensorNF,'noise flag',noiseFlag);  % 1 = photon, 2 = all
+sensorNF  = sensorSet(sensorNF,'noise flag',noiseType);  % 1 = photon, 2 = all
 sensorNF  = sensorSet(sensorNF,'reuse noise',0); % Don't want to reuse
 
 voltImages = zeros(sz(1),sz(2),nSamp);

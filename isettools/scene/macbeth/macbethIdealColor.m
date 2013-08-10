@@ -14,27 +14,24 @@ function target  = macbethIdealColor(illuminant,colorSpace)
 %    'SmithPokorny'  (not yet)
 %
 % Example:
-%   macbethXYZ = macbethIdealColor('d65','xyz');
-%   xy = chromaticity(macbethXYZ);
-%   chromaticityPlot(xy);
+%    macbethXYZ = macbethIdealColor('d65','xyz');
+%    xy = chromaticity(macbethXYZ);
+%    plot(xy(:,1), xy(:,2),'o'); hold on; plotSpectrumLocus
 %
-%   lRGB = macbethIdealColor('d65','lrgb');
-%   lRGB = XW2RGBFormat(lRGB,4,6);
-%   vcNewGraphWin; image(lRGB);
+%    lRGB = macbethIdealColor('d65','lrgb');
+%
 %
 %   lightParameters.name = 'blackbody';
-%   lightParameters.temperature = 6000;
+%   lightParameters.temperature = 3000;
 %   lightParameters.spectrum.wave = 400:10:700;
 %   lightParameters.luminance = 100;
 %   lRGB = macbethIdealColor(lightParameters,'lrgb');
 %
 %   macbethLAB = macbethIdealColor('tungsten','lab');
-%   plot3(macbethLAB(:,1),macbethLAB(:,2),macbethLAB(:,3),'ro'); grid on
-%   gSeries = 4:4:24; hold on
-%   plot3(macbethLAB(gSeries,1),macbethLAB(gSeries,2),macbethLAB(gSeries,3),'kx'); 
-%   xlabel('L'); ylabel('a'); zlabel('b')
+%   plot3(macbethLAB(:,1),macbethLAB(:,2),macbethLAB(:,3),'o')
 %
 % Copyright ImagEval Consultants, LLC, 2005.
+
 
 if ieNotDefined('illuminant'), illuminant = 'D65'; end
 if ieNotDefined('colorSpace'), colorSpace = 'XYZ'; end
@@ -42,10 +39,7 @@ if checkfields(illuminant,'spectrum','wave'), wave = illuminant.spectrum.wave;
 else                           wave = 400:10:700;
 end
 
-% For the order of the reflectances, see the comment in macbethChartCreate
-% or type:  load('macbethChart','comment'); comment 
 patchList = 1:24;
-whitePatch = 4;
 macbethChart = macbethReadReflectance(wave,patchList);
 
 % Read illumination.  Could be a string or a structure describing a
@@ -60,12 +54,12 @@ switch lower(colorSpace)
     case 'xyz'
         % Sets the max Y value to 100 cd/m2
         macbethXYZ = ieXYZFromEnergy(colorSignal',wave);
-        target     = 100*(macbethXYZ/max(macbethXYZ(:,2)));
+        target = 100*(macbethXYZ/max(macbethXYZ(:,2)));
     case 'lab'
         macbethXYZ = ieXYZFromEnergy(colorSignal',wave);
         macbethXYZ = 100*(macbethXYZ/max(macbethXYZ(:,2)));
-        whiteXYZ   = macbethXYZ(whitePatch,:);
-        target     =  xyz2lab(macbethXYZ,whiteXYZ);
+        whiteXYZ = macbethXYZ(1,:);
+        target =  xyz2lab(macbethXYZ,whiteXYZ);
     case 'lrgb'
         % Linear RGB values from srgb space; these don't include gamma
         macbethXYZ = macbethIdealColor(illuminant,'xyz');
@@ -73,15 +67,10 @@ switch lower(colorSpace)
         % 1. We want the linear RGB to really correspond to the Y values we
         % send in.  So, we must scale back.
         macbethXYZ = macbethXYZ/100;  % Set max to 1 - max Y is 100.
-        % vcNewGraphWin; image(xyz2srgb(XW2RGBFormat(macbethXYZ,4,6)))
-        [idealSRGB,idealLRGB] = xyz2srgb(XW2RGBFormat(macbethXYZ,1,24)); %#ok<ASGLU>
+        [idealSRGB,idealLRGB] = xyz2srgb(XW2RGBFormat(macbethXYZ,1,24));
         idealLRGB = RGB2XWFormat(idealLRGB);
-        
-        % Not sure why we clip at 1. Clipping at 0 makes sense.
+        % Not sure why we clip at 1.  0 makes sense.
         target = ieClip(idealLRGB,0,1);
-        % vcNewGraphWin; 
-        % image(XW2RGBFormat(target,4,6))
-        
     case 'srgb'
         macbethXYZ = macbethIdealColor(illuminant,'xyz');
         idealSRGB = xyz2srgb(XW2RGBFormat(macbethXYZ,1,24));
