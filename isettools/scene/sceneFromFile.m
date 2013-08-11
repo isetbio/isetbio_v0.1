@@ -33,8 +33,9 @@ function [scene,fname,comment] = sceneFromFile(filename,imageType,meanLuminance,
 %   imgType = 'rgb'; meanLuminance = 10;
 %   scene = sceneFromFile(fullFileName,imgType,meanLuminance);
 %
-%   dispCal = 'lcdExample.mat';meanLuminance=[];
-%   scene = sceneFromFile(fullFileName,imgType,meanLuminance,dispCal);
+%   dispCal = 'OLED-SonyBVM.mat';meanLuminance=[];
+%   fName = fullfile(isetRootPath,'data','images','rgb','eagle.jpg');
+%   scene = sceneFromFile(fName,'rgb',meanLuminance,dispCal);
 %
 %   wList = [400:50:700];
 %   fullFileName = fullfile(isetRootPath,'data','images','multispectral','StuffedAnimals_tungsten-hdrs');
@@ -109,7 +110,7 @@ if ~(strcmpi(imageType,'multispectral') || strcmpi(imageType,'hyperspectral'))
     % Illuminant scaling must be done after photons are set. The
     % multispectral data all have an illuminant structure that is set, so
     % they do not pass through this step.
-    disp('Scaling illuminant level to make reflectances plausible.')
+    % disp('Scaling illuminant level to make reflectances plausible.')
     scene = sceneIlluminantScale(scene);
 end
 
