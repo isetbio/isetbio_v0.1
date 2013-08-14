@@ -28,4 +28,3 @@ This toolbox is coordinated with the Wavefront Toolbox (also in github) uses dat
 
 The sensor transforms the irradiance into a spatial array of cone absorptions. The sensor pixels and spectral quantum efficiency can be set to model the human cones at various eccentricities and with various types of inert pigments (macular pigment, lens density, optical density).  The sensor simulates the photon absorptions in the cone (and rod) mosaics.
 
-*** END README
