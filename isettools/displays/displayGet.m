@@ -8,7 +8,7 @@ function val = displayGet(d,parm,varargin)
 %     {'name'} - Which specific display
 %
 % Transduction
-%     {'dv2intensity','gamma'}
+%     {'gamma table'}
 %     {'bits','dacsize'}
 %     {'nlevels'}
 %     {'levels'}
