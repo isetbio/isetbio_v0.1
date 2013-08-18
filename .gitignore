@@ -3,3 +3,11 @@
 /isettools/scripts/scene/s_Scene2SampledScene.m
 
 .DS_Store
+/external/liblinear-1.93/matlab/libsvmread.mexa64
+/external/liblinear-1.93/matlab/libsvmwrite.mexa64
+/external/liblinear-1.93/matlab/predict.mexa64
+/external/liblinear-1.93/matlab/train.mexa64
+/external/libsvm-3.17/matlab/libsvmread.mexa64
+/external/libsvm-3.17/matlab/libsvmwrite.mexa64
+/external/libsvm-3.17/matlab/svmpredict.mexa64
+/external/libsvm-3.17/matlab/svmtrain.mexa64

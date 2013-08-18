@@ -70,15 +70,15 @@ switch lower(imageType)
 
         % Match the display wavelength and the scene wavelength
         scene = sceneCreate('rgb');
-        d = displayCreate(dispCal);
-        wave = displayGet(d,'wave');
+        d     = displayCreate(dispCal);
+        wave  = displayGet(d,'wave');
         scene = sceneSet(scene,'wave',wave);
 
-        % Set the illuminant SPD to the white point of the display. Later
-        % we scale so that the peak reflectance value is about 1.  The
-        % illuminant units start out as energy.
-        il = illuminantCreate('d65',wave);
-        il = illuminantSet(il,'energy',sum(d.spd,2));
+        % Set the illuminant SPD to the white point of the display. This
+        % also forces the peak reflectance to 1, so we could delete
+        % illuminant scaling below.
+        il    = illuminantCreate('d65',wave);
+        il    = illuminantSet(il,'energy',sum(d.spd,2));
         scene = sceneSet(scene,'illuminant',il);
 
     case {'multispectral','hyperspectral'}
@@ -86,16 +86,15 @@ switch lower(imageType)
 
         scene = sceneCreate('multispectral');
         
-        % Starting to convert from old illuminant format to the modern one
-        % on August 4, 2012.  New illuminant has photon representation and
-        % a more standard Create/Get/Set group of functions.
+        % The illuminant structure has photon representation and a
+        % standard Create/Get/Set group of functions.
         [photons, coef, basis, comment, illuminant] = vcReadImage(fname,imageType,wList);
         
         % Override the default spectrum with the basis function
         % wavelength sampling.
         scene = sceneSet(scene,'wave',basis.wave);        
         
-        % The illuminant structure is set here
+        % Set the illuminant structure 
         scene = sceneSet(scene,'illuminant',illuminant);
         
     otherwise
@@ -106,13 +105,16 @@ end
 scene = sceneSet(scene,'filename',fname);
 scene = sceneSet(scene,'photons',photons);
 
-if ~(strcmpi(imageType,'multispectral') || strcmpi(imageType,'hyperspectral'))
-    % Illuminant scaling must be done after photons are set. The
-    % multispectral data all have an illuminant structure that is set, so
-    % they do not pass through this step.
-    % disp('Scaling illuminant level to make reflectances plausible.')
-    scene = sceneIlluminantScale(scene);
-end
+% No longer needed because the display calibration scales the illuminant
+% appropriately (I think, BW).  Delete this in December 2013 if no longer
+% needed.
+% if ~(strcmpi(imageType,'multispectral') || strcmpi(imageType,'hyperspectral'))
+%     % Illuminant scaling must be done after photons are set. The
+%     % multispectral data all have an illuminant structure that is set, so
+%     % they do not pass through this step.
+%     % disp('Scaling illuminant level to make reflectances plausible.')
+%     % scene = sceneIlluminantScale(scene);
+% end
 
 [p,n] = fileparts(fname);
 scene = sceneSet(scene,'name',n);     
