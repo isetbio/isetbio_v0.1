@@ -151,7 +151,7 @@ vcAddAndSelectObject(scene); sceneWindow;
 % Many scene properties that can be plotted either from the scene Window or
 % using plotScene. For example, ISET scenes specify a uniform illuminant by
 % default.  You can plot the illuminant in energy units by this command.
-plotScene(scene,'illuminant energy');
+plotScene(scene,'illuminant energy roi');
 
 % The plotScene command above is equivalent to
 %  wave = sceneGet(scene,'wave');
@@ -172,6 +172,6 @@ vcReplaceAndSelectObject(scene); sceneWindow;
 % In this case, we plot the illuminant in units of photons, rather than
 % energy.
 
-plotScene(scene,'illuminant photons');
+plotScene(scene,'illuminant photons roi');
 
 

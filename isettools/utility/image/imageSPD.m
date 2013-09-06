@@ -8,8 +8,7 @@ function RGB = imageSPD(SPD,wList,gam,row,col,displayFlag,xcoords,ycoords)
 % image SPD to XYZ, and then converting the XYZ to sRGB format (xyz2srgb).
 % The conversion to XYZ is managed so that the largest XYZ value is 1.
 %
-% The spd data can be either in XW or RGB format.  If the data are passed
-% in XW format, then row and col must be passed in also. 
+% The spd data should be in RGB format.  
 %
 % The routine can also be used to return the RGB values without displaying
 % the data. 
@@ -38,17 +37,17 @@ function RGB = imageSPD(SPD,wList,gam,row,col,displayFlag,xcoords,ycoords)
 if ieNotDefined('gam'), gam = 1; end
 if ieNotDefined('displayFlag'), displayFlag = 1; end
 
-% Convert the data into XW format.  We should have row and col.
-if ndims(SPD) == 2 ...
-        && exist('row','var') && ~isempty(row) ...
-        && exist('col','var') && ~isempty(col)
-    % In this case, the data are XW format. Leave them alone for the matrix
-    % multiply.  But we will use row and col later
-    w = size(SPD,2);
-else
-    [row,col,w] = size(SPD);
-    SPD = RGB2XWFormat(SPD);
-end
+% Convert the data into XW format.  We need row and col.
+% if ndims(SPD) == 2 ...
+%         && exist('row','var') && ~isempty(row) ...
+%         && exist('col','var') && ~isempty(col) ...
+%         && length(wList) > 1
+%     % In this case, the data are XW format. Leave them alone for the matrix
+%     % multiply.  We will use row and col later
+%     w = size(SPD,2);
+% else
+%     [SPD, row, col, w] = RGB2XWFormat(SPD);
+% end
 
 if ieNotDefined('wList')
     if     w == 31,  wList = (400:10:700); 
@@ -67,13 +66,11 @@ end
 if abs(displayFlag) == 1
     % RGB = imageSPD2RGB(SPD,wList,gam);
     XYZ = ieXYZFromPhotons(SPD,wList);
-    XYZ = XYZ/max(XYZ(:));
-    XYZ = XW2RGBFormat(XYZ,row,col);
+    XYZ = XYZ/max(XYZ(:));    
     RGB = xyz2srgb(XYZ);
-    % RGB = XW2RGBFormat(RGB,row,col);
 elseif abs(displayFlag) == 2    % Gray scale image, used for SWIR, NIR
     RGB = zeros(row,col,3);
-    RGB(:,:,1) = XW2RGBFormat(mean(SPD,2),row,col);
+    RGB(:,:,1) = reshape(mean(SPD,3),row,col);
     RGB(:,:,2) = RGB(:,:,1);
     RGB(:,:,3) = RGB(:,:,1);
 else
@@ -97,4 +94,4 @@ if displayFlag >= 1
     end
 end
 
-return;
+end

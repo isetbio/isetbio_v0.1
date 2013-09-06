@@ -11,9 +11,10 @@ function figHdl = vcNewGraphWin(figHdl, fType, varargin)
 %
 % A few figure shapes can be defaulted
 %   fType:  Default - Matlab normal figure position
-%           upper left
-%           tall 
-%           wide
+%           upper left    Simple
+%           tall          (for 2x1 format)
+%           wide          (for 1x2 format)
+%           upperleftbig  (for 2x2 format)
 %   This list may grow.
 %
 % Examples
@@ -21,10 +22,15 @@ function figHdl = vcNewGraphWin(figHdl, fType, varargin)
 %  vcNewGraphWin([],'upper left')   
 %  vcNewGraphWin([],'tall')
 %  vcNewGraphWin([],'wide')
+%  vcNewGraphWin([],'upper left big')   
 %
 %  vcNewGraphWin([],'wide','Color',[0.5 0.5 0.5])
 %
 % See also:
+%
+%
+% PROGRAMMING TODO:
+%    Add more default position options
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
@@ -44,7 +50,11 @@ switch(fType)
         set(figHdl,'Units','normalized','Position',[0.007 0.055 0.28 0.85]);
     case 'wide'
         set(figHdl,'Units','normalized','Position',[0.007 0.62  0.7  0.3]);
-    otherwise % default
+    case 'upperleftbig'
+        % Like upperleft but bigger
+        set(figHdl,'Units','normalized','Position',[0.007 0.40  0.40 0.50]);
+
+    otherwise % Matlab default
 end
 
 %% Parse the varargin arguments

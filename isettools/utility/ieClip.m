@@ -22,21 +22,23 @@ function im = ieClip(im,lowerBound, upperBound)
 
 % Set up various
 if nargin == 1
+    % Only im sent in.  Default is [0,1]
     lowerBound = 0;
     upperBound = 1;
     disp('ieClip:  Setting range to 0 1');
 elseif nargin == 2
+    % Reads this as [-l,l]
     lowerBound = -abs(lowerBound);
     upperBound = abs(lowerBound);
     s = sprintf('ieClip:  Setting range to [%.3e,%.3e]',lowerBound,upperBound);
     disp(s);
 end
 
-if ~(~exist('lowerBound','var') | isempty(lowerBound))
+if ~(~exist('lowerBound','var') || isempty(lowerBound))
     im(im<lowerBound) = lowerBound;
 end
 
-if ~(~exist('upperBound') | isempty(upperBound))
+if ~(~exist('upperBound') || isempty(upperBound))
     im(im>upperBound) = upperBound;
 end
 

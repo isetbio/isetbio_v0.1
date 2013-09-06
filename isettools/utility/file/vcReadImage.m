@@ -1,8 +1,8 @@
-function [photons, mcCOEF, basis, comment, illuminant ] = vcReadImage(fullname,imageType,varargin)
+function [photons, illuminant, basis, comment, mcCOEF] = vcReadImage(fullname,imageType,varargin)
 % Read image monochrome, rgb, or multispectral data, return multispectral
 % photons
 %
-%   [photons,mcCOEF,basis,comment,illuminant] = vcReadImage(fullname,imageType,varargin)
+%   [photons, illuminant, basis, comment, mcCOEF ] = vcReadImage(fullname,imageType,varargin)
 %
 % The image data in fullname are converted into photons.  The other
 % parameters can be returned if needed.  This routine is called pretty much
@@ -176,7 +176,8 @@ switch lower(imageType)
             
             % The image data should be in units of photons
             photons = imageLinearTransform(mcCOEF,basis.basis');
-            
+            % vcNewGraphWin; imageSPD(photons,basis.wave);
+
             % These lines are left in because there must be different file
             % types out there somewhere.  Sometimes we stored the mean, and
             % sometimes we didn't.
@@ -222,6 +223,7 @@ switch lower(imageType)
                 warndlg('No illuminant information in %s\n',fullname);
             end
             
+            % Force photons to be positive
             photons = max(photons,0);
             
         else

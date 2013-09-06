@@ -21,7 +21,7 @@ function figNum = vcSelectFigure(objType,noNewWin)
 % Copyright ImagEval Consultants, LLC, 2005.
 
 
-figNum = [];
+% figNum = [];
 
 % By default, we assume that the user DOES want a new graph window when
 % this routine is called.  To suppress the call, and return an empty
@@ -31,23 +31,23 @@ objType = vcEquivalentObjtype(objType);
 
 switch lower(objType)
     case 'graphwin'
-        figNum = ieSessionGet('graphwinfigure');
+        figNum = ieSessionGet('graph win figure');
         if isempty(figNum) && ~noNewWin, figNum = vcNewGraphWin;  end
         
     case 'scene'
-        figNum = ieSessionGet('scenewindow');
+        figNum = ieSessionGet('scene window');
         if isempty(figNum) && ~noNewWin, figNum = sceneWindow; end
         
     case {'opticalimage'}
-        figNum = ieSessionGet('oiwindow');
+        figNum = ieSessionGet('oi window');
         if isempty(figNum) && ~noNewWin, figNum = oiWindow; end
         
     case {'isa'}
-        figNum = ieSessionGet('sensorwindow');
+        figNum = ieSessionGet('sensor window');
         if isempty(figNum) && ~noNewWin, figNum = sensorImageWindow; end
         
     case {'vcimage'}
-        figNum = ieSessionGet('vcimagewindow');
+        figNum = ieSessionGet('vcimage window');
         if isempty(figNum) && ~noNewWin, figNum = vcimageWindow; end
         
     otherwise

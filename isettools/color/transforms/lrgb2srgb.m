@@ -4,7 +4,8 @@ function rgb = lrgb2srgb(rgb)
 %    rgb = lrgb2srgb(rgb)
 %
 % This routine implements the nonlinear step for converting linear rgb
-% (lrgb) into the frame buffer representations in the srgb representation 
+% (lrgb) into the frame buffer representations in the srgb representation.
+% The rgb data can be in either RGB or XW format.
 %
 % The inputs are linear rgb values, and the returned values are nonlinear
 % framebuffer values. They are in the range [0,1] 

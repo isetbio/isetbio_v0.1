@@ -1,10 +1,13 @@
 function mRGB = macbethPatchData(obj,mLocs,delta,fullData,dataType)
-%Retrieve mean RGB cell array from a vcimage or sensor structure
+%Return a cell array with the linear RGB values from a vcimage or sensor 
 %
-%  mRGB = macbethPatchData(obj,mLocs,delta)
+%    mRGB = macbethPatchData(obj,mLocs,delta)
+%
+% Returns the linear RGB values from the sensor or processor window
 %
 % Example:
 %
+% See Also:  macbethSelect, vcimageMCCXYZ, macbethColorError
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 

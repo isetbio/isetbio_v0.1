@@ -73,6 +73,7 @@ function oi = oiSet(oi,parm,val,varargin)
 %
 % Auxiliary
 %      {'consistency'}       - Is the display consistent with data
+%      {'gamma'}             - Display gamma in oiWindow
 %
 % Private variables used by ISET but not normally set by the user
 %
@@ -106,6 +107,14 @@ switch parm
         % When parameters are changed, the consistency flag on the optical
         % image changes.  This is irrelevant for the scene case.
         oi.consistency = val;
+    case {'gamma'}
+        % oiSet([],'gamma',0.6);
+        % Should this be ieSessionSet('oi gamma',val)
+        hObj = ieSessionGet('oi window ');
+        hdl = ieSessionGet('oi window handle');
+        eventdata = [];
+        set(hdl.editGamma,'string',num2str(val));
+        oiWindow('oiRefresh',hObj,eventdata,hdl);
         
     case {'distance' }
         % Positive for scenes, negative for optical images

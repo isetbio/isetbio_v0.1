@@ -26,12 +26,14 @@ function iFormat = vcGetImageFormat(data,wave)
 % Copyright ImagEval Consultants, LLC, 2005.
 
 
-
-if ndims(data) == 3 & length(wave) == size(data,3)
+if ndims(data) == 3 && length(wave) == size(data,3)
+    % Checks out as classic
     iFormat = 'RGB';
-elseif ndims(data) == 2 & length(wave) == 1
+elseif ndims(data) == 2 && length(wave) == 1
+    % A matrix (image) with one wavelength
     iFormat = 'RGB';
-elseif ndims(data) == 2 & (length(wave) == size(data,2))
+elseif ndims(data) == 2 && (length(wave) == size(data,2))
+    % A matrix as typical XW with columns -- wave
     iFormat = 'XW';
 elseif length(data) == length(wave)
     % The data is a vector with the same number of entries as wave.  We
@@ -45,4 +47,4 @@ else
     fprintf('nWavelength %.0f',length(wave));
 end
 
-return;
+end

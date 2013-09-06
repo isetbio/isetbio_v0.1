@@ -22,15 +22,18 @@ function sensor = sensorCreate(sensorName,PIXEL,varargin)
 %
 % Other types
 %      {'monochrome'}
+%      {'ideal'}  - No noise in the pixel.  Can be monochrome, rgb, or
+%                   human
 %
 % Multiple channel sensors can be created
-%      {'grbc'}
-%      {'interleaved'}   - One highly sensitive (transparent) channel and 3 RGB
+%      {'grbc'}        - green, red, blue, cyan
+%      {'interleaved'} - One transparent channel and 3 RGB.  Same as RGBC
+%                        or RGBW
 %      {'fourcolor'}
 %      {'custom'}
 %
 % Human cone mosaic
-%      {'human'} - Uses Stockman LMS cones, Bayer array, see
+%      {'human'} - Uses Stockman Quanta LMS cones, see
 %                  pixelCreate('human'), which returns a 2um aperture
 %
 % See also: sensorReadColorFilters, sensorCreateIdeal
@@ -127,6 +130,8 @@ switch sensorName
         filterOrder = [1 2 ; 2 3];
         sensor = sensorBayer(sensor,filterOrder,filterFile);
     case {'ideal'}
+        % sensorCreate('ideal',pSize,sensorType,cPattern);
+        %
         % sensorType = 'human'  % 'rgb','monochrome'
         % cPattern = 'bayer'    % any sensorCreate option
         % sensorCreate('ideal',[],'human','bayer');
@@ -177,8 +182,10 @@ switch sensorName
         filterPattern = [1 2; 3 4];
         sensor = sensorInterleaved(sensor,filterPattern,filterFile);
     case 'human'
-        % See example in header
         % sensor = sensorCreate('human',pixel,params);
+        % Uses StockmanQuanta
+        % See example in header.
+        %
         if length(varargin) >= 1, params = varargin{1};
         else params = [];
         end
@@ -220,7 +227,7 @@ switch sensorName
         sensor = sensorSet(sensor,'rSeed',rSeed);
 
     case 'mouse'
-        error('NYI: Needs to be fixed up with sensorCreateConeMosaic');
+        error('NYI: mouse needs to be fixed up with sensorCreateConeMosaic');
         filterFile = 'mouseColorFilters.mat';
         sensor = sensorMouse(sensor, filterFile);
         sensor = sensorSet(sensor, 'pixel', pixelCreate('mouse'));

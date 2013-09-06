@@ -17,6 +17,8 @@ function roiData = vcGetROIData(obj,roiLocs,dataType)
 % A variety of data types and windows can be chosen. These are:
 %
 %   scene:         photons (default) or energy
+%                  'illuminant photons' or 'illuminant energy'
+%                  reflectance
 %   opticalimage:  photons (default) or energy
 %   sensor:        volts   (default) or electrons 
 %   vcimage:       results (default) or input
@@ -42,7 +44,10 @@ function roiData = vcGetROIData(obj,roiLocs,dataType)
 %
 %  scene = vcGetObject('scene');
 %  roiLocs = vcROISelect(scene);
-%  photons = vcGetROIData(scene,roiLocs,'photons');      % Nx31
+%  photons = vcGetROIData(scene,roiLocs,'photons');             % Nx31
+%  photons = vcGetROIData(scene,roiLocs,'illuminant photons');  % Nx31
+%
+% Does this work for spatial-spectral, too?
 %  reflectance = vcGetROIData(scene,roiLocs,'reflectance');
 %
 % Copyright ImagEval Consultants, LLC, 2005.
@@ -55,29 +60,46 @@ elseif size(roiLocs,2) == 4, roiLocs = ieRoi2Locs(roiLocs);
 end
 
 objType = vcGetObjectType(obj);
-
 switch lower(objType)
     case {'scene'}
+        % Read the ROI for the radiance data or the illuminant data.
         if ieNotDefined('dataType'), dataType = 'photons'; end
 
-        data = sceneGet(obj,dataType);
-        if isempty(data)
-            if strcmp(dataType ,'energy')
-                photons = sceneGet(obj,'photons');
-                wavelength = sceneGet(obj,'wavelength');
-                data = Quanta2Energy(wavelength,photons);
-            else errordlg('No data to plot.');
-            end
+        % Handle getting an ROI for the illuminant as well as the radiance
+        % data.
+        sz = sceneGet(obj,'size'); 
+        r = sz(1); c = sz(2);
+        dataType = ieParamFormat(dataType);
+        
+        % Get data into XW format
+        switch dataType
+            case {'illuminantphotons'}
+                img = sceneGet(obj,'illuminant photons');
+                
+                % Handle spatial-spectral or not
+                if isvector(img), img = repmat(img(:)',prod(sz),1);
+                else              [img,r,c] = RGB2XWFormat(img); 
+                end
+            case {'illuminantenergy'}
+                img = sceneGet(obj,'illuminant energy');
+                
+                % Handle spatial-spectral or not
+                if isvector(img),  img = repmat(img(:)',prod(sz),1);
+                else [img,r,c] = RGB2XWFormat(img);
+                end
+            case {'photons','energy'}
+                img = sceneGet(obj,dataType);
+                [img,r,c] = RGB2XWFormat(img);
+                if isempty(img), errordlg('No radiance data in scene.'); end
         end
-
-        [img,r,c] = RGB2XWFormat(data);
-
+        
         % Should we keep the data in bounds?
         roiLocs(:,1) = ieClip(roiLocs(:,1),1,r);
         roiLocs(:,2) = ieClip(roiLocs(:,2),1,c);
 
         imgLocs = sub2ind([r,c],roiLocs(:,1),roiLocs(:,2));
         roiData = img(imgLocs,:);
+        
     case {'opticalimage','oi'}
         if ieNotDefined('dataType'), dataType = 'photons'; end
 

@@ -3,12 +3,14 @@ function xyz = srgb2xyz(srgb)
 %
 %    xyz = srgb2xyz(srgb)
 % 
-% Convert sRGB image into CIE XYZ values. The input (srgb) and output (xyz)
-% are NxMx3 RGB Format.
+% sRGB:  RGB format image
+% xyz :  RGB format image
 %
+% Convert sRGB image into CIE XYZ values.
 % The input range for srgb values is (0,1).
 %
-% Reference: http://en.wikipedia.org/wiki/SRGB
+% For a description of the sRGB format, see this reference:
+%    http://en.wikipedia.org/wiki/SRGB
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 

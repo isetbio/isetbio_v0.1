@@ -29,7 +29,8 @@ plotSensor(sensor,'electrons hline',[20 20]);
 %%
 [uData,g] = plotSensor(sensor,'sensor snr');
 
-%%
+%% This requires hand intervention
+
 uData = plotSensor(sensor,'electrons hist');
 plotSensor(sensor,'electrons hist',uData.roiLocs)
 
@@ -47,6 +48,6 @@ uData = plotSensor(sensor,'pixel snr');
 human = sensorCreate('human');
 [uData, g] = plotSensor(human,'cone mosaic');
 
-%%
+%% End
 
 

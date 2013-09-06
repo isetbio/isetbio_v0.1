@@ -31,7 +31,7 @@ uData
 get(h,'userdata')
 
 %% Scenes store information about the illuminant
-plotScene(scene,'illuminant energy')
+plotScene(scene,'illuminant energy roi')
 
 %% You can plot the energy 
 rect = [51    35    10    11];        % Yellow Macbeth patch

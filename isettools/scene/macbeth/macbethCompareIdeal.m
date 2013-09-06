@@ -3,7 +3,12 @@ function [embRGB,mRGB,pSize] = macbethCompareIdeal(mRGB,pSize,illType)
 % 
 %   [embRGB,mRGB,pSize] = macbethCompareIdeal(mRGB,pSize,illType)
 %
-% Need parameter for color temperature
+% mRGB:    Macbeth RGB values of the data in the vcimageWindow
+% pSize:   Patch size
+% illType: Illuminant name (e.g., 'd65'). See illuminantRead contains all
+%          the options
+%
+% TODO: Need to be able to set illType parameter for color temperature
 %
 % Example
 %   [embRGB,mRGB,pSize] = macbethCompareIdeal; 
@@ -12,69 +17,34 @@ function [embRGB,mRGB,pSize] = macbethCompareIdeal(mRGB,pSize,illType)
 %   macbethCompareIdeal(mRGB,pSize,6000);
 %   macbethCompareIdeal(mRGB,pSize,'d65');
 %
+% See also:  macbethIdealColor
+%
 % Copyright ImagEval Consultants, LLC, 2003.
 
+%% Arguments
 vci = vcGetObject('vci');
 
+% If the mRGB or pSize not defined, we need to do some processing.
 if ieNotDefined('mRGB') || ieNotDefined('pSize')
     % Now, we get the RGB values for the image data displayed in the
     % image processing window.  We treat this as lRGB (not sRGB) data.
     [mRGB, macbethLocs, pSize]= macbethSelect(vci);
     mRGB = reshape(mRGB,4,6,3);
     mRGB = mRGB/max(mRGB(:));
-    mRGB = imageFlip(mRGB,'updown');
 end
 if ieNotDefined('illType'), illType = 'd65'; end
 
-% Calculate the lRGB values under this illuminant.
+%% Calculate the lRGB values under this illuminant.
 ideal  = macbethIdealColor(illType,'lrgb');
+idealLRGB = XW2RGBFormat(ideal,4,6);
 
-% Reshape to the form of the chart
-idealLRGB = zeros(4,6,3);
-for ii= 1:3
-    tmp = ideal(:,ii); 
-    idealLRGB(:,:,ii) = flipud(reshape(tmp,4,6));
-end
-
-% Old Code - delete some day.
-% % Create the linear RGB (lRGB) values for the ideal MCC under D65.
-% wave = 400:10:700;
-% macbethChart = macbethReadReflectance(wave);
-% 
-% if ischar(illType)
-%     illEnergy = illuminantRead([],illType);
-% elseif isnumeric(illType)
-%     % Read illumination
-%     lightParameters.name = 'blackbody';
-%     lightParameters.temperature = 6500;
-%     lightParameters.spectrum.wave = wave;
-%     % lightParameters.spectrum.binwidth = wave(2)-wave(1);
-%     lightParameters.luminance = 100;        %cd/m2
-%     illEnergy = illuminantRead(lightParameters);
-%     illType = num2str(illType);
-% end
-% 
-% % Create color signal
-% colorSignal = diag(illEnergy)*macbethChart;
-% 
-% % Compute CIE XYZ
-% macbethXYZ = ieXYZFromEnergy(colorSignal',wave);
-% ideal = (macbethXYZ/max(macbethXYZ(:,2)));  % Previously scaled by 100
-% ideal = reshape(ideal,4,6,3);
-% ideal = imageFlip(ideal,'updown');
-% 
-% % Convert to display lRGB and sRGB
-% [idealSRGB,idealLRGB] = xyz2srgb(ideal);
-% idealLRGB = ieClip(idealLRGB,0,1);
-
-% - End of replacement by macbethIdealColor
-
-% Build an image that contains bigger patches of ideal values (patch size
-% like the original data) with smaller inserts for the ideal.  
+%% Build an image that contains bigger patches of ideal values 
+% Patch size like the original data) with smaller inserts for the ideal.  
 fullIdealRGB = imageIncreaseImageRGBSize(idealLRGB,pSize);
-embRGB = fullIdealRGB;   % imagesc(embRGB)
-w = pSize + round([-pSize/3:0]);
-n = length(w);
+embRGB       = fullIdealRGB;   % imagesc(embRGB)
+
+w = pSize + round(-pSize/3:0);
+% n = length(w);
 for ii=1:4
     l1 = (ii-1)*pSize + w;
     for jj=1:6
@@ -86,8 +56,8 @@ for ii=1:4
     end
 end
 
-% Display in graph window
-figNum = vcNewGraphWin;
+%% Display in graph window
+figNum = vcNewGraphWin([],'wide');
 str = sprintf('%s: MCC %s',imageGet(vci,'name'),illType);
 set(figNum,'name',str);
 set(figNum,'Color',[1 1 1]*.7);
@@ -97,4 +67,4 @@ axis image; axis off; title('Data')
 subplot(1,2,2), imagesc(embRGB.^0.6), 
 axis image; axis off; title('Data embedded in ideal')
 
-return;
+end

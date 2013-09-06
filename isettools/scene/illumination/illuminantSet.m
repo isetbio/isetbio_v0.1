@@ -1,22 +1,33 @@
 function il = illuminantSet(il,param,val,varargin)
-% Get parameter value for illuminant structure
+% Set parameter value for illuminant structure
 %
-%  il = illuminantSet(il,param,val,varargin)
+%   il = illuminantSet(il,param,val,varargin)
 %
+% The illuminant structure has various formats.  It can be a simple vector,
+% which defines an SPD for the entire image.  It can also be an RGB format
+% spectral data set that has a separate illuminant SPD at every point.
+%
+% We are in the middle of extending this spatial-spetral format and writing
+% tutorials.
 %
 % See also:  illuminantCreate, illuminantGet
 %
-% Examples
+% Examples:
+%   il = illuminantCreate;    % Creates the illuminant structure, no data
+%   il = illuminantSet(il,'name','outdoor');
+%   il = illuminantSet(il,'photons', photons);
+%  or
+%   il = illuminantSet(il,'energy',e);  % Converts to energy for you
 %
 % (c) Imageval Consulting, LLC, 2012
 
+%%
 if ~exist('il','var') || isempty(il), error('illuminant structure required'); end
 if ~exist('param','var') || isempty(param), error('param required'); end
 if ~exist('val','var') , error('val is required'); end
 
 %%
 param = ieParamFormat(param);
-
 switch param
     case 'name'
         il.name = val;
@@ -40,14 +51,17 @@ switch param
         il.data.max = val;
     case 'energy'
         % User sent in energy.  We convert to photons and set.
+        % We need to handle the spatial spectral case properly.
+        % See s_illuminantSpace
         wave = illuminantGet(il,'wave');
         if ndims(val) > 2 %#ok<ISMAT>
             [val,r,c] = RGB2XWFormat(val);
             val = Energy2Quanta(wave,val')';
             val = XW2RGBFormat(val,r,c);
-            il =illuminantSet(il,'photons',val);
+            il = illuminantSet(il,'photons',val);
         else
-            il =illuminantSet(il,'photons',Energy2Quanta(wave,val(:)));
+            % For set of a vector to be a column vector
+            il = illuminantSet(il,'photons',Energy2Quanta(wave,val(:)));
         end
     case {'wave','wavelength'}
         % il = illuminantSet(il,'wave',wave)

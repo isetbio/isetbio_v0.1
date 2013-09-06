@@ -361,12 +361,12 @@ switch parm
         
     case {'xyz','dataxyz'}
         % sceneGet(scene,'xyz');
-        % 3D array of scene XYZ values.
+        % RGB array of scene XYZ values.
         photons = sceneGet(scene,'photons');
         wave    = sceneGet(scene,'wave');
         val     = ieXYZFromEnergy(Quanta2Energy(wave,photons),wave);
-        sz = sceneGet(scene,'size');
-        val = XW2RGBFormat(val,sz(1),sz(2));
+        % sz = sceneGet(scene,'size');
+        % val = XW2RGBFormat(val,sz(1),sz(2));
         
     case {'lms','datalms','cone'}
         % sceneGet(scene,'lms');
@@ -555,17 +555,19 @@ switch parm
         end
     case {'illuminantphotons'}
         % The data field is has illuminant in photon units.
-        val = illuminantGet(scene.illuminant,'photons');
-        
+        il = sceneGet(scene,'illuminant');
+        val = illuminantGet(il,'photons');
+
     case {'illuminantenergy'}
         % The data field is has illuminant in standard energy units.  We
         % convert from energy to photons here.  We account for the two
         % different illuminant formats (RGW or vector).
-        W = sceneGet(scene,'wave');
+        W = sceneGet(scene,'illuminant wave');
         switch sceneGet(scene,'illuminant format')
             case 'spectral'
                 val = sceneGet(scene,'illuminant photons');
                 val = Quanta2Energy(W,val(:));
+                val = val(:);
             case 'spatial spectral'
                 % Spatial-spectral format.  Sorry about all the transposes.
                 val = sceneGet(scene,'illuminant photons');
@@ -578,12 +580,13 @@ switch parm
     case {'illuminantwave'}
         % Must be the same as the scene wave
         val = sceneGet(scene,'wave');
-        case {'illuminantxyz','whitexyz'}
+        
+    case {'illuminantxyz','whitexyz'}
         % XYZ coordinates of illuminant, which is also the scene white
         % point.
         energy = sceneGet(scene,'illuminant energy');
         wave   = sceneGet(scene,'wave');
-
+        
         % Deal with spatial spectral case and vector case
         if ndims(energy) == 3
             [energy,r,c] = RGB2XWFormat(energy);
@@ -591,7 +594,7 @@ switch parm
             val = XW2RGBFormat(val,r,c);
         else
             val    = ieXYZFromEnergy(energy(:)',wave);
-        end    
+        end
     case {'illuminantcomment'}
         if checkfields(scene,'illuminant','comment'),val = scene.illuminant.comment; end
     

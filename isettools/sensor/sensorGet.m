@@ -190,10 +190,6 @@ function val = sensorGet(sensor,param,varargin)
 % See also:  sensorSet
 %
 % Copyright ImagEval Consultants, LLC, 2005.
-%
-% Modification history:
-%§
-% 8/16/13  dhb  Comment out fprintf about how sensor fov is estimated.
 
 if ~exist('param','var') || isempty(param), error('Param must be defined.'); end
 
@@ -786,7 +782,7 @@ switch param
         % focal distance).
         if isempty(oi)
             distance = opticsGet(opticsCreate,'focal length');
-            % fprintf('Sensor fov estimated using focal length = %f m\n',distance);
+            fprintf('Sensor fov estimated using focal length = %f m\n',distance);
         else
             distance = opticsGet(oiGet(oi,'optics'),'focal plane distance',sDist);
         end

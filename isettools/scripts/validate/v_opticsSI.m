@@ -18,7 +18,7 @@
 pixPerCheck = 8;
 nChecks = 12; 
 scene = sceneCreate('checkerboard',pixPerCheck,nChecks);
-wave = sceneGet(scene,'wave');
+wave  = sceneGet(scene,'wave');
 scene = sceneSet(scene,'fov',3);
 
 %% Replace the optical image into your ISET window
@@ -37,6 +37,7 @@ for ii=1:length(wave), psf(:,:,ii) = h; end     % PSF data
 ieSaveSIDataFile(psf,wave,umPerSample,'customFile');
 
 % Read the custom data and put it into an optics structure.
+oi = oiCreate;
 optics = siSynthetic('custom',oi,'customFile','deleteMe');
 
 % Make sure the program knows you want to use shift invariant
@@ -63,7 +64,6 @@ oi       = vcGetObject('oi');
 oi       = oiCompute(scene,oi);
 vcReplaceAndSelectObject(oi);
 oiWindow;
-
 delete('customFile.mat');
 delete('deleteMe.mat');
 

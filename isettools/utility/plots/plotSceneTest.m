@@ -25,12 +25,12 @@ uData = plotScene(scene,'luminance fft hline',[1,rows]);
 
 %% Radiance image with an overlaid spatial grid
 plotScene(scene,'radiance image with grid')
-plotScene(scene,'illuminant photons')
+plotScene(scene,'illuminant photons roi')
 plotScene(scene,'depth map')
 
 %% Reflectance data from an ROI
 roiRect = [26    40    13    16];
-uData = plotScene(scene,'reflectance',roiRect);
+uData = plotScene(scene,'reflectance roi',roiRect);
 plotScene(scene,'chromaticity',roiRect)
 
 %%

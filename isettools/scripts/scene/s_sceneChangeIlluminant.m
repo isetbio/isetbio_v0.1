@@ -23,7 +23,7 @@ scene = sceneCreate;
 vcAddAndSelectObject(scene); sceneWindow;
 
 % Plot the illuminant
-plotScene(scene,'illuminant photons')
+plotScene(scene,'illuminant photons roi')
 
 
 %% Transform the current illuminant to Tungsten illuminant
@@ -39,7 +39,7 @@ scene = sceneSet(scene,'illuminantComment','Tungsten illuminant');
 
 % Have a look
 vcAddAndSelectObject(scene); sceneWindow;
-plotScene(scene,'illuminant photons')
+plotScene(scene,'illuminant photons roi')
 
 %% Read in a more interesting scene and perform some transformations
 sceneFile = fullfile(isetRootPath,'data','images','multispectral','StuffedAnimals_tungsten-hdrs.mat');
@@ -48,7 +48,7 @@ scene = sceneAdjustLuminance(scene,61); % This sets the mean scene luminance
 scene = sceneSet(scene,'fov',26.5); % match the scene field of view (fov) with the sensor fov
 
 vcAddAndSelectObject('scene',scene); sceneWindow; % display sceneWindow
-plotScene(scene,'illuminant energy')
+plotScene(scene,'illuminant energy roi')
 
 %% Set illuminant to equal energy
 

@@ -14,7 +14,10 @@ function XYZ = ieXYZFromEnergy(energy,wave)
 %
 % The returned values, XYZ, are X,Y,Z in the columns of the matrix. Each
 % row of energy has a corresponding XYZ value in the corresponding row of
-% XYZ. 
+% XYZ. This is what we call XW format.  
+%
+% ** We are considering whether the return might be put into RGB format if
+% it is sent in that way. **
 %
 % The units of Y are candelas/meter-squared if energy is radiance and lux
 % if energy is irradiance.
@@ -36,17 +39,22 @@ function XYZ = ieXYZFromEnergy(energy,wave)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 
-% Force the data into XW format.
+% Force data into XW format.
 if ndims(energy) == 3
     if length(wave) ~= size(energy,3)
         error('Bad format for input variable energy.');
     end
 end
 
-switch vcGetImageFormat(energy,wave)
+% Returning in RGB forma is new.  I tested it in the scielab branch with
+% v_ISET and some other calls.  But it might cause something to break
+% somewhere.  Stay alert!
+iFormat = vcGetImageFormat(energy,wave);
+switch iFormat
     case 'RGB'
         % [rows,cols,w] = size(data);
-        xwData = RGB2XWFormat(energy);
+        [xwData,r,c] = RGB2XWFormat(energy);
+        % disp('RGB return')
     otherwise
         % XW format
         xwData = energy;
@@ -67,5 +75,13 @@ end
 
 % The return value has three columns, [X,Y,Z].
 XYZ = 683*(xwData*S) * dWave;
+
+% If it was sent in RGB, return it in RGB
+switch iFormat
+    case 'RGB'
+        XYZ = XW2RGBFormat(XYZ,r,c);
+    otherwise
+        % XW format
+end
 
 return;

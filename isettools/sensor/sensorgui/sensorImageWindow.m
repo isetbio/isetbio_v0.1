@@ -1476,6 +1476,9 @@ function menuAnColCCM_Callback(hObject, eventdata, handles)
 sensor = vcGetObject('sensor');
 [L,corners] = sensorCCM(sensor); %#ok<ASGLU>
 
+fprintf('    ==  Conversion matrix  ==\n');
+disp(L)
+
 % Store the selection of the corners
 sensor = sensorSet(sensor,'mcc corner points',corners);
 vcReplaceObject(sensor);

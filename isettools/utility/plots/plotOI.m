@@ -257,6 +257,7 @@ switch pType
     case {'irradianceimagegrid','irradianceimagewithgrid','irradianceimage'}
         % plotOI(oi,'irradianceImage',sampleSpacing-um);
         irrad   = oiGet(oi,'photons');
+        wave    = oiGet(oi,'wave');
         sz      = oiGet(oi,'size');
         spacing = oiGet(oi,'sampleSpacing','um');
         
@@ -272,7 +273,7 @@ switch pType
         
         nWave = oiGet(oi,'nwave');
         if nWave > 1
-            imageSPD(irrad,[],[],[],[],1,xCoords,yCoords);
+            imageSPD(irrad,wave,sz(1),sz(2),[],1,xCoords,yCoords);
         else
             wList = oiGet(oi,'wavelength');
             [row,col] = size(irrad);

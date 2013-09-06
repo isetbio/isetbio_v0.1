@@ -1,35 +1,33 @@
 function fullName = ieSaveMultiSpectralImage(fullName,mcCOEF,basis,comment,imgMean,illuminant)
+%Save a Matlab data file containing a multi-spectral image.
 %
 %  fullName = ieSaveMultiSpectralImage(fullName,coef,basis,comment,imgMean,illuminant)
 %
-% Save a Matlab data file containing a multi-spectral image. The image is
-% created using routines in the pdcsoft multicapture directory.
+% The image is created using routines in the multicapture directory.
 % 
 % Input arguments
 %   mcCOEF  - coefficients (RGB format)
-%   basis   - basis functions functions
-%   comment
+%   basis   - basis functions 
+%   comment - 
 %   imgMean - in some cases we remove the mean before creating the coeffs
 %   illuminant structure
 %     .wave  are wavelengths in nanometers
 %     .data  are illuminant as a function of wavelength in energy units
 %
-% %%% TODO:  The illuminant format should be changed to the new standard
-%     ISET illuminant format.  If we send in the old format as per here, we
-%     should allow it. But going forward we should check for the standard
-%     illuminantCreate format and write this code with that expectation.
-%
-% The full path to the data is returned in fullname.
+% The full path to the output file is returned.
 %
 % The SPD of the data can be derived from the coefficients and basis
 % functions using: 
 %
-%    spd = rgbLinearTransform(mcCOEF,basis');
+%    spd = imageLinearTransform(mcCOEF,basis');
 %
 % See also: mcCreateMultispectralBases, CombineExposureColor
 %
-%EXAMPLE:
+% Example:
+%
 %  ieSaveMultiSpectralImage('c:\user\Matlab\data\Tungsten','MacbethChart-hdrs',mcCOEF,basis,basisLights,illuminant,comment)
+%
+% See also:  multicapture repository on github
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 

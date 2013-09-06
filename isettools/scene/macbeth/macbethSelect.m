@@ -13,7 +13,7 @@ function [mRGB, mLocs, pSize, cornerPoints, mccRectHandles] = ...
 % The user selects four points on the MCC (white, black, blue, brown).
 % This algorithm estimates the (row, column) centers of the 24 MCC patches.
 % The mean RGB values in a region around these locations are returned in
-% mRGB. 
+% mRGB. The processor window stores linear RGB values.
 % 
 % The locations for the mean calculation are returned in the mLocs
 % variable. The size of the square region is returned in pSize.  This is a
@@ -158,6 +158,8 @@ ieInWindowMessage('',handles);
 [mLocs,delta,pSize] = macbethRectangles(cornerPoints);
 
 % Get the mean RGB data or the full data from the patches in a cell array
+% The processor window is assumed to store linear RGB values, not gamma
+% corrected.
 mRGB = macbethPatchData(obj,mLocs,delta,fullData,dataType);
 
 % Plot the rectangle that encloses these points.

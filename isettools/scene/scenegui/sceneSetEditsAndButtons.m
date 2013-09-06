@@ -10,11 +10,12 @@ function sceneSetEditsAndButtons(handles)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
+
+%% Use scene data to set boxes in window
 scene = vcGetObject('SCENE');
-figNum = vcSelectFigure('SCENE'); 
-figure(figNum);
 
 if isempty(scene)
+    % No scene, so set empty
     str = [];
     set(handles.editDistance,'String',str);
     set(handles.editLuminance,'String',str);
@@ -38,13 +39,14 @@ else
         'Value',vcGetSelectedObject('SCENE'));    
 end
 
-% Description box on upper right
+%% Description box on upper right
 set(handles.txtSceneDescription,'String',sceneDescription(scene));
 
-gam = str2double(get(handles.editGamma,'String'));
-
-% Get the displayFlag from the scene window.
+%% Set the gamma and displayFlag from the scene window.
+figNum = vcSelectFigure('SCENE'); 
+figure(figNum);
 displayFlag = get(handles.popupDisplay,'Value');
+gam = str2double(get(handles.editGamma,'String'));
 sceneShowImage(scene,displayFlag,gam);
 
 return;

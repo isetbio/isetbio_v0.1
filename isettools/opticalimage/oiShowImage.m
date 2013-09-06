@@ -26,6 +26,7 @@ if ieNotDefined('displayFlag'), displayFlag = 1; end
 % Force to lower case and no spaces
 wList = oiGet(oi,'wavelength');
 img   = oiGet(oi,'photons');
+sz    = oiGet(oi,'size');
 
 if isempty(img)
     cla
@@ -34,8 +35,9 @@ if isempty(img)
 end
     
 % This displays the image in the GUI.  The displayFlag flag determines how
-% imageSPD converts the data into a displayed image. 
-rgb = imageSPD(img,wList,gam,[],[],displayFlag);
+% imageSPD converts the data into a displayed image. The data in img are
+% in RGB format.
+rgb = imageSPD(img,wList,gam,sz(1),sz(2),displayFlag);
 axis image; axis off
 
 return;

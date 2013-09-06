@@ -20,7 +20,7 @@ function varargout = sceneWindow(varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-% Last Modified by GUIDE v2.5 24-Mar-2013 15:56:33
+% Last Modified by GUIDE v2.5 02-Sep-2013 18:14:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -341,18 +341,24 @@ return
 % --------------------------------------------------------------------
 function menuPlotIlluminant_Callback(hObject, eventdata, handles)
 % Plot | Illuminant (energy)
-plotScene(vcGetObject('scene'),'illuminant energy');
+plotScene(vcGetObject('scene'),'illuminant energy roi');
 return
 
 % --------------------------------------------------------------------
 function menuPlotIllumPhotons_Callback(hObject, eventdata, handles)
 % Plot | Illuminant (photons)
-plotScene(vcGetObject('scene'),'illuminant photons');
+plotScene(vcGetObject('scene'),'illuminant photons roi');
+return
+
+% --------------------------------------------------------------------
+function menuPlotIlluminantImage_Callback(hObject, eventdata, handles)
+%  Plot | Illuminant image
+plotScene(vcGetObject('scene'),'illuminant image');
 return
 
 % --------------------------------------------------------------------
 function menuPlotIlluminantComment_Callback(hObject, eventdata, handles)
-% Plot | Illuminant comment
+% Deprecated - Plot | Illuminant comment
 scene = vcGetObject('SCENE');
 disp(sceneGet(scene,'illuminantComment'));
 return
@@ -1183,5 +1189,4 @@ function menuHelpProgGuide_Callback(hObject, eventdata, handles)
 % Help | Iset Programmers (online)
 ieManualViewer('manual');
 return
-
 

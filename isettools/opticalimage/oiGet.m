@@ -342,13 +342,13 @@ switch parm
                 
     case {'xyz','dataxyz'}
         % oiGet(oi,'xyz');
-        % 3D array of oi XYZ values.  These are returned as an RGB format
+        % RGB array of oi XYZ values.  These are returned as an RGB format
         % at the spatial sampling grid of the optical image.
         photons = oiGet(oi,'photons');
         wave    = oiGet(oi,'wave');
         val     = ieXYZFromEnergy(Quanta2Energy(wave,photons),wave);
-        sz = oiGet(oi,'size');
-        val = XW2RGBFormat(val,sz(1),sz(2));
+        %         sz = oiGet(oi,'size');
+        %         val = XW2RGBFormat(val,sz(1),sz(2));
          
     case {'spectrum','wavespectrum'}
         if checkfields(oi,'spectrum'), val = oi.spectrum; end

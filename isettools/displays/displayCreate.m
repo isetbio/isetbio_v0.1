@@ -1,14 +1,17 @@
 function d = displayCreate(displayName,varargin)
 % Create a display structure.
 %
-%  d = displayCreate(displayName,varargin)
+%  d = displayCreate(displayFileName,varargin)
 %
 % Display (d) calibration data are stored in a display structure. These are
 % the spectral radiance distribution of its primaries and a gamma function.
-% The calibrated display file is read in by routines, such as
-% sceneFromFile.
 %
-% See also:  sceneFromFile (RGB read in particular)
+% displayName: Name of a file containing a calibrated display structure.
+%   There are various examples in data/displays.  They contain a variable
+%   ('d') that is a display structure.  See displayGet and displaySet for
+%   the slots.
+% 
+% See Also:  sceneFromFile (RGB read in particular)
 %
 % Example:
 %   d = displayCreate;
@@ -17,6 +20,25 @@ function d = displayCreate(displayName,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
+
+%% sRGB definitions in terms of xy
+%
+%     Red     Green   Blue   White
+% x	0.6400	0.3000	0.1500	0.3127
+% y	0.3300	0.6000	0.0600	0.3290
+%
+% The default is a set of block primaries.  They are close to this.  We
+% should make one that is perfect. The default is shown below, and the
+% white point xy is a little too much x.  The file lcdExample.mat is a
+% little closer.
+%
+% d = displayCreate;
+% displayGet(d,'primaries xy')'
+% displayGet(d,'white xy')'
+%
+
+
+%% Arguments
 if ieNotDefined('displayName'), displayName = 'default'; end
 
 % Identify the object type
@@ -31,6 +53,8 @@ d = displaySet(d,'name',displayName);
 % file name that we load.
 switch displayName
     case 'default'
+        % See comment about the default above.  We should make it a little
+        % closer to sRGB standard chromaticities.
         d = displayDefault(d);
  
     otherwise
@@ -60,9 +84,9 @@ return;
 
 % Create a default display structure
 function d = displayDefault(d)
-%
 % Create a default display that works well with the imageSPD rendering
 % routine.  See vcReadImage for more notes.  Or move those notes here.
+%
 wave = 400:10:700;
 spd = pinv(colorBlockMatrix(length(wave)));
 d = displaySet(d,'wave',wave);

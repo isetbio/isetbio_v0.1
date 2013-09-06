@@ -111,5 +111,5 @@ grid on
 xlabel('Deg visual angle')
 ylabel('Normalized amplitude')
 
-
+%% End
 

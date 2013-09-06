@@ -4,7 +4,7 @@ function [img,vci] = displayRender(img,vci,sensor)
 %   [img,vci] = displayRender(img,vci,sensor);
 %
 % The rendered display image RGB is always between 0 and 1. We use the
-% linear part of the sRGB representation as the default RGB values.
+% linear display primary representation as the default RGB values.
 %
 % In the general processing pipeline, sensor data are demosaicked,
 % converted to the internal color space, and then color balanced.  After
@@ -36,8 +36,8 @@ if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
 
 % This stage converts from the internal color space to the display color
 % space (linearly).
-switch lower(imageGet(vci,'internalCS'));
-    case {'linear srgb','xyz','stockman'}
+switch ieParamFormat(imageGet(vci,'internalCS'))
+    case {'xyz','stockman'}
         % This is the transform for several calibrated color space
         M = ieInternal2Display(vci);
     case {'sensor'}

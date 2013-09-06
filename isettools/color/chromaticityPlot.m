@@ -1,5 +1,5 @@
 function g = chromaticityPlot(pts,background,nPix,newFig)
-% Draw points superimposed on an xy chromaticity diagram in current axes
+% Draw points superimposed on an xy chromaticity diagram 
 %
 %     g = chromaticityPlot(pts,[background='gray'],[nPix=256])
 %
@@ -9,9 +9,11 @@ function g = chromaticityPlot(pts,background,nPix,newFig)
 %  pts        -  xy values of points on the graph
 %  background -  image background color 'gray' (default)
 %  nPix       -  Spatial resolution.  
+%  newFig     -  Plot in a new figure (default = true)
 %
 % Examples:
-% Just the background
+%
+% Just the background, not points
 %  chromaticityPlot;   % Gray background
 %
 % A point on backgrounds at different colors and resolutions
@@ -20,7 +22,14 @@ function g = chromaticityPlot(pts,background,nPix,newFig)
 %  chromaticityPlot(pts,'black');
 %  chromaticityPlot(pts,'white',384);
 %
-% Copyright ImagEval 2011
+% Compare two types of points 
+%  pts = [.33,.33];
+%  chromaticityPlot(pts,'gray',256);
+%  hold on, plot(pts(1),pts(2),'.')
+%
+% See also:  ieXYZFromPhotons, ieXYZFromEnergy, chromaticity, xyz2lab
+%
+% Copyright ImagEval LLC 2011
 
 %% Defaults
 if ieNotDefined('pts'), pts = []; end

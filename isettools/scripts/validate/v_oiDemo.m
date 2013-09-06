@@ -16,3 +16,11 @@ plotOI(oi,'psf',[],550);
 scene = sceneCreate;
 oi = oiCompute(oi,scene);
 plotOI(oi,'illuminance mesh linear');
+
+
+%% Check GUI control
+oiWindow;
+oiSet([],'gamma',1);
+oiSet([],'gamma',0.4);
+oiSet([],'gamma',1);
+

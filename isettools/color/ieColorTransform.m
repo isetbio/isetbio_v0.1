@@ -39,6 +39,9 @@ function T = ieColorTransform(sensor,targetSpace,illuminant,surface)
 %    T = ieColorTransform(sensor,'XYZ','D65','esser')
 %    T = ieColorTransform(sensor,'XYZ','D65','esser',1)
 %
+%  The returned transform can be applied as:
+%    img = imageLinearTransform(img,T);
+%
 % Copyright ImagEval Consultants, LLC, 2005.
 
 if ieNotDefined('targetSpace'), targetSpace = 'XYZ';     end
@@ -55,10 +58,8 @@ switch lower(targetSpace)
         % derived by calculating the relationship between the sensor
         % quantum efficiency and the target space quantum efficiency.
         %
-        % The lights in ISET are w.r.t. quanta. Thus, the target space
-        % should be represented w.r.t. quanta.  We were using XYZ and
-        % stockman. rather than XYZQuanta and stockmanQuanta. Until
-        % November 27, 2012, this was incorrect, and pointed out by SL. 
+        % The linear transformation is chosen by optimizing the match for a
+        % specific surface reflectance target under some illuminant.
         
         % Make case correct for filename
         if     isequal(lower(targetSpace),'xyz'),     targetSpace = 'XYZ'; 
@@ -67,6 +68,7 @@ switch lower(targetSpace)
         targetSpace = sprintf('%sQuanta.mat',targetSpace);
         targetQE = ieReadSpectra(targetSpace,wave);
         
+        % This is where the transform is calculated
         switch lower(surface)
             case{'mcc','macbeth'}
                 T = imageMCCTransform(sensorQE,targetQE,illuminant,wave);
@@ -91,7 +93,7 @@ end
 % CMF
 % figure; subplot(1,2,1), plot(sensorQE*T); subplot(1,2,2), plot(targetQE)
 
-return;
+end
 
 %----------------------------------------------
 function T = linearsrgb(sensorQE,illuminant,wave)
@@ -107,19 +109,27 @@ function T = linearsrgb(sensorQE,illuminant,wave)
 %  Instead of this code, though, we should be using xyz2srgb and then
 %  srgb2lrgb.
 
-load('MCClRGB','lrgbValuesMCC','patchOrder');
+% patchSize = 1; patchList = 1:24;
+% macbethChartObject = macbethChartCreate(patchSize,patchList);
+% load('MCClRGB','lrgbValuesMCC','patchOrder');
+wave = 400:700;    % nanometers
+load('macbethChartLinearRGB');
+idealMacbeth = mcc.lrgbValuesMCC;
 
 % Get the MCC surface spectra and the D65 illuminant.  Combine them to
 % estimate the sensor responses.
-fName = fullfile(isetRootPath,'data','surfaces','macbethChart');
+% fName = fullfile(isetRootPath,'data','surfaces','macbethChart');
+% 
+% surRef = ieReadSpectra(fName,wave);
+surRef = macbethReadReflectance(wave);
 
-surRef = ieReadSpectra(fName,wave);
-surRef = surRef(:,patchOrder);
+% surRef = surRef(:,patchOrder);
 d65    = ieReadSpectra(illuminant,wave);
 
+% Sensor RGB
 sensorMacbeth = (sensorQE'*diag(d65)*surRef)';
 
 % Solve: sensorMacbeth*T = lrgbValuesMCC
-T = pinv(sensorMacbeth)*lrgbValuesMCC;
+T = pinv(sensorMacbeth)*idealMacbeth;
 
-return;
+end

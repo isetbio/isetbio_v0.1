@@ -47,11 +47,12 @@ end
 function oiWindow_OpeningFcn(hObject, eventdata, handles, varargin)
 
 if ~oiOpen(hObject,eventdata,handles), return;
-else oiRefresh(hObject, eventdata, handles);
+else
+    g = get(handles.editGamma,'String');
+    set(handles.editGamma,'String',g);
+    oiRefresh(hObject, eventdata, handles);
 end
 
-% Should remove this line from oiOpen
-set(handles.editGamma,'String',num2str(1));
 
 return;
 

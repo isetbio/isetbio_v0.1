@@ -88,14 +88,14 @@ switch lower(imageType)
         
         % The illuminant structure has photon representation and a
         % standard Create/Get/Set group of functions.
-        [photons, coef, basis, comment, illuminant] = vcReadImage(fname,imageType,wList);
+        [photons, il, basis] = vcReadImage(fname,imageType,wList);
+        % vcNewGraphWin; imageSPD(photons,basis.wave);
         
         % Override the default spectrum with the basis function
         % wavelength sampling.
         scene = sceneSet(scene,'wave',basis.wave);        
         
         % Set the illuminant structure 
-        scene = sceneSet(scene,'illuminant',illuminant);
         
     otherwise
         error('Unknown image type')
@@ -104,6 +104,7 @@ end
 % Put all the parameters in place and return
 scene = sceneSet(scene,'filename',fname);
 scene = sceneSet(scene,'photons',photons);
+scene = sceneSet(scene,'illuminant',il);
 
 % No longer needed because the display calibration scales the illuminant
 % appropriately (I think, BW).  Delete this in December 2013 if no longer

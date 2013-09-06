@@ -44,7 +44,7 @@ for dd = 1:length(objList)  % For each of the top level directors
         %         sceneWindow;  % This refreshes and brings it up
         %
         %         % Plot the illuminant
-        %         plotScene(scene,'illuminant photons');
+        %         plotScene(scene,'illuminant photons roi');
         
         %% Compress the hypercube using a smaller set of spectral basis functions
         % [imgMean, basis, coef] = hcBasis(hc,cType,pExplained)
@@ -117,7 +117,7 @@ for dd = 1:length(objList)  % For each of the top level directors
         %         scene = sceneFromFile(oName ,'multispectral',[],[]);
         %         vcAddAndSelectObject(scene); sceneWindow;
         %         % Plot the illuminant
-        %         plotScene(scene,'illuminant photons')
+        %         plotScene(scene,'illuminant photons roi')
         
         %% Problem
         % ieSaveMultiSpectralImage assumes illuminant is stored in units of energy
