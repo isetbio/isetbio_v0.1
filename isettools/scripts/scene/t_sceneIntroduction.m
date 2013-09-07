@@ -4,6 +4,12 @@
 % the image acquisition pipeline. These are the scene, optical image,
 % sensor, and image processor.
 %
+% A main goal of this script is to illustrate the ISET programming style.
+% By using ISET objects properly, the code and analysis are much easier to
+% understand. The implementation of these objects was written before Matlab
+% implemented its classes and thus doesn't rely on their organization.  But
+% many of the principles are the same.
+%
 % For each object there are three fundamental operations:  Create, set
 % parameters, and get parameters.
 %
@@ -11,13 +17,7 @@
 % scene describes the radiance field.  For the present tutorial we  work
 % with a simple planar radiance image, such as the image on a display
 % surface.  We have some implementations for 3D scenes that should be
-% incorporated by 2013.
-%
-% A main goal of this script is to illustrate the ISET programming style.
-% By using ISET objects properly, the code and analysis are much easier to
-% understand. The implementation of these objects was written before Matlab
-% implemented its classes and thus doesn't rely on their organization.  But
-% many of the principles are the same.
+% incorporated by mid-2014.
 %
 % Note:
 %
@@ -32,7 +32,6 @@
 %  http://www.mathworks.com/help/techdoc/matlab_oop/brh2rgw.html
 %
 % For some discussion of scenes in perception, go to:
-%
 %  http://en.wikipedia.org/wiki/Scene_(perception)
 %
 % Copyright ImagEval Consultants, LLC, 2011.
@@ -102,6 +101,7 @@ hFOV  = sceneGet(scene,'hfov')
 % You can see the scene structure and its parameters simply by
 % typing
 scene
+%%
 % While the objects in ISET can be addressed directly - please don't.
 % If you are ever tempted to set the objects directly, go get a cup of
 % coffee.  When you come back, you will feel like using a sceneSet
@@ -119,7 +119,7 @@ scene
 dist    = sceneGet(scene,'distance','mm');
 spacing = sceneGet(scene,'sample spacing','mm');
 dist
-
+%%
 % If we move the scene closer, and we maintain the same number of row and
 % column samples, the spacing changes.
 scene = sceneSet(scene,'distance',0.6);
@@ -135,7 +135,7 @@ sceneGet(scene,'sample spacing','mm')
 % In this example, we specified the units of the sample spacing as
 % millimemters (mm). We could have specified microns.
 sceneGet(scene,'sample spacing','um')
-
+%%
 % or we could have specified the return in meters.
 sceneGet(scene,'sample spacing','m')
 
@@ -147,7 +147,7 @@ sceneGet(scene,'sample spacing','m')
 fname = fullfile(isetRootPath,'data','images','multispectral','stuffedAnimals_tungsten-hdrs.mat');
 scene = sceneFromFile(fname,'multispectral');
 vcAddAndSelectObject(scene); sceneWindow;
-
+%%
 % Many scene properties that can be plotted either from the scene Window or
 % using plotScene. For example, ISET scenes specify a uniform illuminant by
 % default.  You can plot the illuminant in energy units by this command.
