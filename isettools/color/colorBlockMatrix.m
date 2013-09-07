@@ -1,7 +1,7 @@
-function bMatrix = colorBlockMatrix(wList,extrapVal,whiteSPD)
+function bMatrix = colorBlockMatrix(wList,extrapVal)
 % Create a matrix to render SPD data into RGB
 %
-%       bMatrix = colorBlockMatrix(wList,extrapVal,whiteSPD)
+%       bMatrix = colorBlockMatrix(wList,extrapVal)
 %
 % We render spectral data in the scene and optical image windows as RGB
 % images.  The matrix returned by this routine is used to calculate R,G and
@@ -115,7 +115,11 @@ end
 % equal to (1,1,1) 
 
 % We should think about whether we want whiteSPD to persistent
-wp = ieSessionGet('whitePoint');
+
+% We used to set this with ieSessionSet and manage it with ieSessionGet and
+% matlab setpref/getpref.  Now, not so much.  This code is left here as a
+% reminder that we might reconsider.
+wp = 'd65';   
 switch lower(wp)
     case 'ee'
         % Make equal energy (1,1,1)
@@ -138,6 +142,6 @@ end
 if   ieNotDefined('whiteSPD')
 else bMatrix = diag(1./whiteSPD(:))*bMatrix;
 end
-% figure; plot(bMatrix)
+% vcNewGraphWin; plot(bMatrix)
 
 return;

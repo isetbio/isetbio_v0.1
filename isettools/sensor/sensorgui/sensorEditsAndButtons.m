@@ -66,28 +66,28 @@ set(handles.editVoltageSwing,'string',str);
 set(handles.txtISADescription,'string',sensorDescription(ISA));
 set(handles.txtPixelDescription,'string',pixelDescription(PIXEL));
 
-% Decide whether or not to display the popup menu for custom sensorCompute.
-if get(handles.btnCustomCompute,'Value')
-    set(handles.popCustomCompute,'Visible','on');
-
-    % Make sure the popup points to the currently selected method
-    contents = get(handles.popCustomCompute,'String');
-    method = sensorGet(ISA,'sensorCompute');
-    if isempty(method), method = 'sensorCompute'; end
-    for ii=1:length(contents)
-        if strcmp(method,contents{ii})
-            set(handles.popCustomCompute,'Value',ii);
-            break;
-        end
-    end
-    
-    % Write a routine that hides all of the unwanted (irrelevant) pulldowns
-    % in the sensor window.  The inverse of this routine should be in the
-    % else part, turning them all back on.
-else
-    set(handles.popCustomCompute,'Visible','off');
-    % Turn on all the popups and so forth
-end
+% % Decide whether or not to display the popup menu for custom sensorCompute.
+% if get(handles.btnCustomCompute,'Value')
+%     set(handles.popCustomCompute,'Visible','on');
+% 
+%     % Make sure the popup points to the currently selected method
+%     contents = get(handles.popCustomCompute,'String');
+%     method = sensorGet(ISA,'sensorCompute');
+%     if isempty(method), method = 'sensorCompute'; end
+%     for ii=1:length(contents)
+%         if strcmp(method,contents{ii})
+%             set(handles.popCustomCompute,'Value',ii);
+%             break;
+%         end
+%     end
+%     
+%     % Write a routine that hides all of the unwanted (irrelevant) pulldowns
+%     % in the sensor window.  The inverse of this routine should be in the
+%     % else part, turning them all back on.
+% else
+%     set(handles.popCustomCompute,'Visible','off');
+%     % Turn on all the popups and so forth
+% end
 
 
 % If the incoming call set consistency true, then we eliminate the red

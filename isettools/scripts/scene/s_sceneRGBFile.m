@@ -9,13 +9,14 @@
 %%  Read an rgb image
 
 fName = fullfile(isetRootPath,'data','images','rgb','hats.jpg');
-dCal = 'CNI.mat'; meanL = 50; % cd/m2
+dispFile = 'LCD-Dell.mat'; 
+meanL = 50; % cd/m2
 scene = sceneFromFile(fName,'rgb',meanL);
 vcAddAndSelectObject(scene); sceneWindow;
 
 %% Display characteristics
 
-d = displayCreate('CNI.mat');
+d = displayCreate(dispFile);
 whtSPD = displayGet(d,'white spd');
 wave   = displayGet(d,'wave');
 vcNewGraphWin; plot(wave,whtSPD);
@@ -30,9 +31,9 @@ fName = fullfile(isetRootPath,'data','displays','CNI2.mat');
 save(fName,'d');
 
 fName = fullfile(isetRootPath,'data','images','rgb','hats.jpg');
-dCal = 'CNI2.mat';
+dispFile = 'CNI2.mat';
 
-scene = sceneFromFile(fName,'rgb',[],dCal);
+scene = sceneFromFile(fName,'rgb',[],dispFile);
 scene = sceneSet(scene,'fov',5);
 vcAddAndSelectObject(scene); sceneWindow;
 
@@ -42,8 +43,8 @@ vcAddAndSelectObject(scene); sceneWindow;
 %% The whole calculation from RGB to cone array
 
 fName = fullfile(isetRootPath,'data','images','rgb','hats.jpg');
-dCal = 'CNI.mat'; meanL = 50;
-scene = sceneFromFile(fName,'rgb',meanL,dCal);
+dispFile = 'CNI.mat'; meanL = 50;
+scene = sceneFromFile(fName,'rgb',meanL,dispFile);
 scene = sceneSet(scene,'fov',4);       % 5 deg
 scene = sceneSet(scene,'distance',2);  % Two meters
 

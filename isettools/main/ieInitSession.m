@@ -40,15 +40,14 @@ vcSESSION.VIDEO{1}   = [];
 vcSESSION.initHelp = 0;
 
 % Show waitbars or not.
+% Make sure the waitbar preference is set.  The others don't slow us down
+% much.
 iePref = getpref('ISET');
 if ~checkfields(iePref,'waitbar')
      setpref('ISET','waitbar',0);
      vcSESSION.GUI.waitbar = 0;
 else vcSESSION.GUI.waitbar = iePref.waitbar;
 end
-
-% Save out the vcSESSION file and move on to computing
-% vcSaveSESSION;
 
 return;
 

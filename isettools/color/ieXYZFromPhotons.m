@@ -13,5 +13,5 @@ function XYZ = ieXYZFromPhotons(photons,wave)
 
 XYZ = ieXYZFromEnergy(Quanta2Energy(wave,photons),wave);
 
-return;
+end
 

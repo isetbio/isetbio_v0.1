@@ -15,8 +15,12 @@
 %%
 s_initISET
 
-%% Create the default Macbeth Color Checker (MCC) image and plot the
-% simulated illuminant
+%% Create a scene
+%  
+% sceneCreate is a function that creates a scene
+% If there are no arguments, sceneCreate will simulate a Macbeth
+% ColorChecker uniformly illuminated with daylight (D65)
+
 scene = sceneCreate;
 
 % Have a look at the image
@@ -26,7 +30,7 @@ vcAddAndSelectObject(scene); sceneWindow;
 plotScene(scene,'illuminant photons roi')
 
 
-%% Transform the current illuminant to Tungsten illuminant
+%% Replace the current scene illuminant with Tungsten
 
 % Read illuminant energy.
 wave  = sceneGet(scene,'wave');
@@ -41,7 +45,9 @@ scene = sceneSet(scene,'illuminantComment','Tungsten illuminant');
 vcAddAndSelectObject(scene); sceneWindow;
 plotScene(scene,'illuminant photons roi')
 
-%% Read in a more interesting scene and perform some transformations
+%% Create a scene based on multispectral scene data
+%
+%  see s_sceneFromMultispectral.m
 sceneFile = fullfile(isetRootPath,'data','images','multispectral','StuffedAnimals_tungsten-hdrs.mat');
 scene = sceneFromFile(sceneFile,'multispectral');
 scene = sceneAdjustLuminance(scene,61); % This sets the mean scene luminance
@@ -52,19 +58,17 @@ plotScene(scene,'illuminant energy roi')
 
 %% Set illuminant to equal energy
 
-% Notice that in this case 'Horizon_Gretag.mat' is a file name, not a
-% data vector. 
 scene = sceneAdjustIlluminant(scene,'equalEnergy.mat');
 
 vcAddAndSelectObject('scene',scene); sceneWindow; % display sceneWindow
 
 %% Convert the scene to the sunset color, Horizon_Gretag
+%
+% Notice that in this case 'Horizon_Gretag.mat' is a file name, not a
+% data vector. 
 
 scene = sceneAdjustIlluminant(scene,'Horizon_Gretag.mat');
 vcAddAndSelectObject('scene',scene); sceneWindow; 
 
-%% Test imageMultiview
-imageMultiview('scene',[3 4 5],true);
-imageMultiview('scene',1,false);
 
 %% End

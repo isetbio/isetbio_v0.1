@@ -19,24 +19,24 @@ s_initISET
 %% Scene tests
 h = msgbox('Scene','ISET Tests','replace');
 set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
-v_Scene
+v_scene
 
 %% Optics tests
 h = msgbox('Optics','ISET Tests','replace');
 set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
-v_oiDemo
-v_Diffuser
+v_oi
+v_diffuser
 v_opticsSI
 
 %% Sensor tests
 h = msgbox('Sensor','ISET Tests','replace');
 set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
-v_Sensor
+v_sensor
 
 %% Human visual system tests
 h = msgbox('Human PSF','ISET Tests','replace');
 set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
-v_Human
+v_human
 
 
 %% End

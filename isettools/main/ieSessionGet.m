@@ -22,26 +22,13 @@ function val = ieSessionGet(param)
 %      {'dir','session dir'}
 %      {'help','init help'}
 %
-%     setpref variables
-%      {'detlafontsize'} -- This value determines whether we change the
+%  Matlab pref variables
+%      {'delta font size'} -- This value determines whether we change the
 %        font size in every window by this increment, calling
 %        ieFontChangeSize when the window is opened. 
-%      {'whitePoint'} - sets
-%        which SPD maps to (1,1,1) in scene/optics windows.
 %      {'waitbar'}  - Show compute waitbars or not.  
 %
-
-%
-%     Handles to the various windows
-%      {'main window handle'}
-%      {'scene window handle'}
-%      {'oi window handle'}
-%      {'sensor window handle'}
-%      {'vcimage handle'}
-%      {'metrics window handle'}
-%      {'graphwin handles','graphwin handle'}
-%
-%     Figure numbers
+%  Figure handles
 %      {'graphwin structure'}
 %      {'graphwin figure'}
 %      {'main figure'}
@@ -49,10 +36,18 @@ function val = ieSessionGet(param)
 %      {'oi figure'}
 %      {'sensor figure'}
 %      {'vcimage figure'}
-%      {'metrics figure',}
+%      {'metrics figure'}
 %
-%    ** Custom algorithms list is likely to be deprecated.
+% Guidata
+%      {'main  guidata'}
+%      {'scene  guidata'}
+%      {'oi  guidata'}
+%      {'sensor  guidata'}
+%      {'ip guidata'}
+%      {'metrics  guidata'}
+%      {'graphwin guidata'}
 %
+%  ** Custom algorithms list is deprecated
 %      {'custom','customall','customstructure'}
 %         val = vcSESSION.CUSTOM;
 %         % These are cell arrays of user-defined routines that implement
@@ -82,22 +77,11 @@ function val = ieSessionGet(param)
 %   guihandles(f)
 %
 %   ieSessionGet('version')
-%   ieSessionGet('custom')
 %   d = ieSessionGet('fontsize'); ieFontChangeSize(sceneWindow,d);
 %
 %   hobj = ieSessionGet('opticalimagefigure');
 %
 % Copyright ImagEval Consultants, LLC, 2005.
-
-% Programming note:
-%   There is confusion about whether the processing methods are cell array
-%   lists or just a string defining one routine.  Better clear this up
-%   soon.  The naming conventions looks like they are all lists (cell
-%   arrays).  But some of the calls in the refresh routines look like they
-%   are expecting ieSessionGet to return a single routine name.
-%
-%   The calls here may be changed if we end up attaching vcSESSION to the
-%   Main Window.
 
 global vcSESSION
 
@@ -119,6 +103,8 @@ switch param
         if checkfields(vcSESSION,'initHelp'), val = vcSESSION.initHelp; 
         else vcSESSION.initHelp = 1; val = 1; 
         end
+        
+    % Matlab setpref/getpref 
     case {'detlafontsize','fontsize','fontincrement','increasefontsize','fontdelta','deltafont'}
         % This value determines whether we change the font size in every window
         % by this increment, calling ieFontChangeSize when the window is
@@ -132,16 +118,95 @@ switch param
             val = 0; 
         end
         if isempty(val), val = 0; end
-    case {'whitepoint'}
-        % The white point default is equal photon maps to (1,1,1)
-        % You can set to equal energy ('ee') or Daylight 6500 (d65).
-        isetPref = getpref('ISET');
-        if ~isempty(isetPref)
-            if checkfields(isetPref,'whitePoint'), val = isetPref.whitePoint; 
-            else val = 'ep';
-            end
+        %     case {'whitepoint'}
+        %         % The white point default is equal photon maps to (1,1,1)
+        %         % You can set to equal energy ('ee') or Daylight 6500 (d65).
+        %         isetPref = getpref('ISET');
+        %         if ~isempty(isetPref)
+        %             if checkfields(isetPref,'whitePoint'), val = isetPref.whitePoint;
+        %             else val = 'ep';
+        %             end
+        %         else
+        %             val = 'ep';  % Equal photon
+        %         end
+        
+    case {'waitbar'}
+        % Used to decide whether we show the waitbars.
+        if checkfields(vcSESSION,'GUI','waitbar')
+            val = vcSESSION.GUI.waitbar;
         else
-            val = 'ep';  % Equal photon
+            % The getpref is slow.  So, we attach it to the session 
+            % at start up.  Otherwise, loops that test for it take too
+            % long.
+            iePref = getpref('ISET');
+            if ~checkfields(iePref,'waitbar')
+                setpref('ISET','waitbar',0);
+                val = 0;
+            else val = iePref.waitbar;
+            end
+            vcSESSION.GUI.waitbar = val;
+        end
+        
+        
+        
+    case {'graphwinstructure'}
+        val = vcSESSION.GRAPHWIN;
+    case {'graphwinfigure'}
+        if checkfields(vcSESSION,'GRAPHWIN','hObject') 
+            val = vcSESSION.GRAPHWIN.hObject; 
+        end  
+    case {'graphguidata','graphwinhandles','graphwinhandle'}
+        if checkfields(vcSESSION,'GRAPHWIN','handle') 
+            val = vcSESSION.GRAPHWIN.handle; 
+        end  
+        
+        % Handles to the various windows
+    case {'mainguidata','mainwindowhandle','mainhandle','mainhandles'}
+        v = ieSessionGet('mainfigure');
+        if ~isempty(v), val = guihandles(v); end
+    case {'sceneguidata','scenewindowhandle','sceneimagehandle','sceneimagehandles','scenewindowhandles'}
+        v = ieSessionGet('sceneimagefigure');
+        if ~isempty(v), val = guihandles(v); end
+    case {'oiguidata','oiwindowhandle','oihandle','opticalimagehandle','oihandles','opticalimagehandles','oiwindowhandles'}
+        v = ieSessionGet('opticalimagefigure');
+        if ~isempty(v), val = guihandles(v); end
+    case {'sensorguidata','sensorwindowhandle','sensorimagehandle','sensorhandle','isahandle','sensorhandles','isahandles','sensorwindowhandles'}
+        v = ieSessionGet('sensorfigure');
+        if ~isempty(v), val = guihandles(v); end
+    case {'ipguidata','vciguidata','vciwindowhandle','vcimagehandle','vcimagehandles','processorwindowhandles','processorhandles','processorhandle','processorimagehandle'}
+        v = ieSessionGet('vcimagefigure');
+        if ~isempty(v), val = guihandles(v); end
+    case {'metricguidata','metricshandle','metricshandles','metricswindowhandles','metricswindowhandles','metricswindowhandle'}
+        v = ieSessionGet('vcimagefigure');
+        if ~isempty(v), val = guihandles(v); end
+        
+        % Figure numbers of the various windows.  I am not sure these are
+        % properly updated, but I think so.
+    case {'mainfigure','mainfigures','mainwindow'}
+        if checkfields(vcSESSION,'GUI','vcMainWindow')
+            val = vcSESSION.GUI.vcMainWindow.hObject;
+        end
+    case {'scenefigure','sceneimagefigure','sceneimagefigures','scenewindow'}
+        if checkfields(vcSESSION,'GUI','vcSceneWindow')
+            val = vcSESSION.GUI.vcSceneWindow.hObject;
+        end
+    case {'oifigure','opticalimagefigure','oifigures','opticalimagefigures','oiwindow'}
+        if checkfields(vcSESSION,'GUI','vcOptImgWindow')
+            val = vcSESSION.GUI.vcOptImgWindow.hObject;
+        end
+    case {'sensorfigure','isafigure','sensorfigures','isafigures','sensorwindow','isawindow'}
+        if checkfields(vcSESSION,'GUI','vcSensImgWindow')
+            val = vcSESSION.GUI.vcSensImgWindow.hObject;
+        end
+        
+    case {'vcimagefigure','vcimagefigures','vcimagewindow'}
+        if checkfields(vcSESSION,'GUI','vcImageWindow')
+            val = vcSESSION.GUI.vcImageWindow.hObject;
+        end
+        
+    case {'metricsfigure','metricswindow','metricswindow','metricsfigures'}
+        if checkfields(vcSESSION,'GUI','metricsWindow')
+            val = vcSESSION.GUI.metricsWindow.hObject;
         end
         
         % I think all this custom routine management from the GUI has not
@@ -190,81 +255,6 @@ switch param
         % the ISA data.
         if checkfields(vcSESSION,'CUSTOM','edgeAlgorithm')
             val = vcSESSION.CUSTOM.edgeAlgorithm;
-        end
-        
-        
-    case {'graphwinstructure'}
-        val = vcSESSION.GRAPHWIN;
-    case {'graphwinfigure'}
-        if checkfields(vcSESSION,'GRAPHWIN','hObject') 
-            val = vcSESSION.GRAPHWIN.hObject; 
-        end  
-    case {'graphwinhandles','graphwinhandle'}
-        if checkfields(vcSESSION,'GRAPHWIN','handle') 
-            val = vcSESSION.GRAPHWIN.handle; 
-        end  
-        
-        % Handles to the various windows
-    case {'mainwindowhandle','mainhandle','mainhandles'}
-        v = ieSessionGet('mainfigure');
-        if ~isempty(v), val = guihandles(v); end
-    case {'scenewindowhandle','sceneimagehandle','sceneimagehandles','scenewindowhandles'}
-        v = ieSessionGet('sceneimagefigure');
-        if ~isempty(v), val = guihandles(v); end
-    case {'oiwindowhandle','oihandle','opticalimagehandle','oihandles','opticalimagehandles','oiwindowhandles'}
-        v = ieSessionGet('opticalimagefigure');
-        if ~isempty(v), val = guihandles(v); end
-    case {'sensorwindowhandle','sensorimagehandle','sensorhandle','isahandle','sensorhandles','isahandles','sensorwindowhandles'}
-        v = ieSessionGet('sensorfigure');
-        if ~isempty(v), val = guihandles(v); end
-    case {'vciwindowhandle','vcimagehandle','vcimagehandles','processorwindowhandles','processorhandles','processorhandle','processorimagehandle'}
-        v = ieSessionGet('vcimagefigure');
-        if ~isempty(v), val = guihandles(v); end
-    case {'metricshandle','metricshandles','metricswindowhandles','metricswindowhandles','metricswindowhandle'}
-        v = ieSessionGet('vcimagefigure');
-        if ~isempty(v), val = guihandles(v); end
-        
-        % Figure numbers of the various windows.  I am not sure these are
-        % properly updated, but I think so.
-    case {'mainfigure','mainfigures','mainwindow'}
-        if checkfields(vcSESSION,'GUI','vcMainWindow')
-            val = vcSESSION.GUI.vcMainWindow.hObject;
-        end
-    case {'scenefigure','sceneimagefigure','sceneimagefigures','scenewindow'}
-        if checkfields(vcSESSION,'GUI','vcSceneWindow')
-            val = vcSESSION.GUI.vcSceneWindow.hObject;
-        end
-    case {'oifigure','opticalimagefigure','oifigures','opticalimagefigures','oiwindow'}
-        if checkfields(vcSESSION,'GUI','vcOptImgWindow')
-            val = vcSESSION.GUI.vcOptImgWindow.hObject;
-        end
-    case {'sensorfigure','isafigure','sensorfigures','isafigures','sensorwindow','isawindow'}
-        if checkfields(vcSESSION,'GUI','vcSensImgWindow')
-            val = vcSESSION.GUI.vcSensImgWindow.hObject;
-        end
-        
-    case {'vcimagefigure','vcimagefigures','vcimagewindow'}
-        if checkfields(vcSESSION,'GUI','vcImageWindow')
-            val = vcSESSION.GUI.vcImageWindow.hObject;
-        end
-        
-    case {'metricsfigure','metricswindow','metricswindow','metricsfigures'}
-        if checkfields(vcSESSION,'GUI','metricsWindow')
-            val = vcSESSION.GUI.metricsWindow.hObject;
-        end
-        
-    case {'waitbar'}
-        % Used to decide whether we show the waitbars.
-        if checkfields(vcSESSION,'GUI','waitbar')
-            val = vcSESSION.GUI.waitbar;
-        else
-            iePref = getpref('ISET');
-            if ~checkfields(iePref,'waitbar')
-                setpref('ISET','waitbar',0);
-                val = 0;
-            else val = iePref.waitbar;
-            end
-            vcSESSION.GUI.waitbar = val;
         end
         
     otherwise

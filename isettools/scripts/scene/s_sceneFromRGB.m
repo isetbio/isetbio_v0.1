@@ -1,32 +1,32 @@
-% s_sceneFromRGB
+%% s_sceneFromRGB
 %
-% We can read an RGB file and a display calibration file to produce the
-% display scene accurately.
+% This script illustrates how ISET can create a scene from an rgb data file
+% using the sceneFromFile function. The user can then change the scene
+% illuminant.
 %
-%  The gamma function of the display is not included.
-%  The mean luminance isn't handled properly in the presence of a cal file.
+% sceneFromFile uses 1) the rgb data and the spectral power distributions
+% (spds) of the display color primaries to calculate the spectral radiance
+% of the displayed image, and 2) the spectral power distribution of
+% the display white point as an estimate of the scene illuminant
+%
+% For this example, the gamma function of the display is not used.
 %
 % Copyright ImagEval, 2011
 
 %%
 s_initISET
 
-%% An example RGB file with calibration
-% rgbFile = fullfile(isetRootPath,'data','images','rgb','hats.jpg');
-rgbFile = fullfile(isetRootPath,'data','images','rgb','eagle.jpg');
-
+%% Load display calibration data
+%
 displayCalFile = 'LCD-Apple.mat';
-% load(displayCalFile,'d'); dsp = d;
-% wave = displayGet(dsp,'wave');
-% spd = displayGet(dsp,'spd'); 
-% vcNewGraphWin; plot(wave,spd); 
-% xlabel('Wave (nm)'); ylabel('Energy'); grid on
-scene = sceneFromFile(rgbFile,'rgb',[],displayCalFile);
+load(displayCalFile,'d'); dsp = d;
+wave = displayGet(dsp,'wave');
+spd = displayGet(dsp,'spd'); 
+vcNewGraphWin; plot(wave,spd); 
+xlabel('Wave (nm)'); ylabel('Energy'); grid on
+title('Spectral Power Distribution of Display Color Primaries');
 
-% Show the scene.
-vcAddAndSelectObject(scene); sceneWindow
-
-%% Investigate the display properties: Chromaticity
+%% Analyze the display properties: Chromaticity
 
 d = displayCreate(displayCalFile);
 whtSPD = displayGet(d,'white spd');
@@ -35,22 +35,26 @@ whiteXYZ = ieXYZFromEnergy(whtSPD',wave);
 % Includes its own vcNewGraphWin
 fig = chromaticityPlot(chromaticity(whiteXYZ));
 
-%% SPD graph
-spd = displayGet(d,'spd');
-vcNewGraphWin;
-plot(wave,spd(:,1),'-r',...
-    wave,spd(:,2),'-g',...
-    wave,spd(:,3),'-b')
-grid on;
-xlabel('Wavelength (nm)')
-ylabel('Energy (watts/sr/nm/sec)')
-title('Display primaries')
+%% Read in an rgb file and create calibrated display values
+rgbFile = fullfile(isetRootPath,'data','images','rgb','eagle.jpg');
+scene = sceneFromFile(rgbFile,'rgb',[],displayCalFile);
+vcAddAndSelectObject(scene); sceneWindow % Show the scene.
 
 %% Change the illuminant to 6500 K
 bb = blackbody(sceneGet(scene,'wave'),6500,'energy');
 scene = sceneAdjustIlluminant(scene,bb);
+vcAddAndSelectObject(scene); sceneWindow % Show the scene.
 
-% Show the scene.
-vcAddAndSelectObject(scene); sceneWindow
-
+%% Notes about the method
+%
+% If we have display calibration data, we can accurately predict the
+% radiance emitted when an image is rendered on the display. But we need a
+% scene illuminant to estimate scene reflectances. We use the spectral
+% power of the display whitepoint (max r, max g, max b) as an estimate of
+% the scene illuminant. We then calculate reflectances of surfaces in the
+% scene by dividing the scene radiance by the illuminant spd. The surface
+% reflectances will not be accurate, but they will be feasible. And, more
+% importantly, calculating scene reflectances makes it possible to render
+% the scene under a different illuminant.
+%
 %% End

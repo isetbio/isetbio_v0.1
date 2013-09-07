@@ -38,8 +38,8 @@ function oi = oiCompute(scene,oi,opticsModel)
 %
 % See also: opticsGet for a description of the optics models.
 %
-% Use setpref('ISET','waitbar',0) to turn off waitbar displays
-% Use setpref("ISET','waitbar',1) to turn on waitbar displays
+% Use ieSessionSet('waitbar',0) to turn off waitbar displays
+% Use ieSessionSet('waitbar',1) to turn on waitbar displays
 %
 % Example
 %   oi = oiCompute(scene,oi);

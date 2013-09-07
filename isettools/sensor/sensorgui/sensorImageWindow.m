@@ -66,18 +66,18 @@ varargout{1} = handles.output;
 return;
 
 % --- Executes on button press in btnCustomCompute.
-function btnCustomCompute_Callback(hObject, eventdata, handles)
-% The setting of this button is used to determine (a) the sensorCompute
-% routine, and (b) whether the popup for choosing the sensorCompute
-% routines is present.  The actions are taken during the standard refresh
-% operation, which is called here.
-sensor = vcGetObject('sensor');
-sensor = sensorClearData(sensor);
-vcReplaceObject(sensor);
-sensorRefresh(hObject, eventdata, handles);
-
-% Hint: get(hObject,'Value') returns toggle state of btnCustomCompute
-return;
+% function btnCustomCompute_Callback(hObject, eventdata, handles)
+% % The setting of this button is used to determine (a) the sensorCompute
+% % routine, and (b) whether the popup for choosing the sensorCompute
+% % routines is present.  The actions are taken during the standard refresh
+% % operation, which is called here.
+% sensor = vcGetObject('sensor');
+% sensor = sensorClearData(sensor);
+% vcReplaceObject(sensor);
+% sensorRefresh(hObject, eventdata, handles);
+% 
+% % Hint: get(hObject,'Value') returns toggle state of btnCustomCompute
+% return
 
 % --- Executes during object creation, after setting all properties.
 function popCustomCompute_CreateFcn(hObject, eventdata, handles)

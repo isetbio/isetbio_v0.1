@@ -1,4 +1,5 @@
-function sensorInitCustomStrings(handles);
+function sensorInitCustomStrings(handles)
+% Deprecated
 % Initialize popup menu strings that select  sensor compute function.
 %
 %    sensorInitCustomStrings(handles);
@@ -11,9 +12,11 @@ function sensorInitCustomStrings(handles);
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
+error('Should not be called.')
+
 % Read the default custom compute list, and merge it with the additional
 % compute functions saved in the session structure.
-defaultSensorCompute = get(handles.popCustomCompute,'String');
+% defaultSensorCompute = get(handles.popCustomCompute,'String');
 customSensorCompute =  ieSessionGet('sensorComputeList');
 list = cellMerge(defaultSensorCompute,customSensorCompute);
 set(handles.popCustomCompute,'String',list);

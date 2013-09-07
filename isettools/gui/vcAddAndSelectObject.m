@@ -40,6 +40,7 @@ objType = vcEquivalentObjtype(objType);
 val = vcNewObjectValue(objType);
 
 % Assign object, passed in as 3rd variable, to the vcSESSION global.
+% Should be ieSessionSet, not this.
 if exist('obj','var')
     switch upper(objType)
         case {'SCENE'}

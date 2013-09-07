@@ -44,7 +44,7 @@ if ieNotDefined('val')
     if isempty(val),  val = 1;  selectToo = 1; end
 end
 
-
+% Should be handled by ieSessionSet 
 switch lower(objType)
     case 'scene'
         vcSESSION.SCENE{val} = obj;
