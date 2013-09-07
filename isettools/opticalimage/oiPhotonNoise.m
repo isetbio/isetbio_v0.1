@@ -4,8 +4,8 @@ function [noisyPhotons,theNoise] = oiPhotonNoise(oi)
 %  [noisyPhotons,theNoise] = oiPhotonNoise(oi)
 %
 % This routine uses the normal approximation to the Poisson when there are
-% more than 20 electrons in the pixel.  It uses the true Poisson
-% distribution when there are fewer than 20 electrons.
+% more than 15 electrons in the pixel.  It uses the true Poisson
+% distribution when there are fewer than 15 electrons.
 %
 % The Poisson function we have is slow for larger means, so we separate the
 % calculation this way.  If we have a fast Poisson generator, we could use
@@ -43,8 +43,6 @@ noisyPhotons = round(photons + theNoise);
 % is very small and you see basically nothing. But if the signal is small, you have a chance of seeing something in
 % these plots.
 
-% Testing of plots, below
-
 % Now, we find the small mean values and create a Poisson sample. This is
 % too slow in general because the Poisson algorithm is slow for big
 % numbers.  But it is fast for small numbers. We can't rely on the Stats
@@ -66,6 +64,5 @@ if ~isempty(v)
     end
 end
 
-return;
-
+end
 

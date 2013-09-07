@@ -302,8 +302,9 @@ switch parm
            val = ieUncompressData(val,mn,mx,bitDepth);
        end
     case {'photonsnoise','photonswithnoise'}
-        % Return mean photons plus Poisson photon noise
-        % pn = oiGet(oi,'photons noise');
+        % pn = oiGet(oi,'photons noise'); 
+        % The current photons are the mean.
+        % This returns the mean photons plus Poisson noise
         val = oiPhotonNoise(oi);
          
     case {'energynoise','energywithnoise'}

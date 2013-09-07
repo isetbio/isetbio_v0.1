@@ -571,14 +571,14 @@ return;
 function udata = plotOIIrradiance(oi,dataType,roiLocs)
 %Plot mean irradiance within a selected ROI of the optical image window
 %
-%  udata = plotOIIrradiance(oi,dataType,roiLocs)
+%   udata = plotOIIrradiance(oi,dataType,roiLocs)
 %
-%   Plot the average optical image irradiance within a selected ROI. The
-%   default data type is photons.  If the optical image is not  monochrome,
-%   the results are plotted in the GRAPHWIN.   Otherwise, the mean
-%   irradiance within the ROI is displayed in a message box.
+% Plot the average optical image irradiance within a selected ROI. The
+% default data type is photons.  If the optical image is not  monochrome,
+% the results are plotted in the GRAPHWIN.   Otherwise, the mean irradiance
+% within the ROI is displayed in a message box.
 %
-%   The user data and the graphWin figure number are returned
+% The user data and the graphWin figure number are returned
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
