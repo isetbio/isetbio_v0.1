@@ -61,31 +61,52 @@ if max(illEnergy) > 10^5
 end
 
 % Start the conversion
-curIll = sceneGet(scene,'illuminantPhotons');
+curIll = sceneGet(scene,'illuminant photons');
 if isempty(curIll)
     % We  treat this as an opportunity to create an illuminant, as in
     % sceneFromFile (or vcReadImage). Assume the illuminant is D65.  Lord
     % knows why.  Maybe we should do an illuminant estimation algorithm
     % here.
+    disp('Old scene.  Creating d65 illuminant')
     wave   = sceneGet(scene,'wave');
     curIll = ieReadSpectra('d65',wave);   % D65 in energy units
-    scene  = sceneSet(scene,'illuminant energy',curIll);   
+    scene  = sceneSet(scene,'illuminant energy',curIll);
+    curIll = sceneGet(scene,'illuminant photons');
 end
 
 % Current mean luminance will be preserved
-mLum     = sceneGet(scene,'meanLuminance');
+mLum     = sceneGet(scene,'mean luminance');
 
-% Convert the illuminant energy to photons and find the multiplier ratio
+% We only know how to read a vector, not a spatial-spectral illuminant.
+% This may get better over time.
 illPhotons = Energy2Quanta(illEnergy,wave);
-illFactor  = illPhotons ./ curIll;
-
-% Adjust both the radiance data and the illuminant by the illFactor
-skipIlluminant = 0;  % Don't skip changing the illuminant (do change it!)
-scene = sceneSPDScale(scene,illFactor,'*',skipIlluminant);
+switch sceneGet(scene,'illuminant format')
+    case 'spectral'
+        % Convert the illuminant energy to photons and find the multiplier ratio
+        illFactor  = illPhotons ./ curIll;
+        
+        % Adjust both the radiance data and the illuminant by the illFactor
+        skipIlluminant = 0;  % Don't skip changing the illuminant (do change it!)
+        scene = sceneSPDScale(scene,illFactor,'*',skipIlluminant);
+    case 'spatial spectral'
+        % Input is a vector.  We turn it into a spatial spectral
+        % representation, but all the points are the same.
+        photons = sceneGet(scene,'photons');
+        row = sceneGet(scene,'row'); col = sceneGet(scene,'col');
+        % Build the vector into a spatial spectral illuminant
+        % representation
+        newIll = XW2RGBFormat(repmat(illPhotons(:)',row*col,1),row,col);
+        
+        % Divide the photons by the current illuminant
+        photons = (photons ./ curIll) .* newIll;
+        scene = sceneSet(scene,'photons',photons);
+        scene = sceneSet(scene,'illuminant photons',newIll);
+end
 
 % Make sure the mean luminance is unchanged
 scene = sceneAdjustLuminance(scene,mLum);
 
 scene = sceneSet(scene,'illuminant comment',fullName);
+
 return;
 

@@ -1018,7 +1018,7 @@ switch lower(dataType)
         uData.x = data(:,1); uData.y = data(:,2);
         val = mean(XYZ); valxy = mean(data);
         
-        chromaticityPlot(data);
+        chromaticityPlot(data,[],[],0);
         title('roiLocs-chromaticity (CIE 1931)');
         
         txt = sprintf('Means\n');

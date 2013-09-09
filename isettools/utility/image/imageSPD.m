@@ -37,18 +37,6 @@ function RGB = imageSPD(SPD,wList,gam,row,col,displayFlag,xcoords,ycoords)
 if ieNotDefined('gam'), gam = 1; end
 if ieNotDefined('displayFlag'), displayFlag = 1; end
 
-% Convert the data into XW format.  We need row and col.
-% if ndims(SPD) == 2 ...
-%         && exist('row','var') && ~isempty(row) ...
-%         && exist('col','var') && ~isempty(col) ...
-%         && length(wList) > 1
-%     % In this case, the data are XW format. Leave them alone for the matrix
-%     % multiply.  We will use row and col later
-%     w = size(SPD,2);
-% else
-%     [SPD, row, col, w] = RGB2XWFormat(SPD);
-% end
-
 if ieNotDefined('wList')
     if     w == 31,  wList = (400:10:700); 
     elseif w == 301, wList = (400:1:700);

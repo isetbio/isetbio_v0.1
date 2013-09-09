@@ -467,9 +467,6 @@ if checkfields(scene,'data','photons') && ~isempty(scene.data.photons)
     scene = sceneAdjustLuminance(scene,100);
 end
 
-% The user may store an sRGB image of the radiance here
-scene.sRGB = [];
-
 return;
 
 %---------------------------------------------------

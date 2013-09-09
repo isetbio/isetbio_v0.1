@@ -1288,19 +1288,20 @@ return;
 
 % --------------------------------------------------------------------
 function plotMccOverlay_Callback(hObject, eventdata, handles)
-% Plot | MCC Overlay
+% Plot | MCC overlay off
 % Delete the MCC boxes showing the selection
-% 
 
 sensor = vcGetObject('sensor');
-sensor = sensorSet(sensor,'mccRectHandles',[]);
+macbethDrawRects(sensor,'off');
 vcReplaceObject(sensor);
+sensorRefresh(hObject, eventdata, handles);
 
 return;
 
 % --------------------------------------------------------------------
 function menuPlotHumanCone_Callback(hObject, eventdata, handles)
 % Plot | Human Cone
+
 sensor = vcGetObject('sensor');
 if sensorCheckHuman(sensor), sensorConePlot(sensor)
 else ieInWindowMessage('Not a human cone sensor',handles,3);

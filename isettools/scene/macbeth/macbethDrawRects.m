@@ -9,7 +9,7 @@ function obj = macbethDrawRects(obj,onoff)
 %
 % obj:    A vci or sensor structure.  This should contain a the mcc corner
 %         points to turn on or rects to turn off.
-% onoff:  A string, 'on' or 'off', for showing or not the MCC rects
+% on/off:  A string, 'on' or 'off', for showing or not the MCC rects
 %
 % Example:
 %
@@ -73,7 +73,7 @@ switch onoff
         vcReplaceObject(obj);
 
     otherwise
-        error('Unknown onoff %s\n',onoff);
+        error('Unknown on/off %s\n',onoff);
 end
 
 return;

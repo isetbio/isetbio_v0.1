@@ -1,47 +1,42 @@
-%Script:  s_opticsDepthScene
+% s_opticsDepthScene
 %
-% Render depth image.
-%  Illustrates how to set depth planes by diopter step size and various
-%  rendering options.
+%  Illustrates an imperfect method for computing
+%  and various rendering options.
 %
-% TODO:
-%   This code is being developed for integration with PBRT ray tracing by
-%   (AL).
 %
 % Copyright ImagEval Consultants, LLC, 2011
 
 %%
 s_initISET
 
-
 %% Make a script/function to load the scene
-% fName = fullfile(s3dProjectRootPath,'piano_shelf','ISETSceneSmall.mat');
+
+% This file contains a scene with a depth map.  The scene was created
+% outside of ISET as part of a project being done with Andy Lin.
 fName = fullfile(isetRootPath,'data','scene3d','piano3d.mat');
-
-% If you have the goblet image, it is more fun
-% fName = fullfile(isetRootPath,'data','scenes','goblet.mat');
-
 load(fName);
 scene = sceneSet(scene,'fov',3);
 
-%%  Make optics with a little bigger pupil
+%%  Make optics with a little bigger pupil for depth of field effects
+
+% Parameters for a large aperture
+fNumber = 4;
+pupilFactor = 3;  % When set to 1, this becomes diffraction limited.
+
 oi = oiCreate;
 optics = oiGet(oi,'optics');
 optics = opticsSet(optics,'offaxis','cos4th');
 optics = opticsSet(optics, 'otfmethod', 'custom');
 optics = opticsSet(optics, 'model', 'ShiftInvariant');
-
-fNumber = 4;
 optics = opticsSet(optics,'fnumber',fNumber);
 
-% Set the focal length large so the pupil will be large.
-pupilFactor = 3;  % When set to 1, this becomes diffraction limited.
+% We only set focal length, not pupil diameter.  This trick keeps the f/#
+% and adjusts the focal length so that the pupil becomes large
 f = opticsGet(optics,'focal length');
 optics = opticsSet(optics,'focal length',pupilFactor*f);
 
 % Attach the optics to the oi and move on.
 oi = oiSet(oi,'optics',optics);
-
 
 %% These are the object distances for different defocus levels.
 
@@ -58,17 +53,17 @@ for ii=1:length(inFocusDepth)
     % imageDist will not be in the focal plane.
     [depthEdges, imageDist, oDefocus] = oiDepthEdges(oi,defocus,thisFocusDepth);
     
+    % Get the scene depth map, blur it, reattach it to the scene
     oMap  = sceneGet(scene,'depth map');
     sceneDepthRange = [depthEdges(1),10];
     oMap  = ieScale(oMap,sceneDepthRange(1),sceneDepthRange(2));
-    blurSize = 2;
-    supportSize = [5 5];
-    g = fspecial('gaussian',supportSize,blurSize); oMap = conv2(oMap,g,'same');
-    % imagesc(oMap)
-    
+    blurSize = 2; supportSize = [5 5];
+    g = fspecial('gaussian',supportSize,blurSize); 
+    oMap = conv2(oMap,g,'same');
     scene = sceneSet(scene,'depth map',oMap);
     % vcAddAndSelectObject(scene); sceneWindow;
     
+    % Main function.
     cAberration = [];
     displayFlag = 0;
     [oiD, D] = oiDepthCompute(oi,scene,imageDist,depthEdges,cAberration,displayFlag);

@@ -3,20 +3,23 @@ function [oiD,D] = oiDepthCompute(oi,scene,imageDist,depthEdges,cAberration,disp
 %
 %  [oiD,D] = oiDepthCompute(oi,scene,imageDist,depthEdges,cAberration)
 %
-% We create a cell array of OIs from a scene. For each of the distances (m)
-% in depthEdges, we calculate the defocused image.  This array of images is
-% then combined (oiDepthCombine) into a single image.  The combination is
-% based on picking out the pixels at the appropriate depth.
-%
-% imageDist:   The distance of the image plane behind the lens (default: focal length).
+% Return:
+%  oiD:  A cell array of irradiance images.  There is one image for  from a
+%        scene. For each of the distances (m) in depthEdges. The defocused
+%        image is calculated for each distance.  This cell array of
+%        irradiance images is combined (oiDepthCombine) into a single
+%        image.  The combination is based on picking out the pixels at the
+%        appropriate depth. 
+% imageDist:   The distance of the image plane behind the lens (default:
+%              focal length). 
 % depthEdges:  A vector of distances from the lens.  The number of
 %              depthEdges defines the number of OIs that are computed.
 % cAberration: Defocus in diopters (chromatic aberration, longitudinal) for 
 %              each wavelength (default = 0).
-% displayFlag (1): By default, each of the defocused images is shown in the
-%                  oiWindow.
+% displayFlag: Display the defocused images is shown in the oiWindow
+%              (Default=true) 
 %
-% See also:  oiDepthCombine, oiDepthSegmentMap,s3d_DepthSpacing
+% See also:  oiDepthCombine, oiDepthSegmentMap, s_opticsDepthScene
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
@@ -31,14 +34,14 @@ if ieNotDefined('displayFlag'), displayFlag = 1; end
 
 % Set the scene map to a single depth.  We  sweep through the depthEdges
 % for the whole scene.
-oMap = sceneGet(scene,'depth map');
+oMap  = sceneGet(scene,'depth map');
 [r,c] = size(oMap);
-dMap = ones(r,c);
+dMap  = ones(r,c);
 
 % Cell array of oi images at different depths
 oiD = cell(1,length(depthEdges));
 
-% Loop and show in the OI window.
+% Loop and create the OI structures
 for ii=1:length(depthEdges)
     scene = sceneSet(scene,'depth map',dMap*depthEdges(ii));
     [oiD{ii},tmp,D] = s3dRenderDepthDefocus(scene,oi,imageDist,[],cAberration);

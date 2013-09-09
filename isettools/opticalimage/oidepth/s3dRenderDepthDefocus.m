@@ -1,12 +1,14 @@
 function [oi, oiD, D] = s3dRenderDepthDefocus(scene, oi, imgPlaneDist, depthEdges, cAberration)
-% Computes the blurred optical image given a scene, optics,a nd  image plane distance
+%Compute blurred optical image for a scene, optics,and image plane distance
 %
-%  [oi, oiD, D]=s3dRenderDepthDefocus(scene,oi,imgPlaneDist,depthEdges,cAberration)
+%  [oi, oiD, D]= s3dRenderDepthDefocus(scene,oi,imgPlaneDist, ... 
+%                        depthEdges,cAberration)
 %
-% Arguments:
-%   scene:         ISET scene structure
-%   oi:            ISET oi structure
-%
+% scene:         ISET scene structure
+% oi:            ISET oi structure
+% imgPlaneDist:  In meters
+% depthEdges:    Depths for binning the calculation
+% cAberration:   Chromatic aberration in diopters (default = 0)
 %
 % IMPLEMENTATION
 %  We find the pixels in different depth planes and form an OI of them
@@ -28,15 +30,7 @@ function [oi, oiD, D] = s3dRenderDepthDefocus(scene, oi, imgPlaneDist, depthEdge
 %   * We then compute a weighted sum of these, where the weights are the
 %   wavelength SPD of the point.  We add these to the output photons.
 %
-% Example:
-% 
-% See also:  s3d_Debug.m
-%
-%
-% TODO:
-%   This routine is too long. It should rely as much as possible on
-%   external functions. and we should probably build the alternative
-%   implementation.
+% See also: s_opticsDepthScene, oiDepthCompute
 %
 % Copyright, Stanford, 2011
 
@@ -84,12 +78,14 @@ sampleSF = linspace(0, maxSF, nSteps);     % cyc/deg
 oi = oiSet(oi,'optics',optics);
 
 % Initialize the optic images for each of the depths
-oiD    = cell(1,length(depthCenters));
+oiD = cell(1,length(depthCenters));
 
 %% From the furthest distance to the nearest distance.
+cnt = 0;
 for dd = length(depthCenters):-1:1
 
-    fprintf('Depth %.2f Defocus %.2f (%d of %d)\n',depthCenters(dd),D(dd),dd,length(depthCenters));
+    cnt = cnt+1;
+    fprintf('Depth %.2f Defocus %.2f (%d of %d)\n',depthCenters(dd),D(dd),cnt,length(depthCenters));
     
     % Use defocus of first item in array for all wavelengths
     defocus = cAberration + ones(size(cAberration))*D(dd);

@@ -19,8 +19,7 @@ if ieNotDefined('vci'), vci = vcGetObject('vci'); end
 xy = imageGet(vci,'primary xy');
 L =  imageGet(vci,'max display luminance');
 
-vcNewGraphWin;
-chromaticityPlot(xy);
+hdl = chromaticityPlot(xy);
 hold on; line(xy(:,1),xy(:,2),'color','k');
 line(xy([3,1],1),xy([3,1],2),'color','k');
 hold off

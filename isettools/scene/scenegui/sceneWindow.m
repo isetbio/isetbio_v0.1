@@ -508,21 +508,6 @@ function menuAnalyzeROI_Callback(hObject, eventdata, handles)
 % Analyze | ROI
 return;
 
-
-% --------------------------------------------------------------------
-function menuAnalyzeROIMeanRad_Callback(hObject, eventdata, handles)
-% Analyze | ROI Summary | Mean Radiance (quanta)
-scene = vcGetObject('scene');
-plotScene(scene,'radiance photons roi');
-return;
-
-% --------------------------------------------------------------------
-function menuAnalyzeROIMeanRadE_Callback(hObject, eventdata, handles)
-% Analyze | ROI Summary | Mean Radiance (energy)
-scene = vcGetObject('scene');
-plotScene(scene,'radiance energy roi');
-return;
-
 % --------------------------------------------------------------------
 function menuLuminance_Callback(hObject, eventdata, handles)
 % Analyze | ROI Summary | Luminance
@@ -534,7 +519,7 @@ return;
 function menuPlotCIE_Callback(hObject, eventdata, handles)
 % Analyze | ROI Summary | Chromaticity
 scene = vcGetObject('SCENE');
-plotScene(scene,'chromaticity roi')
+plotScene(scene,'chromaticity roi');
 return;
 
 % --------------------------------------------------------------------

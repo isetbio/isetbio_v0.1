@@ -476,7 +476,7 @@ switch lower(pType)
         end
         
         % Put up the plot of the spectrum locus and the data
-        chromaticityPlot(data);
+        chromaticityPlot(data,[],[],0);
         title('roiLocs-chromaticity (CIE 1931)');
         
         % Legend text
