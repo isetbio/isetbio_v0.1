@@ -3,13 +3,13 @@ function lut = ieLUTInvert(inLUT,resolution)
 %
 %    lut = ieLUTInvert(inLUT,resolution)
 %
-% inLUT:      A gamma table that converts linear DAC values to linear RGB.
+% inLUT:      A gamma table that converts DAC values to linear RGB.
 % resolution: The display bit depth is log2(size(DAC,1)).  We are going to
 %   make an inverse table with finer resolution.  
 %
-% lut:  The returned lookup table.
-% If resolution = 2, then we have twice the number of levels in the
-% returned table.
+% lut:  The returned lookup table converts linear RGB to DAC values
+%   If resolution = 2, then we have twice the number of levels in the
+%    returned table.
 %
 % Example:
 %   d = displayCreate;
@@ -24,13 +24,15 @@ function lut = ieLUTInvert(inLUT,resolution)
 if ieNotDefined('inLUT'), error('input lut required'); end
 if ieNotDefined('resolution'), resolution = 0.5; end
 
-x = 1:size(inLUT,1);
-y = inLUT(:,1);
+x     = 1:size(inLUT,1);
+nbits = log2(size(inLUT,1));
+m     = 2^nbits - 1;
+iY    = (0:(1/resolution):m)/(2^nbits);
 
-nbits = log2(length(y));
-m = 2^nbits - 1;
-
-iY = (0:(1/resolution):m)/(2^nbits);
-lut = interp1(y,x,iY,'cubic',m);
+lut = zeros(length(iY),size(inLUT,2));
+for ii = 1:size(inLUT,2)
+    y = inLUT(:,ii);   
+    lut(:,ii) = interp1(y,x,iY,'cubic',m);
+end
 
 end
