@@ -37,6 +37,9 @@
 % Hence, the total grid size is 32 microns on a side.
 %
 
+%%
+s_initISET
+
 %% Create a simple test scene
 
 % Let's work with a small checkerboard scene
@@ -75,9 +78,10 @@ oi = oiSet(oi,'optics',optics);
 
 % You can now compute using your current scene.
 oi = oiCompute(scene,oi);
+oi = oiSet(oi,'name','Pillbox');
 
 % Show the OI window
-vcReplaceAndSelectObject(oi);
+vcAddAndSelectObject(oi);
 oiWindow;
 
 % Use Analyze | Optics | XXX to plot various functions in the optics
@@ -90,6 +94,7 @@ h2 = fspecial('gaussian', 128, 10);
 h = h1 - 0.5*h2;
 % figure(1); mesh(h)
 
+psf = zeros(128,128,length(wave));
 for ii=1:length(wave), psf(:,:,ii) = h; end     % PSF data
 
 % Save the data and all the rest, in compact form 
@@ -100,7 +105,8 @@ optics = opticsSet(optics,'model','shiftInvariant');
 oi     = oiSet(oi,'optics',optics);
 
 oi = oiCompute(scene,oi);
-vcReplaceAndSelectObject(oi);
+oi = oiSet(oi,'name','Sharpened');
+vcAddAndSelectObject(oi);
 oiWindow;
 
 %% Example 3: Create a wavelength-varying shift-invariant gaussian PSF
@@ -113,10 +119,10 @@ psfType = 'gaussian';
 
 %We set the spread as a function of wavelength.  This function is
 %arbitrary - it makes the long wavelength much worse than the short.
-waveSpread = (wave/wave(1)).^2;
+waveSpread = (wave/wave(1)).^3;
 
-% Make point spreads with an asymmetric Gaussian
-xyRatio = 2*ones(1,length(wave));
+% Make point spreads with a symmetric Gaussian
+xyRatio = ones(1,length(wave));
 
 % Now call the routine with these parameters
 optics  = siSynthetic(psfType,oi,waveSpread,xyRatio,'gaussPSF');
@@ -126,7 +132,9 @@ optics  = opticsSet(optics,'model','shiftInvariant');
 oi      = oiSet(oi,'optics',optics);
 scene   = vcGetObject('scene');
 oi      = oiCompute(scene,oi);
-vcReplaceAndSelectObject(oi);
+
+oi = oiSet(oi,'name','Chromatic Gaussian');
+vcAddAndSelectObject(oi);
 oiWindow;
 
 % We saved these shift invariant optics using:
@@ -142,22 +150,18 @@ oiWindow;
 % Use Analyze | Line x Wave Plot to see the loss of contrast a long
 % wavelengths compared to short wavelengths
 
-%% Loading slightly (2x1) asymmetric optics data from a file
+%% Loading (2x1) asymmetric optics data from a file
 
 fullName = fullfile(isetRootPath,'data','optics','si2x1GaussianWaveVarying.mat');
 newVal   = vcImportObject('OPTICS',fullName);
 oi       = vcGetObject('oi');
 oi       = oiCompute(scene,oi);
-vcReplaceAndSelectObject(oi);
+
+oi = oiSet(oi,'name','Asymmetric Gaussian');
+vcAddAndSelectObject(oi);
 oiWindow;
 
-%% Loading highly (3x1) asymmetric optics data from a file
-
-fullName = fullfile(isetRootPath,'data','optics','siGaussian3To1.mat');
-newVal   = vcImportObject('OPTICS',fullName);
-oi       = vcGetObject('oi');
-oi       = oiCompute(scene,oi);
-vcReplaceAndSelectObject(oi);
-oiWindow;
+%%
+imageMultiview('oi',1:4,1)
 
 %% End

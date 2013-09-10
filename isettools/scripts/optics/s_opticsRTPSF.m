@@ -15,6 +15,8 @@
 
 %%
 s_initISET
+wbStatus = ieSessionGet('waitbar');
+ieSessionSet('waitbar','on');
 
 %% Scene
 scene = sceneCreate('pointArray',512,32);
@@ -52,5 +54,9 @@ oiDL = oiCompute(scene,oiDL);
 oiDL = oiSet(oiDL,'name','psf diffraction case');
 vcAddAndSelectObject('oi',oiDL); oiWindow;
 
-%% End
+%%
+ieSessionSet('waitbar',wbStatus);
+imageMultiview('oi',[1 2],1);
+ 
+ %% End
 

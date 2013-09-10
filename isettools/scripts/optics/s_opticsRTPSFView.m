@@ -5,6 +5,11 @@
 %
 % (c) Imageval Consulting, LLC, 2012
 
+%%
+s_initISET
+wbStatus = ieSessionGet('waitbar');
+ieSessionSet('waitbar','on');
+
 %% This is a pretty fast way to build a shift variant PSF to explore
 
 oi = oiCreate;
@@ -45,3 +50,7 @@ rtPlot(oi,'psf',550,0);
 imgHeight = oiGet(oi,'psf image heights','mm');
 rtPlot(oi,'psf',550,max(imgHeight(end)));
 
+%%
+ieSessionSet('waitbar',wbStatus);
+
+%%

@@ -19,7 +19,7 @@ function optics = opticsBuild2Dotf(optics,otf,sampleSF)
 % See also:  customOTF, humanOTF
 %
 % Example:
-%  
+%
 %  optics = opticsBuild2Dotf(optics,otf,sampleSF);
 %
 % Copyright ImagEval Consultants, LLC, 2011.
@@ -34,7 +34,7 @@ if ieNotDefined('sampleSF'),  error('spatial frequency range required.'); end
 % I think there needs to be a DC term ...
 % fSupport = [-fliplr(sampleSF) sampleSF(2:end)];
 
-% We create a circularly symmetric OTF.  
+% We create a circularly symmetric OTF.
 %
 % Now make a proper list of spatial frequencies for the interpolated OTF2D.
 % This list is stored in the 'otf fx' slot as the sample spatial
@@ -59,14 +59,18 @@ effSF = sqrt((fX.^2 + fY.^2));
 % mesh(fX,fY,effSF)
 
 % Interpolate the 2D OTF from the rows of otf.
-[r,c] = size(fX); 
+[r,c] = size(fX);
 nWave = size(otf,1);
 OTF2D = zeros(r,c,nWave);
 
 % We will set out of range values to 0 in the loop
 l = (effSF > maxF);   %sum(l(:))
 
+showWbar = ieSessionGet('waitbar');
+if showWbar, h = waitbar(0,'Build Defocused OTF'); end
 for ii=1:nWave
+    if showWbar, waitbar(ii/nWave,h); end
+    
     % sampleSF in c/mm.  otf(ii,:) calculated in opticsDefocusedMTF
     % effSF is the effective spatial frequency of the support in c/mm
     % tmp = abs(interp1(sampleSF,otf(ii,:),effSF,'spline'));
@@ -99,6 +103,7 @@ for ii=1:nWave
     %   sum(lsf(:))
     
 end
+if showWbar, close(h); end
 
 % Now set the OTF2D and fx,fy data into the optics structure.
 optics = opticsSet(optics,'otfData',OTF2D);

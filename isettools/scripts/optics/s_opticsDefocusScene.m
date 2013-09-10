@@ -10,6 +10,11 @@
 %
 % Copyright ImagEval Consultants, LLC, 2013
 
+%%
+s_initISET
+wbStatus = ieSessionGet('waitbar');
+ieSessionSet('waitbar','on');
+
 %% Create a test scene
 
 % This is a simple picture that sweeps out 5 deg of visual angle
@@ -26,10 +31,10 @@ vcAddAndSelectObject(scene); sceneWindow;
 %% Standard shift invariant optics
 % We are assuming a diffraction limited lens with some defocus.
 %
-oi = oiCreate;
+oi     = oiCreate;
 optics = oiGet(oi,'optics');
 optics = opticsSet(optics,'model','shift invariant');
-wave = opticsGet(optics,'wave');
+wave   = opticsGet(optics,'wave');
 
 %% Create the optical transfer function (OTF) for the specified defocus 
 
@@ -130,5 +135,6 @@ v3 = vcAddAndSelectObject(oi); oiWindow;
 
 %% Show the three optical image results in three windows
 imageMultiview('oi',[v1,v2,v3],true);
+ieSessionSet('waitbar',wbStatus);
 
 %% End

@@ -13,6 +13,7 @@ function oi = opticsSICompute(scene,oi)
 
 if ieNotDefined('scene'), error('Scene required.'); end
 if ieNotDefined('oi'), error('Opticalimage required.'); end
+showWbar = ieSessionGet('waitbar');
 
 % This is the default compute path
 optics = oiGet(oi,'optics');
@@ -28,16 +29,17 @@ optics = opticsSet(optics,'spectrum',oiGet(oi,'spectrum'));
 oi     = oiSet(oi,'optics',optics);
 
 % Convert radiance units to optical image irradiance (photons/(s m^2 nm))
-%wBar = waitbar(0,'OI-SI: Calculating irradiance...');
-% wStr = 'OI-SI: ';
-% wBar = waitbar(0,[wStr,' Calculating irradiance...']);
+if showWbar
+    wBar = waitbar(0,'OI-SI: Calculating irradiance...');
+end
+
 oi = oiSet(oi,'cphotons',oiCalculateIrradiance(scene,optics));
 
 %-------------------------------
 % Distortion would go here. If we included it.
 %-------------------------------
 
-% waitbar(0.3,wBar,[wStr,' Calculating off-axis falloff']);
+if showWbar, waitbar(0.3,wBar,'OI-SI Calculating off-axis falloff'); end
 
 % Now apply the relative illumination (offaxis) fall-off
 % We either apply a standard cos4th calculation, or we skip.
@@ -52,34 +54,32 @@ switch lower(offaxismethod)
         oi = opticsCos4th(oi);
 end
 
-% waitbar(0.6,wBar,'OI-SI: Applying OTF');
+if showWbar, waitbar(0.6,wBar,'OI-SI: Applying OTF'); end
 % This section applys the OTF to the scene radiance data to create the
 % irradiance data.
 %
 % If there is a depth plane in the scene, we also blur that and put the
 % 'blurred' depth plane in the oi structure.
-%  waitbar(0.6,wBar,[wStr,' Applying OTF-SI']);
+if showWbar, waitbar(0.6,wBar,'Applying OTF-SI'); end
 oi = opticsOTF(oi,scene);
 
 switch lower(oiGet(oi,'diffuserMethod'))
     case 'blur'
-       % waitbar(0.75,wBar,'OI-SI: Diffuser');
+       if showWbar, waitbar(0.75,wBar,'Diffuser'); end
         blur = oiGet(oi,'diffuserBlur','um');
         if ~isempty(blur), oi = oiDiffuser(oi,blur); end
     case 'birefringent'
-       % waitbar(0.75,wBar,'OI-SI: Birefringent Diffuser');
+       if showWbar, waitbar(0.75,wBar,'Birefringent Diffuser'); end
         oi = oiBirefringentDiffuser(oi);
     case 'skip'
         
 end
 
 % Compute image illuminance (in lux)
-% oi.data.illuminance = oiCalculateIlluminance(oi);
-%waitbar(0.9,wBar,'OI: Calculating illuminance');
-%  waitbar(0.9,wBar,[wStr,' Calculating illuminance']);
+if showWbar, waitbar(0.9,wBar,'OI: Calculating illuminance'); end
 oi = oiSet(oi,'illuminance',oiCalculateIlluminance(oi));
 
-%  delete(wBar);
+if showWbar, delete(wBar); end
 
 return;
 
