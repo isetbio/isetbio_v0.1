@@ -8,7 +8,5 @@ s_sensorPhotonsPerPixel
 s_sensorSNR
 s_sensorAnalyzeDarkVoltage
 s_sensorSpectralEstimation
-s_sensorExposureCFA
-s_sensorExposureBracket
 
 %% End
