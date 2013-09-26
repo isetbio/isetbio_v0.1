@@ -1,7 +1,7 @@
-function sceneToFile(fname,scene,cFlag)
+function varExplained = sceneToFile(fname,scene,bType,mType)
 % Write scene data in the hyperspectral and multispectralfile format
 %
-%    sceneToFile(fname,scene,cFlag)
+%    varExplained = sceneToFile(fname,scene,cFlag,mFlag)
 %
 % If the cFlag is empty, it saves a file containing photons, wave,
 % illuminant structure and a comment.
@@ -13,12 +13,21 @@ function sceneToFile(fname,scene,cFlag)
 % model, and stores the mean, linear model, and coefficients for each
 % pixel.
 %
+%Inputs
 % fname:  The full name of the output file
 % scene:  ISET scene structure
-% cFlag:  Empty  - No compression, just save photons, wave, comment,
-%            illuminant (default)
+% mType:  Mean computation
+%         Remove the mean ('meansvd') or not ('canonical', default) before
+%         calculating svd 
+% bType:  Basis calculation type
+%         Empty  - No compression, just save photons, wave, comment,
+%            illuminant
 %         A value between 0 and 1 specifying the fraction of variance
-%            explained by the linear model compression 
+%            explained by the linear model compression (default, 0.99)
+%         An integer >= 1 specifies the number of basis functions
+%
+%Return
+% varExplained - Fraction of variance explained by the linear model
 %
 % Examples:
 %   scene = sceneCreate;
@@ -33,7 +42,8 @@ function sceneToFile(fname,scene,cFlag)
 
 if ieNotDefined('fname'), error('Need output file name for now'); end
 if ieNotDefined('scene'), error('scene structure required'); end
-if ieNotDefined('cFlag'), cFlag = [] ; end
+if ieNotDefined('bType'), bType = [];  end  % See hcBasis
+if ieNotDefined('mType'), mType = [];  end  % See hcBasis
 
 % We need to save the key variables
 photons    = sceneGet(scene,'photons');
@@ -41,13 +51,14 @@ wave       = sceneGet(scene,'wave');
 illuminant = sceneGet(scene,'illuminant');
 comment = sprintf('Scene: %s',sceneGet(scene,'name'));
 
-if isempty(cFlag)
+if isempty(bType)
     % No compression.
     save(fname,'photons','wave','comment','illuminant');
+    varExplained = 1;
 else
     % Figure out the basis functions on a subsampled photon image
     photons = photons(1:3:end,1:3:end,:);
-    [~, basisData] = hcBasis(photons,'meansvd',cFlag);
+    [imgMean, basisData, coef ,varExplained] = hcBasis(photons,bType,mType);
     clear photons;
     
     % Check the basis functions
@@ -58,19 +69,19 @@ else
     %   end   
     
     %  We have the basis functions.  Determine the coefficients
-    photons = sceneGet(scene,'photons');
-    [photons,row,col] = RGB2XWFormat(photons);
-    
+    %     photons = sceneGet(scene,'photons');
+    %     [photons,row,col] = RGB2XWFormat(photons);
+    %
     % Remove the mean
-    imgMean = mean(photons,1);   % vcNewGraphWin; plot(imgMean)
-    photons = photons - repmat(imgMean,row*col,1);
-    coef = photons*basisData;
-    % To get back to the original hc data
-    %  d = coef*basisData'+ repmat(imgMean,row*col,1);
-    % Have a look:   hcimage(XW2RGBFormat(d,row,col))
-    
-    % Reshape the coefficients
-    coef = XW2RGBFormat(coef,row,col);
+    %     imgMean = mean(photons,1);   % vcNewGraphWin; plot(imgMean)
+    %     photons = photons - repmat(imgMean,row*col,1);
+    %     coef = photons*basisData;
+    %     % To get back to the original hc data
+    %     %  d = coef*basisData'+ repmat(imgMean,row*col,1);
+    %     % Have a look:   hcimage(XW2RGBFormat(d,row,col))
+    %
+    %     % Reshape the coefficients
+    %     coef = XW2RGBFormat(coef,row,col);
     % Could check this way.
     %  d = RGB2XWFormat(coef)*basisData'+ repmat(imgMean,row*col,1);
     %  hcimage(XW2RGBFormat(d,row,col))

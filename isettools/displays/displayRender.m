@@ -44,13 +44,13 @@ switch ieParamFormat(imageGet(vci,'internalCS'))
         % nSensors = imageGet(vci,'nSensorInputs');
         % No color space conversion in this case.
         % Simply copy the data from the sensor space to display RGB
-        N = size(imageGet(vci,'colorBalanceTransform'),2);
+        N = size(imageGet(vci,'illuminant correction transform'),2);
         M = eye(N,3);  % Always three display outputs (RGB).
     otherwise
         error('Unknown internal color space')
 end
 
-method = ieParamFormat(imageGet(vci,'Sensor correction method'));
+method = ieParamFormat(imageGet(vci,'Sensor conversion method'));
 switch lower(method)
     case {'current','currentmatrix','manualmatrixentry','none'}
         % Do not apply another matrix if the user set the Transform manually

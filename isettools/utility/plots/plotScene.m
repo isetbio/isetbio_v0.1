@@ -147,7 +147,7 @@ switch lower(pType)
         if max(energy(:)) < 1.1*min(energy(:))
             set(gca,'ylim',[0.99*min(energy(:)), 1.01*max(energy(:))])
         end
-        xlabel('Wavelength (nm)'); ylabel('watts/sr/nm/m^2');
+        xlabel('Wavelength (nm)'); ylabel('Radiance (watts/sr/nm/m^2)');
         
     case {'radiancephotonsroi'}
         % mean radiance in photons of roi
@@ -164,7 +164,7 @@ switch lower(pType)
         if max(photons(:)) < 1.1*min(photons(:))
             set(gca,'ylim',[0.99*min(photons(:)), 1.01*max(photons(:))])
         end
-        xlabel('Wavelength (nm)'); ylabel('q/sec/sr/nm/m^2');
+        xlabel('Wavelength (nm)'); ylabel('Radiance (q/sec/sr/nm/m^2)');
         
     case {'radiancehline','hlineradiance'}
         
@@ -184,7 +184,7 @@ switch lower(pType)
         else
             mesh(pos.x,wave,data');
             xlabel('Position (mm)');
-            ylabel('Wavelength (nm)'); zlabel('radiance (q/s/nm/m^2)');
+            ylabel('Wavelength (nm)'); zlabel('Radiance (q/s/nm/m^2)');
             grid on; set(gca,'xtick',ieChooseTickMarks(pos.x,nTicks))
         end
         colormap(cool)
@@ -211,7 +211,7 @@ switch lower(pType)
         else
             mesh(pos.y,wave,data');
             xlabel('Position (mm)');
-            ylabel('Wavelength (nm)'); zlabel('radiance (q/s/nm/m^2)');
+            ylabel('Wavelength (nm)'); zlabel('Radiance (q/s/nm/m^2)');
             grid on; set(gca,'xtick',ieChooseTickMarks(pos.y,nTicks))
         end
         colormap(cool)
@@ -639,8 +639,7 @@ switch lower(pType)
         
         % Plot 'em up
         plot(wave(:),photons,'-')
-        xlabel('Wavelength (nm)');
-        ylabel('Energy (watts/sr/nm/m^2)');
+        xlabel('Wavelength (nm)'); ylabel('Radiance (q/sec/sr/nm/m^2)');
         grid on,  title('Illuminant data')
         udata.wave = wave; udata.photons = photons;
         udata.comment = sceneGet(scene,'illuminant comment');
@@ -670,25 +669,7 @@ switch lower(pType)
         % Create an RGB image
         udata.srgb = xyz2srgb(ieXYZFromEnergy(energy,wave));
         imagesc(sz(1),sz(2),udata.srgb);  grid on; axis off
-        title('Illumination image')
-        
-    case {'illuminantroiphotons'}
-        % Spatial spectral case
-    case {'illuminantroienergy'}
-        % Spatial spectral case
-        
-    case {'illuminanthlineenergy'}
-        error('Not yet implemented');
-        
-    case {'illuminanthlinephotons'}
-        error('Not yet implemented');
-        
-    case {'illuminantvlineenergy'}
-        error('Not yet implemented');
-        
-    case {'illuminantvlinephotons'}
-        error('Not yet implemented');
-        
+        title('Illumination image')       
         
         % Depth - COuld go into plotSceneDepth
     case {'depthmap'}

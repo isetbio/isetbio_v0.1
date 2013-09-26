@@ -44,12 +44,10 @@ function spectralRadiance = illuminantRead(illP,lightName)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-% Programming note: This code was  used initially only with macbethChart
-% routines.  We are starting to use it elsewhere as we build up the
-% illuminant management infrastructure.
-
 if ieNotDefined('illP')
-    if ieNotDefined('lightName'), name = 'd65';
+    if ieNotDefined('lightName')
+        name = 'd65';
+        warndlg('No illuminant name.  Assuming D65');
     else name =  lightName;
     end
     luminance = 100;

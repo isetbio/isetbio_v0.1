@@ -4,12 +4,13 @@ function Tc = cct(uvs)
 %   correlatedColorTemperature = cct(uvArray)
 %
 % The CIE has defined methods for estimating the relationship between
-% chromaticity coordinates (uv) and the color temperature of a blackbody
-% radiator. This routine accepts 1960 UCS chromaticity coordinates, uv,
-% and returns the color temperature in degrees Kelvin of the correlated
-% blackbody radiators.
+% chromaticity coordinates (uv, see xyz2uv) and the color temperature of a
+% blackbody radiator. This routine accepts 1960 UCS chromaticity
+% coordinates, uv, and returns the color temperature in degrees Kelvin of
+% the correlated blackbody radiators.
 %
-% This value is often used to summarize the properties of a light source.
+% This correlated color temperature is often used to summarize the
+% appearance properties of a light source.  
 %
 % This routine requires the information in the file: cct.mat
 %
@@ -20,6 +21,9 @@ function Tc = cct(uvs)
 %
 %Example:
 %  colorTemp = cct([.31,.32]')
+%
+%
+% See also: spd2cct, xyz2uv
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 

@@ -1093,14 +1093,7 @@ method = contents{get(handles.popCustom,'Value')};
 
 [val,oi] = vcGetSelectedObject('OPTICALIMAGE');
 
-if strcmp(method,'Add Custom')
-    oi = ieAddCustomAlgorithm(oi,'oicompute',handles);
-elseif strcmp(method,'Delete Custom')
-    oi = ieDeleteCustomAlgorithm(oi,'oicompute',handles);
-elseif strncmp(method,'----',4)
-else
-    oi = oiSet(oi,'oiMethod',method);
-end
+oi = oiSet(oi,'oiMethod',method);
 
 oi = oiSet(oi,'consistency',0);
 vcReplaceObject(oi,val);

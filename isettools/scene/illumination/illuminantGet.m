@@ -7,13 +7,17 @@ function val = illuminantGet(il,param,varargin)
 % have implemented a set/get/create suite of routines.  This is the 'get'
 % feature.
 %
-% Illuminants have a variety of formats.  They are 
-%   spectral - a single vector of wavelength that is applied to the entire
-%   scene.   
-%   spatial spectral - a 3D representation of the illuminant (r,c,wave)
+% Illuminants have a variety of formats.
 %
-%  Oddly, the illuminant format is specified in 'scene', as in
+%  spectral - a single vector of wavelength that is applied to the entire
+%             scene.   
+%  spatial spectral - a 3D representation of the illuminant (r,c,wave)
+%
+% You can assess the illuminant format of a 'scene', as in
 %      sceneGet(scene,'illuminant format')
+% You can also assess the illuminant format here as in
+%      illuminantGet(il,'illuminant format')
+%
 %
 % il: illuminant structure.
 %  This structure contains a range of information about the illuminant,
@@ -22,17 +26,19 @@ function val = illuminantGet(il,param,varargin)
 %  format (32 uint bits).
 %
 % Parameter list:
-%   name
+%   name - A useful description, hopefully
 %   type (always illuminant)
 %
 % Can be spectral or spatial spectral
-%   photons
-%   energy
-%   wave
+%   photons   - Stored in photons
+%   energy    - Calculated from photons
+%   wave      - Wavelength samples (nm)
 %
-%   comment
-%   luminance
-%   size
+%   comment   -
+%   luminance - 
+%   size      - spatial/spectral or 1
+%   cct       - Correlated color temperature
+%   illuminant format - spectral or 'spatial spectral'
 %
 % See also:  illuminantCreate, illuminantSet
 %
@@ -51,6 +57,7 @@ function val = illuminantGet(il,param,varargin)
 if ~exist('il','var') || isempty(il), error('illuminant structure required'); end
 if ~exist('param','var') || isempty(param), error('param required'); end
 
+val = [];
 
 %% Main switch statement
 param = ieParamFormat(param);
@@ -107,6 +114,12 @@ switch param
         end
         if isvector(val), val = val(:); end
         
+    case 'nwave'
+        % nWave = illuminantGet(il,'n wave');
+        % Number of wavelength samples
+        
+        val = length(illuminantGet(il,'wave'));
+        
     case 'luminance'
         % Return luminance in cd/m2
         e = illuminantGet(il,'energy');
@@ -120,6 +133,21 @@ switch param
         
     case 'comment'
         val = il.comment;
+        
+    case 'illuminantformat'
+        % illuminantGet(il,'illuminant format') Returns: spectral, spatial
+        % spectral, or empty. In more recent Matlab versions, we can use
+        % isvector, ismatrix functions.
+        sz = illuminantGet(il,'spatial size');
+        if length(sz) < 3
+            if prod(sz) == illuminantGet(il,'nwave');
+                val = 'spectral';
+            end
+        else
+            if sz(3) == illuminantGet(il,'nwave')
+                val = 'spatial spectral';
+            end
+        end
         
     otherwise
         error('Unknown illuminant parameter %s\n',param)

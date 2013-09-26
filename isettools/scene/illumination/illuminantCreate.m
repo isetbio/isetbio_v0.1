@@ -36,15 +36,17 @@ function il = illuminantCreate(ilName,wave, varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-%%
-if ieNotDefined('ilName'),       ilName = 'd65'; end
+%% Initialize parameters
+if ieNotDefined('ilName'), ilName = 'd65'; end
 
 il.name = ilName;
 il.type = 'illuminant';
 il = initDefaultSpectrum(il,'hyperspectral');
 if exist('wave','var') && ~isempty(wave), il.spectrum.wave = wave; end
 
-%% Need a default.
+%% There is no default
+% The absence of a default could be a problem.
+
 switch ieParamFormat(ilName)
     
     case {'d65','d50','tungsten','fluorescent','555nm','equalenergy','illuminantc','equalphotons'}
@@ -77,9 +79,7 @@ switch ieParamFormat(ilName)
         error('unknown illuminant type %s\n',ilName);
 end
 
-%% Now, deal with the mean luminance level
-
-%% Finally, set the photons and return
+%% Set the photons and return
 il = illuminantSet(il,'photons',iPhotons);  % [photons/(s sr m^2 nm)]
 
 return;

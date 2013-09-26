@@ -1,5 +1,5 @@
 function obj = ieAddCustomAlgorithm(obj,algType,handles,varargin)
-%Add a custom computational algorithm to a pulldown list 
+%Deprecated - Add a custom computational algorithm to a pulldown list 
 %
 %   obj = ieAddCustomAlgorithm(obj,algType,handles,varargin)
 %
@@ -12,8 +12,8 @@ function obj = ieAddCustomAlgorithm(obj,algType,handles,varargin)
 %
 %   Processor window:
 %      {'demosaic','colordemosaic'}
-%      {'colorbalance','balance'}
-%      {'conversion','colorconversion','colorconversionmethod'}
+%      {'illuminant correction'}
+%      {'sensor conversion'}
 %      {'processingmethod','render'}
 %
 %    OI window:
@@ -31,6 +31,8 @@ function obj = ieAddCustomAlgorithm(obj,algType,handles,varargin)
 %    vcReplace ...
 %
 % Copyright ImagEval Consultants, LLC, 2005.
+
+error('Deprecated');
 
 switch lower(algType)
     

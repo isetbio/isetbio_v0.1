@@ -4,6 +4,7 @@ function il = illuminantModernize(illuminant)
 %   illuminant = illuminantModernize(illuminant)
 %
 % If the structure is already modern, move on.
+%
 % If it is the old format, it will have the data field wrong.  So, we
 % convert here.
 % 
@@ -35,7 +36,15 @@ else
         
         if isfield(illuminant,'name')
             il = illuminantSet(il,'name',illuminant.name);
+        else
+            % This is a fantastic way to name an unknown illuminant.  Find
+            % its correlated color temperature and name it that.
+            w = illuminantGet(il,'wave');
+            spd = illuminantGet(il,'energy');
+            cct = spd2cct(w,spd);
+            il = illuminantSet(il,'name',sprintf('CCT %.0f',cct));
         end
+        
         if isfield(illuminant,'comment'),
             il = illuminantSet(il,'comment',illuminant.comment);
         end

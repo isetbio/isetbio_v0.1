@@ -1,4 +1,6 @@
-%% Introduction to ISET objects and functions:  The optical image (OI)
+%% t_oiIntroduction.m
+%
+% Introduction to ISET objects and functions:  The optical image (OI)
 %
 % ISET is organized around several key objects (scene, optics, sensor and
 % processor) that reflect the important parts of the image acquisition
@@ -20,7 +22,7 @@
 s_initISET
 
 %% Create a point array scene
-% These are useful for examining simple optical properties
+% This and other simple synthetic scenes are useful for examining simple optical properties
 scene = sceneCreate('pointarray');   % Creates an array of points
 scene = sceneSet(scene,'hfov',1);    % 1 deg field of view
 vcAddAndSelectObject(scene); sceneWindow;
@@ -41,7 +43,7 @@ vcAddAndSelectObject(oi); oiWindow;
 %% Increase the f-number of the optics and compute again. 
 % Increasing the f-number of the optics will blur the irradiance image.
 % The optics structure is attached to the optical image.  To increase the
-% f-number we get the optics object, set its f number, and then reattach it
+% f-number we get the optics object, set its' f number, and then reattach it
 % to the optical image.
 optics  = oiGet(oi,'optics');
 fnSmall = opticsGet(optics,'f number');

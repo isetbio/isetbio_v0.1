@@ -91,6 +91,10 @@ switch lower(objType)
                 img = sceneGet(obj,dataType);
                 [img,r,c] = RGB2XWFormat(img);
                 if isempty(img), errordlg('No radiance data in scene.'); end
+            case {'luminance','luminanceroi'}
+                img = sceneGet(obj,'luminance');
+                [img,r,c] = RGB2XWFormat(img);
+                if isempty(img), errordlg('No luminance data in scene.'); end
         end
         
         % Should we keep the data in bounds?

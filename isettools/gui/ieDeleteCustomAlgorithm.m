@@ -1,5 +1,5 @@
 function obj = ieDeleteCustomAlgorithm(obj,algType,handles)
-% Gateway routine for deleting a custom algorithm from a pulldown list.
+% Deprecated - Gateway routine for deleting a custom algorithm from a pulldown list.
 %
 %   obj = ieDeleteCustomAlgorithm(obj,algType,handles)
 %
@@ -28,6 +28,8 @@ function obj = ieDeleteCustomAlgorithm(obj,algType,handles)
 %    vci = ieDeleteCustomAlgorithm(vci,algType,handles)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
+
+error('Deprecated.')
 
 if ieNotDefined('obj'), error('Object must be defined.'); end
 if ieNotDefined('algType'), error('Algorithm type must be defined'); end

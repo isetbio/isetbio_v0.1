@@ -38,9 +38,7 @@ else
     % Check how we whether the same idx matched two waveVal entries
     nFound = sum(idx);
     if nFound ~= length(waveVal)
-        warning('Duplicate matches found (not perfect case).')
-        fprintf('Wave:\n'); disp(wave)
-        fprintf('WaveVal\n'); disp(waveVal);
+        warning('Problems matching wavelengths. Could be out of range.')
     end
 end
 

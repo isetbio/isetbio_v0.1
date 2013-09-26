@@ -99,14 +99,7 @@ method = contents{get(handles.popCustomCompute,'Value')};
 
 [val,isa] = vcGetSelectedObject('ISA');
 
-if strcmp(method,'Add Custom') 
-    isa = ieAddCustomAlgorithm(isa,'sensorCompute',handles);
-elseif strcmp(method,'Delete Custom')
-    isa = ieDeleteCustomAlgorithm(isa,'sensorCompute',handles);
-elseif strncmp(method,'---',3)
-else
-    isa = sensorSet(isa,'sensorComputeMethod',method);
-end
+isa = sensorSet(isa,'sensorComputeMethod',method);
 
 isa = sensorSet(isa,'consistency',0);
 vcReplaceObject(isa,val);

@@ -1,4 +1,4 @@
-%% An introduction to ISET objects and functions.
+%% An introduction to ISET objects and functions: Scene
 %
 % ISET is structured around  a few key objects that are important parts of
 % the image acquisition pipeline. These are the scene, optical image,

@@ -1,4 +1,6 @@
-% s_SIExamples:  Shift-invariant optics examples
+% s_opticsSIExamples.m
+%
+%   Shift-invariant optics examples
 %
 % This script illustrates how to create an optics structure used for the
 % shift-invariant optics calculations. It also illustrates how to place

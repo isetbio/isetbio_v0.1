@@ -539,20 +539,12 @@ switch parm
         % Returns: spectral, spatial spectral, or empty
         % Check whether illuminant is spatial spectral or just an SPD
         % vector.  
-        % Maybe we should test for a vector by
-        %    ndims(d) < 3 && min(size(d)) == 1
-        % And then confirm that it is 3D by ndims(d) > 2
-        %
-        val = ''; 
-        if ~checkfields(scene,'illuminant'),    
-            return;
-        elseif checkfields(scene,'illuminant','data')
-            % There is a structure, and there is a data field. What
-            % type?
-            if ndims(scene.illuminant.data.photons) < 3 , val = 'spectral'; %#ok<*ISMAT>
-            else                                  val = 'spatial spectral';
-            end
+                
+        il = sceneGet(scene,'illuminant');
+        if isempty(il), disp('No scene illuminant.'); return;
+        else            val = illuminantGet(il,'illuminant format');
         end
+        
     case {'illuminantphotons'}
         % The data field is has illuminant in photon units.
         il = sceneGet(scene,'illuminant');

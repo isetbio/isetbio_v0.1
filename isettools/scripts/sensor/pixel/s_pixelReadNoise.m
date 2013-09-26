@@ -73,7 +73,7 @@ nSamp = prod(sensorGet(sensor,'size'))/2;
 volts = zeros(nSamp,nRepeats);
 
 showBar = ieSessionGet('waitbar');
-ifshowBar, wBar  = waitbar(0,'Acquiring images'); end
+if showBar, wBar  = waitbar(0,'Acquiring images'); end
 for ii=1:nRepeats
     if showBar, waitbar(ii/nRepeats,wBar); end
     sensor = sensorCompute(sensor,darkOI,0);

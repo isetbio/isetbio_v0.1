@@ -19,18 +19,13 @@ function imRGB = XW2RGBFormat(imXW,row,col)
 %
 %   The inverse routine is RGB2XWFormat.
 %
-%   Othertimes, we use a space-wavelength format.  In this format, which is
-%   convenient for some matrix computations, the data are in a  (row*col) x
-%   color format. We call this XW format.
-%
-%   The inverse routine is RGB2XWFormat
-%
 % See also: imageSPD, imagescRGB, imagescM, RGB2XWFormat
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-% 
+
 if ieNotDefined('imXW'), error('No image data.'); end
+
 % I took this out because it is possible to have a monochrome scene with
 % just one column.
 % if ndims(imXW) ~= 2,  error('XW2RGB:  input should be 2D'); end

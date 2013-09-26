@@ -15,8 +15,19 @@ plot(w,p); grid on
 xlabel('Wavelength'); ylabel('Photons')
 
 %% Create a blackbody illuminant structure 3000 deg Kelvin
+wave = 400:1:700;
+illum = illuminantCreate('blackbody',wave,3000);
+p     = illuminantGet(illum,'photons');
+w     = illuminantGet(illum,'wave');
 
-illum = illuminantCreate('blackbody',400:1:700,3000);
+vcNewGraphWin; 
+plot(w,p); grid on
+xlabel('Wavelength'); ylabel('Photons')
+
+%% D65, 200 cd/m2
+luminance = 200;
+wave = [];  % Defaults
+illum = illuminantCreate('d65',wave,luminance);
 p     = illuminantGet(illum,'photons');
 w     = illuminantGet(illum,'wave');
 
@@ -25,25 +36,18 @@ plot(w,p); grid on
 xlabel('Wavelength'); ylabel('Photons')
 
 %%
-illum = illuminantCreate('d65',[],200);
-p     = illuminantGet(illum,'photons');
-w     = illuminantGet(illum,'wave');
-
-vcNewGraphWin; 
-plot(w,p); grid on
-xlabel('Wavelength'); ylabel('Photons')
-
-%%
-illum = illuminantCreate('equal energy',[],200);
+illum = illuminantCreate('equal energy',[],luminance);
 e     = illuminantGet(illum,'energy');
 w     = illuminantGet(illum,'wave');
+mn    = mean(e(:));
 
 vcNewGraphWin; 
 plot(w,e); grid on
 xlabel('Wavelength'); ylabel('Energy')
+set(gca,'ylim',[0.9*mn,1.1*mn]);
 
 %%
-illum = illuminantCreate('equal photons',[],200);
+illum = illuminantCreate('equal photons',[],luminance);
 p     = illuminantGet(illum,'photons');
 e     = illuminantGet(illum,'energy');
 
@@ -57,7 +61,7 @@ vcNewGraphWin;
 plot(w,e); grid on
 xlabel('Wavelength'); ylabel('Energy')
 %%
-illum = illuminantCreate('illuminant C',[],200);
+illum = illuminantCreate('illuminant C',[],luminance);
 p     = illuminantGet(illum,'photons');
 w     = illuminantGet(illum,'wave');
 
@@ -65,7 +69,7 @@ vcNewGraphWin;
 plot(w,p); grid on
 xlabel('Wavelength'); ylabel('Photons')
 %%
-illum = illuminantCreate('555 nm',[],200);
+illum = illuminantCreate('555 nm',[],luminance);
 p     = illuminantGet(illum,'photons');
 w     = illuminantGet(illum,'wave');
 

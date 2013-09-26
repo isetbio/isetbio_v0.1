@@ -154,15 +154,15 @@ m = [ ...
    0.9205   -0.1402   -0.1289
    -0.0148    0.8763   -0.0132
    -0.2516   -0.1567    0.6987];
-vci = imageSet(vci,'colorConversionTransform',m);
+vci = imageSet(vci,'sensor conversion transform',m);
 
 % We set  the other transforms to the identity, so that the product of all
 % the transforms is just the one above.
-vci = imageSet(vci,'colorBalanceTransform',eye(3,3));
-vci = imageSet(vci,'ics2DisplayTransform',eye(3,3));
+vci = imageSet(vci,'illuminant correction transform',eye(3,3));
+vci = imageSet(vci,'ics2Display Transform',eye(3,3));
 
 % We set the vci to not ask any questions, just use the current matrices.
-vci = imageSet(vci,'colorConversionMethod','current matrix')
+vci = imageSet(vci,'sensor conversion method','current matrix')
 
 % Compute and show.
 vci = vcimageCompute(vci,sensor);
