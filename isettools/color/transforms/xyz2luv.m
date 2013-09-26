@@ -41,8 +41,8 @@ end
 luv = zeros(size(xyz));
 
 luv(:,1) = Y2Lstar(xyz(:,2),whitepoint(2));
-[u,v]    = XYZ2uv(xyz);
-[un,vn]  = XYZ2uv(whitepoint);
+[u,v]    = xyz2uv(xyz);
+[un,vn]  = xyz2uv(whitepoint);
 
 luv(:,2) = 13*luv(:,1).*(u - un);
 luv(:,3) = 13*luv(:,1).*(v - vn);
