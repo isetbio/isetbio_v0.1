@@ -30,8 +30,8 @@ else
     set(handles.editDistance,'String',num2str(sceneGet(scene,'distance')));
     meanL = sceneGet(scene,'mean luminance');
    
-    set(handles.editLuminance,'String',num2str(meanL));
-    set(handles.editHorFOV,'String',num2str(scene.wAngular));
+    set(handles.editLuminance,'String',sprintf('%.1f',meanL));
+    set(handles.editHorFOV,'String',sprintf('%.2f',sceneGet(scene,'fov')));
     
     % Select scene popup contents
     set(handles.popupSelectScene,...

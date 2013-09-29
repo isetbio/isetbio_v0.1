@@ -13,6 +13,11 @@ function scene = sceneAdjustLuminance(scene,meanL)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
+% TODO
+%   Some scenes go to very long wavelengths.
+%   That slows the calculation.  Never let the calculation go beyond 780nm.
+%
+
 % Verify that current luminance exists, or calculate it
 currentMeanL  = sceneGet(scene,'mean luminance');
 photons       = sceneGet(scene,'photons');

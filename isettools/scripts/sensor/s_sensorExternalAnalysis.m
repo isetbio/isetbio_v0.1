@@ -2,8 +2,7 @@
 %
 %   Incorporate external sensor data into the ISET pipeline
 %
-% This script illustrates how to import voltage responses from a prototype sensor
-% into ISET. 
+% This script illustrates  
 %
 % There are two steps to the process.  First, you establish the sensor
 % parameters for the device under test.  This needs to be done only once.

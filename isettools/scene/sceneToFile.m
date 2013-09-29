@@ -1,7 +1,7 @@
 function varExplained = sceneToFile(fname,scene,bType,mType)
 % Write scene data in the hyperspectral and multispectralfile format
 %
-%    varExplained = sceneToFile(fname,scene,cFlag,mFlag)
+%    varExplained = sceneToFile(fname,scene,bType,mType)
 %
 % If the cFlag is empty, it saves a file containing photons, wave,
 % illuminant structure and a comment.
@@ -56,37 +56,34 @@ if isempty(bType)
     save(fname,'photons','wave','comment','illuminant');
     varExplained = 1;
 else
-    % Figure out the basis functions on a subsampled photon image
+    % Figure out the basis functions using hypercube computation
     photons = photons(1:3:end,1:3:end,:);
-    [imgMean, basisData, coef ,varExplained] = hcBasis(photons,bType,mType);
+    [imgMean, basisData, coef ,varExplained] = hcBasis(photons,bType,mType); %#ok<ASGLU>
     clear photons;
     
-    % Check the basis functions
+    % Plot the basis functions
     %   wList = sceneGet(scene,'wave');
     %   vcNewGraphWin;
     %   for ii = 1:size(basisData,2)
     %       plot(wList,basisData(:,ii)); hold on
     %   end   
     
-    %  We have the basis functions.  Determine the coefficients
-    %     photons = sceneGet(scene,'photons');
-    %     [photons,row,col] = RGB2XWFormat(photons);
-    %
-    % Remove the mean
-    %     imgMean = mean(photons,1);   % vcNewGraphWin; plot(imgMean)
-    %     photons = photons - repmat(imgMean,row*col,1);
-    %     coef = photons*basisData;
-    %     % To get back to the original hc data
-    %     %  d = coef*basisData'+ repmat(imgMean,row*col,1);
-    %     % Have a look:   hcimage(XW2RGBFormat(d,row,col))
-    %
-    %     % Reshape the coefficients
-    %     coef = XW2RGBFormat(coef,row,col);
-    % Could check this way.
-    %  d = RGB2XWFormat(coef)*basisData'+ repmat(imgMean,row*col,1);
-    %  hcimage(XW2RGBFormat(d,row,col))
-    
-    % Save the data
+    photons           = sceneGet(scene,'photons');
+    [photons,row,col] = RGB2XWFormat(photons);
+    switch mType
+        case 'canonical'
+            coef = photons*basisData;
+            
+        case 'meansvd'
+            photons = photons - repmat(imgMean,row*col,1);
+            coef = photons*basisData;
+            
+        otherwise
+            error('Unknown mType: %s\n',mType);
+    end
+    coef = XW2RGBFormat(coef,row,col);
+
+    % Save the coefficients and basis
     basis.basis = basisData;
     basis.wave  = wave;
     ieSaveMultiSpectralImage(fname,coef,basis,comment,imgMean,illuminant);

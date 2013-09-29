@@ -78,7 +78,7 @@ t = ylabel('Reflectance'); set(t,'fontname','Georgia')
 %% Load XYZ nad choose a light for the rendering experiments
 
 XYZ = ieReadSpectra('XYZ',wave);
-lgt = ieReadSpectra('d65',wave);  
+lgt = ieReadSpectra('D65',wave);  
 
 % Or try these lights instead
 % lgt  = ieReadSpectra('tungsten',wave);

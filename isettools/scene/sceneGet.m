@@ -98,6 +98,7 @@ function val = sceneGet(scene,parm,varargin)
 %
 % Auxiliary information
 %      {'illuminant'}           - HDRS multispectral data illuminant stored here (watts/sr/m^2/nm) 
+%        {'illuminant name'}    - Illuminant name    
 %        {'illuminant energy'}  - energy data
 %        {'illuminant photons'} - energy data
 %        {'illuminant xyz'}     - CIE XYZ (1931, 10 deg)
@@ -219,6 +220,7 @@ switch parm
        if checkfields(scene,'data'), val = scene.data; end;
        
    case {'photons','cphotons'}
+       % sceneGet(scene,'photons',[wavelength]);
        % Read photon data.  It is possible to ask for just a single
        % waveband.
        % Data are returned as doubles (uncompressed).
@@ -309,6 +311,7 @@ switch parm
             val(ii) = max(tmp(:));
         end
     case {'peakradianceandwave'}
+        % Probably deprecated
         % Return the peak radiance and its wavelength
         % v = sceneGet(scene,'peakRadianceAndWave');
         % v(1), v(2)
@@ -330,11 +333,22 @@ switch parm
         if checkfields(scene,'data','bitDepth'), val = scene.data.bitDepth; end
 
     case 'energy'
-        val = sceneGet(scene,'photons');
-        wave = sceneGet(scene,'wave');
-        [XW,r,c,w] = RGB2XWFormat(val); %#ok<NASGU>
-        val = Quanta2Energy(wave,XW);
-        val = XW2RGBFormat(val,r,c);
+        % sceneGet(scene,'energy',[wavelength]);
+        % Get the energy, possibly just one waveband
+        if isempty(varargin),
+            val = sceneGet(scene,'photons');
+            wave = sceneGet(scene,'wave');
+            [XW,r,c,w] = RGB2XWFormat(val); %#ok<NASGU>
+            val = Quanta2Energy(wave,XW);
+            val = XW2RGBFormat(val,r,c);
+        else
+            thisWave = varargin{1};  % Only one wavelength, not a list yet
+            val = sceneGet(scene,'photons',thisWave);
+            [XW,r,c,w] = RGB2XWFormat(val); %#ok<NASGU>
+            val = Quanta2Energy(thisWave,XW);
+            val = XW2RGBFormat(val,r,c);
+        end
+
     case {'meanenergyspd'}  
         % sceneGet(scene,'mean energy spd')
         % mean spd in energy units
@@ -534,6 +548,10 @@ switch parm
     case {'illuminant'}
         % This is the whole illuminant structure.
         if checkfields(scene,'illuminant'), val = scene.illuminant; end
+    case {'illuminantname'}
+        % sceneGet(scene,'illuminant name')
+        il = sceneGet(scene,'illuminant');
+        val = illuminantGet(il,'name');
     case {'illuminantformat'}
         % sceneGet(scene,'illuminant format')
         % Returns: spectral, spatial spectral, or empty

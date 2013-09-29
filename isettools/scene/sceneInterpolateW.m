@@ -1,10 +1,17 @@
-function scene = sceneInterpolateW(scene,newWave,preserveLuminance)
+function scene = sceneInterpolateW(scene,newWave,pLum)
 %Wavelength interpolation for scene image data
 %
-%    scene = sceneInterpolateW(scene,[newWave],[preserveLuminance=1])
+%    scene = sceneInterpolateW(scene,[newWave],[pLum=1])
 %
 % Interpolate the wavelength dimension of a scene. By default, the
 % resampled scene has the same mean luminance as the original scene.
+%
+% scene:   Input scene
+% newWave: Wavelengths of the output scene (interpolated)
+% pLum:    Preserve the luminance (1, default) 
+%
+% We do not think you should be extrapolating.  We alert you if the newWave
+% is outside of the range of the current scene wavelengths.
 %
 % Examples:
 %   scene = sceneCreate;
@@ -20,23 +27,24 @@ function scene = sceneInterpolateW(scene,newWave,preserveLuminance)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-%%
-if ieNotDefined('preserveLuminance'), preserveLuminance = 1; end
+%% Initialize parameters
+if ieNotDefined('pLum'),  pLum = 1; end
 if ieNotDefined('scene'), scene = vcGetSelectedObject('scene');
 elseif ~strcmp(sceneGet(scene,'type'),'scene')
     errordlg('sceneInterpolationW structure not a scene!');
 end
 
-handles = ieSessionGet('sceneimagehandle');
+% Check whether or not to show wait bar
+showBar = ieSessionGet('wait bar');
 
-%% Note the current scene properties
+% Note the current scene properties
 row   = sceneGet(scene,'row');
 col   = sceneGet(scene,'col');
 curWave = sceneGet(scene,'wave');
 
-% If the user didn't send in new wavelengths, we ask.  This is used in the
-% GUI.
+% If the user didn't send in new wavelengths, we ask.
 if ieNotDefined('newWave')
+    handles = ieSessionGet('scene image handle');
     prompt={'Start (nm)','Stop (nm)','Spacing (nm)'};
     def={num2str(curWave(1)),num2str(curWave(end)),num2str(sceneGet(scene,'binwidth'))};
     dlgTitle='Wavelength resampling';
@@ -51,49 +59,71 @@ if ieNotDefined('newWave')
         ieInWindowMessage('Bad wavelength ordering:  high < low. Data unchanged.',handles,5);
         return;
     end
+    newWave = waveSpectrum.wave;
 else
     waveSpectrum.wave = newWave;
 end
 
-
-%% Start by getting current data and parameters
-photons = sceneGet(scene,'photons');
-if ~isempty(photons), 
-    meanL   = sceneGet(scene,'meanluminance'); 
+if logical(min(newWave) < min(curWave)) ||  logical(max(newWave) > max(curWave))
+    error('Wavelength extrapolation not allowed.  Only interpolation');
 end
+
+%% Get current data and parameters
+photons = sceneGet(scene,'photons');
+if ~isempty(photons) && pLum
+    meanL   = sceneGet(scene,'mean luminance'); 
+end
+
 il = sceneGet(scene,'illuminant');
 if ~isempty(il)
-    illuminantPhotons = sceneGet(scene,'illuminantPhotons');
+    illuminantPhotons = sceneGet(scene,'illuminant photons');
 end
 
 % Clear the current data before replacing.  This saves memory.
 scene = sceneSet(scene,'spectrum',waveSpectrum);
 scene = sceneClearData(scene);
 
-% ****
-% There is extrapolation below that can be a problem.  Not sure what we
-% should do.  We set an extrapval that is very small compared to the true
-% data, but not zero.  Zero causes problems with divisions that are hard to
-% deal with.
-% ****
-% We do this to be able to do a 1D interpolation. It is fast ... 2d is
-% slow.  The RGB2XW format puts the photons in columns by wavelength. The
-% interp1 interpolates across wavelength
-
 %% Interpolate the photons to the new wavelength sampling
+if showBar, h = waitbar(0,'Resampling wavelengths'); end
 if ~isempty(photons)
-    photons    = RGB2XWFormat(photons)';
+    
+    r = size(photons,1); c = size(photons,2); w = size(photons,3);
     
     % Here is the extrapval problem
-    newPhotons = interp1(curWave,photons,waveSpectrum.wave,...
-        'linear',min(photons(:))*1e-3)';
-    newPhotons = XW2RGBFormat(newPhotons,row,col);
-    scene = sceneSet(scene,'compressedphotons',newPhotons);
+    if showBar, waitbar(0.3,h,'Interpolating'); end
+    
+    % Not sure how big we should allow this to be
+    if r*c*w < (640*640*31)
+        % This is wavelength x space, rather than XW as usual
+        photons    = RGB2XWFormat(photons)';     
+        newPhotons = interp1(curWave,photons,waveSpectrum.wave, 'linear')';
+        % Replaced 2013.09.29 for speed
+        % newPhotons = interp1(curWave,photons,...
+        %      waveSpectrum.wave, 'linear',min(photons(:))*1e-3)';
+        newPhotons = XW2RGBFormat(newPhotons,row,col);
+    else
+        % Big data set condition, so we loop down the rows
+        newPhotons = zeros(r,c,length(waveSpectrum.wave));
+        for rr=1:r
+            % Get a row
+            pRow = squeeze(photons(rr,:,:))';
+            % Interpolate all the columns in that row and put it in its place
+            newPhotons(rr,:,:) = interp1(curWave(:),pRow,...
+                waveSpectrum.wave(:),'linear')';
+            % Replaced 2013.09.29 for speed
+            %   newPhotons(rr,:,:) = interp1(curWave(:),pRow,...
+            %        waveSpectrum.wave(:),'linear',min(photons(:))*1e-3)';
+        end
+    end
+    
+    if showBar, waitbar(0.7,h,'Compressing and storing'); end
+    scene = sceneSet(scene,'compressed photons',newPhotons);
     
     % Calculate and store the scene luminance
-    scene = sceneSet(scene,'luminance',sceneCalculateLuminance(scene));
+    % scene = sceneSet(scene,'luminance',sceneCalculateLuminance(scene));
 
 end
+if showBar, close(h); end
 
 %% Now create the new illuminant.  This over-writes the earlier one.
 if ~isempty(il)
@@ -118,13 +148,8 @@ end
 % luminance (stored in meanL) despite the resampling. In some cases, such
 % as extracting a monochrome scene, we might not want to preserve the mean
 % luminance.
-if preserveLuminance && ~isempty(photons)
-    %Lansel added the following if statement.  This was giving an error
-    %when doing the following basic call.
-    %   thisScene = sceneFromFile('StuffedAnimals_tungsten-hdrs','multispectral');
-%     if exist('meanL','var')
-        scene = sceneAdjustLuminance(scene,meanL);
-%     end
+if pLum && ~isempty(photons)
+    scene = sceneAdjustLuminance(scene,meanL);
 end
 
 

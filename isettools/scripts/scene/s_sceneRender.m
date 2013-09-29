@@ -1,6 +1,6 @@
 %% s_sceneRender
 % 
-% Read in a multispextral scene and render it under different lights.
+% Read in a multispectral scene and render it under different lights.
 %
 % D50.mat, D55.mat, D65.mat, D75.mat
 % In the first part of this script, we use an arbitrary method for
