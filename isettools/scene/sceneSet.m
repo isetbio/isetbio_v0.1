@@ -249,12 +249,19 @@ switch parm
         %     case {'binwidth','wavelengthspacing'}
         %         scene.spectrum.binwidth = val;
     case {'wave','wavelength','wavelengthnanometers'}
-        % We should probably check that val is a proper set of wavelength
-        % values that make sense ... unique, evenly spaced, stuff like
-        % that.
+        % scene = sceneSet(scene,'wave',wave);
+        % If there are data, we interpolate the data as well as setting the
+        % wavelength.
+        % If there are no data, we just set the wavelength.
 
-        % We need to deal with data, spectrum, and illuminant
-        scene = sceneInterpolateW(scene,val);
+        if ~checkfields(scene,'data','photons') || isempty(scene.data.photons)
+            % No data, so just set the spectrum
+            scene.spectrum.wave = val;
+        else
+            % Because there are data present, we must interpolate the
+            % photon data
+            scene = sceneInterpolateW(scene,val);
+        end
         
         % Scene illumination information
     case {'illuminant'}

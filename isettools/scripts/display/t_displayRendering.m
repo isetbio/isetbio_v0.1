@@ -48,7 +48,7 @@ macbethImage = reshape(1:24,4,6);
 
 % For now, load in the D65 illuminant and call it the lgt.
 
-lgt = ieReadSpectra('d65',wave);
+lgt = ieReadSpectra('D65',wave);
 
 % Load data for a default monitor and the XYZ functions
 % 

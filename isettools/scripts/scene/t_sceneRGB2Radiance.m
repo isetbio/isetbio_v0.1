@@ -15,47 +15,47 @@ s_initISET;
 %% Create scene from file
 %  Init data file path
 imgFileName = 'macbeth.tif';
-dispBVMFile = 'OLED-SonyBVM.mat';
-dispPVMFile = 'OLED-SonyPVM.mat';
+dispOLEDFile = 'OLED-Sony.mat';
+dispLCDFile = 'LCD-Apple.mat';
+dispCRTFile = 'CRT-Dell.mat';
 
 %  Check existence
 if ~exist(imgFileName,'file'), error('Image file not found'); end
-if ~exist(dispBVMFile,'file'), error('BVM Display file not found.'); end
-if ~exist(dispPVMFile,'file'), error('PVM Display file not found.'); end
+if ~exist(dispOLEDFile,'file'), error('OLED Display file not found.'); end
+if ~exist(dispLCDFile,'file'), error('LCDDisplay file not found.'); end
+if ~exist(dispCRTFile,'file'), error('CRTDisplay file not found.'); end
 
 %%  Create scene from file
-% Scene on BVM.
+% Scene on OLED
 % The illuminant is set to be the white point of the monitor
-sceneB = sceneFromFile(imgFileName,'rgb',[],dispBVMFile);
-sceneB = sceneSet(sceneB,'name','Scene on BVM');
-vcAddAndSelectObject(sceneB); sceneWindow;
+sceneA = sceneFromFile(imgFileName,'rgb',[],dispOLEDFile);
+sceneA = sceneSet(sceneA,'name','Scene on OLED');
+vcAddAndSelectObject(sceneA); sceneWindow;
 
-%%  Scene on PVM
-sceneP = sceneFromFile(imgFileName,'rgb',[],dispBVMFile);
-sceneP = sceneSet(sceneP,'name','Scene on PVM');
-vcAddAndSelectObject('scene',sceneP); sceneWindow;
+%%  Scene on LCD
+sceneB = sceneFromFile(imgFileName,'rgb',[],dispLCDFile);
+sceneB = sceneSet(sceneB,'name','Scene on LCD');
+vcAddAndSelectObject('scene',sceneB); sceneWindow;
 
 %%  Scene on CRT
-sceneC = sceneFromFile(imgFileName,'rgb',[],'CRT-Dell');
-sceneC = sceneSet(sceneC,'name','Scene on CRT-Dell');
-vcAddAndSelectObject('scene',sceneC); sceneWindow;
-
-%%  Scene on other CRT
-sceneC = sceneFromFile(imgFileName,'rgb',[],'crt');
-sceneC = sceneSet(sceneC,'name','Scene on crt');
+sceneC = sceneFromFile(imgFileName,'rgb',[],dispCRTFile);
+sceneC = sceneSet(sceneC,'name','Scene on CRT');
 vcAddAndSelectObject('scene',sceneC); sceneWindow;
 
 %% Compare the three images
-imageMultiview('scene', 1:4, true);
+imageMultiview('scene', 1:3, true);
 
 %% Compare the gamuts of the three monitors
-d = displayCreate('CRT-Dell');
+d = displayCreate(dispOLEDFile);
 displayPlot(d,'gamut');
-title('Dell CRT')
+title('OLED')
 
-d = displayCreate('OLED-SonyBVM');
+d = displayCreate(dispLCDFile);
 displayPlot(d,'gamut');
-title('Sony OLED (BVM)')
+title('LCD')
 
+d = displayCreate(dispCRTFile);
+displayPlot(d,'gamut');
+title('CRT')
 
 %% End

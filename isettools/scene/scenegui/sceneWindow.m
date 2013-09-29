@@ -20,7 +20,7 @@ function varargout = sceneWindow(varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-% Last Modified by GUIDE v2.5 02-Sep-2013 18:14:34
+% Last Modified by GUIDE v2.5 28-Sep-2013 23:13:35
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -514,6 +514,21 @@ function menuLuminance_Callback(hObject, eventdata, handles)
 scene = vcGetObject('scene');
 plotScene(scene,'luminance roi');
 return;
+
+
+% --------------------------------------------------------------------
+function menuAnIlluminantCCT_Callback(hObject, eventdata, handles)
+% Analyze | Illuminant CCT
+
+scene = vcGetObject('scene');
+wave = sceneGet(scene,'wave');
+spd = sceneGet(scene,'illuminant energy');
+
+% This size makes the title visible
+str = sprintf('       ---------  Correlated color temp %.0f  ---------',spd2cct(wave,spd));
+msgbox(str,'Illuminant');
+
+return
 
 % --------------------------------------------------------------------
 function menuPlotCIE_Callback(hObject, eventdata, handles)
@@ -1174,4 +1189,5 @@ function menuHelpProgGuide_Callback(hObject, eventdata, handles)
 % Help | Iset Programmers (online)
 ieManualViewer('manual');
 return
+
 

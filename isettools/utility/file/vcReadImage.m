@@ -12,7 +12,14 @@ function [photons, illuminant, basis, comment, mcCOEF] = vcReadImage(fullname,im
 % determine the type from the file name.  If that fails, the user is
 % queried.
 %
-%  'rgb','unispectral','monochrome': In this case, varargin{1} can be a
+% INPUTS
+%  fullname:  Either a file name or possible RGB data read from a file
+%             An empty input filename produces a return, with no error
+%             message, to work smoothly with canceling vcSelectImage.
+%
+%  imageType: The type of input data.  There are two general types
+%
+%   'rgb','unispectral','monochrome': In this case, varargin{1} can be a
 %     file name to a display (displayCreate) structure.  In that case, the
 %     data in the RGB or other format are returned as photons estimated by
 %     putting the data into the display framebuffer.
@@ -27,8 +34,12 @@ function [photons, illuminant, basis, comment, mcCOEF] = vcReadImage(fullname,im
 %     the scene illuminant (usually measured using a PhotoResearch PR-650
 %     spectral radiometer) can be returned.
 %
-%  An empty input filename produces a return, with no error message, to
-%  work smoothly with canceling vcSelectImage.
+% RETURNS
+%  photons:     RGB format of photon data (r,c,w)
+%  illuminant:  An illuminant structure
+%  basis:       Structure containing basis functions for multispectral SPD
+%  comment:
+%  mcCOEF:      Coefficients for basis functions for multispectral SPD
 %
 % Examples:
 %  photons = vcReadImage;
@@ -63,8 +74,9 @@ switch lower(imageType)
         end
         
         % Read the image data and convert them to double
-        inImg = imread(fullname);
-        inImg = double(inImg);
+        if ischar(fullname), inImg = double(imread(fullname));
+        else                 inImg = double(fullname);
+        end
         
         % If the data are 2 or 3 dimensions, then we have a unispectral or
         % an RGB image.

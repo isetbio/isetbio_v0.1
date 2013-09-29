@@ -8,7 +8,13 @@ s_sensorPhotonsPerPixel
 s_sensorSNR
 s_sensorAnalyzeDarkVoltage
 s_sensorSpectralEstimation
-s_sensorExposureCFA
-s_sensorExposureBracket
+
+if exist('s_sensorExposureCFA','file')
+    s_sensorExposureCFA
+end
+
+if exist('s_sensorExposureBracket','file')
+    s_sensorExposureBracket
+end
 
 %% End

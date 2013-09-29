@@ -1,4 +1,4 @@
-%% s_changeIlluminant
+%% s_sceneChangeIlluminant
 %
 % Illustrate how to  adjust the illuminant of the current scene, simulating
 % a change in the spectral power distribution.

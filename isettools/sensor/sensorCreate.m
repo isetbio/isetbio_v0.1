@@ -150,10 +150,9 @@ switch sensorName
         else % Should read it here, NYI
             error('No filter file specified')
         end
-        if length(varargin) >= 3
-            if isempty(varargin{3}),  sensorSize = size(filterPattern);
-            else                      sensorSize = varargin{3};
-            end
+        if length(varargin) <= 3 || isempty(varargin{3})
+             sensorSize = size(filterPattern);
+        else sensorSize = varargin{3};
         end
         if length(varargin) == 4, wave = varargin{4}; 
         else wave = 400:10:700;

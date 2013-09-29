@@ -26,7 +26,7 @@ function varargout = sensorImageWindow(varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-% Last Modified by GUIDE v2.5 01-Jul-2011 16:33:32
+% Last Modified by GUIDE v2.5 26-Sep-2013 20:00:39
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1470,7 +1470,7 @@ function menuAnColCCM_Callback(hObject, eventdata, handles)
 sensor = vcGetObject('sensor');
 [L,corners] = sensorCCM(sensor); %#ok<ASGLU>
 
-fprintf('    ==  Conversion matrix  ==\n');
+fprintf('    ==  MCC to XYZ_D65 matrix  ==\n');
 disp(L)
 
 % Store the selection of the corners
@@ -1828,4 +1828,6 @@ if ~isequal(size(eTimes),mSize)
 end
 
 return;
+
+
 
