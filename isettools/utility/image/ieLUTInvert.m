@@ -31,6 +31,6 @@ nbits = log2(length(y));
 m = 2^nbits - 1;
 
 iY = (0:(1/resolution):m)/(2^nbits);
-lut = interp1(y,x,iY,'cubic',m);
+lut = interp1(y(:),x(:),iY(:),'cubic',m);
 
 end
