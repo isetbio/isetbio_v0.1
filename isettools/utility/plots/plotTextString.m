@@ -1,9 +1,7 @@
-function t = plotTextString(str,position,delta)
+function t = plotTextString(str,position,delta,fontSize)
 %
-%   t = plotTextString(str,position,[delta=0.2])
+%   t = plotTextString(str,[position='ur'],[delta=0.2],[fontSize=12])
 %
-% Author: ImagEval
-% Purpose:
 %   Place a text string on a 2D graph in one of several canonical positions.
 %   The background of the text is set to white to make the text visible
 %   even if the grid is turned on
@@ -16,6 +14,8 @@ function t = plotTextString(str,position,delta)
 % Example:
 %  txt = 'Hello World';
 %  t = plotTextString(txt,'ul');
+%
+% Copyright Imageval Consulting, LLC 2006
 
 % Programming notes:  Positions aren't right.  Fix.
 % We need to account for the scale type when setting these positions.  Not
@@ -23,7 +23,9 @@ function t = plotTextString(str,position,delta)
 % length, too.  At the very least, we could count the number of letters to
 % set the value of delta.
 
+if ieNotDefined('position'), position = 'ur'; end
 if ieNotDefined('delta'), delta = [0.2,0.2]; end
+if ieNotDefined('fontSize'), fontSize = 12; end
 
 xlim = get(gca,'xlim');
 ylim = get(gca,'ylim');
@@ -50,6 +52,6 @@ end
 
 % Display
 t = text(x, y, str);
-set(t,'Background','w','Fontsize',8);
+set(t,'Background','w','Fontsize',fontSize);
 
 return;

@@ -20,6 +20,7 @@ if ieNotDefined('clearDataFlag'), clearDataFlag = 0;   end
 if ieNotDefined('fullName'),    fullName = []; end
 
 objType = obj.type;
+objType = vcEquivalentObjtype(objType);
 
 switch(lower(objType))     
     case {'scene','opticalimage','isa','vcimage'}

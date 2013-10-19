@@ -1,16 +1,15 @@
-function fullpathName = sensorSaveImage(isa,fullName,dataType,gam,scaleMax);
+function fullpathName = sensorSaveImage(isa,fullName,dataType,gam,scaleMax)
 %
 %  fullpathName = sensorSaveImage(isa,fullName,dataType,gam,scaleMax);
 %
-% Author: ImagEval
-% Purpose:
-%   Save out an RGB image of the sensor image as a tiff file.  If the name
-%   is not passed in, then the user is queried to select the fullpath name
-%   of the output file.
+% Save out an RGB image of the sensor image as a tiff file.  If the name
+% is not passed in, then the user is queried to select the fullpath name
+% of the output file.
 % 
 %Example:
 %  sensorSaveImage(isa,fullpathname);
 %
+% See also: sensorData2Image, sensorGet(sensor,'rgb')
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 

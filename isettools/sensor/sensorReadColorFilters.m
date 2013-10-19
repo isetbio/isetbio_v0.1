@@ -25,9 +25,9 @@ switch lower(filterFile)
         filterNames = {'w'};
         return;
     case 'cym'
-        fname = fullfile(isetRootPath,'data','sensor','cym.mat');
+        fname = fullfile(isetRootPath,'data','sensor','colorfilters','cym.mat');
     case {'grbc'}
-        fname = fullfile(isetRootPath,'data','sensor','GRBC.mat');
+        fname = fullfile(isetRootPath,'data','sensor','colorfilters','GRBC.mat');
     case 'stockmanabs'
         fname = fullfile(isetRootPath,'data','human','stockman.mat');
     case 'mousecolorfilters.mat'

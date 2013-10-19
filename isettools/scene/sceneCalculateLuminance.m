@@ -15,7 +15,9 @@ function [luminance,meanLuminance] = sceneCalculateLuminance(scene)
 if ieNotDefined('scene'), error('Scene variable required.'); end
 
 % User may turn on the wait bar, or not, with ieSessionSet('wait bar')
-showBar = ieSessionGet('wait bar');
+% showBar = ieSessionGet('wait bar');
+% But, for now we decided this is.
+showBar = 0;
 
 nCols    = sceneGet(scene,'cols');
 nRows    = sceneGet(scene,'rows');

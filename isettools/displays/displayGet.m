@@ -8,10 +8,10 @@ function val = displayGet(d,parm,varargin)
 %     {'name'} - Which specific display
 %
 % Transduction
-%     {'gamma table'}
-%     {'dacsize'}
-%     {'nlevels'}
-%     {'levels'}
+%     {'gamma table'}  - Nlevels x Nprimaries
+%     {'dacsize'}      - Number of bits (log2(nSamples))
+%     {'nlevels'}      - Number of levels
+%     {'levels'}       - List of levels
 %
 % SPD calculations
 %     {'wave'}                % Nanometers
@@ -48,9 +48,7 @@ function val = displayGet(d,parm,varargin)
 %
 % Copyright ImagEval 2011
 
-% TODO:  This routine should be integrated with the ctToolBox structures.
-% That will be a big project.
-
+%% Check parameters
 if ieNotDefined('parm'), error('Parameter not found.');  end
 
 % Default is empty when the parameter is not yet defined.
@@ -58,16 +56,19 @@ val = [];
 
 parm = ieParamFormat(parm);
 
+%% Do the analysis
 switch parm
     case {'name'}
         val = d.name;
     case {'type'}
         % Type should always be 'display'
         val = d.type;
-    case {'dv2intensity','gamma','gammatable'}
+    case {'gtable','dv2intensity','gamma','gammatable'}
         if checkfields(d,'gamma'), val = d.gamma; end
     case {'bits','dacsize'}
         % 8 bit, 10 bit, and so forth
+        % This should probably be log2(nlevels) and removed from the
+        % structure.
         val = d.bits;
     case {'nlevels'}
         % Number of levels

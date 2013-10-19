@@ -40,6 +40,10 @@ function varExplained = sceneToFile(fname,scene,bType,mType)
 %
 % (c) Imageval Consulting, LLC 2013
 
+% TODO:
+%   Add depth image as potential output
+
+
 if ieNotDefined('fname'), error('Need output file name for now'); end
 if ieNotDefined('scene'), error('scene structure required'); end
 if ieNotDefined('bType'), bType = [];  end  % See hcBasis

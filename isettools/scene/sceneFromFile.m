@@ -82,7 +82,11 @@ switch lower(imageType)
         
         % Match the display wavelength and the scene wavelength
         scene = sceneCreate('rgb');
-        d     = displayCreate(dispCal);
+        if ischar(dispCal), d = displayCreate(dispCal);
+        elseif isstruct(dispCal) && isequal(dispCal.type,'display'), 
+            d = dispCal; 
+        end
+        
         wave  = displayGet(d,'wave');
         scene = sceneSet(scene,'wave',wave);
 

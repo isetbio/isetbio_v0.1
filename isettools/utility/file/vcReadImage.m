@@ -2,7 +2,8 @@ function [photons, illuminant, basis, comment, mcCOEF] = vcReadImage(fullname,im
 % Read image monochrome, rgb, or multispectral data, return multispectral
 % photons
 %
-%   [photons, illuminant, basis, comment, mcCOEF ] = vcReadImage(fullname,imageType,varargin)
+%   [photons, illuminant, basis, comment, mcCOEF ] = ...
+%             vcReadImage(fullname,imageType,varargin)
 %
 % The image data in fullname are converted into photons.  The other
 % parameters can be returned if needed.  This routine is called pretty much
@@ -19,10 +20,12 @@ function [photons, illuminant, basis, comment, mcCOEF] = vcReadImage(fullname,im
 %
 %  imageType: The type of input data.  There are two general types
 %
-%   'rgb','unispectral','monochrome': In this case, varargin{1} can be a
-%     file name to a display (displayCreate) structure.  In that case, the
-%     data in the RGB or other format are returned as photons estimated by
-%     putting the data into the display framebuffer.
+%   'rgb','unispectral','monochrome': 
+%     In this case, varargin{1} can be either 
+%       * file name to a display (displayCreate) structure
+%       * the display structure itself.
+%     In that case, the data in the RGB or other format are returned as
+%     photons estimated by putting the data into the display framebuffer.
 %
 %     If there is no display calibration file, we arrange the values so
 %     that the display code returns the same RGB values as in the original
@@ -42,18 +45,8 @@ function [photons, illuminant, basis, comment, mcCOEF] = vcReadImage(fullname,im
 %  mcCOEF:      Coefficients for basis functions for multispectral SPD
 %
 % Examples:
-%  photons = vcReadImage;
-%  
-%  photons = vcReadImage(vcSelectImage,'monochrome');
 %
-%  fName = fullfile(isetRootPath,'data','images','rgb','eagle.jpg');
-%  photons = vcReadImage(fName,'rgb');
-%
-%  %  fName = fullfile(isetRootPath,'data','images','rgb','eagle.jpg');
-%  photons = vcReadImage(fName,'rgb','OLED-SonyBVM.mat');
-%
-%  photons = vcReadImage(imageNameFullPath,'hyperspectral');
-%  photons = vcReadImage(imageNameFullPath,'multispectral');
+%   See v_displayLUT.m for example calls.
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
@@ -111,12 +104,16 @@ switch lower(imageType)
                 photons = xwImg*pinv(colorBlockMatrix(31));
                 
             else
-                % The user sent a display calibration file. Go get it and
-                % interpret the data with respect to that display.
+                % The user sent a display calibration file. If the user
+                % sent a string, read the file.  If the user sent in the
+                % display structure, set it.
+                if ischar(dispCal)
+                    d = displayCreate(dispCal);
+                elseif isstruct(dispCal) && isequal(dispCal.type,'display')
+                    d = dispCal;
+                end
                 
-                % Create a display structure using the file the user
-                % specified
-                d      = displayCreate(dispCal);
+                % Get the parameters from the display
                 wave   = displayGet(d,'wave');  % Primary wavelengths
                 spd    = displayGet(d,'spd');   % Primary SPD in energy
                 gTable = displayGet(d,'gamma table');
@@ -140,6 +137,8 @@ switch lower(imageType)
                     end
                 end
                 
+                % Convert the DAC values to linear intensities for the
+                % channels.
                 inImg  = ieLUTDigital(inImg,gTable);
                 [xwImg,r,c] = RGB2XWFormat(inImg);
                 

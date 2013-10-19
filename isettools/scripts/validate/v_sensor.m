@@ -17,5 +17,4 @@ if exist('s_sensorExposureBracket','file')
     s_sensorExposureBracket
 end
 
-
 %% End

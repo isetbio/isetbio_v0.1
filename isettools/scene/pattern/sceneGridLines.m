@@ -40,7 +40,8 @@ d(d==0) = 1e-4;
 
 switch lower(spectralType)
     case {'d65'}
-        ieReadSpectra
+        spd = ieReadSpectra('D65',wave);
+        illPhotons = Energy2Quanta(wave,spd);
         % spect = Energy2Quanta(wave,illPhotons);
     case {'ee','equalenergy'}
         illPhotons = Energy2Quanta(wave,ones(nWave,1));

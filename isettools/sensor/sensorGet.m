@@ -187,6 +187,8 @@ function val = sensorGet(sensor,param,varargin)
 %     {'mcc rect handles'}  - Handles for the rectangle selections in an MCC
 %     {'mcc corner points'} - Corner points for the MCC chart
 %
+%     {'rgb'}               - Display image in sensorImageWindow
+%
 % See also:  sensorSet
 %
 % Copyright ImagEval Consultants, LLC, 2005.
@@ -838,6 +840,17 @@ switch param
     case {'mccpointlocs','mcccornerpoints'}
         % Corner points for the whole MCC chart
         if checkfields(sensor,'mccCornerPoints'), val = sensor.mccCornerPoints; end
+
+        % Display image
+    case {'rgb'}
+        % sensorGet(sensor,'rgb',dataType,gam,scaleMax)
+        dataType = 'volts';
+        gam = 1;
+        scaleMax = 0;
+        if ~isempty(varargin), dataType = varargin{1}; end
+        if length(varargin) > 1, gam = varargin{2}; end
+        if length(varargin) > 2, scaleMax = varargin{3}; end
+        val = sensorData2Image(sensor,dataType,gam,scaleMax);
 
         % Human cone case
     case {'human'}

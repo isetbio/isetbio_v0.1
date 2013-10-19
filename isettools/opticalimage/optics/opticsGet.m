@@ -47,16 +47,23 @@ function val = opticsGet(optics,parm,varargin)
 %  below and above zero.
 %
 % Example:
+%   oi = oiCreate; optics = oiGet(oi,'optics'); 
+%   oi = oiSet(oi,'wave',400:10:700);
+%
 %   NA = opticsGet(optics,'na');   % Numerical aperture
 %   rt = opticsGet(optics,'ray Trace');
 %   psf = opticsGet(optics,'rtPSF',500);     % Shift-variant ray trace
-%   psf = opticsGet(optics,'psf Data',400);   % Shift invariant data
-%   otf = opticsGet(optics,'otf data',450);   % MTF
-%         mesh(fftshift(abs(otf)));
+%   psf = opticsGet(optics,'psf Data',600);  % Shift invariant data
+%   vcNewGraphWin; mesh(sSupport(:,:,1),sSupport(:,:,2),psf);
+%
+%   otf = opticsGet(optics,'otf data',oi, 'mm',450); 
+%   vcNewGraphWin; mesh(fftshift(abs(otf)));
+%         
+%   otfAll = opticsGet(optics,'otf data',oi);
 %
 % This OTF support does not work for ray trace optics (yet).
-%   otfSupport = opticsGet(optics,'otfSupport','mm');  % Cycles/mm
-%      mesh(otfSupport{1},otfSupport{2},fftshift(abs(otf)))
+%   otfSupport = oiGet(oi,'fsupport','mm');  % Cycles/mm
+%   vcNewGraphWin; mesh(otfSupport(:,:,1),otfSupport(:,:,2),fftshift(abs(otf)))
 %
 % Optics parameters
 %
@@ -159,10 +166,12 @@ function val = opticsGet(optics,parm,varargin)
 % We should probably just store them in meters properly inside of
 % rtImportData.
 %
+% The OTF support functions are in bad shape.  Fix.
+%
 val = [];
 
 if ~exist('optics','var') || isempty(optics),  error('No optics specified.'); end
-if ~exist('parm','var') || isempty(parm),  error('No parameter specified.'); end
+if ~exist('parm','var')   || isempty(parm),    error('No parameter specified.'); end
 
 % We return different parameters depending on whether the user has a
 % shift-invariant lens model (e.g., diffraction-limited) or a general ray
@@ -445,7 +454,7 @@ switch parm
 
     case {'otf','otfdata','opticaltransferfunction'}
         % You can ask for a particular wavelength with the syntax
-        %    opticsGet(optics,'otfData',wave)
+        %    opticsGet(optics,'otfData',oi, spatialUnits, wave)
         %
         % OTF values can be complex. They are related to the PSF data by
         %    OTF(:,:,wave) = fft2(psf(:,:,wave))
@@ -455,28 +464,45 @@ switch parm
         % We are having some issues on this point for shift-invariant and
         % diffraction limited models.  Apparently there is a problem with
         % fftshift???
-
+       
         opticsModel = opticsGet(optics,'model');
+        thisWave = [];
         switch lower(opticsModel)
             case 'diffractionlimited'
-                % This must be opticsGet(optics,'otfData',oi,fSupport)
-                % fSupport = oiGet(oi,'fSupport','mm');
-                oi = varargin{1};
-                fSupport = varargin{2};   % 'cycles/mm'
+                % For diffraction limited case, the call must be 
+                % otf = opticsGet(optics,'otf data',oi, fSupport, [wave]);
+                units = 'mm';
+                if isempty(varargin)
+                    error('format is ... oi, spatialUnits,wave');
+                else oi = varargin{1};
+                end
+                
+                if length(varargin) > 1, units = varargin{2};
+                end
+                if length(varargin) > 2, thisWave = varargin{3}; end
+                
+                fSupport = oiGet(oi,'fSupport',units);   % 'cycles/mm'
                 wavelength = oiGet(oi,'wave');
                 OTF = dlMTF(oi,fSupport,wavelength,'millimeters');
+
             case 'shiftinvariant'
-                if checkfields(optics,'OTF','OTF'), OTF = optics.OTF.OTF;
-                else OTF = [];
+                % opticsGet(optics,'otf data',[wave]);
+                if checkfields(optics,'OTF','OTF')
+                    OTF = optics.OTF.OTF;
+                    if ~isempty(varargin), thisWave = varargin{1}; end
+                else OTF = []; 
                 end
+                
             case 'raytrace'
+                error('opticsGet(optics,''OTF'') not supported for ray trace');
+                
             otherwise
                 error('OTFData not implemented for %s model',opticsModel);
         end
 
         % Wavelength is asked for
-        if ~isempty(varargin)
-            [idx1,idx2] = ieWave2Index(opticsGet(optics,'otfWave'),varargin{1});
+        if ~isempty(thisWave)
+            [idx1,idx2] = ieWave2Index(opticsGet(optics,'otfWave'),thisWave);
             if idx1 == idx2
                 val = OTF(:,:,idx1);
             else

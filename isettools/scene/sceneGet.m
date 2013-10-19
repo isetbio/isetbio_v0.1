@@ -366,7 +366,8 @@ switch parm
         lum = sceneGet(scene,'luminance');
         val = mean(lum(:));
         
-    case {'luminance','lum'}
+    case {'luminanceimage','luminance'}
+        % sceneGet(scene,'luminance image');
         if ~checkfields(scene,'data','luminance') || isempty(scene.data.luminance)
             val = sceneCalculateLuminance(scene);
         else
