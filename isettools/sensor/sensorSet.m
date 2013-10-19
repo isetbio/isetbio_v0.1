@@ -425,7 +425,7 @@ switch lower(param)
         % Structure containing information about human cone case
         % Only applies when the name field has the string 'human' in it.
         sensor.human = val;
-    case {'humancone type','conetype'}
+    case {'humanconetype','conetype'}
         % Blank (K) K=1 and L,M,S cone at each position
         % L=2, M=3 or S=4 (K means none)
         % Some number of cone types as cone positions.

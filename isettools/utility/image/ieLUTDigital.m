@@ -4,24 +4,28 @@ function RGB = ieLUTDigital(DAC, gTable)
 %   RGB = ieLUTDigital(DAC, gTable)
 %
 % The DAC values are digital values with a bit depth that is determined by
-% the device.
+% the device.  We assume that the smallest DAC value is 0 and the largest
+% value is 2^nbits - 1.
 %
 % Definitions:
 %  * The gamma table maps the digital values to the display intensity.
 %  * The inverse gamma table maps the display intensity to the digital
 %  values.
 %
-%  We expect a gTable to have size 2^nBits x 3.  If it has size 2^nBits x
-%  1, we assume the three channels are the same.  In this application, we
-%  expect that the gTable is the gamma table.
+%  A gTable normally has size 2^nBits x 3, a table for each channel 
+%
+%  If it has size 2^nBits x 1, we assume the three channels are the same.
 %
 %  If the gTable is a single number, we raise the data to the power gTable.
 %
-%  We store the gamma table in display calibration files.  We invert a
-%  typical gTable using ieLUTinvert.
+%  The gamma table is normally stored in the display calibration files.
 %
-% The returned RGB values are in the range of [0,1].  They are supposed to
-% be linear with respect to radiance (intensity).
+%  For this routine, the returned RGB values are in the range of [0,1].
+%  They are linear with respect to radiance (intensity) of the display
+%  primaries.
+%
+%  We invert a typical gTable, which maps from linear intensity to DAC
+%  value, using ieLUTinvert.
 %
 % See also:  ieLUTLinear, ieLUTInvert
 %

@@ -90,6 +90,8 @@ switch lower(species)
         % Set the cone pattern (full size)
         sensor = sensorSet(sensor,'pattern',coneType);
 
+        sensor = sensorSet(sensor,'human cone densities',densities);
+        
         % Adjust the spectra so that the first is black and the remaining three are
         % the Stockman fundamentals.
         switch lower(species)

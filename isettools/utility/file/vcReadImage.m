@@ -98,7 +98,7 @@ switch lower(imageType)
                 % photon values so that the scene window shows the same RGB
                 % values as in the original file.
                 %
-                fprintf('[%s]: Assuming RGB data are 8 bits.\n', mfilename);
+                fprintf('[%s]: Assuming RGB data are 8 bits.\nUsing block matrix primaries\n', mfilename);
                 [xwImg,r,c,w] = RGB2XWFormat(inImg/255);
                 
                 % Prevent DR > 10,000.  See ieCompressData.
@@ -121,12 +121,23 @@ switch lower(imageType)
                 spd    = displayGet(d,'spd');   % Primary SPD in energy
                 gTable = displayGet(d,'gamma table');
                 
-                % On this path, the images should be 8 bit. Check.  
-                if max(inImg(:)) > 256, error('Img is > 8 bits'); end
-                % if the LUT is for 10 bit, compress it down to 8 bit.
-                if size(gTable,1) > 256
-                    s = size(gTable,1); skip = s/256;
-                    gTable = gTable(1:skip:end,:);
+                % Check whether the gTable has enough entries for this
+                % image.
+                if max(inImg(:)) > size(gTable,1)
+                    error('Img exceeds gTable'); 
+                elseif max(inImg(:)) < 1
+                    % DAC values are [0, 2^nBits - 1]
+                    inImg = floor(inImg*size(gTable,1));
+                elseif max(inImg(:)) < 256
+                    % We believe this is an 8 bit image.  We check whether
+                    % the gTable is 8 or 10 or whatever.  If it is not 8
+                    % bit, then we stretch the image values out to span the
+                    % same range as the gTable.
+                    s = size(gTable,1);
+                    if s > 256,
+                        fprintf('[%s] Assuming 8 bit RGB image and %d-bit LUT\n',mfilename,log2(s));                       
+                        inImg = floor((inImg/256)*s);
+                    end
                 end
                 
                 inImg  = ieLUTDigital(inImg,gTable);

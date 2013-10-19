@@ -1,5 +1,5 @@
 function lut = ieLUTInvert(inLUT,resolution)
-% Invert a lookup table (lut) at a specified sampling resolution
+% Calculate an inverse lookup table (lut) at a specified sampling resolution
 %
 %    lut = ieLUTInvert(inLUT,resolution)
 %

@@ -9,7 +9,7 @@ function val = displayGet(d,parm,varargin)
 %
 % Transduction
 %     {'gamma table'}
-%     {'bits','dacsize'}
+%     {'dacsize'}
 %     {'nlevels'}
 %     {'levels'}
 %
