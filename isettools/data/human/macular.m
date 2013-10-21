@@ -1,19 +1,19 @@
 function t = macular(macDensity,wave)
-% Returns several measures of the macular pigment
+% Returns a structure containing several measures of the macular pigment
 %
 %     t = macular(macDensity,wave)
 %
-%  The human retina contains a pigment that covers the central (macular) region. 
-%  This macular pigment passes certain wavelengths of light more than
-%  others.  The pigment varies in density from central vision, where it is
-%  highest, to increasingly peripheral vision.
+% The human retina contains a pigment that covers the central (macular)
+% region. This macular pigment passes certain wavelengths of light more
+% than others.  The pigment varies in density from central vision, where it
+% is highest, to increasingly peripheral vision.
 %  
-%  This function returns several measures of the macular pigment wavelength
-%  properties as a function of macular pigment density (high in the fovea,
-%  lower in the near fovea).
+% This function returns several measures of the macular pigment wavelength
+% properties as a function of macular pigment density (high in the fovea,
+% lower in the near fovea).
 %
-% The returned structure, t, includes a variety of derived terms.
-% This should help to keep the relationship between entities straight.
+% The returned structure, t, includes a variety of derived terms. This
+% should help to keep the relationship between entities straight.
 %
 % macDensity is the estimated (average) peak density of the pigment across
 % a variety of observers.  They estimate the average (across observers)
@@ -24,12 +24,21 @@ function t = macular(macDensity,wave)
 % t.absorption:    The fraction of light absorbed by the pigment as a function of wavelength
 % t.transmittance: The fraction of light transmitted, i.e., 1 - t.absorption
 %
-%  The macular densities values were taken from the Stockman site.  Go to
-%  http://cvision.ucsd.edu, then click on Prereceptoral filters.
+% Useful formulae
 %
-%  The densities were derived by Sharpe and Stockman based on some data from Bone.
-%  The paper describing why they like these is in Vision Research; I
-%  have downloaded the paper to Vision Science/Reference PDF/cone sensitivities
+%   Absorbance spectra are normalized to a peak value of 1.
+%   Absorbtance spectra are the proportion of quanta actually absorbed.
+%   Equation: absorbtanceSpectra = 1 - 10.^(-OD * absorbanceSpectra)
+%
+% The original macular densities values were taken from the Stockman site.
+% Go to http://cvision.ucsd.edu, then click on Prereceptoral filters.  At
+% this point in time, I think the Psychtoolbox and the new Stockman site
+% are authoritative.
+%
+% The densities were derived by Sharpe and Stockman based on some data from
+% Bone. The paper describing why they like these is in Vision Research; I
+% have downloaded the paper to Vision Science/Reference PDF/cone
+% sensitivities
 %
 % Examples:
 %   t = macular(0.35);

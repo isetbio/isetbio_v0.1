@@ -102,7 +102,7 @@ for ii=1:length(wave)
     % models we look up the stored OTF.  Remember, DC is in the (1,1)
     % position.
     otf = oiCalculateOTF(oi,wave(ii),unit);
-    % figure(1); mesh(otf); otf(1,1)
+    % vcNewGraphWin; mesh(fftshift(otf)); otf(1,1)
     
     % Put the image center in (1,1) and take the transform.
     imgFFT = fft2(fftshift(img));
@@ -131,6 +131,7 @@ for ii=1:length(wave)
     % What about dmin and dmax on the 'cphotons' set.  Is that OK?
     % oi = oiSet(oi,'photons',filteredIMG,wave(ii));
     p(:,:,ii) = filteredIMG;
+    
 end
 
 % Put all the photons in at once.
