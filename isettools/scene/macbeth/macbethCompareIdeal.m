@@ -4,9 +4,9 @@ function [embRGB,mRGB,pSize] = macbethCompareIdeal(mRGB,pSize,illType)
 %   [embRGB,mRGB,pSize] = macbethCompareIdeal(mRGB,pSize,illType)
 %
 % mRGB:    Macbeth RGB values of the data in the vcimageWindow
-% pSize:   Patch size
-% illType: Illuminant name (e.g., 'd65'). See illuminantRead contains all
-%          the options
+% pSize:   Patch size for the embedded targets
+% illType: Illuminant name (e.g., 'd65'). See illuminantRead for all
+%          illuminant type options
 %
 % TODO: Need to be able to set illType parameter for color temperature
 %
@@ -34,17 +34,26 @@ if ieNotDefined('mRGB') || ieNotDefined('pSize')
 end
 if ieNotDefined('illType'), illType = 'd65'; end
 
-%% Calculate the lRGB values under this illuminant.
-ideal  = macbethIdealColor(illType,'lrgb');
+%% Calculate the lRGB values under this illuminant for an ideal MCC
+
+% The first returns a 24x3 matrix.  These are the linear rgb values for the
+% MCC assuming an sRGB display.
+ideal     = macbethIdealColor(illType,'lrgb');
+
+% We reshape into a mini-image 
 idealLRGB = XW2RGBFormat(ideal,4,6);
 
-%% Build an image that contains bigger patches of ideal values 
-% Patch size like the original data) with smaller inserts for the ideal.  
+% Now expand the iamge to a bigger size so we can insert the data we are
+% comparing.
 fullIdealRGB = imageIncreaseImageRGBSize(idealLRGB,pSize);
+
+%% Make the image with the data embedded
+
+% Start with the full RGB image rendered for an sRGB display.
 embRGB       = fullIdealRGB;   % imagesc(embRGB)
 
+% Embed the mRGB values into the ideal RGB images
 w = pSize + round(-pSize/3:0);
-% n = length(w);
 for ii=1:4
     l1 = (ii-1)*pSize + w;
     for jj=1:6
@@ -57,14 +66,25 @@ for ii=1:4
 end
 
 %% Display in graph window
+
+% At this point, both images are in linear RGB mode.  The ideal are linear
+% RGB for an sRGB display.  We don't know the display for the vcimage RGB
+% data, but the default is for the lcdExample display in the ISET
+% distribution which is close to an sRGB display. We should probably
+% convert the ISET mRGB data to the sRGB format, accounting for the current
+% display.
+
 figNum = vcNewGraphWin([],'wide');
 str = sprintf('%s: MCC %s',imageGet(vci,'name'),illType);
 set(figNum,'name',str);
 set(figNum,'Color',[1 1 1]*.7);
 
-subplot(1,2,1), imagesc(mRGB.^0.6), 
-axis image; axis off; title('Data')
-subplot(1,2,2), imagesc(embRGB.^0.6), 
-axis image; axis off; title('Data embedded in ideal')
+mRGB = lrgb2srgb(mRGB);
+subplot(1,2,1), imagesc(mRGB), 
+axis image; axis off; title('ISET MCC D65 simulation')
+
+embRGB = lrgb2srgb(embRGB);
+subplot(1,2,2), imagesc(embRGB), 
+axis image; axis off; title('Simulation embedded in an ideal MCC D65')
 
 end

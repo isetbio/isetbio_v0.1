@@ -36,7 +36,11 @@ if ieNotDefined('vci'),     vci = vcGetObject('vcimage'); end
 if ieNotDefined('illName'), illName = 'd65'; end
 
 % cornerPoints has the coordinates of the corners of the MCC. 
-if ieNotDefined('cornerPoints'), cornerPoints = []; end
+if ieNotDefined('cornerPoints')
+    cornerPoints = imageGet(vci,'mcc corner points');
+end
+
+
 % Either custom or sRGB calculation styles
 if ieNotDefined('method'), method = 'sRGB'; end
 
@@ -46,7 +50,7 @@ gSeries = 4:4:24;
 %% Retrieve ideal and image MCCdata LAB and XYZ values
 
 % These are Processor window XYZ values using the monitor model.  They are
-% computed using a model monitor with unit luminance at max (Y = 1 cd/m2).
+% computed using a model monitor with peak luminance of Y = 1 cd/m2.
 [macbethXYZ, whiteMacbethXYZ, cornerPoints] = vcimageMCCXYZ(vci,cornerPoints,method);
 vci = imageSet(vci,'mcc corner points',cornerPoints);
 

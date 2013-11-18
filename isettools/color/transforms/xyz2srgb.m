@@ -12,11 +12,17 @@ function [srgb,lrgb,maxY] = xyz2srgb(xyz)
 % a Sony Trinitron. The monitor white point is assumed to be D65.  The
 % white point chromaticity are (.3127,.3290), and for an sRGB display
 % (1,1,1) is assumed to map to XYZ = ( 0.9504    0.9999    1.0891).
+% The RGB primaries of an srgb display have xy coordinates of
+%    xy = [.64, .3; .33, .6; .15, .06]
 %
-%  sRGB values run from [0 1].  At Imageval this changed from the range [0
-%  255] on July 2010. This was based on the wikipedia entry and discussions
-%  with Brainard.  Prior calculations of delta E are not changed by this
-%  scale factor.
+% The overall gamma of an sRGB display is about 2.2, but this is because at
+% low levels the value is linear and at high levels the gamma is 2.4.  See
+% the wikipedia page for a discussion.
+%
+% sRGB values run from [0 1].  At Imageval this assumption changed from the
+% range [0 255] on July 2010. This was based on the wikipedia entry and
+% discussions with Brainard.  Prior calculations of delta E are not changed
+% by this scale factor.
 %
 % The linear srgb values (lRGB) can also be returned. These are the values
 % of the linear phosphor intensities, without any gamma or clipping
@@ -29,6 +35,8 @@ function [srgb,lrgb,maxY] = xyz2srgb(xyz)
 % See also:  colorTransformMatrix, lrgb2srgb, and imageLinearTransform.
 %
 % Copyright ImagEval Consultants, LLC, 2003.
+
+%% Notes
 
 % This xyz -> sRGB matrix is supposed to work for XYZ values scaled so that
 % the maximum Y value is around 1.  In the Wikipedia page, they write:
@@ -44,6 +52,7 @@ function [srgb,lrgb,maxY] = xyz2srgb(xyz)
 %    0.9505, 1.0000, 1.0890).
 %
 
+%%
 % The matrix converts (R,G,B)*matrix.  This is the transpose of the
 % Wikipedia page.
 matrix = colorTransformMatrix('xyz2srgb');

@@ -33,7 +33,7 @@ switch onoff
             otherwise
                 error('Unknown object type %s',obj.type);
         end
-        if isempty(cornerPoints), error('No point loc'); end
+        if isempty(cornerPoints), error('No mcc corner points'); end
         
         [mLocs, delta] = macbethRectangles(cornerPoints);
         

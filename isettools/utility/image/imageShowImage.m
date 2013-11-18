@@ -3,15 +3,20 @@ function imageShowImage(vci,gam,trueSizeFlag,figNum)
 %
 %  imageShowImage(vci, [gam],[trueSizeFlag],[figNum])
 %
-% The processor data are converted to sRGB for display, using the display
-% model in the vci.
+% The RGB processed data in the virtual camera image (vci) are assumed to
+% be linear RGB values.
 %
-% The images look a little better when they are rendered with gamma of 0.6.
-% Not sure why.
+% The processed RGB data are converted to sRGB.  The logic is that we have
+% a display model for these data.  That display is stored in the vci. We
+% convert the processed RGB data into XYZ values for that display.  We then
+% convert the XYZ values into sRGB values, which we show to the user in the
+% image processing window.
 %
 % Examples:
 %   imageShowImage(vci{3},1/2.2)
 %   imageShowImage(vci{3})
+%
+% See also:
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
@@ -39,8 +44,11 @@ elseif max(img(:)) > imageGet(vci,'dataMax')
     error('Image max %.2f exceeds data max: %.2f\n',max(img(:)),dMax);
 end
 
-% Get the xyz data from the image
-img = xyz2srgb(imageDataXYZ(vci));
+% Here is the key computational step.   We get the XYZ data from the vci.
+% This calculation assumes that the processed RGB values are linear and the
+% XYZ are calculated from the display primaries times these RGB.
+% We then convert the XYZ to sRGB values.  We show those in the window.
+img = imageGet(vci,'srgb');
 
 if ndims(img) == 2,       vciType = 'monochrome';
 elseif ndims(img) == 3, vciType = 'rgb';
@@ -54,9 +62,6 @@ switch vciType
         else imagesc(img);
         end
     case 'rgb'
-        % I am puzzled why we need a gamma when we convert to srgb.
-        % But the images do look better with a gamma of 0.6, which is
-        % how I set the default rendering.
         if imageGet(vci,'scaleDisplay')
             % Use imagescRGB to render the RGB image.
             %  Prior to display negative values imagescRGB clips

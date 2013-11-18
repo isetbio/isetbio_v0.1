@@ -38,9 +38,10 @@ analogOffset = 0.005;   % Analog offset (5 mv)
 % exposure, the PRNU level is irrelevant.  The read noise can matter.  If
 % it is very large, you must average over more trials.
 expTime = 0.001; 
-% We take the image multiple times so we can average out the read noise
+
+% We acquire the image multiple times so we can average out the read noise
 nRepeats = 25;
-meanL = 100;
+meanL    = 100;
 
 %% Make a black scene and a sensor
 scene = sceneCreate('uniformee');
@@ -72,16 +73,11 @@ clear volts
 nSamp = prod(sensorGet(sensor,'size'))/2;
 volts = zeros(nSamp,nRepeats);
 
-showBar = ieSessionGet('waitbar');
-if showBar, wBar  = waitbar(0,'Acquiring images'); end
 for ii=1:nRepeats
-    if showBar, waitbar(ii/nRepeats,wBar); end
     sensor = sensorCompute(sensor,darkOI,0);
     % The G pixels are in the rows.  Multiple reads across the columns.
     volts(:,ii) = sensorGet(sensor,'volts',2);
 end
-if showBar, close(wBar); end
-
 % vcAddAndSelectObject(sensor); sensorImageWindow;
 
 %% Estimate the standard deviation at each pixel.
@@ -93,7 +89,10 @@ pSTD = std(volts,[],2);
 vcNewGraphWin; 
 hist(pSTD,50)
 grid on;
-title('Pixel std to short, black, reads')
+
+title(sprintf('Variation in repeated reads (N=%d)',nRepeats))
+xlabel('Standard deviation (volts)')
+ylabel('Number of pixels')
 
 % Print it out for comparison
 fprintf('---------------------------\n')

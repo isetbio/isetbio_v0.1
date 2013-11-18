@@ -5,7 +5,7 @@
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
-s_pixelSizeSNRluxsec
-s_pixelSizeMTF
+s_metricsSNRPixelSizeLuxsec
+s_metricsMTFPixelSize
 
 %% End

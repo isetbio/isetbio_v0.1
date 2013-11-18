@@ -1,4 +1,4 @@
-%
+% Scratch file.  To be deleted some day.
 %
 % Load this from the PsychToolBox
 % load('den_lens_ssf');

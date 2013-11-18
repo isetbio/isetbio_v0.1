@@ -761,7 +761,7 @@ switch param
         % The assumption here is that the sensor is at the proper focal
         % distance for the scene.  If the scene is at infinity, then the
         % focal distance is the focal length.  But if the scene is close,
-        % then we 
+        % then we might correct.
         %
         if ~isempty(varargin), scene = varargin{1};
         else                   scene = vcGetObject('scene');
@@ -798,19 +798,39 @@ switch param
         height = sensorGet(sensor,'arrayheight');
         val = ieRad2deg(2*atan(0.5*height/distance));
     case {'hdegperpixel','degpersample','degreesperpixel'}
+        % degPerPixel = sensorGet(sensor,'h deg per pixel',oi);
         % Horizontal field of view divided by number of pixels
         sz =  sensorGet(sensor,'size');
-        val = sensorGet(sensor,'hfov')/sz(2);
+        
+        if isempty(varargin), oi = vcGetObject('oi');
+        else oi = varargin{1};
+        end
+        
+        % The horizontal field of view should incorporate information from
+        % the optics.
+        val = sensorGet(sensor,'hfov',oi)/sz(2);
     case {'vdegperpixel','vdegreesperpixel'}
         sz =  sensorGet(sensor,'size');
         val = sensorGet(sensor,'vfov')/sz(1);
     case {'hdegperdistance','degperdistance'}
         % sensorGet(sensor,'h deg per distance','mm')
+        % sensorGet(sensor,'h deg per distance','mm',scene,oi);
         % Degrees of visual angle per meter or other spatial unit
         if isempty(varargin), unit = 'm'; else unit = varargin{1}; end
         width = sensorGet(sensor,'width',unit);
-        fov =  sensorGet(sensor,'fov');
-        val = fov/width; 
+        
+        if length(varargin) < 2, scene = vcGetObject('scene');
+        else scene = varargin{2};
+        end
+        
+        % We want the optics to do this right.
+        if length(varargin) < 3, oi = vcGetObject('oi');
+        else oi = varargin{3};
+        end
+        
+        fov   =  sensorGet(sensor,'fov',scene, oi);
+        val   = fov/width;
+        
     case {'vdegperdistance'}
         % sensorGet(sensor,'v deg per distance','mm') Degrees of visual
         % angle per meter or other spatial unit

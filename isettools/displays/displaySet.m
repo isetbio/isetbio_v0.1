@@ -11,6 +11,7 @@ function d = displaySet(d,parm,val,varargin)
 %   spd
 %   dpi
 %   viewing distance
+%   comment
 %
 % Examples:
 %
@@ -62,6 +63,8 @@ switch parm
         d.dpi = val;
     case {'viewingdistance'}
         d.dist = val;
+    case {'comment'}
+        d.comment = val;
     otherwise
         error('Unknown parameter %s\n',parm);
 end

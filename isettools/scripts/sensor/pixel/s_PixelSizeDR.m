@@ -1,6 +1,6 @@
-%% s_PixelSizeDR
+%% s_pixelSizeDR
 % 
-%  Calculate pixel dynamic range assuming various technology properties
+% Calculate pixel dynamic range assuming various technology properties
 %
 % Pixel dynamic range is an important property that specifies the range of
 % illuminance levels that can be reliably measured by a pixel.
@@ -24,6 +24,7 @@
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
+%% Set up
 
 % You should set the parameters here according to your technology
 % properties.  Different types of pixel manufacturing processes produce
@@ -33,6 +34,8 @@ pixelSize =    [2 4 6 9 10]*1e-6;                 % Pixel size in meters
 readNoiseSD =  [5 4 3 2 1]*1e-3;                  % std dev in volts
 voltageSwing = [.7 1.2 1.5 2 3];                  % voltage swing
 darkVoltage  = [1 1 1 1 1]*1e-3;                  % Volts per sec
+
+%% Run
 
 % After setting your own parameters, run this code to see the dynamic range
 % of your pixel.
@@ -50,9 +53,9 @@ for ii=1:length(pixelSize)
     dr(ii) =  pixelDR(sensor);
 end
 
-% Plot the results
+%% Plot the results
 vcNewGraphWin; plot(pixelSize/1e-6,dr,'-o')
 xlabel('Size (um)'), ylabel('Dynamic range (db)')
 grid on
 
-% End of Script
+%% End of Script

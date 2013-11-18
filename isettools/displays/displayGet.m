@@ -27,6 +27,7 @@ function val = displayGet(d,parm,varargin)
 %     {'white xy'}
 %     {'white lms'}
 %     {'primaries xyz'}
+%     {'primaries xy'}
 %
 % Spatial parameters
 %     {'dpi'}                  % Dots per inch
@@ -176,7 +177,10 @@ switch parm
         spd  = displayGet(d,'spd primaries');
         wave = displayGet(d,'wave');
         val  = ieXYZFromEnergy(spd',wave);
-
+    case {'primariesxy'}
+        xyz = displayGet(d,'primaries xyz');
+        val = chromaticity(xyz);
+        
     case {'whitelms'}
         % displayGet(dsp,'white lms')
         rgb2lms = displayGet(d,'rgb2lms');        

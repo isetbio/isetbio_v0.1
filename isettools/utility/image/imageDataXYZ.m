@@ -3,16 +3,21 @@ function dataXYZ = imageDataXYZ(vci,roiLocs)
 %
 %    dataXYZ = imageDataXYZ(vci,[roiLocs])
 %
-% The linear primary data are contained in the result field.  If roiLocs
-% are passed in, the data are returned in XW format.  If roiLocs are not
-% passed in, the data are returned in RGB (r,c,w)-format .
+% The linear primary data are contained in the result field.  The XYZ are
+% computed by multiplying the monitor SPD (in energy) with these linear RGB
+% values of the display.
+%
+% Typically, the entire image is returned in RGB (r,c,w)-format .
+%
+% But, if roiLocs are passed in, the data are returned in XW format, with
+% one X position for each roiLoc.
 %
 % Example:
 %   [val,vci] = vcGetSelectedObject('VCIMAGE');
 %   xyzRGB = imageDataXYZ(vci);
 %      
 %   roiLocs = vcROISelect(vci);
-%   xyzXW = imageDataXYZ(vci,roiLocs);
+%   xyzXW   = imageDataXYZ(vci,roiLocs);
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 

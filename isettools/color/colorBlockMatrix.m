@@ -128,8 +128,7 @@ switch lower(wp)
         whiteSPD  = eePhotons/max(eePhotons);
     case 'd65'
         % Make D65 (1,1,1)
-        d65Energy = ieReadSpectra('D50.mat',wList);
-        d65Photons = Energy2Quanta(wList,d65Energy);
+        d65Photons = blackbody(wList,6500,'photons');
         whiteSPD = d65Photons/max(d65Photons);
     otherwise
         % ep (equal photon spd) goes here
