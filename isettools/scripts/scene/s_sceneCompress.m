@@ -8,22 +8,23 @@
 % Copyright ImagEval Consultants, LLC, 2012
 
 %% Read in the scene
-cd 'C:\Users\joyce\Desktop\Hyperspectral MCC\Faces\FacesCloseUp'
-load('CaucasianMale2.mat');
+fname = fullfile(isetRootPath,'data','images','multispectral','Feng_Office-hdrs');
+scene = sceneFromFile(fname,'multispectral');
+wave = sceneGet(scene,'wave');
 
 % Have a look at the image
 vcAddAndSelectObject(scene); sceneWindow;
 
 % Plot the illuminant
-plotScene(scene,'illuminant photons')
+plotScene(scene,'illuminant photons roi')
 
 %% compress the hypercube using a smaller set of spectral basis functions
-
-[imgMean, basis, coef] = hcBasis(double(scene.data.photons));
+photons = sceneGet(scene,'photons');
+[imgMean, basis, coef] = hcBasis(photons);
 
 %% save the data 
-comment = 'Caucausian Male 1 compressed using svd with imgMean)';
-illuminant.wavelength = scene.spectrum.wave;
+comment = 'Test scene from ISET';
+illuminant.wavelength = wave;
 illuminant.data = scene.illuminant.data;
 basis.basis = basis;
 basis.wavelength = scene.spectrum.wave;
@@ -34,7 +35,7 @@ ieSaveMultiSpectralImage('male_compressed',coef,basis,comment,imgMean,illuminant
 
 %% read in the data
 wList = [400:10:950];
-fullFileName = fullfile('C:\Users\joyce\Desktop\Hyperspectral MCC\Faces\FacesCloseUp\male_compressed.mat');
+fullFileName = fullfile(pwd,'male_compressed.mat');
 scene = sceneFromFile(fullFileName ,'multispectral',[],[],wList);
 
 %% End

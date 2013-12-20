@@ -40,6 +40,10 @@ function [udata, g] = plotScene(scene,pType,roiLocs,varargin)
 %     {'contrast vline'}          - Vertical line contrast
 %
 %    Illuminant
+%     {'illuminant photons'}      - Graph of spectral scene illuminant
+%                                   if spatial spectral passes to roi case
+%     {'illuminant energy'}       - Graph of spectral case, if spatial
+%                                   spectral passes to roi case
 %     {'illuminant energy roi'}   - Graph of scene illuminant energy
 %     {'illuminant photons roi'}  - Graph of scene illuminant photons
 %     {'illuminant image'}        - RGB image of space-varying illumination
@@ -592,7 +596,7 @@ switch lower(pType)
         % Illuminant - pure spectral case should go here
         % Could all go into plotSceneIlluminant 
     case {'illuminantenergyroi'}
-        % plotScene(scene,'illuminant energy')
+        % plotScene(scene,'illuminant energy roi')
         % Graph for spectral, image for spatial spectral
         handle = ieSessionGet('scenewindowhandle');
         ieInWindowMessage('',handle);       
@@ -620,8 +624,9 @@ switch lower(pType)
         udata.comment = sceneGet(scene,'illuminant comment');
         
     case {'illuminantphotonsroi'}
-        % plotScene(scene,'illuminant photons')
-        % Graph for spectral, image for spatial spectral
+        % plotScene(scene,'illuminant photons roi')
+        % This routine plots a graph for spectral, image for spatial
+        % spectral 
         handle = ieSessionGet('scenewindowhandle');
         ieInWindowMessage('',handle);
         wave = sceneGet(scene,'wave');
@@ -644,6 +649,59 @@ switch lower(pType)
         udata.wave = wave; udata.photons = photons;
         udata.comment = sceneGet(scene,'illuminant comment');
         
+    case {'illuminantphotons'}
+        % plotScene(scene,'illuminant photons')
+        % This routine is only applied to a single illuminant (spectral,
+        % not spatial) condition.  It passes on to illuminant photons roi
+        % if the illuminant is spatial-spectral
+
+        wave = sceneGet(scene,'wave');
+        switch sceneGet(scene,'illuminant format')
+            case 'spectral'
+                photons = sceneGet(scene,'illuminant photons');
+                
+                % Plot 'em up
+                plot(wave(:),photons,'-')
+                xlabel('Wavelength (nm)'); ylabel('Radiance (q/sec/sr/nm/m^2)');
+                grid on,  title('Illuminant data')
+                udata.wave = wave; udata.photons = photons;
+                udata.comment = sceneGet(scene,'illuminant comment');
+                
+            case 'spatial spectral'
+                % Spatial region of the illuminant
+                plotScene(scene,'illuminant photons roi');
+                return;
+            otherwise
+                ieInWindowMessage('No illuminant data.',handle);
+                close(gcf)
+        end
+        
+
+    case {'illuminantenergy'}
+        % plotScene(scene,'illuminant energy')
+        % This routine is only applied to a single illuminant (spectral,
+        % not spatial) condition.  It passes on to illuminant photons roi
+        % if the illuminant is spatial-spectral
+        wave = sceneGet(scene,'wave');
+        switch sceneGet(scene,'illuminant format')
+            case 'spectral'
+                energy = sceneGet(scene,'illuminant energy');
+                plot(wave(:),energy,'-')
+                xlabel('Wavelength (nm)');
+                ylabel('Energy (watts/sr/nm/m^2)');
+                grid on,  title('Illuminant data')
+                udata.wave = wave; udata.energy = energy;
+                udata.comment = sceneGet(scene,'illuminant comment');
+                
+            case 'spatial spectral'
+                % Spatial region of the illuminant
+                plotScene(scene,'illuminant energy roi');
+                return;
+            otherwise
+                ieInWindowMessage('No illuminant data.',handle);
+                close(gcf)
+        end
+        
         % Spatial spectral illumination cases
     case {'illuminantimage'}
         % plotScene(scene,'illuminant image')
@@ -664,6 +722,7 @@ switch lower(pType)
                 energy = repmat(energy(:)',prod(sz),1);
                 energy = XW2RGBFormat(energy,sz(1),sz(2));
             otherwise
+                % Do nothing.
         end
         
         % Create an RGB image
@@ -671,7 +730,7 @@ switch lower(pType)
         imagesc(sz(1),sz(2),udata.srgb);  grid on; axis off
         title('Illumination image')       
         
-        % Depth - COuld go into plotSceneDepth
+        % Depth - Could go into plotSceneDepth
     case {'depthmap'}
         %plotScene(scene,'depth map')
         dmap = sceneGet(scene,'depth map');

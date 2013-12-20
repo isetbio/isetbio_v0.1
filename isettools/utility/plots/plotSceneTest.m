@@ -38,4 +38,10 @@ roiRect = [6    51     8    12];
 uData = plotScene(scene,'reflectance',roiRect);
 plotScene(scene,'chromaticity',roiRect)
 
+%%
+plotScene(scene,'illuminant photons');
+
+%%
+plotScene(scene,'illuminant energy');
+
 %% End
