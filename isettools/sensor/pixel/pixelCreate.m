@@ -1,7 +1,7 @@
-function pixel = pixelCreate(pixelType,wave)
+function pixel = pixelCreate(pixelType,wave,pixelSizeM)
 %Create a pixel data structure
 %
-%  pixel = pixelCreate(pixelType,[wave])
+%  pixel = pixelCreate(pixelType,[wave],[pixelSizeM])
 %
 % The pixel structure describes the pixel parameters.  
 %
@@ -11,17 +11,18 @@ function pixel = pixelCreate(pixelType,wave)
 %
 % At present, we create these default pixel types:
 %
-%    {'aps'}  ('default'), a 2.8 um active pixel sensor
-%    {'humanCone'}
-%    {'mouseCone'}
-% 
+%    'aps','default', a 2.8 um active pixel sensor
+%    'humanCone'
+%    'mouseCone'
+%    'ideal'  - 100% fill factor, 1.5 micron, see below for the rest
+%
 % See also: sensorCreate, pixelSet, pixelGet
 %
 % Examples
 %  pixel = pixelCreate('aps')
 %  pixel = pixelCreate('aps',400:1:700)
 %  pixel = pixelCreate('human')
-%  pixel = pixelCreate('mouse',(365:550))
+%  pixel = pixelCreate('ideal',400:5:700,1e-6);
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
@@ -30,8 +31,25 @@ if ieNotDefined('wave')
     wave = (400:10:700); 
     wave = wave(:); 
 end
+if ieNotDefined('pixelSizeM'), pixelSizeM = 2.8e-6; end
 
+pixelType = ieParamFormat(pixelType);
 switch lower(pixelType)
+    case 'ideal'
+        % Create structure with default parameters
+        pixel = pixelAPSInit();
+
+        % Set up perfect parameters
+        pixel = pixelSet(pixel,'readNoiseVolts',0);
+        pixel = pixelSet(pixel,'darkVoltage',0);
+        pixel = pixelSet(pixel,'height',pixelSizeM);
+        pixel = pixelSet(pixel,'width',pixelSizeM);
+        pixel = pixelSet(pixel,'pdwidth',pixelSizeM);
+        pixel = pixelSet(pixel,'pdheight',pixelSizeM);
+        pixel = pixelPositionPD(pixel,'center');
+        pixel = pixelSet(pixel,'darkVoltage',0);
+        pixel = pixelSet(pixel,'voltage swing',1e6);
+        
     case 'default'
         pixel = pixelAPSInit();
     case 'aps'
@@ -45,8 +63,9 @@ switch lower(pixelType)
 end
 
 % Initialize with flat photodetector spectral QE
-pixel  = pixelSet(pixel,'wave',wave);
+pixel = pixelSet(pixel,'wave',wave);
 pixel = pixelSet(pixel,'pd Spectral QE',ones(size(wave)));
+% pixel = pixelSet(pixel,'size constant fill factor',pixelSizeM);
 
 return;
 

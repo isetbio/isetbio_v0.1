@@ -64,11 +64,14 @@ switch param
     case {'height','pixelheight'}   %M
         pixel.height = val;
     case {'size','widthheight','widthandheight'} %M
-        if length(val) < 2, error('Requires width and height.'); end
+        % pixelSet(pixe,'size')
+        % The fill factor changes, because pd is not change.
+        if length(val) == 1, val(2) = val(1); end
         pixel = pixelSet(pixel,'width',val(1));
         pixel = pixelSet(pixel,'height',val(2));
+        disp('Fill factor may have changed');
     case {'sizeconstantfillfactor','sizekeepfillfactor','sizesamefillfactor'}
-        % pixelSet(pixel,'sizeConstantFillFactor',newSize);
+        % pixelSet(pixel,'size ConstantFillFactor',newSize);
         % If newSize is a single number, we assume the user meant the
         % height and width were both this size.
         if length(val) < 2, val(2) = val(1); end

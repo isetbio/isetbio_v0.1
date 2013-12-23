@@ -1,5 +1,5 @@
 function mpd = dpi2mperdot(dpi,unit)
-% Convert dots per inch microns per dot
+% Convert dots per inch to meters format
 %
 %    mpd = dpi2mperdot(dpi,[unit])
 %

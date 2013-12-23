@@ -16,7 +16,8 @@ function [sOBJECT,val] = vcGetObject(objType,val)
 %  pixel = vcGetObject('PIXEL')
 %  vci   = vcGetObject('VCIMAGE')
 %  vci   = vcGetObject('IMGPROC')
-%  oi   = vcGetObject('OI')
+%  oi    = vcGetObject('OI')
+%  optics = vcGetObject('optics');
 %
 %  If you need the val, you can still use
 %
@@ -26,9 +27,13 @@ function [sOBJECT,val] = vcGetObject(objType,val)
 
 global vcSESSION
 
-objType = vcEquivalentObjtype(objType);
-if ieNotDefined('val'), val = vcGetSelectedObject(objType); end
+% For speed
+if ~exist('objType','var') || isempty(objType), error('objType must be defined'); end
+if ~exist('val','var') || isempty(val), val = vcGetSelectedObject(objType); end
 
+objType = vcEquivalentObjtype(objType);
+
+%%
 if ~isempty(val)
     switch(lower(objType))
         case {'scene','isa','opticalimage','vcimage'}
@@ -43,6 +48,7 @@ if ~isempty(val)
             error('Unknown object type.');
     end
 else
+    % No val.  Return empty.
     sOBJECT = [];
 end
 

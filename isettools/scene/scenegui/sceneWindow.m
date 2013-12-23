@@ -53,7 +53,9 @@ else sceneRefresh(hObject, eventdata, handles);
 end
 
 % Initialize gamma. There are other initialization steps in sceneOpen
-set(handles.editGamma,'String',num2str(1));
+% Deleted Dec. 2013.  Doesn't seem to be needed and interferes with
+% sceneSet(scene,'gamma',val)
+% set(handles.editGamma,'String',num2str(1));
 
 return
 

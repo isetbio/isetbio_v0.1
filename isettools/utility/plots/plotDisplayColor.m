@@ -1,5 +1,5 @@
-function plotDisplayColor(vci,dataType)
-%Gateway plotting routine for processor window color analysis
+function plotDisplayColor(ip,dataType)
+%Gateway routine for plotting image processor window color analysis
 %
 %  plotDisplayColor(vci,dataType)
 %
@@ -31,19 +31,26 @@ function plotDisplayColor(vci,dataType)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('vci'); [val,vci] = vcGetSelectedObject('VCIMAGE'); end
+% TODO:  Restructure using a new routine, plotIP
+%
+
+%% Variables
+if ieNotDefined('vci');      ip = vcGetObject('vcimage'); end
 if ieNotDefined('dataType'), dataType = 'rgb'; end
 
+%% Select the RGB data from the ROI
 handles = ieSessionGet('vcimagehandle');
 ieInWindowMessage('Select image region of interest.',handles,[]);
-roiLocs = vcROISelect(vci);
-RGB = vcGetROIData(vci,roiLocs,'result');
+roiLocs = vcROISelect(ip);
+RGB     = vcGetROIData(ip,roiLocs,'result');
 ieInWindowMessage('',handles,[]);
 
-maxRGB = imageGet(vci,'rgbmax');
+%%
+% maxRGB = imageGet(vci,'rgbmax');
 
-figNum =  vcSelectFigure('GRAPHWIN');
-plotSetUpWindow(figNum);
+% Always open up a new window?
+figNum =  vcNewGraphWin;
+
 switch lower(dataType)
     case {'rgb'}
         colorlist = {'r','g','b'};
@@ -63,7 +70,7 @@ switch lower(dataType)
         udata.RGB = RGB;
 
     case {'xy','chromaticity'}
-        dataXYZ = imageRGB2XYZ(vci,RGB);
+        dataXYZ = imageRGB2XYZ(ip,RGB);
         xy = chromaticity(dataXYZ);
         
         plotSpectrumLocus(figNum); hold on;
@@ -83,7 +90,7 @@ switch lower(dataType)
         
     case 'luminance'
         
-        dataXYZ = imageRGB2XYZ(vci,RGB);
+        dataXYZ = imageRGB2XYZ(ip,RGB);
         luminance = dataXYZ(:,2);
         
         hist(luminance(:)); grid on;
@@ -99,12 +106,13 @@ switch lower(dataType)
         udata.stdLum = stdL;
         
     case 'cielab'
-        dataXYZ = imageRGB2XYZ(vci,RGB);                % XYZ, Y in cd/m2
-        whitepnt = imageGet(vci,'dataorDisplayWhitePoint');
+        % Needs updating
+        dataXYZ  = imageGet(ip,'roi xyz',roiLocs);
+        whitepnt = imageGet(ip,'data or Display WhitePoint');
         dataLAB = xyz2lab(dataXYZ,whitepnt);
         plot3(dataLAB(:,2), dataLAB(:,3),dataLAB(:,1), 'o');
         set(gca,'xlim',[-50 50],'ylim',[-50 50],'zlim',[0,100]);
-        grid on
+        grid on; axis square
         
         xlabel('a*'); ylabel('b*'); zlabel('L*');
         title('CIELAB values of selected region');
@@ -115,11 +123,11 @@ switch lower(dataType)
         udata = dataLAB;
         
     case 'cieluv'
-        dataXYZ = imageRGB2XYZ(vci,RGB);
-        whitepnt = imageGet(vci,'dataorDisplayWhitePoint');
+        dataXYZ  = imageGet(ip,'roi xyz',roiLocs);
+        whitepnt = imageGet(ip,'data or Display WhitePoint');
         dataLUV = xyz2luv(dataXYZ,whitepnt);
         plot3(dataLUV(:,2), dataLUV(:,3),dataLUV(:,1),'o');
-        grid on;
+        grid on; axis square
         set(gca,'xlim',[-100 100],'ylim',[-100 100],'zlim',[0,100]);
 
         xlabel('u*'); ylabel('v*'); zlabel('L*');

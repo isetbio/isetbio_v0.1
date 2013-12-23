@@ -32,25 +32,25 @@ function [val,sOBJECT] = vcGetSelectedObject(objType)
 
 global vcSESSION
 
-val = [];
+objType = vcEquivalentObjtype(objType);
 
-if strcmpi(objType,'oi'), objType = 'OPTICALIMAGE'; end
-objType = upper(objType);
-
-if ieNotDefined('val')
-    switch lower(objType)
-        case 'scene'
-            if checkfields(vcSESSION,'SELECTED','SCENE'), val = vcSESSION.SELECTED.SCENE;  end
-        case {'opticalimage','optics','oi'}
-            if checkfields(vcSESSION,'SELECTED','OPTICALIMAGE'), val = vcSESSION.SELECTED.OPTICALIMAGE;  end
-        case {'isa','pixel','sensor'}
-            if checkfields(vcSESSION,'SELECTED','ISA'), val = vcSESSION.SELECTED.ISA;  end
-        case {'vcimage','imgproc','display'}
-            if checkfields(vcSESSION,'SELECTED','VCIMAGE'), val = vcSESSION.SELECTED.VCIMAGE;  end
-        otherwise,
-            error('Unknown object type.');
-    end
+switch lower(objType)
+    case 'scene'
+        if checkfields(vcSESSION,'SELECTED','SCENE'), val = vcSESSION.SELECTED.SCENE;  end
+    case {'opticalimage','oi'}
+        if checkfields(vcSESSION,'SELECTED','OPTICALIMAGE'), val = vcSESSION.SELECTED.OPTICALIMAGE;  end
+    case {'optics'}
+        if checkfields(vcSESSION,'SELECTED','OPTICALIMAGE'), val = vcSESSION.SELECTED.OPTICALIMAGE;  end
+    case {'isa','sensor'}
+        if checkfields(vcSESSION,'SELECTED','ISA'), val = vcSESSION.SELECTED.ISA;  end
+    case {'vcimage','ip','imgproc'}
+        if checkfields(vcSESSION,'SELECTED','VCIMAGE'), val = vcSESSION.SELECTED.VCIMAGE;  end
+    case {'pixel'}
+        if checkfields(vcSESSION,'SELECTED','ISA'), val = vcSESSION.SELECTED.ISA;  end
+    otherwise,
+        error('Unknown object type.');
 end
+
 
 if nargout == 2
     sOBJECT = vcGetObject(objType,val);

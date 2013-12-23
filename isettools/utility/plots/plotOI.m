@@ -3,13 +3,11 @@ function [udata, g] = plotOI(oi,pType,roiLocs,varargin)
 %
 %   [udata, g] = plotOI([oi],[pType='illuminance hline'],[xy],[wave])
 %
-% This plots the irradiance or illuminance data in the optical image.
-% Mainly these are plotted as a function of spatial position or spatial
-% frequency.  There are options for plotting in wavebands, in small regions
-% of interest, and so forth.
+% Gateway routine to plot the irradiance or illuminance data in the
+% optical image. There are many options.
 %
-% The plotted data are generally returned in udata, and the figure handle
-% is in g. Hence, get(g,'userdata') returns udata.
+% The data shown in the plot are generally returned in udata.  The data can
+% also be retrieved from the figure, using get(figHandle,'userdata');
 %
 % Inputs are the optical image (oi), the plot type (pType), in some cases a
 % position or ROI locations is required (xy) and in some cases other
@@ -21,10 +19,12 @@ function [udata, g] = plotOI(oi,pType,roiLocs,varargin)
 %    Irradiance
 %     {'irradiance photons roi'} - Irradiance within an ROI of the image
 %     {'irradiance energy roi'}  - Irradiance within an ROI of the image
-%     {'irradiance vline'}     - Horizontal line radiance plot (space x wavelength)
-%     {'irradiance hline'}     - Vertical line irradiance (space x wavelength)
-%     {'irradiance fft'}       - 2D FFT of radiance at some wavelength
-%     {'irradiance image with grid'}  - Show spatial grid on irradiance image
+%     {'irradiance vline'}  - Horizontal line spectral irradiance (photons) 
+%                            (space x wavelength)
+%     {'irradiance hline'}  - Vertical line spectral irradiance (photons) 
+%                            (space x wavelength)
+%     {'irradiance fft'}    - 2D FFT of radiance at some wavelength
+%     {'irradiance image with grid'} - Show spatial grid on irradiance image
 %     {'irradiance image wave grid'} - Irradiance image within a band
 %
 %    Illuminance
@@ -60,13 +60,7 @@ function [udata, g] = plotOI(oi,pType,roiLocs,varargin)
 %         3*incoherent cutoff). Number of spatial samples to plot in the
 %         line spread can be set (default: 40).
 %
-% See also:  plotScene.
-%
-%  Programming note: This function includes within it the previous
-%  functions plotOTF and plotOIIrradiance. Those have been deprecated.  We
-%  should write a script that tests all the different plotting calls for
-%  this function and for plotScene.  We should create a plotSensor function
-%  that is analogous.
+% See also:  plotOITest, and plotScene
 %
 % Examples:
 %   oi = vcGetObject('oi');
@@ -89,6 +83,12 @@ function [udata, g] = plotOI(oi,pType,roiLocs,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
+%% Programming note
+%  This function includes within it the previous functions plotOTF and
+%  plotOIIrradiance. Those have been deprecated.  We should write a script
+%  that tests all the different plotting calls for this function and for
+%  plotScene.  We should create a plotSensor function that is analogous.
+
 if ieNotDefined('oi'), oi = vcGetObject('OI'); end
 if ieNotDefined('pType'), pType = 'hlineilluminance'; end
 
@@ -100,11 +100,9 @@ if ieNotDefined('roiLocs')
     switch pType
         case {  'irradiancevline','vline','vlineirradiance', ...
                 'irradiancehline','hline','hlineirradiance' , ...
-                'irradiancefft','fft','fftirradiance', ...
                 'illuminancehline','horizontallineilluminance','hlineilluminance', ...
-                'illuminanceffthline', ...
+                'illuminanceffthline', 'illuminancefftvline',...
                 'illuminancevline','vlineilluminance', ...
-                'illuminancefftvline', ...
                 'contrasthline','hlinecontrast', ...
                 'contrastvline','vlinecontrast'}
             roiLocs = vcLineSelect(oi);
@@ -192,16 +190,25 @@ switch pType
         udata.wave = wave; udata.pos = posMicrons.y; udata.data = double(data');
         set(g,'Name',sprintf('Line %.0f',roiLocs(1)));
         
-    case {'irradiancefft','fft','fftirradiance'}
-        % plot(oi,'irradiance fft')
+    case {'irradiancefft'}
+        % plot(oi,'irradiance fft',roiLocs,wave)
+        % This is the fft of the region at the selected wavelength.
+        %
+        % Default: roiLocs - whole image, roiLocs not tested adequately.
+        %          wave    - middle wavelength
+        %
         % The mean is not included in the graph to help with the dynamic
-        % range.%
-        % Spatial frequency amplitude at a single wavelength.
+        % range.
         % Axis range could be better.
         
-        % Apparently, this is always the fft at a middle wavelength
-        wave = oiGet(oi,'wave');
-        selectedWave = wave(round(length(wave)/2));
+        if isempty(varargin)
+            wave = oiGet(oi,'wave');
+            selectedWave = wave(round(length(wave)/2));
+        else
+            selectedWave = varargin{1};
+        end
+        
+        
         data = oiGet(oi,'photons',selectedWave);
         if isempty(data), warndlg(sprintf('Photon data are unavailable.')); return; end
         
@@ -215,7 +222,7 @@ switch pType
         udata.x = 1:sz(2); udata.y = 1:sz(1); udata.z = fftshift(abs(fft2(data)));
         udata.cmd = 'mesh(x,y,z)';
         mesh(udata.x,udata.y,udata.z);
-        xlabel('Cycles/image'); ylabel('Cycles/image'); zlabel('Amplitude');
+        xlabel('Cycles/ROI-image'); ylabel('Cycles/ROI-image'); zlabel('Amplitude');
         str = sprintf('Amplitude spectrum at %.0f nm', selectedWave);
         title(str);
         set(g,'Name',sprintf('Irradiance with grid'));

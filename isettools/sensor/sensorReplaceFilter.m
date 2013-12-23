@@ -2,15 +2,14 @@ function isa = sensorReplaceFilter(isa,whichFilter,newFilterFile)
 %
 %   isa = sensorReplaceFilter(isa,[whichFilter],[newFilterFile])
 %
-% Author: ImagEval
-% Purpose:
-%    Replace a color filter in the isa color filter list.  The data
-%    are read from a file.
+% Replace a color filter in the isa color filter list.  The data
+% are read from a file.
 %
 % Examples:
 %    [val,isa] = vcGetSelectedObject('ISA');
 %    isa = sensorReplaceFilter(isa);
 %
+% Copyright Imageval, LLC 2002
 
 if ieNotDefined('isa'), [val,isa] = vcGetSelectedObject('ISA'); end
 if ieNotDefined('newFilterFile'), newFilterFile = []; end

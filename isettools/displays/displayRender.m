@@ -68,7 +68,7 @@ end
 % image value to the ratio of the maximum value in this sensor
 % image divided by the sensor's maximum possible value.
 imgMax = max(img(:));
-img = (img/imgMax)*sensorGet(sensor,'responseRatio');
+img = (img/imgMax)*sensorGet(sensor,'response ratio');
 
 % figure; imagescRGB(vci.data.result);
 

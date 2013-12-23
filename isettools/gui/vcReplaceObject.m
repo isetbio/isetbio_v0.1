@@ -6,15 +6,15 @@ function vcReplaceObject(obj,val)
 % Replace an existing object, either a SCENE,VCIMAGE,OPTICS, PIXEL,
 % OPTICALIMAGE, or ISA, in the vcSESSION global variable.
 %
-% val is  the number of the object to be replaced.  If val is not
-% specified, then the currently selected object is replaced. 
+% obj:  The object
+% val:  The number of the object to be replaced.  If val is not
+%       specified, then the currently selected object is replaced. 
 %
 % When  replacing OPTICS or PIXEL the val refers to the OPTICALIMAGE or
 % SENSOR that contain the OPTICS or PIXEL.
 %
-% The object that is replaced is not necessarily selected as the current
-% object.  To replace and select, use vcReplaceAndSelectObject, or
-% vcSetSelectedObject. 
+% The object that is replaced (or its parent) are then set to be the
+% selected object.
 %
 % Examples:
 %   vcReplaceObject(oi,3);
@@ -23,25 +23,16 @@ function vcReplaceObject(obj,val)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-% Programming TODO
-% Rather than make the assignments here, we should probably add this to
-% ieSessionSet. as in 
-%     ieSessionSet('scene',scene,val); or
-%     ieSessionSet('oi',oi,3);
-%
-% Right now, ieSession doesn't support these assignments.  Sigh.
-
+%%
 global vcSESSION;
 
 objType = vcGetObjectType(obj);
 objType = vcEquivalentObjtype(objType);
 
-% We select the object, too, if there were no previous objects
-selectToo = 0;
-
+%%
 if ieNotDefined('val')
     val = vcGetSelectedObject(objType); 
-    if isempty(val),  val = 1;  selectToo = 1; end
+    if isempty(val),  val = 1; end
 end
 
 % Should be handled by ieSessionSet 
@@ -62,7 +53,6 @@ switch lower(objType)
         error('Unknown object type');
 end
 
-if selectToo, vcSetSelectedObject(objType,val); end
-
+vcSetSelectedObject(objType,val)
 
 return;

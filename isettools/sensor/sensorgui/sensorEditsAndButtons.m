@@ -1,55 +1,55 @@
-function sensorEditsAndButtons(handles,ISA)
+function sensorEditsAndButtons(handles,sensor)
 %Update the sensor image window interface
 %
-%   sensorEditsAndButtons(handles,[ISA])
+%   sensorEditsAndButtons(handles,[sensor])
 %
 % Update the sensor image window contents with data using data in the
-% currently selected ISA (image sensor array) or another one that is passed
+% currently selected sensor (image sensor array) or another one that is passed
 % in. Called regularly by sensorImageWindow.
 %
 % Copyright ImagEval Consultants, LLC, 2003.
-if ieNotDefined('ISA'), [val,ISA] = vcGetSelectedObject('ISA'); end
-figure(vcSelectFigure('ISA'));
+if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
+figure(vcSelectFigure('sensor'));
 ieInWindowMessage('',ieSessionGet('sensorwindowhandles'));
   
-% Sensor (ISA) properties
-str = sprintf('%.0f',sensorGet(ISA,'rows')); set(handles.editISARows,'string',str);
-str = sprintf('%.0f',sensorGet(ISA,'cols')); set(handles.editISAcols,'string',str);
+% Sensor (sensor) properties
+str = sprintf('%.0f',sensorGet(sensor,'rows')); set(handles.editISARows,'string',str);
+str = sprintf('%.0f',sensorGet(sensor,'cols')); set(handles.editISAcols,'string',str);
 
-t = sensorGet(ISA,'geometricMeanExposureTime');  % In seconds
+t = sensorGet(sensor,'geometricMeanExposureTime');  % In seconds
 u = log10(t);
 if u >= 0, 
-    str = sprintf('%.2f',sensorGet(ISA,'geometricMeanExposureTime')); 
+    str = sprintf('%.2f',sensorGet(sensor,'geometricMeanExposureTime')); 
     set(handles.txtExposureUnits,'string','(sec)');
 elseif u >= -3, 
-    str = sprintf('%.2f',sensorGet(ISA,'geometricMeanExposureTime')*10^3); 
+    str = sprintf('%.2f',sensorGet(sensor,'geometricMeanExposureTime')*10^3); 
     set(handles.txtExposureUnits,'string','(ms)');
 else 
-    str = sprintf('%.2f',sensorGet(ISA,'geometricMeanExposureTime')*10^6); 
+    str = sprintf('%.2f',sensorGet(sensor,'geometricMeanExposureTime')*10^6); 
     set(handles.txtExposureUnits,'string','(us)');
 end
 set(handles.editExpTime,'string',str);
 
 % Set the slider in the case of bracketed exposures.
-nExposures = sensorGet(ISA,'nExposures');
+nExposures = sensorGet(sensor,'nExposures');
 if nExposures > 1
     set(handles.sliderSelectBracketedExposure,'max',nExposures);
-    set(handles.sliderSelectBracketedExposure,'value',sensorGet(ISA,'Exposure Plane'));
+    set(handles.sliderSelectBracketedExposure,'value',sensorGet(sensor,'Exposure Plane'));
     if nExposures > 1, ss = 1/(nExposures-1);
     else               ss = 0; end
     set(handles.sliderSelectBracketedExposure,'sliderStep',[ss ss]);
 end
 
 
-str = sprintf('%3.1f',sensorGet(ISA,'gain'));    
+str = sprintf('%3.1f',sensorGet(sensor,'gain'));    
 set(handles.editGainFPN,'string',str);
 
 % The offset is stored in volts.  It is displayed in millivolts.
-str = sprintf('%3.1f',sensorGet(ISA,'offset')*1000);  
+str = sprintf('%3.1f',sensorGet(sensor,'offset')*1000);  
 set(handles.editOffsetFPN,'string',str);
 
 % Pixel properties
-PIXEL = sensorGet(ISA,'pixel');
+PIXEL = sensorGet(sensor,'pixel');
 
 %  Dark Voltage displayed in millivolts
 str = sprintf('%2.1f',pixelGet(PIXEL,'darkvolt')*10^3);   %
@@ -63,32 +63,8 @@ str = sprintf('%2.2f',pixelGet(PIXEL,'voltageswing'));
 set(handles.editVoltageSwing,'string',str);
 
 % Header strings
-set(handles.txtISADescription,'string',sensorDescription(ISA));
+set(handles.txtISADescription,'string',sensorDescription(sensor));
 set(handles.txtPixelDescription,'string',pixelDescription(PIXEL));
-
-% % Decide whether or not to display the popup menu for custom sensorCompute.
-% if get(handles.btnCustomCompute,'Value')
-%     set(handles.popCustomCompute,'Visible','on');
-% 
-%     % Make sure the popup points to the currently selected method
-%     contents = get(handles.popCustomCompute,'String');
-%     method = sensorGet(ISA,'sensorCompute');
-%     if isempty(method), method = 'sensorCompute'; end
-%     for ii=1:length(contents)
-%         if strcmp(method,contents{ii})
-%             set(handles.popCustomCompute,'Value',ii);
-%             break;
-%         end
-%     end
-%     
-%     % Write a routine that hides all of the unwanted (irrelevant) pulldowns
-%     % in the sensor window.  The inverse of this routine should be in the
-%     % else part, turning them all back on.
-% else
-%     set(handles.popCustomCompute,'Visible','off');
-%     % Turn on all the popups and so forth
-% end
-
 
 % If the incoming call set consistency true, then we eliminate the red
 % square on the window.  Otherwise, consistency is false.  We always set it
@@ -105,7 +81,7 @@ set(handles.txtPixelDescription,'string',pixelDescription(PIXEL));
 % special value, say -1, into the consistency field and when we see we know
 % that the callback is through a mechanism that didn't hurt the sensor
 % data.
-c = sensorGet(ISA,'consistency');
+c = sensorGet(sensor,'consistency');
 if isequal(c,1)
     % We know the data are consistent.  Get rid of the red spot.
     %
@@ -116,8 +92,8 @@ if isequal(c,1)
     set(handles.txtConsistency,'BackgroundColor',defaultBackground)
     
     % Assume any change will make it inconsistent going forward.
-    ISA = sensorSet(ISA,'consistency',0);
-    vcReplaceObject(ISA);
+    sensor = sensorSet(sensor,'consistency',0);
+    vcReplaceObject(sensor);
 elseif isequal(c,0)
     % The data are inconsistent.  Put on the red spot.
     set(handles.txtConsistency,'BackgroundColor',[1,0,0]);
@@ -126,12 +102,12 @@ else
     % the data and we don't want to influence the red spot because we just
     % don't know, well, just don't do anything.  But when we are done, put
     % it back to inconsistent, as above.
-    ISA = sensorSet(ISA,'consistency',0);
-    vcReplaceObject(ISA);
+    sensor = sensorSet(sensor,'consistency',0);
+    vcReplaceObject(sensor);
 end
 
 % Button states
-set(handles.btnAutoExp,'Value',sensorGet(ISA,'autoexposure'));
+set(handles.btnAutoExp,'Value',sensorGet(sensor,'autoexposure'));
 
 %% mp, Nov., 2009
 % Exposure mode settings. Placing these lines here is somewhat redundant.
@@ -183,18 +159,18 @@ end
 %%
 
 % Select popup contents
-nameList = vcGetObjectNames('ISA');
+nameList = vcGetObjectNames('sensor');
 selectList = {'New'};
 for ii=1:length(nameList); selectList{ii+1} = char(nameList{ii}); end
 set(handles.popupSelect,...
     'String',selectList,...
-    'Value',vcGetSelectedObject('ISA')+1);
+    'Value',vcGetSelectedObject('sensor')+1);
 
 % Ugh, the pop up selections must match the list sensorCFAName, and so
 % should the list in Standard CFA.  Then we just do a match and we keep
 % everything consistent through the sensorCFAName routine.  This code must
 % go.
-switch lower(sensorGet(ISA,'cfaname'))
+switch lower(sensorGet(sensor,'cfaname'))
     case 'bayer-grbg'
         set(handles.popISA,'Value',1);
     case 'bayer-rggb'
@@ -214,11 +190,11 @@ switch lower(sensorGet(ISA,'cfaname'))
 end
 
 % Display the quantization method
-switch lower(sensorGet(ISA,'quantizationmethod'))
+switch lower(sensorGet(sensor,'quantizationmethod'))
     case 'analog'
         set(handles.popQuantization,'Value',1);
     case 'linear'
-        switch sensorGet(ISA,'nbits')
+        switch sensorGet(sensor,'nbits')
             case 4
                 set(handles.popQuantization,'Value',2);
             case 8
@@ -239,10 +215,9 @@ end
 gam = str2double(get(handles.editGam,'String'));
 scaleMax = get(handles.btnDisplayScale,'Value');
 
-if isempty(sensorGet(ISA,'dv')), sensorShowImage(ISA,'volts',gam,scaleMax);
-else                             sensorShowImage(ISA,'dv',gam,scaleMax);
-end
+% Show the image
+sensorShowImage(sensor,gam,scaleMax);
 
-return;
+return
 
 

@@ -109,11 +109,12 @@ switch parm
     case {'gamma'}
         % sceneSet([],'gamma',1);
         % Should this be ieSessionSet('scene gamma',val)
-        hObj = ieSessionGet('scene window ');
+        % hObj = ieSessionGet('scene window');
         hdl = ieSessionGet('scene window handle');
-        eventdata = [];
+        % eventdata = [];
         set(hdl.editGamma,'string',num2str(val));
-        sceneWindow('sceneRefresh',hObj,eventdata,hdl);
+        % sceneWindow('sceneRefresh',hObj,eventdata,hdl);
+        sceneWindow;
         
     case {'distance' }
         % Positive for scenes, negative for optical images

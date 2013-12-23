@@ -1,7 +1,7 @@
-function sensor = sensorCreate(sensorName,PIXEL,varargin)
+function sensor = sensorCreate(sensorName,pixel,varargin)
 %Create an image sensor array structure
 %
-%      sensor = sensorCreate(sensorName,[PIXEL])
+%      sensor = sensorCreate(sensorName,[pixel],varargin)
 %
 % The sensor array uses a pixel definition that can be specified in the
 % parameter PIXEL. If this is not passed in, a default PIXEL is created and
@@ -22,8 +22,7 @@ function sensor = sensorCreate(sensorName,PIXEL,varargin)
 %
 % Other types
 %      {'monochrome'}
-%      {'ideal'}  - No noise in the pixel.  Can be monochrome, rgb, or
-%                   human
+%      {'monochrome array'} - sensorCreate('monochrome array',N);
 %
 % Multiple channel sensors can be created
 %      {'grbc'}        - green, red, blue, cyan
@@ -47,7 +46,10 @@ function sensor = sensorCreate(sensorName,PIXEL,varargin)
 %  sensor = sensorCreate('Monochrome');
 %
 %  pSize  = 3e-6;
-%  sensor = sensorCreate('ideal',[],pSize,'human','bayer');
+%  pixel  = [];
+%  sensorType = 'rgb';
+%  sensor = sensorCreate('ideal',pixel,pSize,sensorType);
+%  sensor = sensorCreate('ideal',pixel,pSize,'human','bayer');
 %
 %  cone   = pixelCreate('human cone'); 
 %  sensor = sensorCreate('Monochrome',cone);
@@ -75,17 +77,17 @@ sensor.name = [];
 sensor.type = 'sensor';
 
 % Make sure a pixel is defined.
-if ieNotDefined('PIXEL')
-    PIXEL  = pixelCreate('default');
-    sensor = sensorSet(sensor,'pixel',PIXEL);
+if ieNotDefined('pixel')
+    pixel  = pixelCreate('default');
+    sensor = sensorSet(sensor,'pixel',pixel);
     sensor = sensorSet(sensor,'size',sensorFormats('qqcif'));
 else
-    sensor = sensorSet(sensor,'pixel',PIXEL);
+    sensor = sensorSet(sensor,'pixel',pixel);
 end
 
 % The sensor should always inherit the spectrum of the pixel.  Probably
 % there should only be one spectrum here, not one for pixel and sensor.
-sensor = sensorSet(sensor,'spectrum',pixelGet(PIXEL,'spectrum'));
+sensor = sensorSet(sensor,'spectrum',pixelGet(pixel,'spectrum'));
 
 sensor = sensorSet(sensor,'data',[]);
 
@@ -130,16 +132,18 @@ switch sensorName
         filterOrder = [1 2 ; 2 3];
         sensor = sensorBayer(sensor,filterOrder,filterFile);
     case {'ideal'}
-        % sensorCreate('ideal',pSize,sensorType,cPattern);
+        % sensorCreate('ideal',[],pSize,sensorType,cPattern);
         %
         % sensorType = 'human'  % 'rgb','monochrome'
         % cPattern = 'bayer'    % any sensorCreate option
         % sensorCreate('ideal',[],'human','bayer');
-        pSize = 2e-6; sensorType = 'human'; cPattern = 'bayer';
-        if length(varargin) >= 1, pSize = varargin{1}; end
-        if length(varargin) >= 2, sensorType = varargin{2}; end
-        if length(varargin) >= 3, cPattern = varargin{3}; end
-        sensor = sensorCreateIdeal(sensorType,pSize,cPattern);
+        error('sensorCreate(''ideal'') is deprecated');
+        
+        %         sensorType = 'human'; pSize = 2e-6; cPattern = 'bayer';
+        %         if length(varargin) >= 1, pSize = varargin{1}; end
+        %         if length(varargin) >= 2, sensorType = varargin{2}; end
+        %         if length(varargin) >= 3, cPattern = varargin{3}; end
+        %         sensor = sensorCreateIdeal(sensorType,pSize,cPattern);
 
     case {'custom'}      % Often used for multiple channel
         % sensorCreate('custom',pixel,filterPattern,filterFile,wave);
@@ -174,6 +178,22 @@ switch sensorName
     case 'monochrome'
         filterFile = 'Monochrome';
         sensor = sensorMonochrome(sensor,filterFile);
+    case 'monochromearray'
+        % sensorA = sensorCreate('monochrome array',[],5);
+        %
+        % Builds an array of monochrome sensors, each corresponding to the
+        % default monochrome.  The array of sensors is used for
+        % calculations that avoid demosaicking.
+        if isempty(varargin), N = 3;
+        else N = varargin{1};
+        end
+        
+        sensorA(N) = sensorCreate('monochrome');
+        for ii=1:(N-1), sensorA(ii) = sensorA(N); end
+        sensor = sensorA;
+        
+        return;
+        
     case 'interleaved'
         % Create an interleaved sensor with one transparent and 3 color
         % filters.
@@ -237,12 +257,17 @@ end
 % Set the exposure time - this needs a CFA to be established to account for
 % CFA exposure mode.
 sensor = sensorSet(sensor,'integrationTime',0);
-sensor = sensorSet(sensor,'autoexposure',1);    % Changed December 2009.
+sensor = sensorSet(sensor,'autoexposure',1);    
 sensor = sensorSet(sensor,'CDS',0);
 
 % Put in a default infrared filter.  All ones.
 sensor = sensorSet(sensor,'irfilter',ones(sensorGet(sensor,'nwave'),1));
+
+% Place holder for Macbeth color checker positions
 sensor = sensorSet(sensor,'mccRectHandles',[]);
+
+% Compute with all noise turned on by default
+sensor = sensorSet(sensor,'noise flag',2);
 
 return;
 

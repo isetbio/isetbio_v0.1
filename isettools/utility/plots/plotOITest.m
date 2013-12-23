@@ -34,6 +34,9 @@ uData = plotOI(oi,'irradiance image with grid',[],40);
 %%
 uData = plotOI(oi,'irradiance image wave',[],500,40);
 
+%%
+uData = plotOI(oi,'irradiance fft',[],450);
+
 %%  Get some roiLocs
 % uData = plotOI(oi,'irradiance energy roi');
 

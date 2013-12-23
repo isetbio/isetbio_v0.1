@@ -49,7 +49,7 @@ if ieNotDefined('illuminant'),  illuminant  = 'D65';     end
 if ieNotDefined('surface'),     surface     = 'macbeth'; end
 
 wave     = sensorGet(sensor,'wave');
-sensorQE = sensorGet(sensor,'spectralQE');
+sensorQE = sensorGet(sensor,'spectral QE');
 
 switch lower(targetSpace)
     case {'stockman','xyz'}

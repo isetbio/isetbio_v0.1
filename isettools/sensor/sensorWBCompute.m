@@ -48,7 +48,7 @@ for ii=1:(nWave-1)
     if displayFlag, 
         figure(displayFig); 
         sensor = sensorSet(sensor,'volts',volts);
-        sensorShowImage(sensor,'voltage');
+        sensorShowImage(sensor);
     end
 end
 close(wBar);

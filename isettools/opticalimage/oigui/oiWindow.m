@@ -1009,8 +1009,12 @@ return;
 
 % --------------------------------------------------------------------
 function menuFFTamp_Callback(hObject, eventdata, handles)
+% Analyze | FFT2dAmp
+% Default is whole image and a middle wavelength
+
 oi = vcGetObject('OI');
-plotOI(oi,'fft');
+plotOI(oi,'irradiance fft');
+
 return;
 
 % --------------------------------------------------------------------

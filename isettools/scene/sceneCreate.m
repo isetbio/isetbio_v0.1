@@ -80,20 +80,21 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %   
 % SPATIAL TEST PATTERNS:
 %
-%      {'ringsRays'}            - Resolution pattern
-%      {'harmonic'}             - Harmonics (can be sums of harmonics)
-%      {'sweepFrequency'}       - Increasing frequency to the right,
+%      {'rings rays'}            - Resolution pattern
+%      {'harmonic'}              - Harmonics (can be sums of harmonics)
+%      {'sweep frequency'}       - Increasing frequency to the right,
 %               increasing contrast upward
-%      {'lined65'}              - Line with
-%      {'lineee''}              - Line with equal energy spectrum
-%      {'pointArray'}           - Point array
-%      {'gridlines'}            - Grid lines
-%      {'checkerboard'}         - Checkerboard with equal photon spectrum
-%      {'frequencyOrientation'} - Demosaicking test pattern, equal photon spectrum
-%      {'slantedEdge'}  - Used for ISO spatial resolution, equal photon spectrum
+%      {'line d65'}              - Line with D65 energy spectrum
+%      {'line ee'}               - Line with equal energy spectrum
+%      {'bar ee'}                - Vertical bar, equal energy
+%      {'point array'}           - Point array
+%      {'gridlines'}             - Grid lines
+%      {'checkerboard'}          - Checkerboard with equal photon spectrum
+%      {'frequency orientation'} - Demosaicking test pattern, equal photon spectrum
+%      {'slanted edge'} - Used for ISO spatial resolution, equal photon spectrum
 %      {'moire orient'} - Circular Moire pattern
-%      {'zonePlate'}   - Circular zone plot, equal photon spectrum
-%      {'starPattern'} - Radial lines used to test printers and displays
+%      {'zone plate'}   - Circular zone plot, equal photon spectrum
+%      {'star pattern'} - Radial lines used to test printers and displays
 %
 %  Additional parameters are available for several of the patterns.  For
 %  example, the harmonic call can set the frequency, contrast, phase,
@@ -113,15 +114,19 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %  Many of the patterns can have an arbitrary image (row,col) size.  This
 %  is possible for whitenoise, impulse1dee,lined65,
 %
-%         imageSize = 128; scene = sceneCreate('lined65',imageSize);
+%         imSize = 128; lineOffset = 25;           % Plus is to the right
+%         scene = sceneCreate('lined65',imSize);
+%         scene = sceneCreate('line ee',imSize,lineOffset);
+%         sceneCreate('bar',imageSize,width);
 %
 %  Other patterns have different parameters:
 %
-%         sceneCreate('slantedBar',imageSize,edgeSlope);
-%         scene = sceneCreate('checkerboard',pixelsPerCheck,numberOfChecks)
-%         scene = sceneCreate('gridlines',imageSize,pixelsBetweenLines);
-%         scene = sceneCreate('pointarray',imageSize,pixelsBetweenPoints);
+%         sceneCreate('slanted edge',imageSize,edgeSlope);
+%         sceneCreate('checkerboard',pixelsPerCheck,numberOfChecks)
+%         sceneCreate('grid lines',imageSize,pixelsBetweenLines);
+%         sceneCreate('point array',imageSize,pixelsBetweenPoints);
 %         sceneCreate('moire orient',imageSize,edgeSlope);
+%         sceneCreate('vernier',imageSize,lineWidth,pixelOffset);
 %
 % NOISE ANALYSIS TEST PATTERNS
 %
@@ -133,16 +138,18 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %
 %    The uniform patterns are small by default (32,32).  If you would like
 %    them at a higher density (not much point), you can use
+%
 %        sceneCreate('uniformD65',256)
+%
 %    where 256 is the image size in pixels.
 %
-% SCENES FROM IMAGES
-%      It is possible to create scenes  using data in image fiels.
-%      The high dynamic range, multispectral image data included in
-%      data\images\MultiSpectral directory are an important source of
-%      data.  It is also possible to simply read a tiff or jpeg file and
-%      create a scene structure.  These image-based scenes created by the
-%      call sceneFromFile which, in turn, calls this function.
+% SCENES FROM IMAGE DATA
+%   We also create scenes using data in image files.  It is also possible
+%   to simply read a tiff or jpeg file and create a scene structure.  These
+%   image-based scenes created by sceneFromFile.  See the comments there
+%   for more information.
+%
+% See also:  sceneFromFile
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
@@ -328,6 +335,10 @@ switch sceneName
         end
         scene = sceneLine(scene,'D65',sz);
     case {'lineee','impulse1dee'}
+        % scene = sceneCreate('line ee',size,offset,wave);
+        % size:   Image row/col
+        % offset: Pixel offset from center (c + offset)
+        % wave:   Wavelength samples
         % scene = sceneCreate('lineee',128,2);
         % scene = sceneCreate('lineee',128,2,380:4:1068);
         sz = 64; offset = 0;
@@ -338,10 +349,25 @@ switch sceneName
         end
         scene = sceneLine(scene,'equalEnergy',sz,offset);
     case {'lineequalphoton','lineep'}
+        % sceneCreate('line ep',sz,offset);
         sz = 64; offset = 0;
         if length(varargin) >= 1, sz = varargin{1};     end
         if length(varargin) >= 2, offset = varargin{2}; end
         scene = sceneLine(scene,'equalPhoton',sz,offset);
+    case {'bar'}
+        % sceneCreate('bar',sz,width)
+        sz = 64; width = 3;
+        if length(varargin) >=1, sz    = varargin{1};   end
+        if length(varargin) >=2, width = varargin{2};   end
+        scene = sceneBar(scene,sz,width);
+    case {'vernier'}
+        % sceneCreate('vernier',size,width,offset)
+        sz = 65; width = 3; offset = 3;
+        if length(varargin) >=1, sz     = varargin{1};   end
+        if length(varargin) >=2, width  = varargin{2};   end
+        if length(varargin) ==3, offset = varargin{3};   end
+        
+        scene = sceneVernier(scene,sz,width,offset);
     case {'whitenoise','noise'}
         % sceneCreate('noise',[128 128])
         sz = 128; contrast = 20;
@@ -454,7 +480,7 @@ if checkfields(scene,'data','photons') && ~isempty(scene.data.photons)
         wave = sceneGet(scene,'wave');
         idxWave = find(wave == v(2));
         p = sceneGet(scene,'photons',v(2));
-        [tmp,ij] = max2(p);
+        [tmp,ij] = max2(p); %#ok<ASGLU>
         v = [0.9 ij(1) ij(2) idxWave];
         scene = sceneSet(scene,'knownReflectance',v);
     end
@@ -708,7 +734,7 @@ nWave = sceneGet(scene,'nwave');
 % vcSESSION.  We can get them by a getappdata call in here, but not if we
 % close the window as part of imageSetHarmonic
 if ieNotDefined('parms')
-    global parms;
+    global parms; %#ok<REDEF>
     h   = imageSetHarmonic; waitfor(h);
     img = imageHarmonic(parms);
     p   = parms;
@@ -861,6 +887,101 @@ scene = sceneSet(scene,'photons',photons);
 
 
 return;
+
+%--------------------------------------------------
+function scene = sceneBar(scene,sz,width)
+%% Create a single bar scene.  
+% This is used for computing the effect of scene dot density, say for a
+% display with varying dots per inch.
+
+if ieNotDefined('sz'),     sz = 64; end
+if ieNotDefined('width'), width = 5; end
+
+scene = sceneSet(scene,'name',sprintf('bar-%d',width));
+
+if ~isfield(scene,'spectrum')
+    scene = initDefaultSpectrum(scene,'hyperspectral');
+end
+wave    = sceneGet(scene,'wave');
+nWave   = sceneGet(scene,'nwave');
+
+% Black is more than zero to prevent HDR problem with ieCompressData
+barPos = (1:width) + round((sz - width)/2);
+photons = ones(sz,sz,nWave)*1e-8;   % Very dark reflectance mostly
+photons(:,barPos,:) = 1;            % White reflectance in bar region
+
+il = illuminantCreate('equal photons',wave);
+scene = sceneSet(scene,'illuminant',il);
+p     = sceneGet(scene,'illuminant photons');
+
+% Create the radiance that matches reflectance and illuminant
+for ii=1:nWave, photons(:,:,ii) = photons(:,:,ii)*p(ii); end
+
+% Attach the photons to the scene
+scene = sceneSet(scene,'photons',photons);
+
+return
+
+%------------------------
+function scene = sceneVernier(scene,sz,width,offset)
+%% Equal photon vernier targets
+%
+% Need to allow changing color of top and bottom, perhaps other features.
+% We will create params structure for parameters in the future, i.e.,
+% params.sz, params.width, params.lineReflectance, ... and so forth
+%
+if ieNotDefined('sz'),     sz = 64;    end
+if ieNotDefined('width'),  width = 0;  end
+if ieNotDefined('offset'), offset = 1; end
+
+% Line and background reflectance
+lineReflectance = 0.6;
+backReflectance = 0.3;
+
+scene = sceneSet(scene,'name',sprintf('vernier-%d',offset));
+
+%% We make the image square
+r = sz; c = sz;
+
+% Make the column number odd so we can really center the top line
+if ~isodd(c), c = c+1; end
+
+% Vernier line size and offset
+% Top and bottom half rows and columns
+% Columns containing top line, shifted offset/2 
+topCols = (1:width) + round((c - width)/2) - floor(offset/2);  
+
+% Columns containing bottom line, shifted offset from top columns
+% With this algorithm, the width of the 
+botCols = topCols + offset; 
+
+% Split the rows, too
+topHalf = round(r/2); 
+topRows = 1:topHalf; botRows = (topHalf+1):r;
+
+%% Init spectrum
+
+if ~isfield(scene,'spectrum')
+    scene = initDefaultSpectrum(scene,'hyperspectral');
+end
+wave    = sceneGet(scene,'wave');
+nWave   = sceneGet(scene,'nwave');
+
+%% Make the photon data
+il    = illuminantCreate('equal photons',wave);
+scene = sceneSet(scene,'illuminant',il);
+illP  = sceneGet(scene,'illuminant photons');
+
+photons = ones(r,c,nWave);
+for ii=1:nWave
+    photons(:,:,ii)     = backReflectance*photons(:,:,ii)*illP(ii);
+    photons(topRows,topCols,ii)  = (lineReflectance/backReflectance)*photons(topRows,topCols,ii);
+    photons(botRows,botCols,ii)  = (lineReflectance/backReflectance)*photons(botRows,botCols,ii);
+end
+
+scene = sceneSet(scene,'photons',photons);
+
+return
 
 %------------------------
 function scene = sceneRadialLines(scene,imSize,spectralType,nLines)

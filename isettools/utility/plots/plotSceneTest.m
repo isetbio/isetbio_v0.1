@@ -1,10 +1,6 @@
-% Test plotScene function
+% Test the plotScene function calls
 %
 % (BW) Imageval Consulting, 2013
-%
-
-%% TODO
-% More tests would be useful, as in plotOITest
 %
 
 %% Initialize data
@@ -24,9 +20,10 @@ plotScene(scene,'hline radiance',[1,rows]);
 uData = plotScene(scene,'luminance fft hline',[1,rows]);
 
 %% Radiance image with an overlaid spatial grid
-plotScene(scene,'radiance image with grid')
+gridSpacing = 21;
+plotScene(scene,'radiance image with grid',[],gridSpacing)
 plotScene(scene,'illuminant photons roi')
-plotScene(scene,'depth map')
+uData = plotScene(scene,'depth map');
 
 %% Reflectance data from an ROI
 roiRect = [26    40    13    16];
@@ -41,7 +38,5 @@ plotScene(scene,'chromaticity',roiRect)
 %%
 plotScene(scene,'illuminant photons');
 
-%%
-plotScene(scene,'illuminant energy');
 
 %% End

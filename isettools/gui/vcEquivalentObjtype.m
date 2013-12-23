@@ -15,11 +15,13 @@ function objType = vcEquivalentObjtype(objType)
 objType = upper(objType);
 
 % These are the aliases we use sometimes
-if strcmp(objType,'OI'), objType = 'OPTICALIMAGE';
+if     strcmp(objType,'OI'), objType = 'OPTICALIMAGE';
 elseif strcmp(objType,'SENSOR'), objType = 'ISA';
-elseif strcmp(objType,'IMGPROC'),objType = 'VCIMAGE';
-elseif strcmp(objType,'VCI'), objType = 'VCIMAGE';
+elseif strcmp(objType,'IMGPROC') || ...
+       strcmp(objType,'VCI') || ...     % Virtual camera image
+       strcmp(objType,'IP'),            % Image processor
+    objType = 'VCIMAGE';
     % Other translations belong here
 end
 
-return;
+return

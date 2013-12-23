@@ -25,7 +25,7 @@ function [noisyImage,theNoise] = noiseShot(ISA)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 volts          = sensorGet(ISA,'volts');
-conversionGain = pixelGet(ISA.pixel,'conversiongain');
+conversionGain = pixelGet(ISA.pixel,'conversion gain');
 electronImage  = volts/conversionGain;
 
 % N.B. The noise is Poisson in electron  units. But the distribution in

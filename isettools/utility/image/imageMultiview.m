@@ -74,7 +74,7 @@ for ii=selectedObjs
             
         case 'ISA'
             scaleMax = 1;
-            sensorShowImage(objList{ii},'volts',gam,scaleMax);
+            sensorShowImage(objList{ii},gam,scaleMax);
             t = sprintf('Sensor %d - %s',ii,sensorGet(objList{ii},'name'));
             
         case 'VCIMAGE'

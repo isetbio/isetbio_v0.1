@@ -277,7 +277,7 @@ elseif nSensors == 1
     otherwise
         error('Unknown orientation')
     end
-    uData = plotSensorLineMonochrome(xy,pos,data,ori,dataType,sORt);
+    [uData, figNum] = plotSensorLineMonochrome(xy,pos,data,ori,dataType,sORt);
 end
 end
 
@@ -410,7 +410,7 @@ set(figNum,'Name',titleString);
 end
 
 %% Monocrhome sensor line
-function uData = plotSensorLineMonochrome(xy,pos,data,ori,dataType,sORt)
+function [uData, figNum] = plotSensorLineMonochrome(xy,pos,data,ori,dataType,sORt)
 %
 % Monochrome sensor line plot
 %

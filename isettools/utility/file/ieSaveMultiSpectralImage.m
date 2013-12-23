@@ -37,7 +37,7 @@ if ieNotDefined('basis'),      error('Basis function required.');  end
 if ieNotDefined('comment'),    comment = sprintf('Date: %s\n',date); end %#ok<NASGU>
 
 % See Programming TODO above.
-if ieNotDefined('illuminant'), error('Illuminant in energy units required'); end
+if ieNotDefined('illuminant'), error('Illuminant required'); end
 % If the illuminant is not in the modern illuminant format, we should
 % convert it to that format here.
 
