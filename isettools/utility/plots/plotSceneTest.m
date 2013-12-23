@@ -23,6 +23,7 @@ uData = plotScene(scene,'luminance fft hline',[1,rows]);
 gridSpacing = 21;
 plotScene(scene,'radiance image with grid',[],gridSpacing)
 plotScene(scene,'illuminant photons roi')
+plotScene(scene,'illuminant photons')
 uData = plotScene(scene,'depth map');
 
 %% Reflectance data from an ROI
