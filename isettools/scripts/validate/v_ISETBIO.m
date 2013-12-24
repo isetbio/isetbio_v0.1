@@ -38,5 +38,7 @@ h = msgbox('Human PSF','ISET Tests','replace');
 set(h,'position',round([36.0000  664.1379  124.7586   50.2759]));
 v_human
 
+%% Wavefront toolbox
+v_wvfValidate
 
 %% End

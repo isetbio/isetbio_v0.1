@@ -111,7 +111,7 @@ for i = 1:length(theFiles)
     % I think the y direction is also inverted in the old calculation
     % but this turns out not to matter because the middle row corresponds
     % to y = 0.
-    figure; clf; hold on
+    vcNewGraphWin; hold on
     if (PLOT_DIFFRACTION)
         plot(diffracarcmin0,diffracpsfLine0,'r','LineWidth',3);
         plot(testData.arcminutes,testData.diffracPSF(:,testData.whichRow-rowOffset),'g');

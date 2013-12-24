@@ -46,7 +46,7 @@ wList = wvfGet(wvf0,'wave');
 jindices = 0:9;
 maxMM = 4; 
 for ii = jindices
-    vcNewGraphWin;
+    vcNewGraphWin([],'tall');
     insertCoeff = 1;
     wvf = wvfSet(wvf0,'zcoeffs',insertCoeff,ii);
     wvf = wvfComputePSF(wvf);
@@ -63,3 +63,5 @@ for ii = jindices
     subplot(3,1,3);
     wvfPlot(wvf,'2d psf space','mm',wList,maxMM,'no window');
 end
+
+%% END

@@ -253,7 +253,7 @@ end
 
 % The position setting was a bit specific to some monitor.  I tried to make
 % vcNewGraphWin do the right thing.
-theFig = vcNewGraphWin([],'wide'); 
+vcNewGraphWin([],'wide'); 
 % position = get(gcf,'Position');
 % position(3) = 1600;
 % set(gcf,'Position',position);
@@ -340,10 +340,7 @@ autrusseauFigure11 = ReadStructsFromText('autrusseauFigure11.txt');
 % middle row of full MTFs) that we get, and compare to what Autrusseau et al. got.
 % Dashed colord line is horizontal grating MTFs.  Black lines are MTFs for 
 % diffraction plus defocus 
-theFig = figure; clf;
-position = get(gcf,'Position');
-position(3) = 1600;
-set(gcf,'Position',position);
+theFig = vcNewGraphWin([],'wide'); clf;
 subplot(1,3,1); hold on
 onedLOTFH = abs(lotf(whichRow,:));
 onedLOTFV = abs(lotf(:,whichRow));
