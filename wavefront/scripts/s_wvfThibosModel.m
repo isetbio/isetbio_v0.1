@@ -37,7 +37,7 @@ pupilMM = 4.5;
 % coefficients.  The covariance is summarized in the variable S.  The mean
 % values across a large sample of eyes measured by Thibos and gang are in
 % the variable sample_mean.
-[sample_mean S] = wvfLoadThibosVirtualEyes(pupilMM);
+[sample_mean sample_cov] = wvfLoadThibosVirtualEyes(pupilMM);
 
 %% Plot the means and covariance (not)
 vcNewGraphWin([],'tall');
@@ -49,7 +49,7 @@ ylabel('Coefficient value')
 title('Mean coefficient');
 
 subplot(3,1,2)
-imagesc(S);
+imagesc(sample_cov);
 axis image, 
 colormap(hot); colorbar
 title('Coefficient covariance')
@@ -58,7 +58,7 @@ title('Coefficient covariance')
 % column of Zcoeffs is an example person. Each row of R is a vector of
 % Zernike coeffs
 N = 10;
-Zcoeffs = ieMvnrnd(sample_mean,S,N)';  
+Zcoeffs = ieMvnrnd(sample_mean,sample_cov,N)';  
 
 % Plot the random examples of coefficients
 subplot(3,1,3)
