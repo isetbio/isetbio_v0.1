@@ -47,7 +47,7 @@ volts = [];
 % rows and columns by 2 because we will add rows or colums to only one side
 % of the sensor (e.g, top or right), which will shift the center of the
 % sensor by 1/2 the number of rows or columns added.
-fov = sensorGet(sensor, 'fov'); 
+fov = sensorGet(sensor, 'fov', [], oi); 
 sz  = sensorGet(sensor, 'size');
 
 xpos = round(2* x * sz(2) / fov); 
