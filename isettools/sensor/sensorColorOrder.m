@@ -24,7 +24,7 @@ function [cfaOrdering, cfaMap] = sensorColorOrder(format)
 %       u -> [.4 .7 .3]; (greenish)
 %       x -> [.7 .5 .3]; (reddish)
 %       z -> [.2 .5 .8]  (bluish)
-%       o -> [.5 .5 .5]; (gray)
+%       o -> [.5 .5 .5]; (orange)
 %
 %  The set of filter names in an ISA have distinct color hints.  So, using
 %  rStanford, gStanford is OK; but do not use rStanford, rSony.  Even if
@@ -52,7 +52,7 @@ cfaOrdering = {'r','g','b','c','y','m','w','i','u','x','z','o','k'};
 
 % The ordering of these color map entries must map cfaOrdering, above.
 cfaMap = [1 0 0; 0 1 0; 0 0 1; 0 1 1; 1 1 0; 1 0 1; 1 1 1; .3 .3 .3; ...
-        .4, .7, .3; .9 .6 .3; .2 .5 .8; .5 .5 .5; 0 0 0];
+        .4, .7, .3; .9 .6 .3; .2 .5 .8; .8 .6 .3; 0 0 0];
 
 % If the user asks for the data to be returned as a string, do this.
 % tmp = char(length(cfaOrdering),1);

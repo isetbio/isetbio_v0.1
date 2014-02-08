@@ -178,7 +178,10 @@ switch lower(param)
         else
             sensor.color.filterSpectra = val;
         end
-    case {'filternames','filtername'}
+    case {'colorfilterletters','filternames','filtername'}
+        % sensorSet(sensor,'color filter letters',{'r','g','b'})
+        % We denote the color filters by a letter so we can plot curves
+        % with the right color.
         if ~iscell(val), error('Filter names must be a cell array');
         else sensor.color.filterNames = val;
         end

@@ -185,8 +185,8 @@ oiPad = oiSet(oi,'photons',p);
 
 % Turn off eye movements
 sensorPad = sensor;
-sensorPad = sensorSet(sensorPad,'frames per position',20);
-sensorPad = sensorSet(sensorPad,'movement positions',[0 0]);
+% sensorPad = sensorSet(sensorPad,'frames per position',20);
+% sensorPad = sensorSet(sensorPad,'movement positions',[0 0]);
 sensorPad = coneAbsorptions(sensorPad, oiPad);
 voltsPad = sensorGet(sensorPad,'volts');
 volts = cat(3,volts,voltsPad);
