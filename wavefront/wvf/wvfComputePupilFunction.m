@@ -1,4 +1,4 @@
-function wvf = wvfComputePupilFunction(wvf)
+function wvf = wvfComputePupilFunction(wvf, showBar)
 % wvf = wvfComputePupilFunction(wvf)
 %
 % Compute the pupil fuction given the wvf object.  If the function is already
@@ -50,6 +50,7 @@ function wvf = wvfComputePupilFunction(wvf)
 
 %% Parameter checking
 if ieNotDefined('wvf'), error('wvf required'); end
+if ieNotDefined('showBar'), showBar = true; end
 
 % Only do this if we need to. It might already be computed
 if (~isfield(wvf,'pupilfunc') || ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPILFUNCTION_STALE) 
@@ -80,13 +81,17 @@ if (~isfield(wvf,'pupilfunc') || ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPI
     % This needs to be done separate at each wavelength because
     % the size in the pupil plane that we sample can be wavelength
     % dependent.
-    wBar = waitbar(0,'Computing pupil functions');
+    if showBar
+        wBar = waitbar(0,'Computing pupil functions');
+    end
     pupilfunc = cell(nWavelengths,1);
     areapix = zeros(nWavelengths,1);
     areapixapod = zeros(nWavelengths,1);
     for ii=1:nWavelengths
         thisWave = waveNM(ii);
-        waitbar(ii/nWavelengths,wBar,sprintf('Pupil function for %.0f',thisWave));
+        if showBar
+            waitbar(ii/nWavelengths,wBar,sprintf('Pupil function for %.0f',thisWave));
+        end
         
         % Set SCE correction params, if desired
         xo  = wvfGet(wvf,'scex0');
@@ -109,7 +114,7 @@ if (~isfield(wvf,'pupilfunc') || ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPI
         nPixels = wvfGet(wvf,'spatial samples');
         pupilPlaneSizeMM = wvfGet(wvf,'pupil plane size','mm',thisWave);
         pupilPos = (0:(nPixels-1))*(pupilPlaneSizeMM/nPixels)-pupilPlaneSizeMM/2;
-        [xpos ypos] = meshgrid(pupilPos);
+        [xpos, ypos] = meshgrid(pupilPos);
         ypos = ypos(end:-1:1,:);
         
         % Set up the amplitude of the pupil function.
@@ -280,7 +285,8 @@ if (~isfield(wvf,'pupilfunc') || ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPI
             error('Two ways of computing areapix do not agree');
         end
     end
-    close(wBar)
+    
+    if showBar, close(wBar); end
     
     wvf.wavefrontaberrations = wavefrontaberrations;
     wvf.pupilfunc = pupilfunc;

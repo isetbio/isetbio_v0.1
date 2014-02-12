@@ -1,4 +1,4 @@
-function oi = wvf2oi(wvfP, oType)
+function oi = wvf2oi(wvfP, oType, showBar)
 % Convert wavefront data to ISET optical image with optics
 %
 %  optics = wvf2oi(wvfP, [oType])
@@ -33,9 +33,10 @@ function oi = wvf2oi(wvfP, oType)
 
 %%
 if ieNotDefined('oType'), oType = 'human'; end
+if ieNotDefined('showBar'), showBar = true; end
 
 % Create the shift-invariant PSF data structure
-siData = wvf2PSF(wvfP);
+siData = wvf2PSF(wvfP, showBar);
 pupil  = wvfGet(wvfP,'calculated pupil','m');
 
 %% Create the OI
@@ -50,7 +51,7 @@ switch oType
         flength = 0.017;         % Human focal length is 17 mm
 
     case 'mouse'
-        flength = .003;          % Mouse focal length is 3 mm??
+        %flength = .003;          % Mouse focal length is 3 mm??
         error('Mouse not yet implemented');
         %         oi = oiCreate(oType);
     otherwise

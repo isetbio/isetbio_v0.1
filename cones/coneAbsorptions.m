@@ -1,4 +1,4 @@
-function sensor = coneAbsorptions(sensor, oi)
+function sensor = coneAbsorptions(sensor, oi, showBar)
 % Compute the sensor including eye movements
 % 
 %   sensor = coneAbsorptions(sensor, oi);
@@ -11,6 +11,11 @@ function sensor = coneAbsorptions(sensor, oi)
 % the mean (noiseless) voltage and then add frame-by-frame noise. To move
 % the sensor, we expand it using sensorHumanResize, and then remove
 % unneeded rows/columns from the outputted volatge image.
+%
+% The last parameter showBar indicates whether or not to show the progress
+% bar. 0 or false for hiding all. true is for displaying the waitBar. Any
+% value larger than 2 is for printing progress information into command
+% window
 %
 % Example: A horizontal eye movement, 2% of the scene FOV
 %   scene = sceneCreate;
@@ -31,13 +36,14 @@ function sensor = coneAbsorptions(sensor, oi)
 %% check inputs
 if notDefined('sensor'), error('Need sensor'); end
 if notDefined('oi'), error('Need optical image'); end
+if notDefined('showBar'), showBar = true; end
 
 % Get and verify eye movement parameters
 x = sensorGet(sensor,'sensor positions x');  % In deg of visual angle
 y = sensorGet(sensor,'sensor positions y');
 framesPerPosition =  sensorGet(sensor,'frames per position');
 if ~isequal(length(x), length(y), length(framesPerPosition))
-    error('framesPerPosition, x positions, and y positions are not the same lengths');
+    error('framesPerPosition, x, y positions are not of same lengths');
 end
 
 %% Calculate volts.
@@ -58,10 +64,24 @@ ypos = round(2* y * sz(1) / fov);
 sensor = sensorSet(sensor,'noise flag',0);
 
 % loop across positions
-wBar = waitbar(0,'Looping over frames');
+if showBar == 1
+    wBar = waitbar(0,'Looping over frames');
+elseif showBar >= 2
+    fprintf('Start computing cone absorption samples:0%%');
+    preLength = 3;
+end
 for p = 1:length(framesPerPosition)
-    waitbar(p/length(framesPerPosition),wBar);
-
+    if showBar == 1
+        waitbar(p/length(framesPerPosition),wBar);
+    elseif showBar >= 2
+        if p < length(framesPerPosition)
+            progressStr = sprintf('%d%%%%', ...
+                round(100*p/length(framesPerPosition)));
+            fprintf([repmat('\b',1,preLength-1) progressStr]);
+            preLength = length(progressStr);
+        end
+    end
+    
     % if xpos (ypos) is positive, we add columns (rows) to the left 
     % (bottom), shifting the image  rightward (upward). verify this. it
     % could easily be wrong.
@@ -86,7 +106,12 @@ for p = 1:length(framesPerPosition)
     volts = cat(3, volts, single(tmp));
     
 end
-close(wBar);
+
+if showBar == 1
+    close(wBar);
+elseif showBar >= 2
+    fprintf('\b\b\b\bCompleted...\n');
+end
 
 % Return the sensor with the voltage data from all the eye positions.
 sensor = sensorSet(sensor, 'volts', volts);

@@ -1,4 +1,4 @@
-function [siData, wvfP] = wvf2PSF(wvfP)
+function [siData, wvfP] = wvf2PSF(wvfP, showBar)
 % Convert a wvf structure to ISET shift-invariant PSF data
 %
 %    [siData, wvfP] = wvf2PSF(wvfP)
@@ -45,11 +45,12 @@ function [siData, wvfP] = wvf2PSF(wvfP)
 
 %% Parameters
 if ieNotDefined('wvfP'), error('wvf parameters required.'); end
+if ieNotDefined('showBar'), showBar = true; end
 wave = wvfGet(wvfP,'wave');
 nWave = wvfGet(wvfP,'nwave');
 
 % Use WVF to compute the PSFs
-wvfP = wvfComputePSF(wvfP);
+wvfP = wvfComputePSF(wvfP, showBar);
 
 % Set up to interpolate the PSFs for ISET
 % number of pixels and spacing in microns between samples
@@ -60,16 +61,16 @@ iSamp = iSamp - mean(iSamp);
 iSamp = iSamp(:);
 psf = zeros(nPix,nPix,nWave);
 
-wBar = waitbar(0,'Creating PSF');
+if showBar, wBar = waitbar(0,'Creating PSF'); end
 for ii=1:nWave,
-    waitbar(ii/nWave,wBar)
+    if showBar, waitbar(ii/nWave,wBar); end
     thisPSF = wvfGet(wvfP,'psf',wave(ii));  % vcNewGraphWin; imagesc(thisPSF)
     samp = wvfGet(wvfP,'samples space','um',wave(ii));
     samp = samp(:);
     psf(:,:,ii) = interp2(samp,samp',thisPSF,iSamp,iSamp');
     % wvfPlot(wvfP,'image psf space','um',wave(ii),50)
-end     
-close(wBar)
+end
+if showBar, close(wBar); end
 
 siData.psf = psf;
 siData.wave = wave;
