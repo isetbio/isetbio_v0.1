@@ -138,7 +138,10 @@ if nSensors > 1    % A color CFA
             img = imageLinearTransform(img,T);
         case 'rgbw'
             T = [1 0 0; 0 1 0; 0 0 1; 1 1 1];  
-            img = imageLinearTransform(img,T);       
+            img = imageLinearTransform(img,T);
+        case 'krgb'
+            T = [0 0 0; 1 0 0; 0 1 0; 0 0 1];
+            img = imageLinearTransform(img,T);
         otherwise
             % I think this covers 3 and four color cases.  I am not
             % sure the other cases (above) should be handled

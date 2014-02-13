@@ -210,12 +210,17 @@ switch sensorName
         end
 
         % Assign key fields
-        if checkfields(params,'sz'), sz = params.sz;
-        else sz = []; end
-        if checkfields(params,'rgbDensities'), rgbDensities = params.rgbDensities;
-        else rgbDensities = []; end
-        if checkfields(params,'coneAperture'), coneAperture = params.coneAperture;
-        else coneAperture = []; end
+        if checkfields(params,'sz'), sz = params.sz; else sz = []; end
+        if checkfields(params,'rgbDensities')
+            rgbDensities = params.rgbDensities;
+        else
+            rgbDensities = [];
+        end
+        if checkfields(params,'coneAperture')
+            coneAperture = params.coneAperture;
+        else
+            coneAperture = [];
+        end
         if checkfields(params,'rSeed'), rSeed = params.rSeed;
         else rSeed = [];
         end
@@ -246,10 +251,10 @@ switch sensorName
         sensor = sensorSet(sensor,'rSeed',rSeed);
 
     case 'mouse'
-        error('NYI: mouse needs to be fixed up with sensorCreateConeMosaic');
-        filterFile = 'mouseColorFilters.mat';
-        sensor = sensorMouse(sensor, filterFile);
-        sensor = sensorSet(sensor, 'pixel', pixelCreate('mouse'));
+        error('NYI: mouse needs to be fixed with sensorCreateConeMosaic');
+        %filterFile = 'mouseColorFilters.mat';
+        %sensor = sensorMouse(sensor, filterFile);
+        %sensor = sensorSet(sensor, 'pixel', pixelCreate('mouse'));
     otherwise
         error('Unknown sensor type');
 end

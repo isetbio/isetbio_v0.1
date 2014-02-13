@@ -36,7 +36,7 @@ gui_State = struct('gui_Name', mfilename, ...
     'gui_OutputFcn',  @sensorImageWindow_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
-if nargin & isstr(varargin{1})
+if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
 
@@ -1827,6 +1827,8 @@ if ~isequal(size(eTimes),mSize)
     sensor = sensorSet(sensor,'expTime',eTimes);
 end
 
+%#ok<*DEFNU>
+%#ok<*INUSD>
 return;
 
 
