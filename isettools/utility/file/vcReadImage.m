@@ -122,7 +122,7 @@ switch lower(imageType)
                 % image.
                 if max(inImg(:)) > size(gTable,1)
                     error('Img exceeds gTable'); 
-                elseif max(inImg(:)) < 1
+                elseif max(inImg(:)) <= 1
                     % DAC values are [0, 2^nBits - 1]
                     inImg = floor(inImg*size(gTable,1));
                 elseif max(inImg(:)) < 256
@@ -267,7 +267,7 @@ switch lower(imageType)
             if ieVarInFile(variables,'wave'), load(fullname,'wave');
             elseif ieVarInFile(variables,'wavelength')
                 load(fullname,'wavelength');
-                wave = wavelength; clear wavelength; %#ok<NODEF>
+                wave = wavelength; clear wavelength;
             end
 
             % Pull out the photons

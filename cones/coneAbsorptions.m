@@ -110,7 +110,7 @@ end
 if showBar == 1
     close(wBar);
 elseif showBar >= 2
-    fprintf('\b\b\b\bCompleted...\n');
+    fprintf([repmat('\b',1,preLength-1) 'Completed...\n']);
 end
 
 % Return the sensor with the voltage data from all the eye positions.

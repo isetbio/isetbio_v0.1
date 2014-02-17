@@ -21,8 +21,9 @@ function [sensor, xy, coneType, rSeed, densities] = sensorCreateConeMosaic(senso
 %  densities:     
 %   human:  [0 0.6, 0.3, 0.1] default
 %   mouse:  Not yet implemented
-%          Any two non-zero numbers work for the mouse. A zero for one cone type will
-%          create a monochromatic sensor of the other cone type.
+%           Any two non-zero numbers work for the mouse. A zero for one
+%           cone type will create a monochromatic sensor of the other cone
+%           type.
 %  coneAperture:  [1.5 1.5]*1e-6 (default). Microns. Probably too small.
 %  rSeed:         Random number seed for creating the mosaic
 %  species :      'human' or 'mouse' 
@@ -49,7 +50,8 @@ function [sensor, xy, coneType, rSeed, densities] = sensorCreateConeMosaic(senso
 %  [sensor, xy, coneType,rSeed] = sensorCreateConeMosaic(sensorCreate,[],[],[],rSeed);
 %  figure(1); conePlot(xy,coneType);
 %
-%  sz = [72,88]; densities = [0.55, 0.3, 0.1]; coneAperture = [3 3]*1e-6 % Microns
+%  sz = [72,88]; densities = [0.55, 0.3, 0.1];
+%  coneAperture = [3 3]*1e-6 % Microns
 %  [sensor, xy, coneType] = sensorCreateConeMosaic(sensorCreate,sz,densities,coneAperture);
 %  figure(1); conePlot(xy,coneType);
 %
@@ -60,12 +62,7 @@ function [sensor, xy, coneType, rSeed, densities] = sensorCreateConeMosaic(senso
 if ieNotDefined('sensor'),       sensor = sensorCreate; end
 if ieNotDefined('sz'),           sz = [72,88]; end
 if ieNotDefined('densities'),    densities = [0 0.6, 0.3, 0.1]; end
-if ieNotDefined('rSeed'),        
-    try rSeed = rng;
-    catch err
-        rSeed = rand('seed');
-    end
-end
+if ieNotDefined('rSeed'),        rSeed = rng; end
 if ieNotDefined('species'),      species = 'human'; end
 
 % Aperture in meters.
@@ -74,7 +71,7 @@ if ieNotDefined('coneAperture'), coneAperture = [1.5 1.5]*1e-6; end
 
 wave = sensorGet(sensor,'wave');
 
-switch lower(species)
+switch ieParamFormat(species)
     case 'human'
         
         % Create a model human sensor array structure.
@@ -84,7 +81,7 @@ switch lower(species)
         [xy, coneType] = humanConeMosaic(sz,densities,coneAperture(1)*1e6,rSeed);
         coneType = reshape(coneType,sz);
         
-        % The cone type defines each cone in the cfa, so the size must match
+        % The cone type defines each cone in CFA, so the size must match
         sensor = sensorSet(sensor,'size',size(coneType));
 
         % Set the cone pattern (full size)
@@ -92,33 +89,21 @@ switch lower(species)
 
         sensor = sensorSet(sensor,'human cone densities',densities);
         
-        % Adjust the spectra so that the first is black and the remaining three are
-        % the Stockman fundamentals.
-        switch lower(species)
-            case 'mouse'
-                error('Not implemented');
-                % This is just bad EC code.  Fix.
-                %         fname = '~/psych221/mouseColorFilters.mat';
-                %         [fS, fN] = ieReadColorFilter(wave,fname);
-
-            case 'human'
-                % The Stockman functions are based on color-matching with
-                % the units of the light in energy. ISET computes the
-                % sensor response based on an irradiance in photons.  So we 
-                % use the form of the Stockman filters that is appropriate
-                % for photon input.  See the script stockmanQuanta in the
-                % data/human directory.
-                fname = fullfile(isetRootPath,'data','human','stockmanQuanta.mat');
-                [fsQuanta,fN] = ieReadColorFilter(wave,fname);
-                % vcNewGraphWin; plot(wave,fsQuanta); grid on
-                
-                % Add a black sensor (K,L,M,S) so we can simulate holes in the cfa
-                z = zeros(sensorGet(sensor,'nWave'),1); fSQuanta = [z,fsQuanta];
-                fN = cellMerge({'kBlack'}, fN);
-
-            otherwise
-                error('Unknown species %s\n',species);
-        end
+        % Adjust the spectra so that the first is black and the remaining
+        % three are the Stockman fundamentals.
+        %
+        % The Stockman functions are based on color-matching with the units
+        % of the light in energy. ISET computes the sensor response based
+        % on an irradiance in photons.  So we use the form of the Stockman
+        % filters that is appropriate for photon input.  See the script
+        % stockmanQuanta in the data/human directory.
+        fname = fullfile(isetRootPath,'data','human','stockmanQuanta.mat');
+        [fsQuanta,fN] = ieReadColorFilter(wave,fname);
+        % vcNewGraphWin; plot(wave,fsQuanta); grid on
+        
+        % Add a black sensor (K,L,M,S) so we can simulate holes in the cfa
+        z = zeros(sensorGet(sensor,'nWave'),1); fSQuanta = [z,fsQuanta];
+        fN = cellMerge({'kBlack'}, fN);
 
         sensor = sensorSet(sensor,'filterSpectra',fSQuanta);
         sensor = sensorSet(sensor,'filterNames',fN);
@@ -134,20 +119,21 @@ switch lower(species)
         % mouse sensor
         % The mosaic is M cones on top, UV on bottom
 
-        %         error('Code needs to be fixed like human ... it is a mess now');
+        % error('Code needs to be fixed like human ... it is a mess now');
         %
-        %         sensor = sensorCreate('mouse');
+        % sensor = sensorCreate('mouse');
         %
-        %         fHeight = []; % default is [-0.5, -0.1 0.1 0.5]
-        %         [coneType, filters, filterNames] = mouseConeMosaic(sz, fHeight, densities, sensor);
+        % fHeight = []; % default is [-0.5, -0.1 0.1 0.5]
+        % [coneType, filters, filterNames] = ...
+        %        mouseConeMosaic(sz, fHeight, densities, sensor);
         %
-        %         xy = 0; rSeed = 0; % for outputs
+        % xy = 0; rSeed = 0; % for outputs
         %
-        %         % No reshape, coneType is already right size
-        %         sensor = sensorSet(sensor, 'filterSpectra', filters);
-        %         sensor = sensorSet(sensor, 'filterNames', filterNames);
-        %
-        %         % We don't change the mouse cones' size, we keep the default (2um)
+        % No reshape, coneType is already right size
+        % sensor = sensorSet(sensor, 'filterSpectra', filters);
+        % sensor = sensorSet(sensor, 'filterNames', filterNames);
+        
+        % We don't change the mouse cones' size, we keep the default (2um)
 
 
        

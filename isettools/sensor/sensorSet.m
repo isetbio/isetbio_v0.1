@@ -499,7 +499,7 @@ switch lower(qMethod)
         sensor.quantization.bits = 8;
         sensor.quantization.method = 'log';
     otherwise
-        error('Unknown quantization method.',qMethod);
+        error('Unknown quantization method: %s.',qMethod);
 end
 
 return;
