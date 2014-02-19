@@ -1,4 +1,4 @@
-function wvf = wvfComputePSF(wvf)
+function wvf = wvfComputePSF(wvf, showBar)
 % Compute the psf for the wvf object. 
 %
 %   wvf = wvfComputePSF(wvf)
@@ -21,6 +21,7 @@ function wvf = wvfComputePSF(wvf)
 %
 % Copyright Wavefront Toolbox Team 2012
 
+if ieNotDefined('showBar'), showBar = true; end
 
 % Only do this if we need to -- it might already be computed and stored
 if (~isfield(wvf,'psf') || ~isfield(wvf,'PSF_STALE') || ...
@@ -33,7 +34,7 @@ if (~isfield(wvf,'psf') || ~isfield(wvf,'PSF_STALE') || ...
     pupilfunc = cell(nWave,1);
 
     % Make sure pupil function is computed.  
-    wvf = wvfComputePupilFunction(wvf);
+    wvf = wvfComputePupilFunction(wvf, showBar);
     
     % wave = wvfGet(wvf,'wave');
     psf = cell(nWave,1);

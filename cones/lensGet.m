@@ -43,32 +43,45 @@ switch param
         
         
     case {'absorbance','unitdensity'}
-        % This is defined by Sharp, 1999.  To load use
-        % ieReadSpectra('macularPigment.mat',wave);
-        % See macularCreate.
-        val = lens.unitDensity;
+        % We accept user defined sampling wavelength in varargin{1}
+        if isempty(varargin)
+            val = lens.unitDensity;
+        else
+            wave = lensGet(lens, 'wave');
+            val = interp1(wave, lens.unitDensity, varargin{1});
+        end
     case 'density'
         % Assumed density for this instance
         val = lens.density;
 
     case {'spectraldensity'}
         % Unit density times the density for this structure
-        u = lensGet(lens,'unit density');
+        if isempty(varargin)
+            u = lensGet(lens,'unit density');
+        else
+            u = lensGet(lens,'unit density', varargin{1});
+        end
         d = lensGet(lens,'density');
         val = u*d;
         
     case 'transmittance'
         % Proportion of quanta transmitted
-        val = 10.^(-lensGet(lens,'spectral density'));
+        if isempty(varargin)
+            val = 10.^(-lensGet(lens,'spectral density'));
+        else
+            val = 10.^(-lensGet(lens,'spectral density', varargin{1}));
+        end
         
     case {'absorbtance','absorption'}
         % Proportion of quanta absorbed
-        val = 1 - 10.^(-lensGet(lens,'spectral density'));
+        if isempty(varargin)
+            val = 1 - 10.^(-lensGet(lens,'spectral density'));
+        else
+            val = 1 - 10.^(-lensGet(lens,'spectral density', varargin{1}));
+        end
         
     otherwise
         error('Unknown parameter %s\n',param);
 end
 
 return
-
-

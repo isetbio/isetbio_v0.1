@@ -40,22 +40,44 @@ param = ieParamFormat(param);
 switch param
     case 'name'
         lens.name = val;
-    case 'wave'
+    case {'wave', 'wavelength'}
+        % Sampling wavelength
+        % This will require the interpolation on the data
+        if ~isempty(varargin)
+            % passed in extraval in varargin
+            extrapval = varargin{1};
+        else
+            extrapval = 0;
+        end
+        wave = lensGet(lens, 'wave');
+        unitDensity = lensGet(lens, 'unit density');
+        
+        val = val(:); % Make sure it's a column vector
+        lens.unitDensity = interp1(wave, unitDensity, val, [],extrapval);
         lens.wave = val;
-        
-        
     case {'absorbance','unitdensity'}
         % This might not be the unit density, which has me bummed.  We
         % should deal with this in lensCreate.
         %
         % ieReadSpectra('lensDensity.mat',wave);
         % See macularCreate.
-        lens.unitDensity = val;
+         % Spectral density
+        % Accept wavelength in varargin{1}
+        if isempty(varargin)
+            % Checking for lengths
+            assert(length(val) == length(lensGet(lens, 'wave')), ...
+                'Val should have same length as lens wavelength');
+            lens.unitDensity = val;
+        else
+            wave = varargin{1};
+            wave = wave(:); % Make sure a column vector
+            assert(length(val)==length(wave),'val and wave size mismatch');
+            lens.unitDensity = interp1(wave, val, lens.wave, [], 0);
+        end
     case 'density'
         % Assumed density for this instance
-        lens.density = val;
-
-        
+        assert(isscalar(val), 'val should be scalar');
+        lens.density = val;      
     otherwise
         error('Unknown parameter %s\n',param);
 end

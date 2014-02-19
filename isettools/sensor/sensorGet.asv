@@ -170,18 +170,18 @@ function val = sensorGet(sensor,param,varargin)
 %    {'human'} - The structure with all human parameters.  Applies only
 %                when the name contains the string 'human' in it
 %    {'human lens'}                  - underlying lens structure
-%    {'human lens transmittance'}    - lens transmittance
-%    {'human lens absorption'}       - lens absorbtance
-%    {'human macular'}               - macular pigment structure
-%    {'human macular density'}       - macular density
-%    {'human macular transmittance'} - macular transmittance
-%    {'human macular absorption'}    - macular absorption
-%    {'human ocular transmittance'}  - totally transmittance for lens and
+%    {'human lens transmittance'}          - lens transmittance
+%    {'human lens absorption'}             - lens absorbtance
+%    {'human macular'} - macular pigment structure
+%    {'human macular density'}  - macular density
+%    {'human macular transmittance'}       - macular transmittance
+%    {'human macular absorption'}          - macular absorption
+%    {'human ocular transmittance'}                   - totally transmittance for lens and
 %                                      macular pigments
-%    {'cone type'}                   - K=1, L=2, M=3 or S=4 (K means none)
-%    {'human cone density'}          - densities used to generate mosaic
-%    {'rSeed'}                       - seed for generating mosaic
-%    {'xy'}                          - xy position of the cones in the mosaic
+%      {'cone type'} - K=1, L=2, M=3 or S=4 (K means none)
+%      {'cone density'} - densities used to generate mosaic (K,L,M,S)
+%      {'rSeed'}     - seed for generating mosaic
+%      {'xy'}        - xy position of the cones in the mosaic
 %
 % Sensor motion
 %       {'sensor movement'}     - A structure of sensor motion information

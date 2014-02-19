@@ -444,21 +444,9 @@ switch lower(param)
     case {'humanlensdensity'}
         % lens OD
         lens = sensorGet(sensor, 'human lens');
-        lens = lensSet(lens, 'density', val);
-        sensor = sensorSet(sensor, 'human lens', lens);
+        conlens = lensSet(lens, 'density', val);
     case {'humanmacular', 'macular'}
-        % Set macular structure
-        % We should first make sure that val is actually a macular
-        % structure and it has the same wavelength as the cone
-        assert(strcmp(val.type, 'macular'),'val should be macular struct');
-        wave = sensorGet(sensor, 'wave');
-        sensor.human.macular = macularSet(val, 'wave', wave);
-    case {'humanmaculardensity', 'maculardensity'}
-        % val is typically between 0 and 0.7, a range of macular pigment
-        % densities.
-        m    = macularGet(sensor,'human macular');
-        m    = macularSet(m,'density',val);
-        sensor = sensorSet(sensor,'macular',m);
+        sensor.human.macular = val;
     case {'humancone'}
         sensor.human.cone = val;
     case {'humanconetype','conetype'}

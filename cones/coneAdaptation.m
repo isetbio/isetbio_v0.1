@@ -260,7 +260,7 @@ elseif typeAdapt == 2
     % using interp of gains
     % gainMixed = interp1([0,numRowsMixed+1]', [1, meanM/meanUV]', [1:numRowsMixed]', 'linear');
     % using interp of means, then inverse
-    gainMixed = meanM ./ interp1([0,numRowsMixed+1]', [meanM, meanUV]', [1:numRowsMixed]', 'linear');
+    gainMixed = meanM ./ interp1([0,numRowsMixed+1]', [meanM, meanUV]', (1:numRowsMixed)', 'linear');
     gainMap((numRowsM+1):(firstRowUV-1), :) = repmat(gainMixed, 1, sz(2));
     % Apply gain map to absorption data
     adaptedData = volts .* repmat(gainMap,[1,1,size(volts,3)]);

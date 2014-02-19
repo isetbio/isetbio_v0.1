@@ -1,7 +1,7 @@
-function t = macular(macDensity,wave)
+function m = macularCreate(macDensity,wave)
 % Returns a structure containing several measures of the macular pigment
 %
-%     t = macular(macDensity,wave)
+%     m = macularCreate(macDensity,wave)
 %
 % The human retina contains a pigment that covers the central (macular)
 % region. This macular pigment passes certain wavelengths of light more
@@ -19,16 +19,17 @@ function t = macular(macDensity,wave)
 % a variety of observers.  They estimate the average (across observers)
 % peak density to be 0.28, with a range of 0.17 to 0.48.
 %
-% t.unitDensity:   The spectral density function with a maximum value of 1.0
-% t.density:       The spectral density times macDensity
-% t.absorption:    The fraction of light absorbed by the pigment as a function of wavelength
-% t.transmittance: The fraction of light transmitted, i.e., 1 - t.absorption
-%
+% m.name    'Convenient name'
+% m.type    'macular'
+% m.wave    
+% m.unitDensity:   The spectral density function with a maximum value of 1.0
+% m.density:       The density for this instance
+
 % Useful formulae
 %
 %   Absorbance spectra are normalized to a peak value of 1.
-%   Absorbtance spectra are the proportion of quanta actually absorbed.
-%   Equation: absorbtanceSpectra = 1 - 10.^(-OD * absorbanceSpectra)
+%   Absorptance spectra are the proportion of quanta actually absorbed.
+%   Equation: absorptanceSpectra = 1 - 10.^(-OD * absorbanceSpectra)
 %
 % The original macular densities values were taken from the Stockman site.
 % Go to http://cvision.ucsd.edu, then click on Prereceptoral filters.  At
@@ -41,35 +42,27 @@ function t = macular(macDensity,wave)
 % sensitivities
 %
 % Examples:
-%   t = macular(0.35);
-%   figure; plot(t.wave,t.transmittance)
+%   m = macularCreate;
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-
+%% 
+if ieNotDefined('macDensity'), macDensity = 0.28; end
 if ieNotDefined('wave'), wave = [400:700]'; end
-t.wave = wave;
-t.density  = ieReadSpectra('macularPigment.mat',wave);
 
+m.name = 'default human macular pigment';
+m.type = 'macular';
+m.wave = wave;
+
+% Read in the Sharpe macular pigment curve and normalize to unit density
 % Typical peak macular density, Estimated by Sharpe in VR paper, 1999 is
 % 0.28.  Yet, the data they provide are at 0.3521.  It is probably not
 % important to return the unit density, but we do.
-if ~exist('macDensity','var'), macDensity = 0.3521; end 
+density  = ieReadSpectra('macularPigment.mat',wave);
+m.unitDensity = density / 0.3521;
 
-% I don't understand this, but the download from the web site has a peak
-% spectral density at 460 of 0.3521, not the average estimated in the
-% paper, which is 0.28. I use their value to make the data unit density.
-t.unitDensity = t.density / 0.3521;
+m.density = macDensity;
 
-% Here is the density, given the macular density passed in.
-t.density = t.unitDensity*macDensity;
-
-% Here is the fraction transmitted through the macular pigment
-t.transmittance = 10.^(-t.density);
-
-% Here is the fraction of light absorbed by the macular pigment
-t.absorption = 1 - t.transmittance;
-
-return;
+return
 
 
