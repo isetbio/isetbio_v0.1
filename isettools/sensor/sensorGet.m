@@ -211,11 +211,13 @@ param = ieParamFormat(param);
 
 switch param
 
+    % Descriptive
     case {'name'}
         if checkfields(sensor,'name'), val = sensor.name; end
     case {'type'}
         if checkfields(sensor,'type'), val = sensor.type; end
 
+        % Size and shape
     case {'rows','row'}
         % There should not be a rows/cols field at all, right, unless the
         % data field is empty?
@@ -352,7 +354,7 @@ switch param
         val = sensorGet(sensor,'dv');
         if isempty(val), val = sensorGet(sensor,'volts'); end
 
-        % Region of interest for data handling
+        % Region of interest for data handling (ROI)
     case {'roi','roilocs'}
         % roiLocs = sensorGet(sensor,'roi');
         % This is the default, which is to return the roi as roi locations,
@@ -476,15 +478,24 @@ switch param
     case 'color'
         val = sensor.color;
     case {'filterspectra','colorfilters'}
-        val = sensor.color.filterSpectra;
+        if sensorCheckHuman(sensor)
+            warning('Human sensor.  returning spectral qe');
+            val = sensorGet(sensor,'spectral qe');
+        else
+            val = sensor.color.filterSpectra;
+        end
+        
     case {'filternames'}
+        % 
         val = sensor.color.filterNames;
     case {'filtercolorletters'}
         % The color letters returned here are in the order of the filter
-        % column position in the matrix of filterSpectra. Only the first
-        % letter of the filter name is returned.  This information is used
-        % in combination with sensorColorOrder to determine plot colors.
-        % The letters are a string.
+        % column position in the matrix of filterSpectra, or in the case of
+        % human the order of the cone pigments. 
+        % 
+        % Only the first letter of the filter name is returned.  This
+        % information is used in combination with sensorColorOrder to
+        % determine plot colors. The letters are a string.
         %
         % The pattern field(see below) describes the position for each
         % filter in the block pattern of color filters.
@@ -618,7 +629,7 @@ switch param
     case 'diffusionmtf'
         val = sensor.diffusionMTF;
 
-        % These are pixel-wise FPN parameters
+        % Pixel-wise FPN parameters
     case {'fpnparameters','fpn','fpnoffsetgain','fpnoffsetandgain'}
         val = [sensorGet(sensor,'sigmaOffsetFPN'),sensorGet(sensor,'sigmaGainFPN')];
     case {'dsnulevel','sigmaoffsetfpn','offsetfpn','offset','offsetsd','dsnusigma','sigmadsnu'}
@@ -874,7 +885,7 @@ switch param
         if length(varargin) > 2, scaleMax = varargin{3}; end
         val = sensorData2Image(sensor,dataType,gam,scaleMax);
 
-        % Human cone case
+        % Human sensor (eye) case
     case {'human'}
         % Structure containing information about human cone case
         % Only applies when the name field has the string 'human' in it.
@@ -914,9 +925,9 @@ switch param
         val = lensGet(lens,'transmittance') .* ...
                 macularGet(macular, 'transmittance');
     case {'humaneffectiveabsorptance'}
-        % Combines cone photopigment, ocular transmittance and peak
-        % efficiency
-        cone = sensorGet(sensor, 'human cone');
+        % Combines cone photopigment, ocular (lens and macular)
+        % transmittance and peak efficiency
+        cone        = sensorGet(sensor, 'human cone');
         absorptance = coneGet(cone, 'absorptance');
         eyeTrans    = sensorGet(sensor, 'human ocular transmittance');
         peakEfficiency = coneGet(cone,'peak efficiency');
@@ -1048,19 +1059,26 @@ function spectralQE = sensorSpectralQE(sensor)
 % wavelengths in wave.
 %
 
-sensorIR = sensorGet(sensor,'irfilter');
-cf = sensorGet(sensor,'filterspectra');
-% isaWave = sensorGet(sensor,'wave');
+if sensorCheckHuman(sensor)
+    % This combines the lens, macular pigment and cone pigments into a
+    % single, overall spectral QE.
+    spectralQE = sensorGet(sensor, 'human effective absorptance');
 
-pixelQE = pixelGet(sensor.pixel,'qe');
-if isempty(pixelQE)
-    warndlg('Empty pixel QE. Assuming QE(lambda) = 1.0');
-    pixelQE = ones(size(sensorIR(:)));
+else
+    
+    sensorIR = sensorGet(sensor,'ir filter');
+    cf       = sensorGet(sensor,'filter spectra');
+    
+    pixelQE = pixelGet(sensor.pixel,'qe');
+    if isempty(pixelQE)
+        warndlg('Empty pixel QE. Assuming QE(lambda) = 1.0');
+        pixelQE = ones(size(sensorIR(:)));
+    end
+    
+    % Compute the combined wavelength sensitivity including the ir filter, the
+    % pixel QE, and the color filters.
+    spectralQE = diag(pixelQE(:) .* sensorIR(:)) * cf;
 end
-
-% Compute the combined wavelength sensitivity including the ir filter, the
-% pixel QE, and the color filters.
-spectralQE = diag(pixelQE(:) .* sensorIR(:)) * cf;
 
 return
 

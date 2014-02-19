@@ -456,7 +456,7 @@ switch lower(param)
     case {'humanmaculardensity', 'maculardensity'}
         % val is typically between 0 and 0.7, a range of macular pigment
         % densities.
-        m    = macularGet(sensor,'human macular');
+        m    = sensorGet(sensor,'human macular');
         m    = macularSet(m,'density',val);
         sensor = sensorSet(sensor,'macular',m);
     case {'humancone'}

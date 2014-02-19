@@ -235,6 +235,9 @@ switch sensorName
         sensor = sensorSet(sensor, 'pixel', pixel);
         sensor = sensorSet(sensor, 'exposure time', 0.05); % 50 ms
         
+        % There are no filter spectra in the human case.  We calculate the
+        % spectral qe from the cones, macular, and lens data
+        
     case 'mouse'
         error('NYI: mouse needs to be fixed with sensorCreateConeMosaic');
         %filterFile = 'mouseColorFilters.mat';

@@ -122,7 +122,7 @@ switch ieParamFormat(species)
         z = zeros(sensorGet(sensor,'nWave'),1); fSQuanta = [z,fsQuanta];
         fN = cellMerge({'kBlack'}, fN);
 
-        sensor = sensorSet(sensor,'filterSpectra',fSQuanta);
+        % sensor = sensorSet(sensor,'filterSpectra',fSQuanta);
         sensor = sensorSet(sensor,'filterNames',fN);
        
         % change pixel size, keeping the same fillfactor (default human
