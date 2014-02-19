@@ -219,12 +219,7 @@ switch sensorName
         sensor = sensorSet(sensor,'pixel',pixelCreate('human',wave));
         
         % Add the default lens structure
-        lens = lensCreate([], wave);
-        sensor = sensorSet(sensor, 'human lens', lens);
-        
-        % Add the default macular structure
-        macular = macularCreate([], wave);
-        sensor = sensorSet(sensor, 'human macular', macular);
+        lens = lensCreate('human'
              
         % Build up a human cone mosaic.
         sensor = sensorCreateConeMosaic(sensor, params);

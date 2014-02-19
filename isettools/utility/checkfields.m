@@ -42,6 +42,3 @@ end
 
 % Should never get here
 error('checkfields: Error')
-return;
-
-
