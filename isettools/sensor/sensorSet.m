@@ -88,10 +88,12 @@ function sensor = sensorSet(sensor,param,val,varargin)
 %     {'framesPerPosition'}- Exposure times per (x,y) position
 %
 % Human
-%     {'human lens'}       - human lens structure, see lensCreate
-%     {'human cone'}       - human cone struture, see coneCreate
-%     {'human cone type'}  - cone type for each position
+%     {'human lens'}           - human lens structure, see lensCreate
+%     {'human cone'}           - human cone struture, see coneCreate
+%     {'human cone type'}      - cone type for each position
 %     {'human cone densities'} - cone spatial densities for K,L,M,S
+%     {'adaptation gain'}      - human cone adaptation gain
+%     {'adaptation offset'}    - human cone adaptation offset
 %
 %  
 % Private
@@ -477,7 +479,11 @@ switch lower(param)
     case {'humanrseed','rseed'}
         % random seed for generating mosaic
         sensor.human.rSeed = val;
-
+        
+    case {'adaptationgain'}
+        sensor.human.adaptGain = val;
+    case {'adaptationoffset'}
+        sensor.human.adaptOffset = val;
         % Sensor motion -  used for eye movements or camera shake
     case {'sensormovement','eyemovement'}
         % A structure with sensor motion information
