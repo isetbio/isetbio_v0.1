@@ -461,7 +461,7 @@ switch lower(param)
         m    = sensorGet(sensor,'human macular');
         m    = macularSet(m,'density',val);
         sensor = sensorSet(sensor,'macular',m);
-    case {'humancone'}
+    case {'humancone', 'cone'}
         sensor.human.cone = val;
     case {'humanconetype','conetype'}
         % Blank (K) K=1 and L,M,S cone at each position
@@ -469,10 +469,20 @@ switch lower(param)
         % Some number of cone types as cone positions.
         sensor.human.coneType = val;
     case {'humanconedensities','densities'}
+        assert(numel(val)==4,'val should have 4 entries for KLMS');
         %- densities used to generate mosaic (K,L,M,S)
         cone = sensorGet(sensor, 'human cone');
         cone = coneSet(cone, 'spatial density', val);
-        sensor = sensorSet(sensor, 'cone', cone);
+        sensor = sensorSet(sensor, 'human cone', cone);
+        
+        % we should update sensor array here
+        params.sz = sensorGet(sensor, 'size');
+        params.density = sensorGet(sensor, 'human cone densities');
+        params.rSeed = sensorGet(sensor, 'human rseed');
+        params.density = val;
+        
+        sensor = sensorCreateConeMosaic(sensor, params);
+        
     case {'humanconelocs','conexy','conelocs','xy'}
         %- xy position of the cones in the mosaic
         sensor.human.xy = val;

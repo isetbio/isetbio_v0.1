@@ -1,7 +1,7 @@
 function sensor = coneAbsorptions(sensor, oi, showBar)
 % Compute the sensor including eye movements
 % 
-%   sensor = coneAbsorptions(sensor, oi);
+%   sensor = coneAbsorptions(sensor, oi, [showBar]);
 %
 % Loop through a number of eye position fixations and calculate the voltage
 % image at each position, concatenating the voltage images to

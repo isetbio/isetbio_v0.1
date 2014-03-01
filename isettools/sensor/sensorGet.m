@@ -173,7 +173,7 @@ function val = sensorGet(sensor,param,varargin)
 %    {'human lens transmittance'}    - lens transmittance
 %    {'human lens absorption'}       - lens absorbtance
 %    {'human macular'}               - macular pigment structure
-%    {'human macular density'}       - macular density
+%    {'human macular densities'}     - macular density
 %    {'human macular transmittance'} - macular transmittance
 %    {'human macular absorption'}    - macular absorption
 %    {'human ocular transmittance'}  - totally transmittance for lens and
@@ -947,7 +947,7 @@ switch param
     case   {'humanconelocs','conexy','conelocs','xy'}
         %- xy position of the cones in the mosaic
         if checkfields(sensor,'human','xy'), val = sensor.human.xy; end
-    case {'humanrseed','humanconeseed'}
+    case {'humanrseed','humanconeseed', 'rseed'}
         % random seed for generating cone mosaic
         % Should get rid of humanrseed alias
         if checkfields(sensor,'human','rSeed'), val = sensor.human.rSeed; end

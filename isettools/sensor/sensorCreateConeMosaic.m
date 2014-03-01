@@ -61,8 +61,8 @@ function sensor = sensorCreateConeMosaic(sensor,params)
 %
 % (c) Copyright, 2010, ImagEval
 
-if ieNotDefined('sensor'),       sensor = sensorCreate; end
-if ~isfield(params, 'sz'), sz = [72,88];else sz = []; end
+if ieNotDefined('sensor'),       sensor = sensorCreate('human'); end
+if ~isfield(params, 'sz'), sz = [72,88];else sz = params.sz; end
 
 if isfield(params,'rgbDensities'), density = params.rgbDensities;
 else density = [0 0.6 0.3 0.1]; end
@@ -74,7 +74,9 @@ if isfield(params,'rSeed'), rSeed = params.rSeed;
 else rSeed = []; end
 
 if isfield(params, 'species'), species = params.species;
-else species = 'human'; end
+elseif sensorCheckHuman(sensor), species = 'human'; 
+else error('Unknown species'); 
+end
 
 % Aperture in meters.
 % Central human cones are 1.5 um in the fovea, 3um in the periphery
@@ -114,12 +116,10 @@ switch ieParamFormat(species)
         cone = coneCreate('human');
         cone = coneSet(cone, 'spatial density', density);
         sensor = sensorSet(sensor, 'human cone', cone);
-        fsQuanta = sensorGet(sensor, 'human effective absorptance');
         fN = {'rLong', 'gMiddle', 'bShort'};
         % vcNewGraphWin; plot(wave,fsQuanta); grid on
         
         % Add a black sensor (K,L,M,S) so we can simulate holes in the cfa
-        z = zeros(sensorGet(sensor,'nWave'),1); fSQuanta = [z,fsQuanta];
         fN = cellMerge({'kBlack'}, fN);
 
         % sensor = sensorSet(sensor,'filterSpectra',fSQuanta);
