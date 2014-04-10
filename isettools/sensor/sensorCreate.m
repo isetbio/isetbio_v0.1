@@ -214,8 +214,13 @@ switch sensorName
         else wave = 400:10:700;
         end
         
+        if isfield(params,'tInteval'), tInteval = params.tInteval;
+        else tInteval = 0.001; % time series sampling time inteval
+        end
+        
         % Add the default human pixel with StockmanQuanta filters.
         sensor = sensorSet(sensor,'wave',wave);
+        sensor = sensorSet(sensor,'time interval', tInteval);
         sensor = sensorSet(sensor,'pixel',pixelCreate('human',wave));
         
         % Add the default lens structure

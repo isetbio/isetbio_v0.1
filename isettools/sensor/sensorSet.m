@@ -94,6 +94,7 @@ function sensor = sensorSet(sensor,param,val,varargin)
 %     {'human cone densities'} - cone spatial densities for K,L,M,S
 %     {'adaptation gain'}      - human cone adaptation gain
 %     {'adaptation offset'}    - human cone adaptation offset
+%     {'time interval'}        - human eye sampling time interval
 %
 %  
 % Private
@@ -489,6 +490,9 @@ switch lower(param)
     case {'humanrseed','rseed'}
         % random seed for generating mosaic
         sensor.human.rSeed = val;
+        
+    case {'sampletimeinterval','timeinterval'}
+        sensor.human.timeInterval = val;
         
     case {'adaptationgain'}
         sensor.human.adaptGain = val;
