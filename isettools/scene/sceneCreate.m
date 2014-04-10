@@ -16,11 +16,11 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %
 % Scenes are represented as photons with 32 bits of precision by default.
 % The spectral representation is 400:10:700 by default.  Both of these can
-% be changed.  
+% be changed.
 %
 % To resample with respect to wavelength use the function
 % sceneInterpolateW.
-% 
+%
 % The create a scene with 16 bits of precision, call sceneCreate with the
 % full list of opticnal arguments and then append two arguments as in
 %
@@ -72,12 +72,12 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %       sSamples = [64 64];  % Surface samples from the files
 %       sFiles{1} = fullfile(isetRootPath,'data','surfaces','reflectances','MunsellSamples_Vhrel.mat');
 %       sFiles{2} = fullfile(isetRootPath,'data','surfaces','reflectances','Food_Vhrel.mat');
-%       sceneCreate('reflectance chart',pSize,sSamples,sFiles); 
+%       sceneCreate('reflectance chart',pSize,sSamples,sFiles);
 %
 % NARROWBAND COLOR PATCHES
 %    wave = [600, 610];  sz = 64;
 %    scene = sceneCreate('uniform monochromatic',wave,sz);
-%   
+%
 % SPATIAL TEST PATTERNS:
 %
 %      {'rings rays'}            - Resolution pattern
@@ -162,7 +162,7 @@ scene = sceneSet(scene,'bit depth',32);   % Single precision
 if length(varargin) > 1 && ischar(varargin{end-1})
     str = ieParamFormat(varargin{end-1});
     if isequal(str,'bitdepth')
-        scene = sceneSet(scene,'bit depth',varargin{end}); 
+        scene = sceneSet(scene,'bit depth',varargin{end});
     end
 end
 sceneName = ieParamFormat(sceneName);
@@ -192,7 +192,7 @@ switch sceneName
         % scene = sceneCreate('macbethEE_IR',patchSize,spectrum)
         scene = sceneDefault(scene,'ir',varargin);
     case {'reflectancechart'}
-        % sceneCreate('reflectance chart',pSize,sSamples,sFiles); 
+        % sceneCreate('reflectance chart',pSize,sSamples,sFiles);
         % There is always a gray strip at the right.
         
         % Patch size in pixels
@@ -202,7 +202,7 @@ switch sceneName
         sFiles{2} = fullfile(isetRootPath,'data','surfaces','reflectances','Food_Vhrel.mat');
         % Surface samples from the files
         sSamples = [64 64];
-
+        
         if isempty(varargin)
         else
             pSize = varargin{1};
@@ -210,7 +210,7 @@ switch sceneName
             if length(varargin) > 2, sFiles = varargin{3}; end
         end
         scene = sceneReflectanceChart(sFiles,sSamples,pSize);
-
+        
     case {'lstar'}
         scene = sceneSet(scene,'name','L-star');
         bWidth = 20; nBars = 10; deltaE = 10;
@@ -361,22 +361,22 @@ switch sceneName
         if length(varargin) >=2, width = varargin{2};   end
         scene = sceneBar(scene,sz,width);
     case {'vernier'}
-        % sceneCreate('vernier',size,width,offset)
-        sz = 65; width = 3; offset = 3;
-        if length(varargin) >=1, sz     = varargin{1};   end
-        if length(varargin) >=2, width  = varargin{2};   end
-        if length(varargin) ==3, offset = varargin{3};   end
+        % sceneCreate('vernier',type, params)
+        type = 'object'; params = [];
+        if length(varargin) >=1, type = varargin{1}; end
+        if length(varargin) >=2, params = varargin{2}; end
         
-        scene = sceneVernier(scene,sz,width,offset);
+        
+        scene = sceneVernier(scene, type,params);
     case {'whitenoise','noise'}
         % sceneCreate('noise',[128 128])
         sz = 128; contrast = 20;
         if length(varargin) >= 1, sz = varargin{1}; end
         if length(varargin) >= 2, contrast = varargin{2}; end
-
+        
         scene = sceneNoise(scene,sz,contrast);
         scene = sceneSet(scene,'name','white noise');
-
+        
     case {'pointarray','manypoints'}
         % sceneCreate('pointArray',sz,spacing,spectralType);
         sz = 128; spacing = 16; spectralType = 'ep';
@@ -500,11 +500,11 @@ function scene = sceneNoise(scene,sz,contrast)
 %% Make a spatial white noise stimulus
 % contrast is the standard deviation of the N(0,contrast) noise.
 % The noise is shifted to a mean of 0.5, and the level is clipped to a
-% minimum of 0. 
+% minimum of 0.
 
 if ieNotDefined('sz'), sz = [128,128]; end
-if ieNotDefined('contrast'), contrast = 0.20; 
-elseif contrast > 1, contrast = contrast/100; 
+if ieNotDefined('contrast'), contrast = 0.20;
+elseif contrast > 1, contrast = contrast/100;
 end
 
 scene = initDefaultSpectrum(scene,'hyperspectral');
@@ -519,7 +519,7 @@ il = illuminantCreate('d65',wave,100);
 p  = illuminantGet(il,'photons');
 scene = sceneSet(scene,'illuminant',il);
 
-% 
+%
 photons = zeros(sz(1),sz(2),nWave);
 for ii=1:nWave, photons(:,:,ii) = d*p(ii); end
 
@@ -839,7 +839,7 @@ return;
 
 %--------------------------------------------------
 function scene = sceneLine(scene,spectralType,sz,offset)
-%% Create a single line scene.  
+%% Create a single line scene.
 % This is used for computing linespreads and OTFs.
 
 if ieNotDefined('spectralType'), spectralType = 'ep'; end
@@ -870,11 +870,11 @@ switch lower(spectralType)
         % to the number of photons is just to produce a reasonable energy
         % level.
         il = illuminantCreate('equal energy',wave);
-
+        
     case 'd65'
         % D65 spectra for the line
         il = illuminantCreate('d65',wave);
-
+        
     otherwise
         error('Unknown uniform field type %s.',spectralType);
 end
@@ -890,7 +890,7 @@ return;
 
 %--------------------------------------------------
 function scene = sceneBar(scene,sz,width)
-%% Create a single bar scene.  
+%% Create a single bar scene.
 % This is used for computing the effect of scene dot density, say for a
 % display with varying dots per inch.
 
@@ -923,63 +923,146 @@ scene = sceneSet(scene,'photons',photons);
 return
 
 %------------------------
-function scene = sceneVernier(scene,sz,width,offset)
-%% Equal photon vernier targets
+function scene = sceneVernier(scene, type, params)
+%% scene for vernier acuity
+%    type indicates what scene is created from, can take value from
+%      'display' - scene is created from an image on display
+%      'object'  - scene is creaetd from object with certain illuminance
 %
-% Need to allow changing color of top and bottom, perhaps other features.
-% We will create params structure for parameters in the future, i.e.,
-% params.sz, params.width, params.lineReflectance, ... and so forth
+%    params structure could include:
+%      sceneSz    - scene resolution, default is 64
+%      barWidth   - bar width in pixels
+%      offset     - displacement in pixels
+%      lineSpace  - spacing between the lines in pixels if type = 'display'
+%      display    - display name or structure, useful if type = 'display'
+%      barColor   - bar color, 0~1 RGB value for type = 'display'
+%      bgColor    - background color, 0~1 RGB for type = 'display'
+%      meanLum    - mean luminance
+%      il         - illuminanece, for type = 'object'
+%      barReflect - bar reflectance, for type = 'object'
+%      bgReflect  - background reflectance, for type = 'object'
 %
-if ieNotDefined('sz'),     sz = 64;    end
-if ieNotDefined('width'),  width = 0;  end
-if ieNotDefined('offset'), offset = 1; end
+%
 
-% Line and background reflectance
-lineReflectance = 0.6;
-backReflectance = 0.3;
+% check inputs
+if notDefined('scene'), error('scene requried'); end
+if notDefined('type'),  type = 'object'; end
 
-scene = sceneSet(scene,'name',sprintf('vernier-%d',offset));
+% init parameters from params
+if isfield(params, 'sceneSz'), sz = params.sceneSz; else sz = 64; end
+if isfield(params, 'barWidth'), width = params.barWidth; else width = 0; end
+if isfield(params, 'offset'), offset = params.offset; else offset = 1; end
+if isfield(params, 'lineSpace'), lineSpace = params.lineSpace;
+else lineSpace = inf; end
 
-%% We make the image square
-r = sz; c = sz;
-
-% Make the column number odd so we can really center the top line
-if ~isodd(c), c = c+1; end
-
-% Vernier line size and offset
-% Top and bottom half rows and columns
-% Columns containing top line, shifted offset/2 
-topCols = (1:width) + round((c - width)/2) - floor(offset/2);  
-
-% Columns containing bottom line, shifted offset from top columns
-% With this algorithm, the width of the 
-botCols = topCols + offset; 
-
-% Split the rows, too
-topHalf = round(r/2); 
-topRows = 1:topHalf; botRows = (topHalf+1):r;
-
-%% Init spectrum
-
-if ~isfield(scene,'spectrum')
-    scene = initDefaultSpectrum(scene,'hyperspectral');
+% Set scene parameters based on type
+switch type
+    case 'object'
+        % Init bar and background reflectance parameter
+        if isfield(params,'barReflect')
+            lineReflectance = params.barReflect;
+        else
+            lineReflectance = 0.6;
+        end
+        if isfield(params, 'bgReflect')
+            backReflectance = params.bgReflect;
+        else
+            backReflectance = 0.3;
+        end
+        
+        scene = sceneSet(scene,'name',sprintf('vernier-%d',offset));
+        
+        %% We make the image square
+        r = sz; c = sz;
+        
+        % Make the column number odd so we can really center the top line
+        if ~isodd(c), c = c+1; end
+        
+        % Vernier line size and offset
+        % Top and bottom half rows and columns
+        % Columns containing top line, shifted offset/2
+        topCols = (1:width) + round((c - width)/2) - floor(offset/2);
+        
+        % Columns containing bottom line, shifted offset from top columns
+        % With this algorithm, the width of the
+        botCols = topCols + offset;
+        
+        % Split the rows, too
+        topHalf = round(r/2);
+        topRows = 1:topHalf; botRows = (topHalf+1):r;
+        
+        %% Init spectrum
+        
+        if ~isfield(scene,'spectrum')
+            scene = initDefaultSpectrum(scene,'hyperspectral');
+        end
+        wave    = sceneGet(scene,'wave');
+        nWave   = sceneGet(scene,'nwave');
+        
+        %% Make the photon data
+        if isfield(params,'il')
+            il = params.il;
+        else
+            il    = illuminantCreate('equal photons',wave);
+        end
+        scene = sceneSet(scene,'illuminant',il);
+        illP  = sceneGet(scene,'illuminant photons');
+        
+        photons = ones(r,c,nWave);
+        for ii=1:nWave
+            photons(:,:,ii)     = backReflectance*photons(:,:,ii)*illP(ii);
+            photons(topRows,topCols,ii)  = (lineReflectance/backReflectance)*photons(topRows,topCols,ii);
+            photons(botRows,botCols,ii)  = (lineReflectance/backReflectance)*photons(botRows,botCols,ii);
+        end
+        
+        scene = sceneSet(scene,'photons',photons);
+    case 'display'
+        % Init related parameters
+        if isfield(params, 'display')
+            display = params.display;
+        else
+            display = displayCreate('LCD-Apple');
+        end
+        if ischar(display), display = displayCreate(display); end
+        
+        if isfield(params, 'barColor')
+            barColor = params.barColor;
+        else
+            barColor = 0.99;
+        end
+        if isscalar(barColor), barColor = repmat(barColor, [1 3]); end
+        if isfield(params, 'bgColor')
+            bgColor = params.bgColor;
+        else
+            bgColor = 0;
+        end
+        if isscalar(bgColor), bgColor = repmat(bgColor, [1 3]); end
+        
+        % Create image to be shown on display
+        if isscalar(sz), sz = [sz sz]; end
+        Img = repmat(reshape(bgColor,[1 1 3]),[sz 1]);
+        cc = [round(sz(2)/2):-lineSpace:1 round(sz(2)/2):lineSpace:sz];
+        width = width - 1;
+        for jj = 1 : length(cc)
+            barCols = max(round(cc(jj)-width/2),1) : ...
+                      min(round(cc(jj)+width/2),sz(2));
+            for ii = 1 : 3
+                Img(:, barCols, ii) = barColor(ii);
+            end
+        end
+        % Shift for offset
+        Img(1:round(end/2),:,:) = circshift(Img(1:round(end/2),:,:), ...
+            [0 offset 0]);
+        
+        % Create scene
+        scene = sceneFromFile(Img, 'rgb',[], display);
+    otherwise
+        error('unknown vernier scene type');
 end
-wave    = sceneGet(scene,'wave');
-nWave   = sceneGet(scene,'nwave');
 
-%% Make the photon data
-il    = illuminantCreate('equal photons',wave);
-scene = sceneSet(scene,'illuminant',il);
-illP  = sceneGet(scene,'illuminant photons');
-
-photons = ones(r,c,nWave);
-for ii=1:nWave
-    photons(:,:,ii)     = backReflectance*photons(:,:,ii)*illP(ii);
-    photons(topRows,topCols,ii)  = (lineReflectance/backReflectance)*photons(topRows,topCols,ii);
-    photons(botRows,botCols,ii)  = (lineReflectance/backReflectance)*photons(botRows,botCols,ii);
+if isfield(params, 'meanLum')
+    scene = sceneAdjustLuminance(scene, params.meanLum);
 end
-
-scene = sceneSet(scene,'photons',photons);
 
 return
 
@@ -1097,7 +1180,7 @@ il = illuminantCreate('equal photons',sceneGet(scene,'wave'));
 scene = sceneSet(scene,'illuminant',il);
 
 % This routine returns an RGB image.  We base the final image on just the
-% green channel 
+% green channel
 img = repmat(img(:,:,2),[1,1,nWave]);
 [img,r,c] = RGB2XWFormat(img);
 illP = illuminantGet(il,'photons');
@@ -1218,7 +1301,7 @@ il = illuminantCreate('equal energy',wave);
 scene = sceneSet(scene,'illuminant',il);
 illP = illuminantGet(il,'photons');
 
-% Create the scene photons 
+% Create the scene photons
 photons = zeros(size(img,1),size(img,2),nWave);
 for ii=1:nWave, photons(:,:,ii) = img*illP(ii); end
 scene = sceneSet(scene,'photons',photons);
