@@ -57,8 +57,16 @@ if ((size(mu,2)==1) && (~isequal(size(Sigma),[1,1]))), mu=mu'; end
 if nargin==3, mu=repmat(mu,K,1); end
 [n,d]=size(mu);
 
-if (size(Sigma)~= [d,d])
+if any(size(Sigma)~= [d,d])
 	error('Sigma must have dimensions dxd where mu is nxd.');
+end
+
+% Check for stats toolbox
+v = ver;
+if any(strcmp('Statistics Toolbox ', {v.Name}))
+    % Matlab toolbox version is present.  Use it.
+    s = mvnrnd(mu, Sigma);
+    return
 end
 
 try

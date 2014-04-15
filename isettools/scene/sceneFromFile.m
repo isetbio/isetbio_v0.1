@@ -131,7 +131,7 @@ scene = sceneSet(scene,'photons',photons);
 scene = sceneSet(scene,'illuminant',il);
 
 % The file name or just announce that we received rgb data
-if ischar(imageData), [p,n] = fileparts(imageData);
+if ischar(imageData), [~,n] = fileparts(imageData);
 else                     n = 'rgb data input';
 end
 scene = sceneSet(scene,'name',n);     

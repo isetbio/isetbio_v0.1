@@ -40,61 +40,60 @@ function val = iePoisson(lambda,nSamp)
 % Copyright ImagEval, LLC, 2010
 
 if ieNotDefined('lambda'), error('rate parameter lambda required'); end
+if ieNotDefined('nSamp'), nSamp = 1; end
+
+% Check if we have MEX function
+if (exist('iePoissrnd','file')==3)
+    val = iePoissrnd(lambda, nSamp);
+    return;
+end
 
 % Check for stats toolbox
-lic = license('inuse');
-nFeatures = length(lic);
-for ii=1:nFeatures
-    if strmatch('stats',lic(ii).feature)
-        % Matlab toolbox version is present.  Use it.
-        val = poissrnd(lambda);
-        return
-    end
+v = ver;
+if any(strcmp('Statistics Toolbox ', {v.Name}))
+    % Matlab toolbox version is present.  Use it.
+    val = poissrnd(lambda, nSamp);
+    return
 end
 
 
 % Use the local ISET methods
-if ~isempty(which('iePoissrnd'))
-    % Plans for Imageval mex-files to speed this up.
-    val = iePoissrnd(lambda);
-else
-    % Matlab implementation
-    if isscalar(lambda)
-        % Scalar version of the routine
-        % Probably we want multiple samples for a single lambda
-        if ieNotDefined('nSamp'), nSamp = 1; end
-        
-        L =  exp(-lambda);
-        val = zeros(1,nSamp);
-        for nn=1:nSamp
-            kk = 0;
-            p = 1;
-            while(p>L)
-                kk = kk+1;
-                u = rand(1,1);
-                p = p*u;
-            end
-            val(nn) = kk-1;
+% Simple implementation, this is slow for large lambda
+% Not recommanded, should try to use mex file first
+warning('Using slow poission random variable generation');
+if isscalar(lambda)
+    % Scalar version of the routine
+    % Probably we want multiple samples for a single lambda
+    L =  exp(-lambda);
+    val = zeros(1,nSamp);
+    for nn=1:nSamp
+        kk = 0;
+        p = 1;
+        while(p>L)
+            kk = kk+1;
+            u = rand(1,1);
+            p = p*u;
         end
-        % figure(1); hist(val,50)
-    else
-        % A matrix or vector of lambdas and we return samples for each
-        [r,c] = size(lambda);
-        val = -1*ones(size(lambda));
-        
-        % There is a challenge with the routine because we have to search through a
-        % number of iterations, and the number depends on the largest value.  This
-        % is why the routine is probably too slow for practical use and large
-        % numbers.
-        mx = max(lambda(:))*7;
-        
-        L   = exp(-lambda);
-        for ii=1:numel(L)
-            prodU = cumprod(rand(1,ceil(mx)));
-            val(ii) = length(find(L(ii) < prodU));
-        end
-        val = reshape(val,r,c);
+        val(nn) = kk-1;
     end
+    % figure(1); hist(val,50)
+else
+    % A matrix or vector of lambdas and we return samples for each
+    [r,c] = size(lambda);
+    val = -1*ones(size(lambda));
+    
+    % There is a challenge with the routine because we have to search through a
+    % number of iterations, and the number depends on the largest value.  This
+    % is why the routine is probably too slow for practical use and large
+    % numbers.
+    mx = max(lambda(:))*7;
+    
+    L   = exp(-lambda);
+    for ii=1:numel(L)
+        prodU = cumprod(rand(1,ceil(mx)));
+        val(ii) = length(find(L(ii) < prodU));
+    end
+    val = reshape(val,r,c);
 end
 
 return
