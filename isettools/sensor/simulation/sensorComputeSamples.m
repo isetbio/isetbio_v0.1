@@ -43,12 +43,23 @@ sensorNF  = sensorSet(sensorNF,'reuse noise',0); % Don't want to reuse
 voltImages = zeros(sz(1),sz(2),nSamp);
 str = sprintf('Computing %d samples',nSamp);
 if showBar, h = waitbar(0,str); end
-for kk=1:nSamp
-    sensorN = sensorComputeNoise(sensorNF,[]);
-    voltImages(:,:,kk) = sensorGet(sensorN,'volts');
-    % v2 = voltImages(:,:,kk); v1 = sensorGet(sensorNF,'volts'); 
-    % vcNewGraphWin; hist(v1(:)-v2(:),100)
-    if ~mod(kk,10) && showBar, waitbar(kk/nSamp); end
+
+% Here, we use a simplied method to compute noise samples for human. The
+% method is the same as the original one. But it doesn't do it in loop and
+% checks are simplified. This could save a great amount of time in the
+% whole simulation process
+if sensorCheckHuman(sensorNF)
+    volts = sensorGet(sensorNF, 'volts');
+    volts = repmat(volts, [1 1 nSamp]);
+    voltImages = iePoisson(volts);
+else    
+    for kk=1:nSamp
+        sensorN = sensorComputeNoise(sensorNF,[]);
+        voltImages(:,:,kk) = sensorGet(sensorN,'volts');
+        % v2 = voltImages(:,:,kk); v1 = sensorGet(sensorNF,'volts');
+        % vcNewGraphWin; hist(v1(:)-v2(:),100)
+        if ~mod(kk,10) && showBar, waitbar(kk/nSamp); end
+    end
 end
 if showBar, close(h); end
 
