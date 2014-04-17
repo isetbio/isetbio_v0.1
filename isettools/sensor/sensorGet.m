@@ -936,6 +936,11 @@ switch param
         
         val = (absorptance.*repmat(eyeTrans, [1 size(absorptance,2)]))* ...
             diag(peakEfficiency);
+        nFilters = length(sensorGet(sensor, 'filter names'));
+        if size(val, 2) ~= nFilters
+            val = [zeros(size(val,1),1) val];
+        end
+        assert(size(val, 2) == nFilters, 'size mismatch: filter name/qe');
     case {'humanconetype','conetype'}
         % Blank (K) K=1 and L,M,S cone at each position
         % L=2, M=3 or S=4 (K means none)

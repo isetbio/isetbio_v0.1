@@ -61,7 +61,7 @@ function sensor = sensorCreateConeMosaic(sensor,params)
 %
 % (c) Copyright, 2010, ImagEval
 
-if ieNotDefined('sensor'),       sensor = sensorCreate('human'); end
+if ieNotDefined('sensor'), sensor = sensorCreate('human'); end
 if ~isfield(params, 'sz'), sz = [72,88];else sz = params.sz; end
 
 if isfield(params,'rgbDensities'), density = params.rgbDensities;
@@ -116,13 +116,8 @@ switch ieParamFormat(species)
         cone = coneCreate('human');
         cone = coneSet(cone, 'spatial density', density);
         sensor = sensorSet(sensor, 'human cone', cone);
-        fN = {'rLong', 'gMiddle', 'bShort'};
+        fN = {'kBlack', 'rLong', 'gMiddle', 'bShort'};
         % vcNewGraphWin; plot(wave,fsQuanta); grid on
-        
-        % Add a black sensor (K,L,M,S) so we can simulate holes in the cfa
-        fN = cellMerge({'kBlack'}, fN);
-
-        % sensor = sensorSet(sensor,'filterSpectra',fSQuanta);
         sensor = sensorSet(sensor,'filterNames',fN);
        
         % change pixel size, keeping the same fillfactor (default human

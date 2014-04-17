@@ -72,7 +72,7 @@ nGridSamples = 1/gridSpacing;
 %
 %  So the default is gridSpacing of 1.  
 %
-[flatSCDI,rCoords,cCoords] = regridOI2ISA(scdi,OI,ISA,gridSpacing);
+flatSCDI = regridOI2ISA(scdi,OI,ISA,gridSpacing);
 
 % Calculate the fractional area of the photodetector within each grid
 % region of each pixel.  If we are super-sampling, we use sensorPDArray.

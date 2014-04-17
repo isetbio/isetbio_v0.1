@@ -124,7 +124,7 @@ switch lower(imageType)
                     error('Img exceeds gTable'); 
                 elseif max(inImg(:)) <= 1
                     % DAC values are [0, 2^nBits - 1]
-                    inImg = floor(inImg*size(gTable,1));
+                    inImg = round(inImg*(size(gTable,1)-1));
                 elseif max(inImg(:)) < 256
                     % We believe this is an 8 bit image.  We check whether
                     % the gTable is 8 or 10 or whatever.  If it is not 8

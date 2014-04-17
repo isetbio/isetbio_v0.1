@@ -80,7 +80,9 @@ for ii=1:nFilters
     % When the sensor has only 1 row or column, the interpolated value of
     % tmp could have the wrong shape.  So, we force it to be the same shape
     % as mask.  We don't need to do this if it is a 2D sensor.
-    if (size(tmp,1) == 1) || (size(tmp,2) == 1), tmp = reshape(tmp,size(mask)); end
+    if (size(tmp,1) == 1) || (size(tmp,2) == 1)
+        tmp = reshape(tmp,size(mask)); 
+    end
     flatSCDI = flatSCDI + mask.*tmp;
 end
 warning('on','MATLAB:interp1:NaNinY');
@@ -109,7 +111,7 @@ function interpolatedCFAN = interpcfaSCDI(rPos, cPos, sensor,spacing)
 % filterNames = sensorGet(sensor,'filterNames');
 
 % Determine the RGB positions of the pixels in the sensor's CFA
-[cfa,cfaN] = sensorDetermineCFA(sensor);
+[~,cfaN] = sensorDetermineCFA(sensor);
 % sensorCheckArray(sensor)
 
 % let's do without inversing the rPos and cPos values as we may get rounding issues,
