@@ -1,4 +1,4 @@
-function [connecMatrix layer] = layersConnectionMatrix(layer)
+function [connecMatrix, layer] = layersConnectionMatrix(layer)
 % Calculate a lateral connection matrix between RGCs
 %
 %    [connecMatrix layer] = layersConnectionMatrix(layer)

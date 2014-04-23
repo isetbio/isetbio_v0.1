@@ -6,10 +6,10 @@ function d = displaySet(d,parm,val,varargin)
 % Parameters
 %   name
 %   gTable
-%   dac size
 %   wave
 %   spd
 %   dpi
+%   psf
 %   viewing distance
 %   comment
 %
@@ -45,9 +45,6 @@ switch parm
             val = repmat(val(:),1,3);
         end
         d.gamma = val;
-    case {'bits','dacsize'}
-        % 8 bit, 10 bit, and so forth
-        d.bits = val;
     case {'wave','wavelength'}  %nanometers
         % d = displaySet(d,'wave',val);
         % Force column
@@ -63,6 +60,9 @@ switch parm
         d.dpi = val;
     case {'viewingdistance'}
         d.dist = val;
+    case {'psfs', 'point spread', 'psf'}
+        assert(size(val,3)==displayGet(d, 'n primaries'), 'size mismatch');
+        d.psfs = val;
     case {'comment'}
         d.comment = val;
     otherwise

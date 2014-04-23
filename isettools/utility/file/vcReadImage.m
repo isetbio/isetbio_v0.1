@@ -73,8 +73,8 @@ switch lower(imageType)
         
         % If the data are 2 or 3 dimensions, then we have a unispectral or
         % an RGB image.
-        if ndims(inImg) == 2 || ndims(inImg) == 3
-            if ndims(inImg) == 2
+        if ismatrix(inImg) || ndims(inImg) == 3
+            if ismatrix(inImg)
                 % A unispectral image.  We convert it to an RGB image and
                 % then process it the same we we process an RGB image.
                 rgbImg =zeros(size(inImg,1),size(inImg,2),3);
@@ -92,7 +92,7 @@ switch lower(imageType)
                 % values as in the original file.
                 %
                 fprintf('[%s]: Assuming RGB data are 8 bits.\nUsing block matrix primaries\n', mfilename);
-                [xwImg,r,c,w] = RGB2XWFormat(inImg/255);
+                [xwImg,r,c,~] = RGB2XWFormat(inImg/255);
                 
                 % Prevent DR > 10,000.  See ieCompressData.
                 xwImg = ieClip(xwImg,1e-3,1);
@@ -114,9 +114,16 @@ switch lower(imageType)
                 end
                 
                 % Get the parameters from the display
-                wave   = displayGet(d,'wave');  % Primary wavelengths
-                spd    = displayGet(d,'spd');   % Primary SPD in energy
-                gTable = displayGet(d,'gamma table');
+                wave   = displayGet(d, 'wave');  % Primary wavelengths
+                spd    = displayGet(d, 'spd');   % Primary SPD in energy
+                gTable = displayGet(d, 'gamma table');
+                psfs   = displayGet(d, 'psf');   % subpixel point spread
+                
+                if ~isempty(psfs)
+                    % We should render the input image to the specific
+                    % subpixel positions
+                    % inImg = vdisplayCompute(d);
+                end
                 
                 % Check whether the gTable has enough entries for this
                 % image.
@@ -125,7 +132,7 @@ switch lower(imageType)
                 elseif max(inImg(:)) <= 1
                     % DAC values are [0, 2^nBits - 1]
                     inImg = round(inImg*(size(gTable,1)-1));
-                elseif max(inImg(:)) < 256
+                elseif max(inImg(:)) <= 255
                     % We believe this is an 8 bit image.  We check whether
                     % the gTable is 8 or 10 or whatever.  If it is not 8
                     % bit, then we stretch the image values out to span the
@@ -133,7 +140,7 @@ switch lower(imageType)
                     s = size(gTable,1);
                     if s > 256,
                         fprintf('[%s] Assuming 8 bit RGB image and %d-bit LUT\n',mfilename,log2(s));                       
-                        inImg = floor((inImg/256)*s);
+                        inImg = round(inImg/255*(s-1));
                     end
                 end
                 
@@ -142,21 +149,7 @@ switch lower(imageType)
                 inImg  = ieLUTDigital(inImg,gTable);
                 [xwImg,r,c] = RGB2XWFormat(inImg);
                 
-                % Prevent DR > 10,000.  See ieCompressData.
-                % xwImg = ieClip(xwImg,1e-4,1);
-                
-                % The gamma table part here won't work if we scale first.
-                % The values need to be DAC values (integers) not scaled
-                % between 0 and 1.  At some point, get back to this and
-                % make the DAC value stuff work right.  For now, make the
-                % call and use a power function of 2.2
-                %
-                % Now, we need to convert to linear values using dac2rgb
-                % xwImg = dac2rgb(xwImg,gTable);
-                % xwImg = dac2rgb(xwImg);
-                
-                % Yes, this has a lot of transposes.  Sorry.  Try not to
-                % think about it.
+                % Convert energy units to quanta
                 photons = Energy2Quanta(wave,(xwImg*spd')')';
             end
             photons = XW2RGBFormat(photons,r,c);

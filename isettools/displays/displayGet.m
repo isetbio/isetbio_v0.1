@@ -67,16 +67,16 @@ switch parm
     case {'gtable','dv2intensity','gamma','gammatable'}
         if checkfields(d,'gamma'), val = d.gamma; end
     case {'bits','dacsize'}
-        % 8 bit, 10 bit, and so forth
-        % This should probably be log2(nlevels) and removed from the
-        % structure.
-        val = d.bits;
+        % color bit depths, e.g. 8 bit / 10 bit
+        % This is computed from size of gamma table
+        gTable = displayGet(d, 'gTable');
+        assert(ismatrix(gTable), 'Bit depth of display unkown');
+        val = round(log2(size(gTable, 1)));
     case {'nlevels'}
         % Number of levels
         val = 2^displayGet(d,'bits');
     case {'levels'}
-        % List of the levels
-        % Should it start from 0?  Or 1?
+        % List of the levels, e.g. 0~255
         val = 1:displayGet(d,'nlevels') - 1;
         
         % SPD calculations
@@ -220,6 +220,18 @@ switch parm
         % Viewing distance in meters
         if checkfields(d,'dist'), val = d.dist;
         else val = 0.5;   % Default viewing distance in meters, 19 inches
+        end
+    case {'oversample', 'osample'}
+        if isfield(d, 'psfs')
+            val = size(d.psfs, 1);
+        else
+            val = [];
+        end
+    case {'psfs', 'point spread', 'psf'}
+        if isfield(d, 'psfs')
+            val = d.psfs;
+        else
+            val = [];
         end
     otherwise
         error('Unknown parameter %s\n',parm);

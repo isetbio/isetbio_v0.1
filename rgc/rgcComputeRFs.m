@@ -63,8 +63,8 @@ end
 end
 
 % What is this?  Can't it be better?
-function mi = minimumIndex(A,threshold)
-    A = A > threshold;
-    [a b] = max(A);
-    mi = min(b(b>1));
-end
+% function mi = minimumIndex(A,threshold)
+%     A = A > threshold;
+%     [a b] = max(A);
+%     mi = min(b(b>1));
+% end

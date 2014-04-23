@@ -70,6 +70,8 @@ switch displayName
 
 end
 
+% Handle user-specified parameter values
+% Now we only support user setting value of wavelength
 if length(varargin) >= 1
     newWave = varargin{1};
     oldWave = displayGet(d,'wave');
