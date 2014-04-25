@@ -188,12 +188,20 @@ switch parm
         % The focal plane depends on the scene distance.  If
         % there is no scene, we assume the user meant a scene at
         % infinity.
-        scene = vcGetObject('Scene');
-        if isempty(scene), sDist = 1e10;
-        else               sDist = sceneGet(scene,'distance');
+        if ~isempty(varargin)
+            sDist = varargin{1};
+        elseif isfield(oi, 'distance') && oi.distance > 0
+            sDist = oi.distance;
+        else
+            scene = vcGetSelectedObject('Scene');
+            if isempty(scene), sDist = 1e10;
+            else sDist = sceneGet(scene,'distance');
+            end
         end
         val = opticsGet(oiGet(oi,'optics'),'imagedistance',sDist);
-        if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1});
+        end
         
     case {'wangular','widthangular','hfov','horizontalfieldofview','fov'}
         % oiCompute(oi,scene) assigns the angular field of view to the oi.

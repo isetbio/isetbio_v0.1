@@ -49,9 +49,10 @@ if showBar, h = waitbar(0,str); end
 % checks are simplified. This could save a great amount of time in the
 % whole simulation process
 if sensorCheckHuman(sensorNF)
-    volts = sensorGet(sensorNF, 'volts');
-    volts = repmat(volts, [1 1 nSamp]);
-    voltImages = iePoisson(volts);
+    p = sensorGet(sensorNF, 'photons');
+    p = repmat(p, [1 1 nSamp]);
+    pixel = sensorGet(sensorNF,'pixel');
+    voltImages = iePoisson(p) * pixelGet(pixel, 'conversion gain');
 else    
     for kk=1:nSamp
         sensorN = sensorComputeNoise(sensorNF,[]);

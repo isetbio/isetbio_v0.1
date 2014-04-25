@@ -66,6 +66,7 @@ if ieNotDefined('opticsModel'),
     optics = oiGet(oi,'optics'); 
     opticsModel = opticsGet(optics,'model'); 
 end
+oi = oiSet(oi, 'distance', sceneGet(scene, 'distance'));
 
 % Compute according to the selected model
 opticsModel = ieParamFormat(opticsModel);

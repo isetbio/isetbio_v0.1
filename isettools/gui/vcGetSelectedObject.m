@@ -33,6 +33,7 @@ function [val,sOBJECT] = vcGetSelectedObject(objType)
 global vcSESSION
 
 objType = vcEquivalentObjtype(objType);
+val = [];
 
 switch lower(objType)
     case 'scene'

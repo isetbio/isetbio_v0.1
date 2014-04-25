@@ -64,8 +64,13 @@ function sensor = sensorCreateConeMosaic(sensor,params)
 if ieNotDefined('sensor'), sensor = sensorCreate('human'); end
 if ~isfield(params, 'sz'), sz = [72,88];else sz = params.sz; end
 
-if isfield(params,'rgbDensities'), density = params.rgbDensities;
-else density = [0 0.6 0.3 0.1]; end
+if isfield(params,'rgbDensities')
+    density = params.rgbDensities;
+elseif isfield(params, 'humanConeDensities')
+    density = params.humanConeDensities;
+else
+    density = [0 0.6 0.3 0.1]; 
+end
 
 if isfield(params,'coneAperture'), coneAperture = params.coneAperture;
 else coneAperture = []; end
