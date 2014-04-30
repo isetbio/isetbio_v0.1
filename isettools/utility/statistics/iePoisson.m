@@ -50,7 +50,7 @@ end
 
 % Check for stats toolbox
 v = ver;
-if any(strcmp('Statistics Toolbox ', {v.Name}))
+if any(strcmp('Statistics Toolbox', {v.Name}))
     % Matlab toolbox version is present.  Use it.
     val = poissrnd(lambda, nSamp);
     return
