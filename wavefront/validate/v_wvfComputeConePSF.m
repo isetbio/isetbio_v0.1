@@ -25,6 +25,7 @@
 % 7/20/12  dhb  Got TEST1 to work without crashing, and possibly even to be correct.
 % 7/23/12  dhb  OTF plot is looking vaguely reasonable.
 %               Added Autrusseau equal energy OTFs for comparison
+% 4/30/14  dhb  Add a little line that comptues the polychromatic psf.
 
 %% Initialize
 s_initISET;
@@ -145,6 +146,15 @@ wvfParams2 = wvf0;
 wvfParams2 = wvfSet(wvfParams2,'zcoeffs',0);
 wvfParams2 = wvfComputePSF(wvfParams2);
 conePsf2 = wvfGet(wvfParams2,'cone psf');
+
+%% Pull out psfs at each wavelength
+%
+% DHB put this here because he needed the polychromatic
+% psf to make a figure and this seemed like a good place
+% to get it.
+for i = 1:length(wls)
+    psfs{i} = wvfGet(wvfParams1,'psf',wls(i));
+end
 
 % This bit is a sanity check that our code yields constant sampling in the psf domain.
 % Also compute arcminutes per pixel.
@@ -398,6 +408,8 @@ else
     title('S cone OTF');
 end
 drawnow;
+
+
 
 return
 
