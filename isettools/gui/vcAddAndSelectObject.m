@@ -51,6 +51,8 @@ if exist('obj','var')
             vcSESSION.ISA{val} = obj;
         case {'VCIMAGE'}
             vcSESSION.VCIMAGE{val} = obj;
+        case {'DISPLAY'}
+            vcSESSION.DISPLAY{val} = obj;
         otherwise
             error('Unknown object type');
     end
