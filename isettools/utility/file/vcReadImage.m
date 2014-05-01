@@ -66,6 +66,10 @@ switch lower(imageType)
         else dispCal = varargin{1};
         end
         
+        if length(varargin) > 1, doSub = varargin{2}; 
+        else doSub = false;
+        end
+        
         % Read the image data and convert them to double
         if ischar(fullname), inImg = double(imread(fullname));
         else                 inImg = double(fullname);
@@ -74,16 +78,7 @@ switch lower(imageType)
         % If the data are 2 or 3 dimensions, then we have a unispectral or
         % an RGB image.
         if ismatrix(inImg) || ndims(inImg) == 3
-            if ismatrix(inImg)
-                % A unispectral image.  We convert it to an RGB image and
-                % then process it the same we we process an RGB image.
-                rgbImg =zeros(size(inImg,1),size(inImg,2),3);
-                for ii=1:3
-                    rgbImg(:,:,ii) = inImg;
-                end
-                inImg = rgbImg;
-                clear rgbImg;
-            end
+            if ismatrix(inImg), inImg = repmat(inImg, [1 1 3]); end
             
             % An rgb image.
             if isempty(dispCal)
@@ -91,7 +86,8 @@ switch lower(imageType)
                 % photon values so that the scene window shows the same RGB
                 % values as in the original file.
                 %
-                fprintf('[%s]: Assuming RGB data are 8 bits.\nUsing block matrix primaries\n', mfilename);
+                fprintf('[%s]: Assuming input data is 8 bit\n', mfilename);
+                fprintf('[%s]: Using block matrix primaries\n', mfilename);
                 [xwImg,r,c,~] = RGB2XWFormat(inImg/255);
                 
                 % Prevent DR > 10,000.  See ieCompressData.
@@ -111,6 +107,8 @@ switch lower(imageType)
                     d = displayCreate(dispCal);
                 elseif isstruct(dispCal) && isequal(dispCal.type,'display')
                     d = dispCal;
+                else
+                    error('Unknown diplay structure');
                 end
                 
                 % Get the parameters from the display
@@ -118,12 +116,6 @@ switch lower(imageType)
                 spd    = displayGet(d, 'spd');   % Primary SPD in energy
                 gTable = displayGet(d, 'gamma table');
                 psfs   = displayGet(d, 'psf');   % subpixel point spread
-                
-                if ~isempty(psfs)
-                    % We should render the input image to the specific
-                    % subpixel positions
-                    % inImg = vdisplayCompute(d);
-                end
                 
                 % Check whether the gTable has enough entries for this
                 % image.
@@ -147,6 +139,13 @@ switch lower(imageType)
                 % Convert the DAC values to linear intensities for the
                 % channels.
                 inImg  = ieLUTDigital(inImg,gTable);
+                
+                % Subpixel rendering
+                if doSub
+                    if isempty(psfs), error('display psf not set'); end
+                    inImg = displayCompute(d, inImg);
+                end
+                
                 [xwImg,r,c] = RGB2XWFormat(inImg);
                 
                 % Convert energy units to quanta

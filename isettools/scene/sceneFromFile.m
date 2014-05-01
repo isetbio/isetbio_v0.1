@@ -1,4 +1,4 @@
-function [scene,imageData,comment] = sceneFromFile(imageData,imageType,meanLuminance,dispCal,wList)
+function [scene,I] = sceneFromFile(I, imType, meanLuminance,dispCal,wList, doSub)
 % Create a scene structure by reading data from a file
 %
 %     [scene,fname,comment] = sceneFromFile(imageData,imageType,[meanLuminance],[dispCal],[wList])
@@ -57,28 +57,28 @@ function [scene,imageData,comment] = sceneFromFile(imageData,imageType,meanLumin
 % Copyright ImagEval Consultants, LLC, 2003.
 
 %% Parameter set up
-if ieNotDefined('imageData')
+if notDefined('I')
     % If imageData is not sent in, we ask the user for a filename.
     % The user may or may not have set the imageType.  Sigh.
-    if ieNotDefined('imageType'), [imageData,imageType] = vcSelectImage;
-    else imageData = vcSelectImage(imageType);
+    if notDefined('imType'), [I,imType] = vcSelectImage;
+    else I = vcSelectImage(imType);
     end
-    if isempty(imageData), scene = []; return; end
+    if isempty(I), scene = []; return; end
 end
-comment = '';
+if notDefined('doSub'), doSub = false; end
 
 %% Read the photons and illuminant structure
-
 % Remove spaces and force lower case.
-imageType = ieParamFormat(imageType);
+imType = ieParamFormat(imType);
 
-switch lower(imageType)
+switch lower(imType)
     case {'monochrome','rgb'}  % 'unispectral'
         if ieNotDefined('dispCal')
+            warning('Default display lcdExample is used to create scene');
             dispCal = fullfile(isetRootPath,'data','displays','lcdExample.mat');
         end
         
-        photons = vcReadImage(imageData,imageType,dispCal);
+        photons = vcReadImage(I,imType,dispCal, doSub);
         
         % Match the display wavelength and the scene wavelength
         scene = sceneCreate('rgb');
@@ -102,14 +102,14 @@ switch lower(imageType)
 
     case {'multispectral','hyperspectral'}
         
-        if ~ischar(imageData), error('File name required for multispectral'); end
+        if ~ischar(I), error('File name required for multispectral'); end
         if ieNotDefined('wList'), wList = []; end
 
         scene = sceneCreate('multispectral');
         
         % The illuminant structure has photon representation and a
         % standard Create/Get/Set group of functions.
-        [photons, il, basis] = vcReadImage(imageData,imageType,wList);
+        [photons, il, basis] = vcReadImage(I,imType,wList);
         
         % vcNewGraphWin; imageSPD(photons,basis.wave);
         
@@ -126,12 +126,12 @@ switch lower(imageType)
 end
 
 %% Put all the parameters in place and return
-scene = sceneSet(scene,'filename',imageData);
+scene = sceneSet(scene,'filename',I);
 scene = sceneSet(scene,'photons',photons);
 scene = sceneSet(scene,'illuminant',il);
 
 % The file name or just announce that we received rgb data
-if ischar(imageData), [~,n] = fileparts(imageData);
+if ischar(I), [~,n] = fileparts(I);
 else                     n = 'rgb data input';
 end
 scene = sceneSet(scene,'name',n);     
