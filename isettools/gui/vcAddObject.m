@@ -51,7 +51,9 @@ if exist('obj','var')
             sensor = sensorSet(sensor,'pixel',obj);
             vcSESSION.ISA{val} = sensor;
         case {'vcimage'}
-            vcSESSION.VCIMAGE{val} = obj;          
+            vcSESSION.VCIMAGE{val} = obj;
+        case {'display'}
+            vcSESSION.DISPLAY{val} = obj;
         otherwise
             error('Unknown object type');
     end

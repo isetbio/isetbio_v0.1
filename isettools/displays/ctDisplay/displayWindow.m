@@ -1,44 +1,45 @@
 function varargout = displayWindow(varargin)
-% display main window
+% displayWindow main window
 %
-% This is the main GUI window for interfacing with the Display Simulator
-% design functions.  From this window you can visualize the sub-pixels,
-% load simple images, and perform various analytical calculations using the
-% display.  
-%
-% The display radiance data can also be converted into an ISET Scene format
-% and thus transferred into the ISET analysis tools.
+% This is the main GUI window for interfacing with the Clear Type or
+% Display Simulator design functions.  From this window you can visualize
+% the sub-pixels, load simple images, and perform various analytical
+% calculations using the display.  The display radiance data can also be
+% converted into an ISET Scene format and thus transferred into the ISET
+% analysis tools.
 %
 % This function brings up the window to edit display properties
 %
-%      displayWindow, by itself, creates a new display or raises the
-%      existing singleton.
+%      DISPLAYWINDOW, by itself, creates a new DISPLAYWINDOW or raises the existing
+%      singleton*.
 %
-%      H = displayWindow returns the handle to a new or the the existing
-%      singleton.
+%      H = DISPLAYWINDOW returns the handle to a new DISPLAYWINDOW or the handle to
+%      the existing singleton*.
 %
-%      displayWindow('Property','Value',...) creates a new CTDISPLAY using
-%      the given property value pairs. Unrecognized properties are passed
-%      via varargin to ctDisplay_OpeningFcn.  This calling syntax produces
-%      a warning when there is an existing singleton*.
+%      DISPLAYWINDOW('Property','Value',...) creates a new DISPLAYWINDOW using the
+%      given property value pairs. Unrecognized properties are passed via
+%      varargin to displayWindow_OpeningFcn.  This calling syntax produces a
+%      warning when there is an existing singleton*.
 %
-%      CTDISPLAY('CALLBACK') and CTDISPLAY('CALLBACK',hObject,...) call the
-%      local function named CALLBACK in CTDISPLAY with the given input
+%      DISPLAYWINDOW('CALLBACK') and DISPLAYWINDOW('CALLBACK',hObject,...) call the
+%      local function named CALLBACK in DISPLAYWINDOW with the given input
 %      arguments.
 %
+%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 %
 % (c) Stanford, PDCSOFT, Wandell, 2010
 
-% Edit the above text to modify the response to help ctDisplay
+% Edit the above text to modify the response to help displayWindow
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @ctDisplay_OpeningFcn, ...
-                   'gui_OutputFcn',  @ctDisplay_OutputFcn, ...
+                   'gui_OpeningFcn', @displayWindow_OpeningFcn, ...
+                   'gui_OutputFcn',  @displayWindow_OutputFcn, ...
                    'gui_LayoutFcn',  [], ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -53,8 +54,8 @@ end
 % End initialization code - DO NOT EDIT
 return;
 
-% --- Executes just before ctDisplay is made visible.
-function ctDisplay_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before displayWindow is made visible.
+function displayWindow_OpeningFcn(hObject, eventdata, handles, varargin)
 
 handles.output = hObject;
 
@@ -62,7 +63,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 if isempty(ctGetObject('displayW'))
-    ctSetObject('displayFigure', hObject);
+    ctSetObject('displayFigure',hObject);
     ctdpInitializeSession;
 else
     menuRefresh_Callback(hObject, eventdata, handles);
@@ -71,7 +72,7 @@ end
 return;
 
 % --- Outputs from this function are returned to the command line.
-function varargout = ctDisplay_OutputFcn(hObject, eventdata, handles)
+function varargout = displayWindow_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;

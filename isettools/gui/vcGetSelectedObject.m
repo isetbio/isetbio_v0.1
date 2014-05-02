@@ -48,6 +48,8 @@ switch lower(objType)
         if checkfields(vcSESSION,'SELECTED','VCIMAGE'), val = vcSESSION.SELECTED.VCIMAGE;  end
     case {'pixel'}
         if checkfields(vcSESSION,'SELECTED','ISA'), val = vcSESSION.SELECTED.ISA;  end
+    case {'display'}
+        if checkfields(vcSESSION,'SELECTED', 'DISPLAY'), val = vcSESSION.SELECTED.DISPLAY; end
     otherwise,
         error('Unknown object type.');
 end
