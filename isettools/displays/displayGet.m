@@ -30,7 +30,7 @@ function val = displayGet(d,parm,varargin)
 %     {'primaries xy'}
 %
 % Spatial parameters
-%     {'dpi'}                  % Dots per inch
+%     {'dpi', 'ppi'}                  % Dots per inch
 %     {'meters per dot'}
 %     {'dots per meter'}
 %     {'dots per deg'}         % Dots per degree visual angle
@@ -188,7 +188,7 @@ switch parm
         val = ones(1,3)*rgb2lms;
 
         % Spatial parameters
-    case {'dpi'}
+    case {'dpi', 'ppi'}
         if checkfields(d,'dpi'), val = d.dpi;
         else val = 96;
         end

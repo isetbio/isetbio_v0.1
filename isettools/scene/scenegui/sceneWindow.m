@@ -55,7 +55,7 @@ end
 % Initialize gamma. There are other initialization steps in sceneOpen
 % Deleted Dec. 2013.  Doesn't seem to be needed and interferes with
 % sceneSet(scene,'gamma',val)
-% set(handles.editGamma,'String',num2str(1));
+% sceneSet(handles.editGamma,'String',num2str(1));
 
 return
 

@@ -36,14 +36,12 @@ objType = vcEquivalentObjtype(objType);
 %%
 if ~isempty(val)
     switch(lower(objType))
-        case {'scene','isa','opticalimage','vcimage'}
+        case {'scene','isa','opticalimage','vcimage', 'display'}
             eval(['sOBJECT = vcSESSION.',objType,'{val};']);
         case {'pixel'}
             sOBJECT = sensorGet(vcSESSION.ISA{val},'pixel');
         case {'optics'}
             sOBJECT = oiGet(vcSESSION.OPTICALIMAGE{val},'optics');
-        case {'display'}
-            sOBJECT = vcimageGet(vcSESSION.VCIMAGE{val},'display');
         otherwise
             error('Unknown object type.');
     end

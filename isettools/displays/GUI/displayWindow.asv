@@ -32,6 +32,8 @@ function varargout = displayWindow(varargin)
 %
 % (c) Stanford, PDCSOFT, Wandell, 2010
 
+%#ok<*DEFNU> % suppress unused warnings
+
 % Edit the above text to modify the response to help displayWindow
 
 % Begin initialization code - DO NOT EDIT
@@ -62,18 +64,20 @@ handles.output = hObject;
 % Refresh handles structure
 guidata(hObject, handles);
 
-if isempty(ctGetObject('displayW'))
-    ctSetObject('displayFigure',hObject);
-    ctdpInitializeSession;
-else
-    menuRefresh_Callback(hObject, eventdata, handles);
+% add to vcSESSION
+global vcSESSION
+if ~checkfields(vcSESSION, 'GUI', 'vcDisplayWindow')
+    vcSESSION.GUI.vcDisplayWindow.hObject = hObject;
+    vcSESSION.GUI.vcDisplayWindow.eventdata = eventdata;
+    vcSESSION.GUI.vcDisplayWindow.handles = handles;
 end
+
+displayRefresh(hObject, eventdata, handles);
 
 return;
 
 % --- Outputs from this function are returned to the command line.
-function varargout = displayWindow_OutputFcn(hObject, eventdata, handles)
-
+function varargout = displayWindow_OutputFcn(~, ~, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
@@ -102,7 +106,7 @@ function menuFileLoadImage_Callback(hObject, eventdata, handles)
 % File | Load Image
 %
 dW = ctGetObject('displayW'); 
-[img, comment, displayGD] = ctdpLoadImage(dW);
+[img, ~, displayGD] = ctdpLoadImage(dW);
 if isempty(img), return; end
 
 vd = ctDisplayGet(displayGD,'vd'); 
@@ -425,13 +429,13 @@ ctdpLoadFont(handles.figure1);
 return;
 
 % --------------------------------------------------------------------
-function menuRefresh_Callback(hObject, eventdata, handles)
-ctdpProcessRefreshEvent(hObject);
+function displayRefresh(~, ~, handles)
+    displaySetEditsAndButtons(handles);
 return;
 
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
-ctdpSaveAndClose(handles.figure1);
+    displayClose(handles.figure1);
 return;
 
 % --------------------------------------------------------------------
@@ -617,16 +621,17 @@ ctdpProcessExistingDisplayModels(handles.figure1);
 ctdpRefreshGUIWindow(handles.figure1);
 return;
 
-% --- Executes on selection change in popupmenuDisplayModels.
+% --- Executes on selection change in popupSelectDisplay.
 
-function popupmenuDisplayModels_Callback(hObject, eventdata, handles)
+function popupSelectDisplay_Callback(hObject, eventdata, handles)
 % When the 'Selected Display' popup is chosen, this routine is called
+displayRefresh(handles);
 ctdpProcessSelectDisplayModel(hObject);
 ctdpRefreshGUIWindow(hObject);
 return;
 
 % --- Executes during object creation, after setting all properties.
-function popupmenuDisplayModels_CreateFcn(hObject, eventdata, handles)
+function popupSelectDisplay_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -824,10 +829,10 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 return;
 
-function editAmp_Callback(hObject, eventdata, handles)
+function editPPI_Callback(hObject, eventdata, handles)
 return;
 
-function editAmp_CreateFcn(hObject, eventdata, handles)
+function editPPI_CreateFcn(hObject, eventdata, handles)
 return;
 
 % Hint: edit controls usually have a white background on Windows.

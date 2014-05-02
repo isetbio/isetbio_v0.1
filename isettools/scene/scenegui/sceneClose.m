@@ -14,5 +14,4 @@ if checkfields(vcSESSION,'GUI','vcSceneWindow')
 end
 
 closereq;
-
 return;

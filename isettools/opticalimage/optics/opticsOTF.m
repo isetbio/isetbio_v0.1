@@ -94,8 +94,9 @@ oi = oiPad(oi,padSize,sDist);
 % Get the current data set.  It has the right size.  We over-write it
 % below.
 p = oiGet(oi,'photons');   
-for ii=1:length(wave)
-    img = oiGet(oi,'photons',wave(ii));
+parfor ii=1:length(wave)
+    % img = oiGet(oi,'photons',wave(ii));
+    img = p(:, :, ii);
     % figure(1); imagesc(img); colormap(gray); 
 
     % For diffraction limited we calculate the OTF.  For other optics
