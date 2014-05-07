@@ -1,4 +1,4 @@
-function newName = ctdpRenameDisplayModel(ctDisplayW);
+function newName = ctdpRenameDisplayModel(ctDisplayW)
 % Rename current display
 %
 %   ctdpRenameDisplayModel(ctDisplayW);

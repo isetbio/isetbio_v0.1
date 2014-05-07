@@ -25,8 +25,6 @@ function val = coneGet(cone, param, varargin)
 %    {'absorbance'}                  - cone absorbance
 %    {'absorptance'}                 - cone absorbtance without any
 %                                      pre-receprocal transimitance
-%    {'effetive absorptance'}        - cone absorbtance with lens and
-%                                      macular pigment transmittance
 %    {'quantal fundamentals'}        - quantal fundamentals of the cones
 %
 %

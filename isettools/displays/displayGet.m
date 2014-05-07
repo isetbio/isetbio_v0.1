@@ -86,6 +86,11 @@ switch parm
         if checkfields(d,'wave'), val = d.wave(:);
         elseif checkfields(d,'wavelengths'), val = d.wavelengths(:);
         end
+    case {'binwidth'}
+        wave = displayGet(d, 'wave');
+        if length(wave) > 1
+            val = wave(2) - wave(1);
+        end
         
     case {'nwave'}
         val = length(displayGet(d,'wave'));

@@ -17,7 +17,6 @@ nObj = length(objects);
 % list of names.
 if nObj == 1 && isempty(objects{1})
     objNames = [];
-    nObj = 0;
     return;
 else
     % Every object should have a name.

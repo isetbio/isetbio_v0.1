@@ -110,19 +110,6 @@ if cbType > 0
             L(~lst) = -(b2*M(~lst) + c2*S(~lst)) / a2;
             imgLMS(:,:,1) = L;
             % vcNewGraphWin; imagescRGB(imgLMS);
-
-            %             for rr = 1:sizeLMS(1)
-            %                 for cc = 1:sizeLMS(2)
-            %                     if((imgLMS(rr, cc, 3) / imgLMS(rr, cc, 2)) < inflection)
-            %                         imgLMS(rr, cc, 1) = -(b1 * imgLMS(rr, cc, 2) + c1 * imgLMS(rr, cc, 3)) / a1;
-            %                     else
-            %                         imgLMS(rr, cc, 1) = -(b2 * imgLMS(rr, cc, 2) + c2 * imgLMS(rr, cc, 3)) / a2;
-            %                     end
-            %                 end
-            %             end
-            % vcNewGraphWin; imagescRGB(imgLMS);
-
-
         case 2          % Deuternopia
             % find a,b,c for lam=575nm and lam=475, again.
             % Less than inflection

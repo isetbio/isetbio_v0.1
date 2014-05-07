@@ -34,7 +34,7 @@ else
 end
 
 %% Description box on upper right
-%  set(handles.txtSceneDescription,'String', displayDescription(d));
+set(handles.txtSummary,'String', displayDescription(d));
 
 %% Set subpixel figure
 psfs = displayGet(d, 'psfs');
