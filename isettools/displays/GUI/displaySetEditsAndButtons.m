@@ -36,6 +36,12 @@ end
 %% Description box on upper right
 set(handles.txtSummary,'String', displayDescription(d));
 
+%% Redraw the main image 
+%
+% TO BE DONE.
+
+
+
 %% Set subpixel figure
 psfs = displayGet(d, 'psfs');
 if ~isempty(psfs)

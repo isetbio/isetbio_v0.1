@@ -99,9 +99,25 @@ switch parm
         spd = displayGet(d,'spd');
         val = size(spd,2);
     case {'spd','spdprimaries'}
+        % Units are energy (watts/....)
         % displayGet(dsp,'spd');
         % displayGet(d,'spd',wave);
-        % Units are energy (watts/....)
+        %
+        % The issue of scaling the units of the SPD is worth thinking
+        % about. When we calibrate a display we are at a distance and we
+        % obtain the SPD of each channel maximum averaging over a lot of
+        % pixels. 
+        %
+        % When we want to represent the data at high spatial
+        % resolution, it should always be the case that the peak luminance
+        % of each channel, averaged over a large region of image, equals
+        % that peak.  But at high spatial resolution, the channel may be
+        % zero over large portions of the image.  For example, the red
+        % channel doesn't span the green/blue or black lines.  So, when we
+        % create a spatially resolved subpixel image we need to know how to
+        % scale the spd for that image so that the mean luminance is
+        % preserved.
+        
         
         % Always make sure the spd has rows equal to number of wavelength
         % samples.  The PTB uses spectra rather than spd.  This hack makes
@@ -226,18 +242,29 @@ switch parm
         if checkfields(d,'dist'), val = d.dist;
         else val = 0.5;   % Default viewing distance in meters, 19 inches
         end
-    case {'oversample', 'osample'}
-        if isfield(d, 'psfs')
-            val = size(d.psfs, 1);
-        else
-            val = [];
-        end
-    case {'psfs', 'point spread', 'psf'}
+
+        
+    % PSF information
+    case {'psfs', 'pointspread', 'psf'}
+        % The whole psf data set
         if isfield(d, 'psfs')
             val = d.psfs;
         else
             val = [];
         end
+    case {'psfsamples','oversample', 'osample'}
+        % Number of psf samples per pixel
+        if isfield(d, 'psfs')
+            val = size(d.psfs, 1);
+        else
+            val = [];
+        end
+    case {'psfsamplespacing'}
+        % displayGet(d,'psf sample sampling',units)
+        disp('NYI');
+        
+      
+        
     otherwise
         error('Unknown parameter %s\n',parm);
 end

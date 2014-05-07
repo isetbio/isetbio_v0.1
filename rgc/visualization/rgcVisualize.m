@@ -84,10 +84,10 @@ switch lower(plotType)
 
     % Input images
     case {'conevoltages','cvolts'}
-        % Not sure who sets these. I guess they are set by the adaptation
-        % model.
         % rgcVisualize('cone voltages',rgcP);
-        % Someday this should look like
+        %
+        % These are set by the cone adaptation model.
+        % Someday this visualization should look like
         %   cones = rgcP.get('cones');
         %   conesVisualize(cones,'cone voltages');
         %

@@ -322,6 +322,8 @@ set(handles.uipanel2, 'FontSize', answer);
 % --- Executes on selection change in popupSelectDisplay.
 function popupSelectDisplay_Callback(hObject, eventdata, handles)
 % Called when the 'Selected Display' popup is chosen
+val = get(handles.popupSelectDisplay,'value');
+vcSetSelectedObject('display',val);
 displayRefresh(hObject, eventdata, handles);
 
 % --------------------------------------------------------------------
