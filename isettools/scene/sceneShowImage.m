@@ -8,9 +8,9 @@ function rgb = sceneShowImage(scene,displayFlag,gam)
 % from the command line, a new figure is displayed.
 %
 % Examples:
-%   rgb = sceneShowImage(scene,'photons')
-%   sceneShowImage(scene,'energy')
-%   sceneShowImage(scene,'luminance')
+%   rgb = sceneShowImage(scene)
+%   sceneShowImage(scene)
+%   sceneShowImage(scene, 0)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 

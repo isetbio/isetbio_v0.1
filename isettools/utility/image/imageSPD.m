@@ -38,6 +38,7 @@ if ieNotDefined('gam'), gam = 1; end
 if ieNotDefined('displayFlag'), displayFlag = 1; end
 
 if ieNotDefined('wList')
+    w = size(SPD, ndims(SPD));
     if     w == 31,  wList = (400:10:700); 
     elseif w == 301, wList = (400:1:700);
     elseif w == 37,  wList = (370:10:730);
@@ -68,7 +69,7 @@ end
 % Display the rendered RGB.  Sometimes we just return the RGB
 % values. 
 if displayFlag >= 1
-    if ~isequal(gam,1), RGB = RGB.^gam; end
+    if ~isscalar(gam), RGB = RGB.^gam; end
     if ieNotDefined('xcoords') || ieNotDefined('ycoords')
         imagescRGB(RGB); axis image; 
     else

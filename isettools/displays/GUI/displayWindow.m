@@ -76,7 +76,7 @@ end
 % Refresh image window
 I = imread(fullfile(isetRootPath, 'data', 'images', 'rgb', 'macbeth.tif'));
 I = im2double(I);
-imshow(I, 'Parent', handles.axes1);
+vcSESSION.imgData = I;
 
 % Refresh other components
 displayRefresh(hObject, eventdata, handles);
@@ -91,13 +91,18 @@ varargout{1} = handles.output;
 return;
 
 % --------------------------------------------------------------------
-function menuFileLoadImage_Callback(~, ~, handles)
+function menuFileLoadImage_Callback(hObject, eventdata, handles)
 % File | Load Image
 %
 fname = uigetfile('*.*', 'Choose Image File');
 if fname == 0, return; end
-I = imread(fname);
-imshow(I, 'Parent', handles.axes1);
+I = im2double(imread(fname));
+
+global vcSESSION;
+vcSESSION.imgData = I;
+
+% Refresh other components
+displayRefresh(hObject, eventdata, handles);
 
 return;
 
@@ -143,24 +148,37 @@ return;
 
 
 % --------------------------------------------------------------------
-function menuAnalyzeSceneSubpixel_Callback(~, ~, handles)
+function menuAnalyzeSceneSubpixel_Callback(~, ~, ~)
 % Analyze | Scene
 % Opens up a Scene Window
 ind = vcGetSelectedObject('display');
 d = vcGetObject('display', ind);
 
 % Get current image
-h = get(handles.axes1, 'children');
-I = get(h, 'CData');
+global vcSESSION;
+if isfield(vcSESSION, 'imgData')
+    I = vcSESSION.imgData;
+else
+    warning('No image set');
+    return;
+end
 
 % Generate scene
 if isempty(I), disp('No image set'); return; end
 scene = sceneFromFile(I, 'rgb', [], d, [], 1);
+
+% Compute scene size
+[r,c,~] = size(I);
+vDist = sceneGet(scene, 'distance');
+fov   = atand(max(r,c) * displayGet(d, 'metersperdot')/vDist);
+scene = sceneSet(scene, 'fov', fov);
+
+% Show scene window
 vcAddAndSelectObject('scene', scene);
 sceneWindow;
 
 % --------------------------------------------------------------------
-function menuAnalyzeScene_Callback(~, ~, handles)
+function menuAnalyzeScene_Callback(~, ~, ~)
 % Analyze | Scene
 % Opens up a Scene Window
 ind = vcGetSelectedObject('display');
@@ -168,12 +186,25 @@ if isempty(ind), disp('no display selected'); return; end
 d = vcGetObject('display', ind);
 
 % Get current image
-h = get(handles.axes1, 'children');
-I = get(h, 'CData');
+global vcSESSION;
+if isfield(vcSESSION, 'imgData')
+    I = vcSESSION.imgData;
+else
+    warning('No image set');
+    return;
+end
 
 % Generate scene
-if isempty(I), disp('No image set'); return; end
+if isempty(I),  warning('No image set'); return; end
 scene = sceneFromFile(I, 'rgb', [], d, [], 0);
+
+% Compute scene size
+[r,c,~] = size(I);
+vDist = sceneGet(scene, 'distance');
+fov   = atand(max(r,c)  * displayGet(d,'metersperdot')/vDist);
+scene = sceneSet(scene, 'fov', fov);
+
+% Show scene window
 vcAddAndSelectObject('scene', scene);
 sceneWindow;
 
@@ -325,10 +356,6 @@ function popupSelectDisplay_Callback(hObject, eventdata, handles)
 val = get(handles.popupSelectDisplay,'value');
 vcSetSelectedObject('display',val);
 displayRefresh(hObject, eventdata, handles);
-
-% --------------------------------------------------------------------
-function menuEditScalePixel_Callback(hObject, eventdata, handles)
-disp('Not yet implemented')
 
 % --------------------------------------------------------------------
 function menuEditRenameDisplay_Callback(hObject, eventdata, handles)

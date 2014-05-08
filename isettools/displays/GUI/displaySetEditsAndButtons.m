@@ -37,10 +37,7 @@ end
 set(handles.txtSummary,'String', displayDescription(d));
 
 %% Redraw the main image 
-%
-% TO BE DONE.
-
-
+displayShowImage(d, [], handles.axes1);
 
 %% Set subpixel figure
 psfs = displayGet(d, 'psfs');
@@ -48,7 +45,5 @@ if ~isempty(psfs)
     imshow(psfs / max(psfs(:)), 'Parent', handles.axes4);
 end
 
-%% Show rendered subpixel image
-
-
+%% END
 return;

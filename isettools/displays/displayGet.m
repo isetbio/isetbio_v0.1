@@ -237,34 +237,47 @@ switch parm
         degPerPixel = ieRad2deg(tan( mpd / dist));
         val = round(1/degPerPixel);
         
-    case {'viewingdistance'}
+    case {'viewingdistance', 'distance'}
         % Viewing distance in meters
         if checkfields(d,'dist'), val = d.dist;
         else val = 0.5;   % Default viewing distance in meters, 19 inches
         end
-
         
     % PSF information
     case {'psfs', 'pointspread', 'psf'}
         % The whole psf data set
-        if isfield(d, 'psfs')
-            val = d.psfs;
-        else
-            val = [];
-        end
+        if isfield(d, 'psfs'), val = d.psfs; end
+        
     case {'psfsamples','oversample', 'osample'}
         % Number of psf samples per pixel
-        if isfield(d, 'psfs')
-            val = size(d.psfs, 1);
-        else
-            val = [];
-        end
+        if isfield(d, 'psfs'), val = size(d.psfs, 1); end
+        
     case {'psfsamplespacing'}
+        % spacing between psf samples
         % displayGet(d,'psf sample sampling',units)
-        disp('NYI');
-        
-      
-        
+        if isempty(displayGet(d, 'psfs')), return; end
+        val = displayGet(d, 'metersperdot') / displayGet(d, 'psfsamples');
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1});
+        end
+    case {'fillingfactor','subpixelfilling'}
+        % Filling factor of subpixel
+        psfs = displayGet(d, 'psfs');
+        if isempty(psfs), return; end
+        [r,c,~] = size(psfs);
+        psfs = psfs ./ repmat(max(max(psfs)), [r c]);
+        psfs = psfs > 0.2;
+        val = sum(sum(psfs))/r/c;
+        val = val(:);
+    case {'subpixelspd'}
+        % spectral power distribution for subpixels
+        % see comments in spd
+        % This is the real subpixel spd, not the spatial averaged one
+        % To get the spd for the whole pixel, use displayGet(d, 'spd')
+        % instead
+        spd = displayGet(d, 'spd');
+        ff  = displayGet(d, 'filling factor');
+        val = spd ./ repmat(ff(:)', [size(spd, 1) 1]);
     otherwise
         error('Unknown parameter %s\n',parm);
 end
