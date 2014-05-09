@@ -243,6 +243,10 @@ switch parm
         else val = 0.5;   % Default viewing distance in meters, 19 inches
         end
         
+    case {'refreshrate'}
+        % display refresh rate
+        if isfield(d, 'refreshRate'), val = d.refreshRate; end
+        
     % PSF information
     case {'psfs', 'pointspread', 'psf'}
         % The whole psf data set

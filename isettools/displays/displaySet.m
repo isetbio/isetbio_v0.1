@@ -51,7 +51,8 @@ switch parm
         d.wave = val(:);
     case {'spd','spdprimaries'}
         % d = displaySet(d,'spd primaries',val);
-        % Should check the length(wave) matches rows of spd.
+        if ~ismatrix(val), error('unknonwn spd structure'); end
+        if size(val,1) < size(val, 2), val = val'; end
         d.spd = val;
         
         % Spatial matters
@@ -60,6 +61,8 @@ switch parm
         d.dpi = val;
     case {'viewingdistance'}
         d.dist = val;
+    case {'refreshrate'}
+        d.refreshRate = val;
     case {'psfs', 'point spread', 'psf'}
         assert(size(val,3)==displayGet(d, 'n primaries'), 'size mismatch');
         d.psfs = val;

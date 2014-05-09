@@ -131,9 +131,10 @@ scene = sceneSet(scene,'photons',photons);
 scene = sceneSet(scene,'illuminant',il);
 
 % The file name or just announce that we received rgb data
-if ischar(I), [~,n] = fileparts(I);
-else                     n = 'rgb data input';
+if ischar(I), [~, n, ~] = fileparts(I);
+else n = 'rgb image';
 end
+if exist('d', 'var'), n = [n ' - ' displayGet(d, 'name')]; end
 scene = sceneSet(scene,'name',n);     
 
 if ieNotDefined('meanLuminance')                         % Do nothing

@@ -234,7 +234,7 @@ displayClose(handles.figure1);
 % --------------------------------------------------------------------
 function menuCRT_Callback(hObject, eventdata, handles)
 % Display | CRT
-d = displayCreate('crt');
+d = displayCreate('CRT-Dell');
 vcAddAndSelectObject('display', d);
 displayRefresh(hObject, eventdata, handles);
 
@@ -296,16 +296,9 @@ warning('NYI');
 
 % --------------------------------------------------------------------
 function menuLCDVerticalStripesRGB_Callback(hObject, eventdata, handles)
-% displayGD  = ctGetObject('display');
-% 
-% dpi = 72;
-% dSpacing = 0.001; % sample spacing in mm
-% vDisplayLCD = vDisplayCreate('lcd',dpi,dSpacing,'v','rgb');
-% 
-% displayGD  = ctDisplaySet(displayGD,'vDisplay',vDisplayLCD);  % Add?  Replace?
-% ctSetObject('display', displayGD);
-% ctdpRefreshGUIWindow(hObject);
-warning('NYI');
+d = displayCreate('LCD-Dell');
+vcAddAndSelectObject('display', d);
+displayRefresh(hObject, eventdata, handles);
 
 % --------------------------------------------------------------------
 function menuLCDVerticalStripesBGR_Callback(hObject, eventdata, handles)
