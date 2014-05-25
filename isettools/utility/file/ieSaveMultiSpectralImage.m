@@ -40,6 +40,7 @@ if ieNotDefined('comment'),    comment = sprintf('Date: %s\n',date); end %#ok<NA
 if ieNotDefined('illuminant'), error('Illuminant required'); end
 % If the illuminant is not in the modern illuminant format, we should
 % convert it to that format here.
+% illuminant = illuminantModernize(illuminant);
 
 if ieNotDefined('fullName')
     fullName = vcSelectDataFile('stayput','w','mat','Save multispectral data file.');

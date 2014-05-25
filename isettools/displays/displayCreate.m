@@ -18,6 +18,10 @@ function d = displayCreate(displayName,varargin)
 %   d = displayCreate('lcdExample');
 %   wave = 400:5:700; d = displayCreate('lcdExample',wave);
 %
+%  Some displays have psf data, as well.  For example:
+%
+%   d = displayCreate('LCD-Apple');
+%  
 % Copyright ImagEval Consultants, LLC, 2011.
 
 
@@ -58,7 +62,8 @@ switch displayName
         d = displayDefault(d);
  
     otherwise
-        % Is it a file with calibrated display data?
+        % Read a file with calibrated display data.
+        % This can include pixel psf data for some displays.
         if exist(displayName,'file') || exist([displayName,'.mat'],'file') 
             tmp = load(displayName);
             if ~isfield(tmp,'d')

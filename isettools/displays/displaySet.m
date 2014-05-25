@@ -47,11 +47,20 @@ switch parm
         d.gamma = val;
     case {'wave','wavelength'}  %nanometers
         % d = displaySet(d,'wave',val);
-        % Force column
-        d.wave = val(:);
+        % Force column, interpolate SPD, and don't do anything if it turns
+        % out that the value was already as sent in.
+        if ~isequal(val(:),d.wave)
+            disp('Changing wave and interpolating SPD also, for consistency')
+            spd = displayGet(d,'spd');
+            wave = displayGet(d,'wave');
+            newSPD = interp1(wave, spd, val(:), 'linear');
+            d.wave = val(:);
+            d = displaySet(d,'spd',newSPD);
+        end
+
     case {'spd','spdprimaries'}
         % d = displaySet(d,'spd primaries',val);
-        if ~ismatrix(val), error('unknonwn spd structure'); end
+        if ~ismatrix(val), error('unknown spd structure'); end
         if size(val,1) < size(val, 2), val = val'; end
         d.spd = val;
         
