@@ -264,8 +264,8 @@ switch parm
         if ~isempty(varargin)
             val = val*ieUnitScaleFactor(varargin{1});
         end
-    case {'fillingfactor','subpixelfilling'}
-        % Filling factor of subpixel
+    case {'fillfactor','fillingfactor','subpixelfilling'}
+        % Fill factor of subpixel
         psfs = displayGet(d, 'psfs');
         if isempty(psfs), return; end
         [r,c,~] = size(psfs);
