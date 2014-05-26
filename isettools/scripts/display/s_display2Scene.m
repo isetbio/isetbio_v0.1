@@ -30,10 +30,11 @@ energy = dRGB*spd';
 energy = XW2RGBFormat(energy,r,c);
 p = Energy2Quanta(wave,energy);
 scene = sceneSet(scene,'cphotons',p);   % Compressed photons
+% vcAddObject(scene); sceneWindow;
 
 %% Adjust the scene to match the display resolution
-%
-%  Adjust luminance to maximum Y value of display, but divided by 2 because
+
+% Adjust luminance to maximum Y value of display, but divided by 2 because
 % half the scene is black
 wp = displayGet(d,'white point');
 scene = sceneAdjustLuminance(scene,wp(2)/2);
@@ -41,11 +42,13 @@ scene = sceneAdjustLuminance(scene,wp(2)/2);
 dist = 0.5;
 scene = sceneSet(scene,'distance',dist);
 dpi   = displayGet(d,'dpi');
-% Scene width in meters
+
+% Calculate scene width in meters
 sceneWidth = dpi2mperdot(dpi,'meters')*imSize(2);
 fov = rad2deg(atan2(sceneWidth,dist));
 scene = sceneSet(scene,'fov',fov);
 
+% Show it
 vcAddObject(scene);
 sceneWindow;
 
