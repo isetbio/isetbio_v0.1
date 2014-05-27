@@ -1,5 +1,5 @@
 function sensor = coneAbsorptions(sensor, oi, showBar)
-% Compute the sensor including eye movements
+% Compute the cone absorptions accounting for eye movements
 % 
 %   sensor = coneAbsorptions(sensor, oi, [showBar]);
 %
@@ -34,17 +34,29 @@ function sensor = coneAbsorptions(sensor, oi, showBar)
 
 
 %% check inputs
-if notDefined('sensor'), error('Need sensor'); end
-if notDefined('oi'), error('Need optical image'); end
-if notDefined('showBar'), showBar = true; end
+if notDefined('sensor'),  error('Need sensor'); end
+if notDefined('oi'),      error('Need optical image'); end
+if notDefined('showBar'), showBar = ieSessionGet('wait bar'); end
 
 % Get and verify eye movement parameters
-x = sensorGet(sensor,'sensor positions x');  % In deg of visual angle
-y = sensorGet(sensor,'sensor positions y');
+x = sensorGet(sensor,'positions x');  % In deg of visual angle
+y = sensorGet(sensor,'positions y');
 framesPerPosition =  sensorGet(sensor,'frames per position');
 if ~isequal(length(x), length(y), length(framesPerPosition))
     error('framesPerPosition, x, y positions are not of same lengths');
 end
+
+% We could sort the positions to make the computation more efficient.  The
+% movie, however, won't match the real eye movements.  Below is the code
+% that HJ used to sort.  It isn't quite right in here, but ihas the idea.
+
+% pos = sensorGet(sensor,'movement positions');
+% [pos,~,ic]  = unique(pos,'rows');
+% %          
+% % % Compute frame per position
+% framesPerPosition    = hist(ic,unique(ic));      % frames per position
+% framesPerPosition(1) = framesPerPosition(1) + size(pos,1) - sum(framesPerPosition);
+% x = pos(:,1); y = pos(:,2);
 
 %% Calculate volts.
 volts = [];
@@ -63,25 +75,14 @@ ypos = round(2* y * sz(1) / fov);
 % or sensor noise.
 sensor = sensorSet(sensor,'noise flag',0);
 
-% loop across positions
-if showBar == 1
-    wBar = waitbar(0,'Looping over frames');
-elseif showBar >= 2
-    fprintf('Start computing cone absorption samples:0%%');
-    preLength = 3;
-end
-for p = 1:length(framesPerPosition)
-    if showBar == 1
-        waitbar(p/length(framesPerPosition),wBar);
-    elseif showBar >= 2
-        if p < length(framesPerPosition)
-            progressStr = sprintf('%d%%%%', ...
-                round(100*p/length(framesPerPosition)));
-            fprintf([repmat('\b',1,preLength-1) progressStr]);
-            preLength = length(progressStr);
-        end
-    end
-    
+% loop across positions, suppress waitbar in sensorCompute
+wbarState = ieSessionGet('wait bar'); ieSessionSet('wait bar','off');
+nPositions = length(framesPerPosition);
+txt = sprintf('Looping over %i eye positions',nPositions);
+if showBar, wBar = waitbar(0,txt); end
+for p = 1:nPositions
+    if showBar, waitbar(p/nPositions,wBar); end
+
     % if xpos (ypos) is positive, we add columns (rows) to the left 
     % (bottom), shifting the image  rightward (upward). verify this. it
     % could easily be wrong.
@@ -107,13 +108,11 @@ for p = 1:length(framesPerPosition)
     
 end
 
-if showBar == 1
-    close(wBar);
-elseif showBar >= 2
-    fprintf([repmat('\b',1,preLength-1) 'Completed...\n']);
-end
+if showBar == 1, close(wBar); end
+ieSessionSet('wait bar',wbarState);
 
-% Return the sensor with the voltage data from all the eye positions.
+% Return the sensor with the voltage data from all the eye positions as an
+% Row x Col x Position matrix.
 sensor = sensorSet(sensor, 'volts', volts);
 
 %% End

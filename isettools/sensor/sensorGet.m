@@ -190,8 +190,8 @@ function val = sensorGet(sensor,param,varargin)
 %       {'sensor movement'}     - A structure of sensor motion information
 %       {'movement positions'}  - Nx2 vector of (x,y) positions in deg
 %       {'frames per position'} - N vector of exposures per position
-%       {'sensor positions x'}  - 1st column (x) of sensor positions (deg)
-%       {'sensor positions y'}  - 2nd column (y) of sensor positions (deg)
+%       {'positions x'}         - 1st column (x) of movement positions (deg)
+%       {'positions y'}         - 2nd column (y) of movement positions (deg)
 %
 % Miscellaneous - Macbeth color checker (MCC)
 %   More chart handling is being introduced.  See chart<TAB>
@@ -1000,12 +1000,12 @@ switch param
         if checkfields(sensor,'movement','pos'), val = sensor.movement.pos;
         else val = [0,0]; 
         end
-    case {'sensorpositionsx'}
+    case {'positionsx','sensorpositionsx'}
         if checkfields(sensor,'movement','pos')
             val = sensor.movement.pos(:,1);
         else val = 0;
         end
-    case {'sensorpositionsy'}
+    case {'positionsy','sensorpositionsy'}
         if checkfields(sensor,'movement','pos')
             val = sensor.movement.pos(:,2);
         else val = 0;
