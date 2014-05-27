@@ -264,6 +264,8 @@ rgcComputeSpikes(rgcP);
 
 %% Visualize 
 
+% NEED TO USE implay rather than mplay.  Re-write required.
+
 rgcVisualize('Cone Voltages',rgcP); 
 rgcVisualize('Linear Timeseries',rgcP); 
 
