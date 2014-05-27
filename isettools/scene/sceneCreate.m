@@ -95,6 +95,7 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %      {'moire orient'} - Circular Moire pattern
 %      {'zone plate'}   - Circular zone plot, equal photon spectrum
 %      {'star pattern'} - Radial lines used to test printers and displays
+%      {'letter', 'font}- Scene created for certain character and display
 %
 %  Additional parameters are available for several of the patterns.  For
 %  example, the harmonic call can set the frequency, contrast, phase,
@@ -448,6 +449,27 @@ switch sceneName
         if length(varargin) >=3, nLines = varargin{3}; end
         scene = sceneRadialLines(scene,imSize,spectralType,nLines);
         
+    case {'letter', 'font'}
+        % Create scene of single letter
+        %
+        % scene = sceneCreate('font');
+        % scene = sceneCreate('letter', 'g', 18, [], 'OLED-Sony');
+        if ~isempty(varargin), letter = varargin{1}; else letter = 'g'; end
+        if length(varargin) > 1,fontSz = varargin{2}; else fontSz = 16; end
+        if length(varargin) > 2
+            fontName = varargin{3};
+        else
+            fontName = 'Courier New';
+        end
+        if length(varargin) > 3, d = varargin{4}; else d = 'LCD-Apple'; end
+        if ischar(d), d = displayCreate(d); end
+        
+        fontBitmap = fontBitmapGet(fontName, fontSz, letter);
+        scene = sceneFromFile(fontBitmap, 'rgb', [], d, [], true);
+        sz = max(size(fontBitmap));
+        vDist = sceneGet(scene, 'distance');
+        fov = atand(dpi2mperdot(displayGet(d, 'dpi'), 'meters') * sz/vDist);
+        scene = sceneSet(scene, 'h fov', fov);
     otherwise
         error('Unknown scene format.');
 end
