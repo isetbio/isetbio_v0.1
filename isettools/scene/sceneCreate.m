@@ -95,7 +95,6 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %      {'moire orient'} - Circular Moire pattern
 %      {'zone plate'}   - Circular zone plot, equal photon spectrum
 %      {'star pattern'} - Radial lines used to test printers and displays
-%      {'letter', 'font}- Scene created for certain character and display
 %
 %  Additional parameters are available for several of the patterns.  For
 %  example, the harmonic call can set the frequency, contrast, phase,
@@ -128,6 +127,14 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %         sceneCreate('point array',imageSize,pixelsBetweenPoints);
 %         sceneCreate('moire orient',imageSize,edgeSlope);
 %         sceneCreate('vernier',imageSize,lineWidth,pixelOffset);
+%
+% TEXT
+%      {'letter', 'font}- Scene created for certain character and display
+%   For displays that have a psf, and a subset of all the possible letter
+%   sizes and font combinations, we can create a scene.
+%      letter = 'g'; fontSize = 18; 
+%      display ='LCD-Apple'; fontName = 'Georgia';
+%      scene = sceneCreate('letter', 'g', fontSize, fontName, display);
 %
 % NOISE ANALYSIS TEST PATTERNS
 %
@@ -463,13 +470,12 @@ switch sceneName
         end
         if length(varargin) > 3, d = varargin{4}; else d = 'LCD-Apple'; end
         if ischar(d), d = displayCreate(d); end
+
+        % We want this to look like this:
+        font = fontCreate(letter,fontSz,fontName);
+        % or fontSets ?
+        scene = sceneFromFont(font,d);
         
-        fontBitmap = fontBitmapGet(fontName, fontSz, letter);
-        scene = sceneFromFile(fontBitmap, 'rgb', [], d, [], true);
-        sz = max(size(fontBitmap));
-        vDist = sceneGet(scene, 'distance');
-        fov = atand(dpi2mperdot(displayGet(d, 'dpi'), 'meters') * sz/vDist);
-        scene = sceneSet(scene, 'h fov', fov);
     otherwise
         error('Unknown scene format.');
 end
