@@ -471,10 +471,13 @@ switch sceneName
         if length(varargin) > 3, d = varargin{4}; else d = 'LCD-Apple'; end
         if ischar(d), d = displayCreate(d); end
 
+        disp('Not completed')
+        
         % We want this to look like this:
         font = fontCreate(letter,fontSz,fontName);
         % or fontSets ?
         scene = sceneFromFont(font,d);
+        error('font not working');
         
     otherwise
         error('Unknown scene format.');
