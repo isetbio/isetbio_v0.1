@@ -1,24 +1,20 @@
 function [otf, achOTF] = humanCore(wave,sampleSF,p,D0)
-%Compute the human optical transfer function
+%  Compute the human optical transfer function
 %
 %   [otf, achOTF] = humanCore(wave,nWave,sampleSF,p,D0)
 %
-% Calculate the human OTF. 
+%  Calculate the human OTF. 
 %
-% Inputs
-%  p:         Pupil radius in meters (computed from f/# and focal length)
-%  D0:        Base dioptric power (accomodation), usually around 60
-%  sampleSF:  Spatial frequencies in cycles/deg
-%  wave:      Wavelength in nanometers
+%  Inputs:
+%   p        - Pupil radius in meters (computed from f/# and focal length)
+%   D0       - Base dioptric power (accomodation), usually around 60
+%   sampleSF - Spatial frequencies in cycles/deg
+%   wave     - Wavelength in nanometers
 %
-%Returns
-% otf:  Optical transfer function (actually, this is the MTF, just a set of
-%       scale factors.  We assume there is no frequency-dependent phase
-%       shift.
-% williamsFactor: This is a general loss of contrast, independent of
-%                 wavelength, that is applied to bring the data into
-%                 register with human optics.  That factor comes from
-%                 empirical measurements out of the Williams' lab.
+%  Outputs:
+%   otf      -  Optical transfer function (actually, this is the MTF, just
+%               a set of scale factors.  We assume there is no
+%               frequency-dependent phase shift.
 %
 % Example:
 %   wave = 400:10:700; sampleSF = [0:1:30]; 
@@ -32,33 +28,22 @@ function [otf, achOTF] = humanCore(wave,sampleSF,p,D0)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-% TODO
-%  We need a form of this same function that calls opticsDefocusedMTF for a
-%  lens imaging a plane that is out of the good focal distance.  Then, if
-%  we have a depth map, we compute the defocus (D) and apply this formula -
-%  without using the williamsFactor.
-%
-%
-
-% Retrieve the defocus, in diopters, at each wavelength.  These are classic
-% data.  See the function.
+% Retrieve the defocus, in diopters, at each wavelength
 D = humanWaveDefocus(wave);
 
 % Converts the defocus in diopters to the Hopkins w20 parameter for a
 % given pupil radius in meters, defocus (D, diopters), and dioptric power
-% (D0).  The explanation for this formula is in Marimont and Wandell.
-w20 = p^2/2*(D0.*D)./(D0+D);
-% plot(wave,w20); 
-% grid; xlabel('Wavelength (nm)'); ylabel('relative defocus (Hopkins w20)');
+% (D0). The explanation for this formula is in Marimont and Wandell.
+w20 = p^2 / 2 * (D0 .* D) ./ (D0+D);
+% plot(wave,w20); grid on; 
+% xlabel('Wavelength (nm)'); ylabel('relative defocus (Hopkins w20)');
 
 % We use this factor to convert from the input spatial frequency units
 % (cycles/deg) to cycles/meter needed for the Hopkins eye
 % c = 3434.07;            % degrees per meter for human eye
 c = 1/(tan(ieDeg2rad(1))*(1/D0));  % deg per meter    
 
-% This is the general OTF, independent of wavelength.  The curve here is
-% derived from data obtained by Dave Williams.  It could come from some
-% other source in the future.
+% Compute the general OTF, independent of wavelength.
 achOTF = humanAchromaticOTF(sampleSF);
 
 s     = zeros(length(wave),length(sampleSF));

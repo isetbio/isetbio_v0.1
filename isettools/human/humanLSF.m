@@ -27,11 +27,11 @@ function [lineSpread,xDim,wave] = humanLSF(pupilRadius,dioptricPower,unit,wave)
 %  radius = 0.003/2;  % In meters
 %  dioptricPower = 60;% In diopters (1/m)
 %  unit = 'mm';
-%  [lsf,xDim,wave]  = humanLSF([],radius,dioptricPower,'mm'); colormap(jet); mesh(xDim,wave,lsf)
+%  [lsf,xDim,wave]  = humanLSF([],radius,dioptricPower,'mm');
+%  colormap(jet); mesh(xDim,wave,lsf)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('oi'),            oi = vcGetObject('OI'); end
 if ieNotDefined('pupilRadius'),   p  = 0.0015;   else p = pupilRadius;   end   % Default pupil radius is 3mm 
 if ieNotDefined('dioptricPower'), D0 = 59.9404;  else D0 = dioptricPower;end   % dioptric power of unaccomodated eye
 if ieNotDefined('unit'), unit = 'mm';    end

@@ -18,7 +18,7 @@ function [impResp,t,tMTF,freq] = watsonImpulseResponse(t,transientFactor)
 %
 % Reference
 %   This formula and the rationale for it are defined in Basic Sensory
-%   Processing:  Temporal Sensitivity, Boff et al., Chapter 6, equations 40-41.
+%   Processing:Temporal Sensitivity, Boff et al. Chapter 6, equations 40-41
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 

@@ -2,18 +2,18 @@ function [OTF2D, fSupport, wave] = humanOTF(pRadius, D0, fSupport, wave)
 % Calculate the human OTF, including chromatic aberration
 %
 %  [OTF2D, fSupport, wave] = ...
-%        humanOTF([pRadius = 0.0015], [D0 = 59.9404], [fSupport = :],[wave = :])
+%        humanOTF([pRadius = 0.0015], [D0 = 59.9404], [fSupport], [wave])
 %
 % Inputs
-%  pRadius - Pupil radius in meters
-%  D0      - Dioptric power (1/m)
+%  pRadius  - Pupil radius in meters
+%  D0       - Dioptric power (1/m)
 %  fSupport - Frequency support  (cyc/deg)
 %  wave     - wavelength (nm) 
 % 
-% Returns
-%  OTF2D - Two D optical transfer function for each wavelength
+% Outputs
+%  OTF2D    - Two D optical transfer function for each wavelength
 %  fSupport - Frequency support for row,col dimensions of OTF2D
-%  wave - wave
+%  wave     - wave
 %
 % The spatial frequency range is determined by the spatial extent and
 % sampling density of the original scene.
@@ -29,7 +29,8 @@ function [OTF2D, fSupport, wave] = humanOTF(pRadius, D0, fSupport, wave)
 %   vcNewGraphWin;
 %   mesh(fSupport(:,:,1),fSupport(:,:,2),abs(fftshift(OTF2D(:,:,15)))); 
 %   title('550 nm'); xlabel('Frequency (cyc/deg)'), zlabel('Relative amp')
-%   subplot(1,2,2), mesh(fSupport(:,:,1),fSupport(:,:,2), fftshift(abs(OTF2D(:,:,3)))); 
+%   subplot(1,2,2)
+%   mesh(fSupport(:,:,1),fSupport(:,:,2), fftshift(abs(OTF2D(:,:,3)))); 
 %   set(gca,'zlim',[-.2,1]);
 %   xlabel('Frequency (cyc/deg)'), zlabel('Relative amp'); title('400 nm')
 %
@@ -40,13 +41,13 @@ function [OTF2D, fSupport, wave] = humanOTF(pRadius, D0, fSupport, wave)
 % the other aberrations.  At present, we are using some data from Dave
 % Williams and colleagues measured using double-pass and threshold data.  
 %
-% Williams et al. (19XX) predict the measured MTF at the infocus wavelength by 
-% multiplying the diffraction limited OTF by a weighted exponential.  
-% We perform the analogous calculation at every wavelength.  That is, we
+% Williams et al. (19XX) predict the measured MTF at the infocus wavelength
+% by multiplying the diffraction limited OTF by a weighted exponential. We
+% perform the analogous calculation at every wavelength.  That is, we
 % multiply the aberration-free MTF at each wavelength by the weighted
 % exponential in the Williams measurements.  Speaking with Dave last month,
-% he said his current experimental observations confirmed that this was
-% an appropriate correction.  (BW 05.24.96).
+% he said his current experimental observations confirmed that this was an
+% appropriate correction.  (BW 05.24.96).
 %
 % As a further simplification, the human measurements are all 1D.  We build
 % a 1D function and then we assume that the true function is circularly

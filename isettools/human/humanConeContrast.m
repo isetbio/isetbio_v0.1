@@ -24,7 +24,7 @@ if ieNotDefined('mpDensity'), mpDensity = []; end
 if length(wave) ~= length(signalSPD), error('Wavelength incorrect.'); end
 
 % Calculation must take place in energy units
-if strcmp(units,'photons') | strcmp(units,'quanta')
+if strcmp(units,'photons') || strcmp(units,'quanta')
     signalSPD     = Quanta2Energy(wave,signalSPD(:)');
     backgroundSPD = Quanta2Energy(wave,backgroundSPD');
 end
