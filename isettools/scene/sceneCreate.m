@@ -474,7 +474,7 @@ switch sceneName
         disp('Not completed')
         
         % We want this to look like this:
-        font = fontCreate(letter,fontSz,fontName);
+        font = fontCreate(letter,fontName,fontSz,dpi);
         % or fontSets ?
         scene = sceneFromFont(font,d);
         error('font not working');

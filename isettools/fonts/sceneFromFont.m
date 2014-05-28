@@ -6,7 +6,7 @@ function scene = sceneFromFont(font,display)
 % (BW) Vistasoft group, 2014
 
 %% Input arguments
-if ieNotDefined('font'), font = fontCreate; end
+if ieNotDefined('font'),    font = fontCreate; end
 if ieNotDefined('display'), display = displayCreate('LCD-Apple'); end
 
 %%
@@ -35,4 +35,7 @@ end
 
 
 % cd '/Users/wandell/Github/ctToolbox/FontCache'
+
+%% TODO
+% 1.  Convert a bunch of the FontCach files into the new format
 
