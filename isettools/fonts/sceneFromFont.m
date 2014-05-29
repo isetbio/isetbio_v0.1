@@ -1,41 +1,59 @@
-function scene = sceneFromFont(font,display)
+function scene = sceneFromFont(font,display,scene)
 % Create a scene from a font and display
 %
-%  scene = sceneFromFont(font,display)
+%  scene = sceneFromFont(font,[display='LCD-Apple'],[scene])
 %
 % (BW) Vistasoft group, 2014
 
 %% Input arguments
 if ieNotDefined('font'),    font = fontCreate; end
 if ieNotDefined('display'), display = displayCreate('LCD-Apple'); end
+if ieNotDefined('scene'),   scene = sceneCreate; end
 
-%%
-
-bitMap = fontGet(font,'bit map');
-
-% Now convert the bitmap to the black/white rendering on the display
-
-% Now convert the display, using the psf and so forth to the spectral
-% radiance in photons
-
-% Shove it all into the scene structure whose wave matches the display.
-
-
-
-% Adjust fov of scene.  Maybe adjust the luminance, too, depending on the
-% number of black pixels or something.
-sz = max(size(fontBitmap));
-vDist = sceneGet(scene, 'distance');
-
-fov = atand(dpi2mperdot(displayGet(display, 'dpi'), 'meters') * sz/vDist);
-
-scene = sceneSet(scene, 'h fov', fov);
-        
+% Initialize the display to match the scene and font properties
+if ischar(display), display = displayCreate(display); end
+display = displaySet(display,'wave',sceneGet(scene,'wave'));
+if displayGet(display,'dpi') ~= fontGet(font,'dpi')
+    warning('Adjusting display dpi to match font');
+    display = displaySet(display,'dpi',fontGet(font,'dpi'));
 end
 
+%% Compute the high resolution display image
+paddedBitmap = fontGet(font,'padded bitmap');
+dRGB       = displayCompute(display,paddedBitmap);
+[dRGB,r,c] = RGB2XWFormat(dRGB);
+spd  = displayGet(display,'spd');
+wave = displayGet(display,'wave');
 
-% cd '/Users/wandell/Github/ctToolbox/FontCache'
+% Convert the display radiance (energy) to photons and place in scene
+energy = dRGB*spd';
+energy = XW2RGBFormat(energy,r,c);
+p = Energy2Quanta(wave,energy);
+scene = sceneSet(scene,'cphotons',p);   % Compressed photons
 
-%% TODO
-% 1.  Convert a bunch of the FontCach files into the new format
+% vcAddObject(scene); sceneWindow;
 
+%% Adjust the scene to match the display resolution
+
+% Adjust mean luminance to maximum Y value of display, but corrected
+% for number of black pixels
+wp = displayGet(display,'white point');
+nPixels = numel(paddedBitmap(:,:,1));
+p = paddedBitmap(:,:,2); s = sum(p(:))/nPixels;
+scene = sceneAdjustLuminance(scene,wp(2)*s);
+
+dist = 0.5;
+scene = sceneSet(scene,'distance',dist);
+
+% Calculate scene width in meters.  Each bitmap is 1 pixel.
+dpi     = displayGet(display,'dpi');
+mPerDot = dpi2mperdot(dpi,'meters');
+nDots   = size(paddedBitmap,2);
+wMeters = mPerDot*nDots;
+fov     = atan2d(wMeters,dist);
+scene   = sceneSet(scene,'fov',fov);
+
+% Name it
+scene = sceneSet(scene,'name',fontGet(font,'name'));
+
+end

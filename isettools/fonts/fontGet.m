@@ -34,6 +34,26 @@ switch parm
     case 'bitmap'
         val = font.bitmap;
         
+    % Derived
+    case 'paddedbitmap'
+        % fontGet(font,'padded bitmap',padval);
+        % vcNewGraphWin; imagesc(fontGet(font,'padded bitmap'));axis equal
+        padsize = [3 3]; padval = 1;
+        if ~isempty(varargin), padsize = varargin{1}; end
+        if length(varargin) > 1, padval = varargin{2}; end
+        
+        % RGB bitmap
+        bitmap = fontGet(font,'bitmap');
+        
+        % Pad and return
+        newSize = size(bitmap); 
+        newSize(1:2) = newSize(1:2) + 2*padsize;
+        val = zeros(newSize);        
+        for ii=1:size(bitmap,3);
+            val(:,:,ii) = padarray(bitmap(:,:,ii),padsize,padval);
+        end
+        
+        
     otherwise
         disp(['Unknown parameter: ',parm]);
         

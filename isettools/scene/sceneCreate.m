@@ -459,31 +459,30 @@ switch sceneName
     case {'letter', 'font'}
         % Create scene of single letter
         %
-        % scene = sceneCreate('font');
-        % scene = sceneCreate('letter', 'g', 18, [], 'OLED-Sony');
-        if ~isempty(varargin), letter = varargin{1}; else letter = 'g'; end
-        if length(varargin) > 1,fontSz = varargin{2}; else fontSz = 16; end
-        if length(varargin) > 2
-            fontName = varargin{3};
-        else
-            fontName = 'Courier New';
-        end
-        if length(varargin) > 3, d = varargin{4}; else d = 'LCD-Apple'; end
-        if ischar(d), d = displayCreate(d); end
-
-        disp('Not completed')
+        % scene = sceneCreate('letter',font,display);
         
-        % We want this to look like this:
-        font = fontCreate(letter,fontName,fontSz,dpi);
-        % or fontSets ?
-        scene = sceneFromFont(font,d);
-        error('font not working');
+        % Defaults, both have 96 dpi
+        font = fontCreate; display = 'LCD-Apple';  
+        
+        % Assign arguments
+        if ~isempty(varargin), font = varargin{1}; end
+        if length(varargin) > 1, display = varargin{2}; end      
+        if ischar(display), display = displayCreate(display); end
+        
+        scene = sceneFromFont(font,display);
+        return;  % Do not adjust luminance or other properties.  Return.
         
     otherwise
         error('Unknown scene format.');
 end
 
-% Initialize scene geometry, spatial sampling
+%% Optional initializations
+% The initializations below here are not required, but they are used by
+% some of the default patterns above.  If you create a new scene type and
+% don't want any of these initializations, call a return at the end of the
+% case statement above.
+
+% Initialize scene geometry, spatial sampling if not already set above
 scene = sceneInitGeometry(scene);
 scene = sceneInitSpatial(scene);
 
