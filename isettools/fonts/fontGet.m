@@ -38,7 +38,7 @@ switch parm
     case 'paddedbitmap'
         % fontGet(font,'padded bitmap',padval);
         % vcNewGraphWin; imagesc(fontGet(font,'padded bitmap'));axis equal
-        padsize = [3 3]; padval = 1;
+        padsize = [7 7]; padval = 1;
         if ~isempty(varargin), padsize = varargin{1}; end
         if length(varargin) > 1, padval = varargin{2}; end
         
