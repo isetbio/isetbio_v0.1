@@ -127,11 +127,11 @@ switch lower(psfType)
         % Units at this point are in mm.  
         x = (1:n)*mmPerSamp(2); x = x - mean(x(:));
         y = (1:m)*mmPerSamp(1); y = y - mean(y(:));
-        [xInGrid yInGrid] = meshgrid(x,y);
+        [xInGrid, yInGrid] = meshgrid(x,y);
 
         xOut = (1:nSamples)*dx(2); xOut = xOut - mean(xOut(:));
         yOut = (1:nSamples)*dx(1); yOut = yOut - mean(yOut(:));
-        [xOutGrid yOutGrid] = meshgrid(xOut,yOut);
+        [xOutGrid, yOutGrid] = meshgrid(xOut,yOut);
         
         for ii=1:nWave
             psf = interp2(xInGrid,yInGrid,psfIn(:,:,ii),xOutGrid,yOutGrid,'linear',0);

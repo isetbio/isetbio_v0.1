@@ -49,7 +49,7 @@ switch model
         lambda = 555;
         u0 = pupilD * pi * 1e6 / lambda / 180;
         uHat = sampleSF / u0;
-        MTF = 2/pi * (acos(uHat) - uHat * sqrt(1 - uHat^2));
+        MTF = 2/pi * (acos(uHat) - uHat .* sqrt(1 - uHat.^2));
         MTF(uHat >= 1) = 0;
     case {'watson'}
         if notDefined('pupilD'), error('pupil diameter required'); end
@@ -58,7 +58,7 @@ switch model
         end
         u1 = 21.95 - 5.512 * pupilD + 0.3922 * pupilD^2;
         MTFdl = humanAchromaticOTF(sampleSF, 'dl', pupilD);
-        MTF = (1 + (sampleSF / u1)^2)^(-0.62) * sqrt(MTFdl);
+        MTF = (1 + (sampleSF ./ u1).^2).^(-0.62) .* sqrt(MTFdl);
         
         % Apply scatter effects here
         % Not sure if it's the right place to apply the scatter effect
@@ -66,9 +66,10 @@ switch model
         
         % adjusted pigment factor, see IJspeert (1993). It could take some
         % other values as small as 0.056 etc.
-        p = 0.16;
-        age = 30; % should be an input parameter, HJ will update it later
-        MTF = MTF * (1 - p) / (1 + p * (age / 70)^4);
+        
+        %p = 0.16;
+        %age = 30; % should be an input parameter, HJ will update it later
+        %MTF = MTF * (1 - p) / (1 + p * (age / 70)^4);
 end
 
 % END
