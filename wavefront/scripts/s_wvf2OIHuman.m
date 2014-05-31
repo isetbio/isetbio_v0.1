@@ -41,7 +41,7 @@ set(gca,'xlim',[-maxUM maxUM],'ylim',[-maxUM maxUM]);
 
 oiD = wvf2oi(wvfP,'human');
 oiD = oiSet(oiD,'name','Human 3mm');
-vcAddAndSelectObject(oiD); oiWindow;
+vcAddObject(oiD); oiWindow;
 uData = plotOI(oiD,'psf','um',thisWave);
 set(gca,'xlim',[-maxUM maxUM],'ylim',[-maxUM maxUM]);
 

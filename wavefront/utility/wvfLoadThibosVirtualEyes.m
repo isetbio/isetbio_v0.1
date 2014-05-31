@@ -50,7 +50,7 @@ switch pupilDiameterMM
         load('IASstats30','S','sample_mean');
         
     otherwise
-        error('Unknown pupil size')
+        error('Unknown pupil size %.1f. Options are 3, 4.5, 6, 7.5.\n',pupilDiameterMM)
 end
 
 sample_cov = S;
