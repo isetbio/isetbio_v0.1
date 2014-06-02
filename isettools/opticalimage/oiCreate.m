@@ -110,6 +110,7 @@ switch oiType
         
         % Create wavefront parameters
         wvfP = wvfCreate('wave',wave,'zcoeffs',zCoefs,'name',sprintf('human-%d',pupilMM));
+        wvfP = wvfSet(wvfP,'calc pupil size',pupilMM);
         wvfP = wvfComputePSF(wvfP);
         % [u,p,f] = wvfPlot(wvfP,'2d psf space','um',550);
         % set(gca,'xlim',[-20 20],'ylim',[-20 20]);
