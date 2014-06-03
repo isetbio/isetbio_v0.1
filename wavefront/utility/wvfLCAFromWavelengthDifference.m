@@ -100,7 +100,6 @@ function lcaDiopters = wvfLCAFromWavelengthDifference(wl1NM,wl2NM,whichCalc)
 
 %% Set which calculation to use
 if (nargin < 3 || isempty(whichCalc)), whichCalc = 'hoferCode'; end
-if (nargin < 4 || isempty(COMPARE)), COMPARE = false; end
 
 switch (whichCalc)
     case 'hoferCode'
