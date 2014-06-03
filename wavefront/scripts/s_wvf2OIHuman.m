@@ -36,15 +36,16 @@ wvfP = wvfCreate('wave',wave,'zcoeffs',zCoefs,'name',sprintf('human-%d',pupilMM)
 wvfP = wvfComputePSF(wvfP);
 
 thisWave = wvfGet(wvfP,'wave');
-[u,p,f] = wvfPlot(wvfP,'2d psf space','um',thisWave);
+[u,p,f] = wvfPlot(wvfP,'2d psf space','um',thisWave,maxUM);
 set(gca,'xlim',[-maxUM maxUM],'ylim',[-maxUM maxUM]);
 
 oiD = wvf2oi(wvfP,'human');
 oiD = oiSet(oiD,'name','Human 3mm');
 vcAddObject(oiD); oiWindow;
-uData = plotOI(oiD,'psf','um',thisWave);
+uData = plotOI(oiD,'psf','um',thisWave,maxUM);
 set(gca,'xlim',[-maxUM maxUM],'ylim',[-maxUM maxUM]);
 
+% Not right ... something needs to be fixed here (BW).
 % Interpolate the wvf data onto the spatial grid of the ISET data.  Same as
 % above, but written more compactly.
 test = interp2(u.x,u.y,u.z,uData.x,uData.y);

@@ -123,12 +123,12 @@ switch ieParamFormat(species)
         sensor = sensorSet(sensor, 'human cone', cone);
         fN = {'kBlack', 'rLong', 'gMiddle', 'bShort'};
         % vcNewGraphWin; plot(wave,fsQuanta); grid on
-        sensor = sensorSet(sensor,'filterNames',fN);
+        sensor = sensorSet(sensor,'filter names',fN);
        
         % change pixel size, keeping the same fillfactor (default human
         % pixel size = 2um, pdsize = 2um, fillfactor = 1) 
         pixel  = sensorGet(sensor,'pixel');
-        pixel  = pixelSet(pixel,'sizeSameFillFactor',coneAperture);
+        pixel  = pixelSet(pixel,'size same fill factor',coneAperture);
         sensor = sensorSet(sensor,'pixel',pixel);
         
         sensor = sensorSet(sensor,'cone locs',xy);

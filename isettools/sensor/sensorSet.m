@@ -492,12 +492,15 @@ switch lower(param)
         sensor.human.rSeed = val;
         
     case {'sampletimeinterval','timeinterval'}
+        % For human eye movement sampling rate, typically 1 ms. 
         sensor.human.timeInterval = val;
         
+        % Human adaptation
     case {'adaptationgain'}
         sensor.human.adaptGain = val;
     case {'adaptationoffset'}
         sensor.human.adaptOffset = val;
+        
         % Sensor motion -  used for eye movements or camera shake
     case {'sensormovement','eyemovement'}
         % A structure with sensor motion information

@@ -1,7 +1,7 @@
-function sensor = sensorCreate(sensorName,pixel,varargin)
+function [sensor, params] = sensorCreate(sensorName,pixel,varargin)
 %Create an image sensor array structure
 %
-%      sensor = sensorCreate(sensorName,[pixel],varargin)
+%   [sensor,params] = sensorCreate(sensorName,[pixel],varargin)
 %
 % The sensor array uses a pixel definition that can be specified in the
 % parameter PIXEL. If this is not passed in, a default PIXEL is created and
@@ -32,8 +32,9 @@ function sensor = sensorCreate(sensorName,pixel,varargin)
 %      {'custom'}
 %
 % Human cone mosaic
-%      {'human'} - Uses Stockman Quanta LMS cones, see
-%                  pixelCreate('human'), which returns a 2um aperture
+%      {'human'} - Uses Stockman Quanta LMS cones
+%                  Default params:  
+%                     params.XXX
 %
 % See also: sensorReadColorFilters, sensorCreateIdeal
 %
@@ -63,10 +64,10 @@ function sensor = sensorCreate(sensorName,pixel,varargin)
 %  sensor = sensorCreate('custom',pixel,filterOrder,filterFile,sensorSize,wave)
 %
 %  params.sz = [128,192];
-%  params.rgbDensities = [0.1 .6 .2 .1]; % Empty, L,M,S
+%  params.rgbDensities = [0.1 .6 .2 .1]; % Empty (missing cone), L, M, S
 %  params.coneAperture = [3 3]*1e-6;     % In meters
 %  pixel = [];
-%  sensor = sensorCreate('human',pixel,params);
+%  [sensor, params] = sensorCreate('human',pixel,params);
 %  sensorConePlot(sensor)
 %
 % Copyright ImagEval Consultants, LLC, 2005
@@ -137,13 +138,7 @@ switch sensorName
         % sensorType = 'human'  % 'rgb','monochrome'
         % cPattern = 'bayer'    % any sensorCreate option
         % sensorCreate('ideal',[],'human','bayer');
-        error('sensorCreate(''ideal'') is deprecated');
-        
-        %         sensorType = 'human'; pSize = 2e-6; cPattern = 'bayer';
-        %         if length(varargin) >= 1, pSize = varargin{1}; end
-        %         if length(varargin) >= 2, sensorType = varargin{2}; end
-        %         if length(varargin) >= 3, cPattern = varargin{3}; end
-        %         sensor = sensorCreateIdeal(sensorType,pSize,cPattern);
+        error('sensorCreate(''ideal'') is deprecated. Set noise flag to 0');
 
     case {'custom'}      % Often used for multiple channel
         % sensorCreate('custom',pixel,filterPattern,filterFile,wave);
@@ -214,13 +209,13 @@ switch sensorName
         else wave = 400:10:700;
         end
         
-        if isfield(params,'tInteval'), tInteval = params.tInteval;
-        else tInteval = 0.001; % time series sampling time inteval
-        end
+        %         if isfield(params,'tInteval'), tInteval = params.tInteval;
+        %         else tInteval = 0.001; % time series sampling time inteval
+        %         end
         
         % Add the default human pixel with StockmanQuanta filters.
         sensor = sensorSet(sensor,'wave',wave);
-        sensor = sensorSet(sensor,'time interval', tInteval);
+        %         sensor = sensorSet(sensor,'time interval', tInteval);
         sensor = sensorSet(sensor,'pixel',pixelCreate('human',wave));
         
         % Add the default lens structure

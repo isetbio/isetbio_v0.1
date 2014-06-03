@@ -7,9 +7,12 @@ function [uData, pData, fNum] = wvfPlot(wvfP,pType,varargin)
 % plotData:  The handles from the plotted data
 % fNum:      The figure number
 %
-% varargin:  These are used to set various parameters of the plot.
+% wvfP:     Wavefront structure
+% pType:    Plot type
+% varargin: These are used to set various parameters of the plot.
 %   units, wavelength, plotRange, 'window/no-window'
-%
+%  This should change by using an argument reading function for
+%  parameters/value pairs.
 %    
 % By default, this routine opens a new graph window (vcNewGraphWin). If the
 % final varargin argument is set to 'no window', then the vcNewGraphWin is
@@ -54,15 +57,19 @@ if ieNotDefined('pType'), pType = '1dpsf'; end
 
 uData = [];
 pType = ieParamFormat(pType);
+fNum  = [];
 
 % Allow the last argument to turn off window opening.
-if ~isempty(varargin)
+if ~isempty(varargin) && ischar(varargin{end})
+    % The last argument is not empty, and it is a string
     v = ieParamFormat(char(varargin{end}));
     switch v
         case {'nowindow','nofigure','noplot','nofig'}
         otherwise
             fNum = vcNewGraphWin;
     end
+else
+    fNum = vcNewGraphWin;
 end
 
 switch(pType)
@@ -114,7 +121,7 @@ switch(pType)
         
         % Extract within the range
         if ~isempty(pRange)
-            index = (abs(samp) < pRange);
+            index = (abs(samp) < max(pRange));
             samp = samp(index);
             psf = psf(index,index);
         end
