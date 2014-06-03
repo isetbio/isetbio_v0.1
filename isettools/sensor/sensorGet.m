@@ -957,11 +957,11 @@ switch param
         % Should get rid of humanrseed alias
         if checkfields(sensor,'human','rSeed'), val = sensor.human.rSeed; end
         
-    case {'sampletimeinterval', 'timeinterval'}
-        disp('Retrieved time interval for eye movement sample.')
-        if checkfields(sensor, 'human', 'timeInterval')
-            val = sensor.human.timeInterval;
-        end
+%     case {'sampletimeinterval', 'timeinterval'}
+%         disp('Retrieved time interval for eye movement sample.')
+%         if checkfields(sensor, 'human', 'timeInterval')
+%             val = sensor.human.timeInterval;
+%         end
         
     case {'adaptationgain'}
         % Adaptation gain
