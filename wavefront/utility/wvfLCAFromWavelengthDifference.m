@@ -4,19 +4,21 @@ function lcaDiopters = wvfLCAFromWavelengthDifference(wl1NM,wl2NM,whichCalc)
 %
 % lcaDiopters = wvfLCAFromWavelengthDifference(wl1NM,wl2NM,[method])
 %
-%
 % Either input argument may be a vector, but if both are vectors they need
 % to have the same dimensions.
 %
-% Optional argument 'method' determines which of two methods are used. They
-% are supposed to give the same answer, and do to reasonable approximation.
-% The differences are probably just numerical roundoff.
+% Optional argument 'method' determines which of three methods are used.
+% They are supposed to give the same answer, and do to reasonable
+% approximation. The differences are just numerical roundoff.
 %
-%   hoferCode  -  The way Heidi Hofer wrote it in the code she provided us with.
+%   hoferCode {Default} -  The way Heidi Hofer wrote it in the code she
+%                           provided us with. 
 %   thibosPaper - The calculation as described in Thibos et al, 1992, "The
 %                chromatic eye: ...", Applied Optics, 31, pp 3594-3600.
-%                {Default}
-% 
+%                
+%   iset        -  Bedford and Wyszecki formula, which is always w.r.t
+%                  580nm, that was used in ISET
+%
 % If the image is in focus at wl1NM, this provides the refractive error at
 % wl2NM.  The sign convention matches that of Figure 6 the Thibos et al.%
 % paper, so that (e.g.):
@@ -83,11 +85,11 @@ function lcaDiopters = wvfLCAFromWavelengthDifference(wl1NM,wl2NM,whichCalc)
 % figures in the Thibos paper.
 %
 % Example:
-%  w0 = 500; w = 400:10:700; d = zeros(size(w));
-%  for ii=1:length(w), d(ii) = wvfLCAFromWavelengthDifference(w0,w(ii)); end
-%  vcNewGraphWin; plot(w,d);
-%  for ii=1:length(w), d(ii) = wvfLCAFromWavelengthDifference(w0,w(ii),'thibosPaper'); end
-%  vcNewGraphWin; plot(w,d); xlabel('Wave (nm)'); ylabel('Diopters')
+%  w0 = 580; w = 400:10:700; d1 = zeros(size(w)); d2 = d1; d3 = d1;
+%  for ii=1:length(w), d1(ii) = wvfLCAFromWavelengthDifference(w0,w(ii)); end
+%  for ii=1:length(w), d2(ii) = wvfLCAFromWavelengthDifference(w0,w(ii),'thibosPaper'); end
+%  for ii=1:length(w), d3(ii) = wvfLCAFromWavelengthDifference(w0,w(ii),'iset'); end
+%  vcNewGraphWin; plot(w,d1,'-',w,d2,'--',w,d3,':'); xlabel('Wave (nm)'); ylabel('Diopters')
 %
 % 8/21/11  dhb  Pulled out from code supplied by Heidi Hofer.
 % 9/5/11   dhb  Rename.  Rewrite for wvfPrams i/o.
@@ -127,7 +129,12 @@ switch (whichCalc)
         % Use equation 1 and take the difference of the two deltas
         % in diopters.
         lcaDiopters = (n1 - n2)./(nD*rM);
-        
+    case 'iset'
+        % This formula is always with respect to a fixed wavelength
+        warning('ISET:  Always with respect to 580nm');
+        lcaDiopters = humanWaveDefocus(wl2NM);
+    otherwise
+        error('Unknown LCA method');
 end
 
 end
