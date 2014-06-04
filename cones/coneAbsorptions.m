@@ -79,40 +79,89 @@ sensor = sensorSet(sensor,'noise flag',0);
 wbarState = ieSessionGet('wait bar'); ieSessionSet('wait bar','off');
 nPositions = length(framesPerPosition);
 txt = sprintf('Looping over %i eye positions',nPositions);
-if showBar, wBar = waitbar(0,txt); end
-for p = 1:nPositions
-    if showBar, waitbar(p/nPositions,wBar); end
 
-    % if xpos (ypos) is positive, we add columns (rows) to the left 
-    % (bottom), shifting the image  rightward (upward). verify this. it
-    % could easily be wrong.
-    if ypos(p) > 0,  rows = [0 ypos(p)]; else rows = [-ypos(p) 0]; end
-    if xpos(p) > 0,  cols = [xpos(p) 0]; else cols = [0 -xpos(p)]; end
+if max(framesPerPosition) < inf
+    if showBar, wBar = waitbar(0,txt); end
+    for p = 1:nPositions
+        if showBar, waitbar(p/nPositions,wBar); end
+        
+        % if xpos (ypos) is positive, we add columns (rows) to the left
+        % (bottom), shifting the image  rightward (upward). verify this. it
+        % could easily be wrong.
+        if ypos(p) > 0,  rows = [0 ypos(p)]; else rows = [-ypos(p) 0]; end
+        if xpos(p) > 0,  cols = [xpos(p) 0]; else cols = [0 -xpos(p)]; end
+        
+        % create a new, resized sensor. Should we worry about exposure time
+        % each time we move (resize) the sensor?
+        sensor2 = sensorHumanResize(sensor,rows, cols);
+        
+        % compute the noiseless mean
+        sensor2 = sensorCompute(sensor2,oi);
+        
+        % compute the noisy frame-by-frame samples
+        noiseType = 1;  % Only photon noise
+        tmp = sensorComputeSamples(sensor2,framesPerPosition(p),noiseType);
+        
+        % remove the added rows/columns
+        tmp = tmp(1+rows(1):end-rows(2), 1+cols(1):end-cols(2), :);
+        
+        % concatenate the voltage image
+        volts = cat(3, volts, single(tmp));
+        
+    end
+    if showBar == 1, close(wBar); end
+    ieSessionSet('wait bar',wbarState);
     
-    % create a new, resized sensor. Should we worry about exposure time
-    % each time we move (resize) the sensor?
-    sensor2 = sensorHumanResize(sensor,rows, cols);
+    % Return the sensor with the voltage data from all the eye positions as
+    % an Row x Col x Position matrix.
+    sensor = sensorSet(sensor, 'volts', volts);
+else
+    warning('This part is under development. Please do not use it'); 
+    % Pad to the sensor to max size
+    rows = [-min([ypos(:); 0]) max([ypos(:); 0])];
+    cols = [max([xpos(:); 0]) -min([xpos(:); 0])];
+    coneType = sensorGet(sensor, 'cone type');
+    sensor2 = sensorHumanResize(sensor, rows, cols);
     
-    % compute the noiseless mean
-    sensor2 = sensorCompute(sensor2,oi);
+    % Compute all-L/M/S absorptions
+    sz = sensorGet(sensor2, 'size');
+    LMS = zeros([sz 3]);
+    msk = zeros([size(coneType) 3]);
+    for ii = 2 : 4 % L, M, S
+        pattern = ii * ones(sz);
+        sensor2 = sensorSet(sensor2, 'pattern', pattern);
+        sensor2 = sensorSet(sensor2, 'cone type', pattern);
+        
+        sensor2 = sensorComputeNoiseFree(sensor2, oi);
+        LMS(:,:,ii-1) = sensorGet(sensor2, 'volts');
+        msk(:,:,ii-1) = double(coneType == ii);
+    end
     
-    % compute the noisy frame-by-frame samples
-    noiseType = 1;  % Only photon noise
-    tmp = sensorComputeSamples(sensor2,framesPerPosition(p),noiseType);
+    sz = sensorGet(sensor, 'size');
+    volts = zeros([sz nPositions]);
     
-    % remove the added rows/columns
-    tmp = tmp(1+rows(1):end-rows(2), 1+cols(1):end-cols(2), :);
-   
-    % concatenate the voltage image
-    volts = cat(3, volts, single(tmp));
+    for p = 1:nPositions
+        % cropping
+        tmp = LMS(1+rows(1)+ypos(p):end-rows(2)+ypos(p), ...
+                  1+cols(1)-xpos(p):end-cols(2)-xpos(p),:);
+        % select cone type
+        volts(:,:,p) = sum(tmp .* msk, 3);
+    end
     
+    % Add photon noise
+    % We don't use sensorAddNoise or sensorComputeSamples because in here,
+    % our noise-free sensor contains more than one volts images. For
+    % simplicity, we just add some photon noise to the noise-free cone
+    % absorption data.
+    % noiseShot might be a good function to use, but we need to get rid of
+    % the bunky for-loop there
+    cg      = pixelGet(sensorGet(sensor,'pixel'), 'conversion gain');
+    photons = round(volts / cg);
+    
+    volts   = (photons + sqrt(photons).*randn(size(photons))) * cg;
+    indx    = find(photons < 15);
+    volts(indx) = iePoisson(photons(indx)) * cg;
+    sensor  = sensorSet(sensor, 'volts', volts);
 end
-
-if showBar == 1, close(wBar); end
-ieSessionSet('wait bar',wbarState);
-
-% Return the sensor with the voltage data from all the eye positions as an
-% Row x Col x Position matrix.
-sensor = sensorSet(sensor, 'volts', volts);
 
 %% End
