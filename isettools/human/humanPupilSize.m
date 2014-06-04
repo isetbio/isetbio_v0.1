@@ -1,7 +1,7 @@
-function [diam, area] = humanPupilSize(lum, model, area, age, eyeNum)
+function [diam, area] = humanPupilSize(lum, model, varargin)
 % Estimated pupil diameter and area (mm^2) 
 %
-%  [diam,area] = pupilSize(lum,'model', [area], [eyeNum])
+%  [diam,area] = pupilSize(lum,'model', varargin)
 %
 % Inputs:
 %   lum    - luminance in cd/m^2 or cd/m^2/deg^2 for 'sd' and 'wy' model
@@ -42,7 +42,7 @@ function [diam, area] = humanPupilSize(lum, model, area, age, eyeNum)
 %   (cdm-2 deg2).
 %
 %   According to Andrew B. Watson and John I. Yellott (A unified formula
-%   for light-adapted pupil size) The pupil size formula should incorporate
+%   for light-adapted pupil size) the pupil size formula should incorporate
 %   the combined effects of the observer's age, the size of adapting field,
 %   and number of eyes used (mono- / bi-nocular). They describe the formula
 %   as:
@@ -55,7 +55,7 @@ function [diam, area] = humanPupilSize(lum, model, area, age, eyeNum)
 % Example:
 %    [d,a] = humanPupilSize(100,'ms')
 %
-%    lumSteps = logspace(-6,6,20);
+%    lumSteps = logspace(-4,4,50);
 %    [d1,a] = humanPupilSize(lumSteps,'ms');  
 %    [d2,a] = humanPupilSize(lumSteps,'dg');  
 %    semilogx(lumSteps,d1,'r-',lumSteps,d2,'g--')
@@ -63,10 +63,15 @@ function [diam, area] = humanPupilSize(lum, model, area, age, eyeNum)
 %    age = 30:5:70;
 %    diam = 9.08 - (0.082 * age) + (0.00037 * age.^2);
 %    plot(age,diam)
+%    
+%    params.age= 30; params.eyeNum= 2; params.area= pi*30^2; %Figure 16 (WY)
+%    d0 = humanPupilSize(lumSteps,'wy',params); vcNewGraphWin;
+%    semilogx(lumSteps,d0); grid on; xlabel('Log lum'); ylabel('Diameter')
 %
+% (HJ) (c) Vistalab 2014
 
-if ieNotDefined('lum'), lum = 100; end % Candelas/m2
-if ieNotDefined('model'), model = 'dg'; end
+if notDefined('lum'), lum = 100; end        % Candelas/m2
+if notDefined('model'), model = 'wy'; end   % Watson and Yellott
 
 switch lower(model)
     case 'ms'
@@ -74,20 +79,29 @@ switch lower(model)
     case 'dg'
         diam = 10.^(0.8558 - 0.000401*(log10(lum) + 8.6).^3);
     case 'sd'
-        if notDefined('area'), error('Area in deg^2 required'); end
-        F = lum * area;
-        diam = 7.75 - 5.75 * (F/846)^0.41 / ((F/846)^0.41 + 2);
-    case 'wy'
-        if notDefined('area'), error('Area in deg^2 required'); end
-        if notDefined('age'), age = 28; end
-        if eyeNum == 1
-            me = 0.1;
-        elseif eyeNum == 2
-            me = 1;
+        if isempty(varargin), error('Area in deg^2 required'); 
+        else area = varargin{1}; 
         end
+        F = lum * area;
+        diam = 7.75 - 5.75 * (F/846).^0.41 ./ ((F/846).^0.41 + 2);
+    case 'wy'
+        if isempty(varargin), error('Parameters required'); 
+        else params = varargin{1};
+        end
+        
+        age = 28; eyeNum = 1; area = 4; 
+        if isfield(params,'age'),    age = params.age; end
+        if isfield(params,'area'),   area = params.area; end
+        if isfield(params,'eyeNum'), eyeNum = params.eyeNum; end
+        
+        if eyeNum == 1,        me = 0.1;
+        elseif eyeNum == 2,    me = 1;
+        end
+        
         F = lum * area * me;
         Dsd = humanPupilSize(F, 'sd', 1);
         diam = Dsd + (age - 28.58)*(0.02132 - 0.009562*Dsd);
+        
     otherwise
         error('Unknown model')
 end
