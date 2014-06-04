@@ -87,14 +87,37 @@ switch oiType
         tmp = load(rtFileName);
         oi.optics = tmp.optics;
         
-    case {'human'}
-        % We may have to change some features here ... at present we allow
-        % cos4th and
+    case {'human','mwhuman'}
+        % Marimont and Wandell optics
+        % oi = oiCreate('human');
         oi = oiCreate('default');
         oi = oiSet(oi,'diffuserMethod','skip');
         oi = oiSet(oi,'consistency',1);
         oi = oiSet(oi,'optics',opticsCreate('human'));
         oi = oiSet(oi,'name','human-MW');
+        
+    case {'wvfhuman'}
+        % A human lens specified using the WVF toolbox method
+        % oi = oiCreate('wvf human',pupilMM,zCoefs)
+        
+        % Defaults and then adjust for varargin
+        wave = 400:10:700; wave = wave(:);
+        pupilMM = 3;
+        zCoefs = wvfLoadThibosVirtualEyes(pupilMM);
+        if ~isempty(varargin), pupilMM = varargin{1}; end
+        if length(varargin) > 1, zCoefs = varargin{2}; end
+        if length(varargin) > 2, wave = varargin{3}; end
+        
+        % Create wavefront parameters
+        wvfP = wvfCreate('wave',wave,'zcoeffs',zCoefs,'name',sprintf('human-%d',pupilMM));
+        wvfP = wvfSet(wvfP,'calc pupil size',pupilMM);
+        wvfP = wvfComputePSF(wvfP);
+        % [u,p,f] = wvfPlot(wvfP,'2d psf space','um',550);
+        % set(gca,'xlim',[-20 20],'ylim',[-20 20]);
+        
+        oi = wvf2oi(wvfP,'human');
+        oi = oiSet(oi,'name',sprintf('Human WVF %.1f mm',pupilMM));
+        return;
         
     case {'mouse'}
         % Similar to the human optics, but with different parameters.

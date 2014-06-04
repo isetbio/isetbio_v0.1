@@ -95,6 +95,11 @@ function sensor = sensorSet(sensor,param,val,varargin)
 %     {'adaptation gain'}      - human cone adaptation gain
 %     {'adaptation offset'}    - human cone adaptation offset
 %     {'time interval'}        - human eye sampling time interval
+%     {'total time'}           - total time of eye movement sequence
+%     {'em type'}              - eye movement type vector
+%     {'em tremor'}            - eye movement tremor structure
+%     {'em drift'}             - eye movement drift structure
+%     {'em microsaccade'}      - eye movement microsaccade structure
 %
 %  
 % Private
@@ -491,26 +496,67 @@ switch lower(param)
         % random seed for generating mosaic
         sensor.human.rSeed = val;
         
-    case {'sampletimeinterval','timeinterval'}
-        sensor.human.timeInterval = val;
-        
+%     case {'sampletimeinterval','timeinterval'}
+%         % For human eye movement sampling rate, typically 1 ms. 
+%         sensor.human.timeInterval = val;
+%         
+        % Human adaptation
     case {'adaptationgain'}
         sensor.human.adaptGain = val;
     case {'adaptationoffset'}
         sensor.human.adaptOffset = val;
+        
+<<<<<<< HEAD
+    % Sensor motion -  used for eye movements or camera shake
+=======
         % Sensor motion -  used for eye movements or camera shake
     case {'sensormovement','eyemovement'}
         % A structure with sensor motion information
         sensor.movement = val;
+>>>>>>> FETCH_HEAD
     case {'movementpositions','sensorpositions'}
-        % Nx2 vector of (x,y) positions in deg
+        % Nx2 vector of (x,y) positions in number of pixels
         sensor.movement.pos = val;
     case {'framesperposition','exposuretimesperposition','etimeperpos'}
         % Exposure frames for each (x,y) position
         % This is a vector with some number of exposures for each x,y
         % position (deg)
+        warning('This field might be removed in the future');
+        disp(['For a general eyemovement sequence'...
+            'just set sensor positions to the sensor.']);
         sensor.movement.framesPerPosition = val;
-
+        
+    case {'tottime', 'totaltime'}
+        % total time of exposure
+        sampTime = sensorGet(sensor, 'time interval');
+        seqLen = round(val/sampTime);
+        pos = sensorGet(sensor, 'sensor positions');
+        if isempty(pos)
+            pos = zeros(seqLen, 2);
+        elseif size(pos,1) < seqLen
+            pos = padarray(pos, [seqLen-size(pos,1) 0], 0, 'post');
+        else
+            pos = pos(1:seqLen, :);
+        end
+        sensor = sensorSet(sensor, 'sensor positions', pos);
+        
+    case {'eyemove', 'eyemovement'}
+        % eye movement structure
+        sensor.human.eyemove = val;
+    case {'emtype'}
+        % eye movement type
+        assert(numel(val)==3, 'emType should be 3x1 vector');
+        sensor.human.eyemove.emType = val(:);
+        
+    case {'emtremor'}
+        % eye movemenet tremor structure
+        sensor.human.eyemove.tremor = val;
+    case {'emdrift'}
+        % eye movement drift structure
+        sensor.human.eyemove.drift = val;
+    case {'emmsaccade', 'emmicrosaccade'}
+        % eye movement microsaccade structure
+        sensor.human.eyemove.msaccade = val;
     otherwise
         error('Unknown parameter.');
 end

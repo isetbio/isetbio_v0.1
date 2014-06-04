@@ -23,20 +23,18 @@ function oi = wvf2oi(wvfP, oType, showBar)
 %  wave = [400:10:700]';
 %  wvfP = wvfCreate('wave',wave,'zcoeffs',zCoefs,'name',sprintf('human-%d',pupilMM));
 %  oi = wvf2oi(wvfP,'human');
-%  fname = fullfile(isetRootPath,'data','optics','wvfHuman30.mat');
 %  oi = oiSet(oi,'name','Human 3mm wvf');
-%  vcExportObject(oi,fname);
 %
-% See also:
+% See also: oiCreate('wvf human',pupilSize,zCoefs,wave);
 %
 % Copyright Wavefront Toolbox Team 2012
 
 %%
-if ieNotDefined('oType'), oType = 'human'; end
-if ieNotDefined('showBar'), showBar = true; end
+if ieNotDefined('oType'),   oType = 'human'; end
+if ieNotDefined('showBar'), showBar = ieSessionGet('wait bar'); end
 
 % Create the shift-invariant PSF data structure
-siData = wvf2PSF(wvfP, showBar);
+psfData = wvf2PSF(wvfP, showBar);
 pupil  = wvfGet(wvfP,'calculated pupil','m');
 
 %% Create the OI
@@ -59,7 +57,7 @@ switch oType
 end
 
 % Set up the optics and attach to OI
-optics = siSynthetic('custom',oi,siData);
+optics = siSynthetic('custom',oi,psfData);
 optics = opticsSet(optics,'model','shiftInvariant');
 optics = opticsSet(optics,'fnumber',flength/pupil);
 optics = opticsSet(optics,'flength',flength);

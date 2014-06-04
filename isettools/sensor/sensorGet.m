@@ -185,6 +185,13 @@ function val = sensorGet(sensor,param,varargin)
 %    {'adaptation gain'}             - cone adaptation gain
 %    {'adaptation offset'}           - cone adaptation volts
 %    {'adapted volts'}               - adapted volts, will have negatives
+%    
+%    {'time interval'}          - human eye sampling time interval
+%    {'total time'}             - total time of eye movement sequence
+%    {'em type'}                - eye movement type vector
+%    {'em tremor'}              - eye movement tremor structure
+%    {'em drift'}               - eye movement drift structure
+%    {'em microsaccade'}        - eye movement microsaccade structure
 %
 % Sensor motion
 %       {'sensor movement'}     - A structure of sensor motion information
@@ -955,12 +962,15 @@ switch param
     case {'humanrseed','humanconeseed', 'rseed'}
         % random seed for generating cone mosaic
         % Should get rid of humanrseed alias
-        if checkfields(sensor,'human','rSeed'), val = sensor.human.rSeed; end
-        
-    case {'sampletimeinterval', 'timeinterval'}
-        if checkfields(sensor, 'human', 'timeInterval')
-            val = sensor.human.timeInterval;
+        if checkfields(sensor,'human','rSeed')
+            val = sensor.human.rSeed;
         end
+        
+%     case {'sampletimeinterval', 'timeinterval'}
+%         disp('Retrieved time interval for eye movement sample.')
+%         if checkfields(sensor, 'human', 'timeInterval')
+%             val = sensor.human.timeInterval;
+%         end
         
     case {'adaptationgain'}
         % Adaptation gain
@@ -989,12 +999,6 @@ switch param
             val(isnan(val)) = 0;
         end
 
-        % Sensor motion -  used for eye movements or camera shake
-    case {'sensormovement','eyemovement'}
-        % A structure with sensor motion information
-        if checkfields(sensor,'movement')
-            val = sensor.movement; 
-        end
     case {'movementpositions','sensorpositions'}
         % Nx2 vector of (x,y) positions in deg
         if checkfields(sensor,'movement','pos'), val = sensor.movement.pos;
@@ -1014,16 +1018,49 @@ switch param
         % Exposure frames for each (x,y) position
         % This is a vector with some number of exposures for each x,y
         % position (deg)
+        warning('This field might be removed in the future');
+        disp(['For a general eyemovement sequence'...
+            'just set sensor positions to the sensor.']);
+        
         if checkfields(sensor,'movement','framesPerPosition')
             val = sensor.movement.framesPerPosition;
         else
             val = 1;
         end
         
-        %
+    case {'tottime', 'totaltime'}
+        % total time of exposure
+        sampTime = sensorGet(sensor, 'time interval');
+        seqLen = size(sensorGet(sensor, 'sensor positions'), 1);
+        val = seqLen * sampTime;
+        
+    case {'eyemove', 'eyemovement'}
+        % eye movement structure
+        if checkfields(sensor, 'human', 'eyemove')
+            val = sensor.human.eyemove;
+        end
+    case {'emtype'}
+        % eye movement type
+        if checkfields(sensor, 'human', 'eyemove', 'emType')
+            val = sensor.human.eyemove.emType;
+        end
+    case {'emtremor'}
+        % eye movemenet tremor structure
+        if checkfields(sensor, 'human', 'eyemove', 'tremor')
+            val = sensor.human.eyemove.tremor;
+        end        
+    case {'emdrift'}
+        % eye movement drift structure
+        if checkfields(sensor, 'human', 'eyemove', 'drift')
+            val = sensor.human.eyemove.drift;
+        end
+    case {'emmsaccade', 'emmicrosaccade'}
+        % eye movement microsaccade structure
+        if checkfields(sensor, 'human', 'eyemove', 'msaccade')
+            val = sensor.human.eyemove.msaccade;
+        end
     otherwise
         error('Unknown sensor parameter.');
-
 end
 
 return;

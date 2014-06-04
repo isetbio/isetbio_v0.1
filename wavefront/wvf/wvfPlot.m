@@ -5,14 +5,22 @@ function [uData, pData, fNum] = wvfPlot(wvfP,pType,varargin)
 %
 % userData:  The user data that are plotted
 % plotData:  The handles from the plotted data
+% fNum:      The figure number
 %
+% wvfP:     Wavefront structure
+% pType:    Plot type
+% varargin: These are used to set various parameters of the plot.
+%   units, wavelength, plotRange, 'window/no-window'
+%  This should change by using an argument reading function for
+%  parameters/value pairs.
+%    
 % By default, this routine opens a new graph window (vcNewGraphWin). If the
 % final varargin argument is set to 'no window', then the vcNewGraphWin is
 % suppressed.  Hence, you can use this call to plot within a subplot of a
 % current window.
 %
 % Plot types:
-%   2d psf angle - mesh.  wvfPlot(wvfP,'2d psf angle','arcmin',wave)
+%   2d psf angle - mesh.  wvfPlot(wvfP,'2d psf angle','min',wave)
 %   2d psf space - mesh   wvfPlot(wvfP,'2d psf space','um',wave)
 %   2d OTF       - mesh (e.g., linepairs/'um')
 %
@@ -49,15 +57,19 @@ if ieNotDefined('pType'), pType = '1dpsf'; end
 
 uData = [];
 pType = ieParamFormat(pType);
+fNum  = [];
 
 % Allow the last argument to turn off window opening.
-if ~isempty(varargin)
+if ~isempty(varargin) && ischar(varargin{end})
+    % The last argument is not empty, and it is a string
     v = ieParamFormat(char(varargin{end}));
     switch v
         case {'nowindow','nofigure','noplot','nofig'}
         otherwise
             fNum = vcNewGraphWin;
     end
+else
+    fNum = vcNewGraphWin;
 end
 
 switch(pType)
@@ -109,7 +121,7 @@ switch(pType)
         
         % Extract within the range
         if ~isempty(pRange)
-            index = (abs(samp) < pRange);
+            index = (abs(samp) < max(pRange));
             samp = samp(index);
             psf = psf(index,index);
         end
@@ -380,28 +392,38 @@ end
 
 %%% - Interpret the plotting arguments
 function [units, wList, pRange] = wvfReadArg(wvfP,theseArgs)
+% The idea is to read the varargin in the wvfPlot call.
+% These are usually unit, wave, plotRange, showPlot
+% But, it may be that we have only unit, wave, showPlot.
+% So, we trap that case here.  
+%
+% Really, this is all BS.  We should have parameter, value pairs and stop
+% this craziness (BW).
 
-if length(theseArgs) > 2 && isnumeric(theseArgs{3})
-    % Make sure the final argument is not 'no window' or a string.  If it
-    % is numeric, then set it.
-    pRange = theseArgs{3};
-else pRange = Inf;
-end
-
-if length(theseArgs) > 1, wList = theseArgs{2};
-else wList = [];
-end
-
+% Units
 if ~isempty(theseArgs), units = theseArgs{1};
 else units = 'min';
 end
 
+% Wavelength list
+if length(theseArgs) > 1, wList = theseArgs{2};
+else wList = [];
+end
 if isempty(wList)
     wList = wvfGet(wvfP,'wave');
     if length(wList) > 1
         warning('WVF:wList','Using 1st wave %d\n',wList(1));
         wList = wList(1);
     end
+end
+
+% Plot range
+if length(theseArgs) > 2 && isnumeric(theseArgs{3})
+    % Make sure the final argument is not 'no window' or a string.  If it
+    % is numeric, then set it to the plot range.  Plot range is a 2-vector
+    % of min,max values.
+    pRange = theseArgs{3};
+else pRange = Inf;
 end
 
 end
