@@ -10,8 +10,8 @@ function D = humanWaveDefocus(wave)
 %
 % Example:
 %   wave = 400:10:700;
-%   D =  humanDefocus(wave);
-%   plot(wave,D); xlabel('Wave (nm)'), ylabel('Diopters'); grid on
+%   D =  humanWaveDefocus(wave);
+%   vcNewGraphWin; plot(wave,D); xlabel('Wave (nm)'), ylabel('Diopters'); grid on
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
