@@ -57,7 +57,7 @@ function sensor = eyemovementInit(sensor, params)
 %      page 229~240
 %   2) Susana Martinez-Conde et. al, Microsaccades: a neurophysiological
 %      analysis, Trends in Neurosciences, Volume 32, Issue 9, September
-%      2009, Pages 463?475
+%      2009, Pages 463~475
 %
 % Example:
 %   sensor = eyemovementInit;

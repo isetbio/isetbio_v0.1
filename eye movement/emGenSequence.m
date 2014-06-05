@@ -35,9 +35,54 @@ end
 emType = sensorGet(sensor, 'em type');
 if isempty(emType), error('eye movement type not defined'); end
 
+% Init positions
+pos = sensorGet(sensor, 'sensor positions');
+pos = zeros(size(pos));
+
+% Load general parameters
+sampTime  = sensorGet(sensor, 'sample time interval');
+seqLen    = size(pos, 1);
+mperdeg   = vcConstants('mmperdeg') / 1000;
+coneWidth = pixelGet(sensorGet(sensor, 'pixel'), 'width');
+
 %% Generate eye movement for tremor
 if emType(1)
-    tremorP = 
+    % Load parameters
+    params    = sensorGet(sensor, 'em tremor');
+    amplitude = params.amplitude * mperdeg / coneWidth; 
+    
+    % Compute time of tremor occurs
+    t = params.interval + randn(seqLen,1) * params.intervalSD;
+    t(t < 0.001) = 0.001;
+    t = cumsum(t);
+    tPos = round(t / sampTime);
+    tPos = tPos(1:find(tPos <= seqLen, 1, 'last'));
+    
+    % Generate random move on the selected time
+    direction = rand(length(tPos),1);
+    pos(tPos, :) = amplitude * [direction sqrt(1-direction.^2)];
+    pos = pos .* (2*(randn(size(pos))>0)-1); % shuffle the sign
 end
 
+%% Generate eye movement for drift
+if emType(2)
+    % Load Parameters
+    params    = sensorGet(sensor, 'em drift');
+    speed     = params.speed * sampTime * mperdeg / coneWidth;
+    speedSD   = params.speedSD * sampTime * mperdeg / coneWidth;
+    
+    % Generate random move at each sample time
+    direction = rand(seqLen, 1);
+    direction = [direction sqrt(1-direction.^2)];
+    direction = direction .* (2*randn(size(direction))>0-1);
+    pos = pos + (speed + speedSD * randn(seqLen,2)/sqrt(2)) .* direction;
+end
+
+%% Generate eye movement for micro-saccade
+if emType(3)
+end
+
+%% Set sensor position back to sensor
+pos = round(cumsum(pos, 1));
+sensor = sensorSet(sensor, 'sensor positions', pos);
 end

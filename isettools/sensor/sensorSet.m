@@ -506,14 +506,6 @@ switch lower(param)
     case {'adaptationoffset'}
         sensor.human.adaptOffset = val;
         
-<<<<<<< HEAD
-    % Sensor motion -  used for eye movements or camera shake
-=======
-        % Sensor motion -  used for eye movements or camera shake
-    case {'sensormovement','eyemovement'}
-        % A structure with sensor motion information
-        sensor.movement = val;
->>>>>>> FETCH_HEAD
     case {'movementpositions','sensorpositions'}
         % Nx2 vector of (x,y) positions in number of pixels
         sensor.movement.pos = val;

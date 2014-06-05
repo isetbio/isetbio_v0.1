@@ -952,7 +952,9 @@ switch param
         % Blank (K) K=1 and L,M,S cone at each position
         % L=2, M=3 or S=4 (K means none)
         % Some number of cone types as cone positions.
-        if checkfields(sensor,'human','coneType'), val = sensor.human.coneType; end
+        if checkfields(sensor,'human','coneType')
+            val = sensor.human.coneType;
+        end
     case {'humanconedensities','conedensity', 'densities'}
         %- densities used to generate mosaic (K,L,M,S)
         val = coneGet(sensorGet(sensor, 'human cone'), 'spatial density');
@@ -966,11 +968,10 @@ switch param
             val = sensor.human.rSeed;
         end
         
-%     case {'sampletimeinterval', 'timeinterval'}
-%         disp('Retrieved time interval for eye movement sample.')
-%         if checkfields(sensor, 'human', 'timeInterval')
-%             val = sensor.human.timeInterval;
-%         end
+    case {'sampletimeinterval', 'timeinterval'}
+        if checkfields(sensor, 'human', 'timeInterval')
+            val = sensor.human.timeInterval;
+        end
         
     case {'adaptationgain'}
         % Adaptation gain
