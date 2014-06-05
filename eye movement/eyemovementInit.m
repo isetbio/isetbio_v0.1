@@ -38,7 +38,7 @@ function sensor = eyemovementInit(sensor, params)
 % Notes:
 %   1) For all eye-movements, we assume that the acceleration time is
 %      neglectable
-%   2) Drift and tremor can be super-imposed. However, during the time of
+%   2) Drift and tremor can be superimposed. However, during the 
 %      microsaccade, both drift and tremor are suppressed
 %   3) We assume that drift works like a 2D brownian motion. This is
 %      reasonable when micro-saccade is present. However, when
@@ -73,6 +73,12 @@ function sensor = eyemovementInit(sensor, params)
 % (HJ) Copyright PDCSOFT TEAM 2014
 
 warning('This function is under development. Please do not use it');
+% Make emCreate/Get/Set
+% Add ieParameterOtype() to isetbio, put it in oiGet/Set and sensorGet/Set
+% Attach this whole structure (after eliminating redundancy) to sensor.
+% 
+% See if we can simplify the optics modules.  (dlCore, all that jazz)
+%
 
 %% Init
 if notDefined('sensor'), sensor = sensorCreate('human'); end
@@ -82,8 +88,8 @@ if notDefined('params'), params = []; end
 params = emFillParams(params);
 
 %% Set eye-movement parameters to sensor
-sensor = sensorSet(sensor, 'sample time interval', params.sampTime);
-sensor = sensorSet(sensor, 'total time', params.totTime);
+sensor = sensorSet(sensor, 'sample time interval', params.sampTime);   % Typically about 1 ms.
+sensor = sensorSet(sensor, 'total time', params.totTime);              % Should use n samples
 sensor = sensorSet(sensor, 'em type', params.emType);
 sensor = sensorSet(sensor, 'em tremor', params.tremor);
 sensor = sensorSet(sensor, 'em drift', params.drift);
