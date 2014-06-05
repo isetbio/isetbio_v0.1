@@ -9,10 +9,10 @@ function oi = opticsCos4th(oi)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 % Setting up local variables
-wavelength = oiGet(oi,'wavelength');
-nWaves = oiGet(oi,'nWaves');
-sz = oiGet(oi,'size');
-photons = zeros(sz(1),sz(2),nWaves);
+% wavelength = oiGet(oi,'wavelength');
+% nWaves = oiGet(oi,'nWaves');
+% sz = oiGet(oi,'size');
+% photons = zeros(sz(1),sz(2),nWaves);
 
 optics = oiGet(oi,'optics');
 
@@ -24,16 +24,16 @@ if isempty(method), method = 'cos4th'; end
 % the cos4th slot is empty.
 optics = feval(method, optics, oi);
 % figure; mesh(optics.cos4th.value)
-oi = oiSet(oi,'optics',optics);
+oi = oiSet(oi, 'optics', optics);
 
 % Applying cos4th scaling.
-% This loops on the stored compressed data, saving a little memory space.
 sFactor = opticsGet(optics,'cos4thData');  % figure(3); mesh(sFactor)
-for ii=1:nWaves
-    % Get one waveband of the irradiance image and calculate.
-    irradianceImage = oiGet(oi,'photons',wavelength(ii));
-    photons(:,:,ii) = irradianceImage .* sFactor;
-end
+photons = bsxfun(@times, oiGet(oi, 'photons'), sFactor);
+% for ii=1:nWaves
+%     % Get one waveband of the irradiance image and calculate.
+%     irradianceImage = oiGet(oi,'photons',wavelength(ii));
+%     photons(:,:,ii) = irradianceImage .* sFactor;
+% end
 
 % Compress the calculated image and put it back in the structure.
 oi = oiSet(oi,'cphotons',photons); 

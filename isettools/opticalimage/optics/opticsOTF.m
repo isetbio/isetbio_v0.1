@@ -32,8 +32,8 @@ function oi = opticsOTF(oi,scene)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('oi'), error('Optical image required.'); end
-if ieNotDefined('scene'), scene = vcGetObject('scene'); end
+if notDefined('oi'), error('Optical image required.'); end
+if notDefined('scene'), scene = vcGetObject('scene'); end
 % if ieNotDefined('otfSaveFlag'),  otfSaveFlag = 0; end
 
 optics      = oiGet(oi,'optics');
@@ -54,7 +54,7 @@ switch lower(opticsModel)
         error('Unknown OTF method');
 end
 
-return;
+end
 
 %-------------------------------------------
 function oi = oiApplyOTF(oi,scene,unit)
@@ -72,10 +72,9 @@ function oi = oiApplyOTF(oi,scene,unit)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('oi'),     error('Optical image required.'); end
-if ieNotDefined('unit'),   unit   = 'cyclesPerDegree'; end
+if notDefined('unit'), unit = 'cyclesPerDegree'; end
 
-wave     = oiGet(oi,'wave');
+wave = oiGet(oi,'wave');
 
 % Pad the optical image to allow for light spread.  Also, make sure the row
 % and col values are even.
@@ -93,8 +92,10 @@ oi = oiPad(oi,padSize,sDist);
 
 % Get the current data set.  It has the right size.  We over-write it
 % below.
-p = oiGet(oi,'photons');   
-parfor ii=1:length(wave)
+p = oiGet(oi,'photons');
+otfM = oiCalculateOTF(oi, wave, unit);
+
+for ii=1:length(wave)
     % img = oiGet(oi,'photons',wave(ii));
     img = p(:, :, ii);
     % figure(1); imagesc(img); colormap(gray); 
@@ -102,7 +103,7 @@ parfor ii=1:length(wave)
     % For diffraction limited we calculate the OTF.  For other optics
     % models we look up the stored OTF.  Remember, DC is in the (1,1)
     % position.
-    otf = oiCalculateOTF(oi,wave(ii),unit);
+    otf = otfM(:,:,ii);
     % vcNewGraphWin; mesh(fftshift(otf)); otf(1,1)
     
     % Put the image center in (1,1) and take the transform.
@@ -114,14 +115,6 @@ parfor ii=1:length(wave)
     % Multiply the transformed otf and the image.  
     % Then invert and put the image center in  the center of the matrix 
     filteredIMG = abs(ifftshift(ifft2(otf .* imgFFT)));
-    % if  (sum(filteredIMG(:))/sum(img(:)) - 1) > 1e-10  % Should be 1 if DC is correct
-    %   warning('DC poorly accounted for');
-    % end
-
-    % Temporary debug statements
-    %  if ~isreal(filteredIMG),
-    %     warning('ISET:complexphotons','Complex photons: %.0f', wave(ii));
-    %  end
        
     % Sometimes we had  annoying complex values left after this filtering.
     % We got rid of it by an abs() operator.  It should never be there.
@@ -138,5 +131,4 @@ end
 % Put all the photons in at once.
 oi = oiSet(oi,'photons',p);
 
-return;
-
+end

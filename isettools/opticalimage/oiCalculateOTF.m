@@ -20,7 +20,7 @@ function [otf,fSupport] = oiCalculateOTF(oi,wave,unit)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('wave'), wave = sceneGet(oi,'wave'); end
+if ieNotDefined('wave'), wave = sceneGet(oi, 'wave'); end
 if ieNotDefined('unit'), unit = 'cyclesPerDegree'; end
 
 optics = oiGet(oi,'optics');

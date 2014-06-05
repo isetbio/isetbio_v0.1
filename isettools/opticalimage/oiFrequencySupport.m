@@ -32,7 +32,7 @@ if ieNotDefined('units'), units = 'cyclesPerDegree'; end
 fovHeight = oiGet(oi,'hangular');   % oi height in degrees
 fovWidth  = oiGet(oi,'wangular');   % oi width in degrees
 
-% If the oi is empty, this returns the number of rows and columns.
+% If oi is empty, this returns the number of rows and columns.
 nRows = oiGet(oi,'rows');     % Number of oi row and col samples
 nCols = oiGet(oi,'cols');
 

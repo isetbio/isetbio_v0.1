@@ -53,7 +53,7 @@ otfSupport = opticsGet(optics,'otfSupport');
 
 % Find the OTF at each wavelength. We may be interpolating from the custom
 % data.
-if length(wavelength) == 1
+if isscalar(wavelength) == 1
     % Should we be interpolating here?
     OTF2D = opticsGet(optics,'otfData',wavelength);
     % figure(1); mesh(X,Y,OTF2D); 
@@ -80,10 +80,9 @@ if length(wavelength) == 1
     % case of the filtered font.  We are tracking this down.  Odd and even
     % scene size is an issue.
     % Changed to ifftshift from fftshift on June 19,2011, as per AL
-    OTF2D    = ifftshift(interp2(X, Y, fftshift(OTF2D), fx, fy, '*linear',0));
+    OTF2D = ifftshift(interp2(X, Y, fftshift(OTF2D), fx, fy, '*linear',0));
 
 else
-    disp('Warning:  unverified customOTF using multiple wavelengths')
     OTF2D = zeros(nY,nX,nWave);
     for ii=1:length(wavelength)
         tmp = opticsGet(optics,'otfData',wavelength(ii));

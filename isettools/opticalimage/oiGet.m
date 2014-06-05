@@ -546,7 +546,6 @@ switch parm
     case {'frequencyresolution','freqres'}
         % Default is cycles per degree
         % val = oiGet(oi,'frequencyResolution',units);
-
         if isempty(varargin), units = 'cyclesPerDegree';
         else units = varargin{1};
         end

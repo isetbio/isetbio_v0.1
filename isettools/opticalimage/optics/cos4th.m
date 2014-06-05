@@ -57,15 +57,6 @@ else
     cos_theta = sqrt(1 - sin_theta.^2);
     tan_theta = sin_theta ./ cos_theta;
     
-    % Old code set radiance to 1 as in:
-    %     radiance = 1;
-    %     irradiance = ...
-    %       pi * (radiance / 2) * (1 - (1 - tan_theta.^2 + tan_phi.^2)...
-    %       ./ sqrt(tan_phi.^4 + 2*tan_phi.^2*(1-tan_theta.^2)+1./cos_theta.^4));
-    %     cos4th_ = irradiance./(pi*radiance*sin_theta.^2);
-    %
-    % But, if radiance = 1, then we can simplify to
-    % I am not sure why radiance was set to 1 in the old code. Ask PC.
     spatialFall = ( pi / 2) * (1 - (1 - tan_theta.^2 + tan_phi.^2) ...
         ./ sqrt(tan_phi.^4 + 2*tan_phi.^2*(1-tan_theta.^2)+1./cos_theta.^4));
     spatialFall = spatialFall./(pi*sin_theta.^2);
