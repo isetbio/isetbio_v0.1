@@ -33,8 +33,7 @@ function [illuminance,meanIlluminance,meanCompIlluminance] = oiCalculateIllumina
 % TODO:  There is something odd with the compIlluminance calculation below.
 % Discuss with MP.
 %
-% Should we just get the current optical image?
-if ieNotDefined('oi'), error('Optical image required.'); end
+if notDefined('oi'), error('Optical image required.'); end
 
 wave        = oiGet(oi,'wave');
 binWidth    = oiGet(oi,'binWidth');
@@ -62,10 +61,7 @@ try
     img = RGB2XWFormat(irradianceE);
     illuminance = (683*binWidth)*img*V;
     illuminance = XW2RGBFormat(illuminance,sz(1),sz(2));
-catch ME
-    % Todo:
-    % We should check the matlab error in ME
-    
+catch
     % We are probably here because of a memory problem.  So, let's try
     % the calculation again, but one waveband at a time
     [r,c,w] = size(irradianceP);
@@ -85,13 +81,13 @@ if nargout >= 2, meanIlluminance = mean(illuminance(:)); end
 % Compute the complementary (infrared mainly) illuminance if requested
 if nargout >= 3
 
-    shiftedV = V;
-    oldPeak = find(V==max(V)); % The luminosity function's peak
-    newPeak = find(wave > 750); % Move peak to the right to here
+    % shiftedV = V;
+    % oldPeak = find(V==max(V)); % The luminosity function's peak
+    % newPeak = find(wave > 750); % Move peak to the right to here
     if isempty(newPeak), return;
     else
-        rightShift = newPeak(1) - oldPeak;
-        shiftedV = circshift(V,rightShift);
+        % rightShift = newPeak(1) - oldPeak;
+        % shiftedV = circshift(V,rightShift);
 
         try
             % Formula requires irradiance in energy units
@@ -111,7 +107,7 @@ if nargout >= 3
 
             compIlluminance = XW2RGBFormat(compIlluminance,sz(1),sz(2));
         
-        catch ME2
+        catch
             % We are probably here because of a memory problem.  We should
             % check the Matlab Error.  At this point, we simply assume so
             % and then we try the calculation again, but one waveband at a
@@ -145,4 +141,4 @@ if nargout >= 3
     meanCompIlluminance = mean(compIlluminance(:));
 end
 
-return;
+end

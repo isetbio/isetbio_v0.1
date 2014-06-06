@@ -14,7 +14,7 @@ function [uData, g] = displayPlot(d,param,varargin)
 %
 % (c) Imageval Consulting, 2013
 
-if ieNotDefined('d'), error('Display required'); end
+if notDefined('d'), error('Display required'); end
 
 param = ieParamFormat(param);
 

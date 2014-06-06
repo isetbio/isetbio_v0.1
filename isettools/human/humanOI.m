@@ -12,8 +12,8 @@ function oi = humanOI(scene,oi)
 %
 % Copyright ImagEval Consultants, LLC, 2005
 
-if ieNotDefined('scene'), error('Scene required.'); end
-if ieNotDefined('oi'), error('Opticalimage required.'); end
+if notDefined('scene'), error('Scene required.'); end
+if notDefined('oi'), error('Opticalimage required.'); end
 showWaitbar = ieSessionGet('waitbar');
 
 % This is the default compute path
@@ -61,5 +61,5 @@ oi = oiSet(oi,'illuminance',oiCalculateIlluminance(oi));
 
 if showWaitbar,  close(wBar); end
 
-return;
+end
 

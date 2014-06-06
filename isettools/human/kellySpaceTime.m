@@ -17,10 +17,10 @@ function [Sens,fs,ft] = kellySpaceTime(fs,ft)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('fs'), fs = 10 .^ (-.5:.05:1.3); end
-if ieNotDefined('ft'), ft = 10 .^ (-.5:.05:1.7); end
+if notDefined('fs'), fs = 10 .^ (-.5:.05:1.3); end
+if notDefined('ft'), ft = 10 .^ (-.5:.05:1.7); end
 
-[ft fs] = meshgrid(ft,fs);
+[ft, fs] = meshgrid(ft,fs);
 
 % Kelly '79 formula
 alpha = 2*pi*fs;	
@@ -37,7 +37,8 @@ Sens(Sens < 1) = NaN;
 % Sens/2 (see Kelly, 1979, p. 1341 and related discussion
 %
 Sens = Sens/2;
-return;
+
+end
 
 % surf(ft,fs, G)
 % set(gca,'FontName','Bookman')

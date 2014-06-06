@@ -19,8 +19,8 @@ function xy = vcLineSelect(obj,objFig)
 %  probably use that addressing.  We should also trap the case no points
 %  returned ... is that possible?  Or out of range points?
 
-if ieNotDefined('obj'), error('You must define an object (isa,oi,scene ...)'); end
-if ieNotDefined('objFig'), objFig = vcGetFigure(obj); end
+if notDefined('obj'), error('You must define an object (isa,oi,scene ...)'); end
+if notDefined('objFig'), objFig = vcGetFigure(obj); end
 
 % Select points.  
 hndl = guihandles(objFig);
@@ -30,7 +30,7 @@ ieInWindowMessage(msg,hndl);
 [x,y] = getpts(objFig);
 nPoints = length(x);
 if nPoints > 1
-    warning('ISET:vcLineSelect1','%.0f points selected. returning N-1 point',nPoints); 
+    warning('ISET:vcLineSelect1','%.0f points selected',nPoints); 
     xy = [round(x(end-1)), round(y(end-1))];
 else
     xy = [round(x), round(y)];
@@ -38,5 +38,4 @@ end
 
 ieInWindowMessage('',hndl);
 
-return;
-
+end

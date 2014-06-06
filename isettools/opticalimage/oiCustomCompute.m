@@ -21,7 +21,7 @@ function [bool,customOI] = oiCustomCompute(oi);
 
 warning('oiCustomCompute: Obsolete')
 
-if ieNotDefined('oi'), oi = vcGetObject('OI'); end
+if notDefined('oi'), oi = vcGetObject('OI'); end
 customOI = [];
 
 bool = oiGet(oi,'customCompute');
@@ -45,4 +45,4 @@ if (nargout ==2) && (exist(customOI) ~= 2)
     return;
 end
 
-return;
+end

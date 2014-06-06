@@ -24,7 +24,7 @@ function d = displaySet(d,parm,val,varargin)
 %
 % Copyright ImagEval 2011
 
-if ieNotDefined('parm'), error('Parameter not found.');  end
+if notDefined('parm'), error('Parameter not found.');  end
 
 % Convert parameter format
 parm = ieParamFormat(parm);

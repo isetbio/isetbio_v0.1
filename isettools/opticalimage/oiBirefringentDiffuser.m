@@ -27,8 +27,8 @@ function [oi,umDisp] = oiBirefringentDiffuser(oi,umDisp)
 %
 % Copyright ImagEval Consultants, LLC, 2009.
 
-if ieNotDefined('oi'), oi = vcGetObject('oi'); end
-if ieNotDefined('umDisp'), 
+if notDefined('oi'), oi = vcGetObject('oi'); end
+if notDefined('umDisp'), 
     sensor = vcGetObject('sensor');
     
     if isempty(sensor)
@@ -75,7 +75,4 @@ oi = oiSet(oi,'photons',irrad);
 % Transformed irradiance
 % plotOI(oi,'irradianceimagewithgrid',[],100)
 
-return
-
-
-
+end

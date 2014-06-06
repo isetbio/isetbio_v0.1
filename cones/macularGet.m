@@ -22,10 +22,10 @@ function val = macularGet(m,param,varargin)
 %   vcNewGraphWin; plot(w,macularGet(m,'absorbance'))
 %   hold on; plot(w,macularGet(m,'transmittance'))
 %
-% Copyright ImagEval Consultants, LLC, 2005.
+% Copyright ImagEval Consultants, LLC, 2013
 
-if ieNotDefined('m'), error('Macular structure required'); end
-if ieNotDefined('param'), error('param required'); end
+if notDefined('m'), error('Macular structure required'); end
+if notDefined('param'), error('param required'); end
 
 %
 param = ieParamFormat(param);

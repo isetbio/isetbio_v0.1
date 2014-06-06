@@ -1,5 +1,5 @@
 function Tc = cct(uvs)
-% Calculate  correlated color temperature from CIE uv coordinates
+% Calculate correlated color temperature from CIE uv coordinates
 %
 %   correlatedColorTemperature = cct(uvArray)
 %
@@ -32,11 +32,12 @@ function Tc = cct(uvs)
 % Put the cct.mat file in the proper place and give it some decent
 % structure.
 
-if ieNotDefined('uvs'), error('uv coordinates are required');
+if notDefined('uvs'), error('uv coordinates are required');
 elseif (size(uvs,1) ~= 2), error('uv must have two rows.'); 
 end
 
-load cct.mat;
+tmp = load('cct.mat');
+table = tmp.table;
 
 Nd = size(uvs,2);		% Number of uv coordinates
 Nt = size(table,1);	% Number of temperatures

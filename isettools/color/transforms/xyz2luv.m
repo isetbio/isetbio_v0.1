@@ -25,14 +25,14 @@ function luv = xyz2luv(xyz, whitepoint)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('xyz'), error('XYZ values required.'); end
-if ieNotDefined('whitepoint'), error('White point required.'); end
+if notDefined('xyz'), error('XYZ values required.'); end
+if notDefined('whitepoint'), error('White point required.'); end
 
 if ( length(whitepoint)~=3 ),  error('whitepoint must be a three vector'); end
 
 if ndims(xyz) == 3
     iFormat = 'RGB';
-    [r,c,w] = size(xyz);
+    [r,c,~] = size(xyz);
     xyz = RGB2XWFormat(xyz);
 else
     iFormat = 'XW';

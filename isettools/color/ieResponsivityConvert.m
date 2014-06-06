@@ -64,9 +64,9 @@ function [responsivity,sFactor] = ieResponsivityConvert(responsivity, wave, meth
 % Copyright ImagEval Consultants, LLC, 2005.
 
 
-if ieNotDefined('responsivity'), error('Must define color responsivity functions'); end
-if ieNotDefined('wave'), error('Must define wavelength in nanometers'); end
-if ieNotDefined('method'), method = 'e2q'; end
+if notDefined('responsivity'), error('Must define color responsivity functions'); end
+if notDefined('wave'), error('Must define wavelength in nanometers'); end
+if notDefined('method'), method = 'e2q'; end
 
 if length(wave) ~= size(responsivity,1)
     error('Mis-match between wavelength and color filters.');

@@ -52,10 +52,10 @@ function roiData = vcGetROIData(obj,roiLocs,dataType)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('obj'),     error('Object must be defined'); end
+if notDefined('obj'),     error('Object must be defined'); end
 
 % The variable might be locs or a rect. We check and make sure it is locs.
-if ieNotDefined('roiLocs'), error('ROI locations must be defined'); 
+if notDefined('roiLocs'), error('ROI locations must be defined'); 
 elseif size(roiLocs,2) == 4, roiLocs = ieRoi2Locs(roiLocs); 
 end
 
@@ -63,7 +63,7 @@ objType = vcGetObjectType(obj);
 switch lower(objType)
     case {'scene'}
         % Read the ROI for the radiance data or the illuminant data.
-        if ieNotDefined('dataType'), dataType = 'photons'; end
+        if notDefined('dataType'), dataType = 'photons'; end
 
         % Handle getting an ROI for the illuminant as well as the radiance
         % data.
@@ -105,7 +105,7 @@ switch lower(objType)
         roiData = img(imgLocs,:);
         
     case {'opticalimage','oi'}
-        if ieNotDefined('dataType'), dataType = 'photons'; end
+        if notDefined('dataType'), dataType = 'photons'; end
 
         data = oiGet(obj,dataType);
         if isempty(data)
@@ -127,7 +127,7 @@ switch lower(objType)
         roiData = img(imgLocs,:);
 
     case {'isa','sensor'}
-        if ieNotDefined('dataType'), dataType = 'volts'; end
+        if notDefined('dataType'), dataType = 'volts'; end
 
         data = sensorGet(obj,dataType);  % volts or dv
 
@@ -151,8 +151,7 @@ switch lower(objType)
         end
 
     case 'vcimage'
-
-        if ieNotDefined('dataType'), dataType = 'results'; end
+        if notDefined('dataType'), dataType = 'results'; end
 
         data = imageGet(obj,dataType);  %input, result
         [img,r,c] = RGB2XWFormat(data);
@@ -165,4 +164,4 @@ switch lower(objType)
         roiData = img(imgLocs,:);
 end
 
-return;
+end

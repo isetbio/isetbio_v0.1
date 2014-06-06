@@ -48,5 +48,4 @@ for ii=1:length(deleteList)
     nRemaining = vcDeleteObject(objType,deleteList(ii));
 end
 
-return;
-
+end

@@ -28,12 +28,12 @@ function xyz = vcLAB2xyz(lab,whitepoint,useOldCode,exp)
 %
 % Copyright ImagEval Consultants, LLC, 2009.
 
-if ieNotDefined('lab'), error('No data.'); end
-if ieNotDefined('whitepoint')
+if notDefined('lab'), error('No data.'); end
+if notDefined('whitepoint')
     error('A whitepoint is required for conversion to CIELAB (1976).');
 end
-if ieNotDefined('useOldCode'), useOldCode = 0; end
-if ieNotDefined('exp'), if useOldCode, exp = 3; end; end
+if notDefined('useOldCode'), useOldCode = 0; end
+if notDefined('exp'), if useOldCode, exp = 3; end; end
 
 if (exist('makecform','file') == 2) &&  ~useOldCode
     

@@ -24,7 +24,7 @@ function m = macularCreate(macDensity,wave)
 % m.wave    
 % m.unitDensity:   The spectral density function with a maximum value of 1.0
 % m.density:       The density for this instance
-
+%
 % Useful formulae
 %
 %   Absorbance spectra are normalized to a peak value of 1.
@@ -44,11 +44,11 @@ function m = macularCreate(macDensity,wave)
 % Examples:
 %   m = macularCreate;
 %
-% Copyright ImagEval Consultants, LLC, 2005.
+% Copyright ImagEval Consultants, LLC, 2013
 
 %% 
-if ieNotDefined('macDensity'), macDensity = 0.28; end
-if ieNotDefined('wave'), wave = [400:700]'; end
+if notDefined('macDensity'), macDensity = 0.28; end
+if notDefined('wave'), wave = (400:700)'; end
 
 m.name = 'default human macular pigment';
 m.type = 'macular';

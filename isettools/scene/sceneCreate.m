@@ -161,7 +161,7 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('sceneName'), sceneName = 'default'; end
+if notDefined('sceneName'), sceneName = 'default'; end
 parms = [];  % Returned in some cases, not many.
 
 % Identify the object type
@@ -532,8 +532,8 @@ function scene = sceneNoise(scene,sz,contrast)
 % The noise is shifted to a mean of 0.5, and the level is clipped to a
 % minimum of 0.
 
-if ieNotDefined('sz'), sz = [128,128]; end
-if ieNotDefined('contrast'), contrast = 0.20;
+if notDefined('sz'), sz = [128,128]; end
+if notDefined('contrast'), contrast = 0.20;
 elseif contrast > 1, contrast = contrast/100;
 end
 
@@ -568,8 +568,8 @@ function scene = sceneDefault(scene,illuminantType,args)
 %% Default scene is a Macbeth chart with D65 illuminant and patchSize 16
 % pixels.
 
-if ieNotDefined('illuminantType'), illuminantType = 'd65'; end
-if ieNotDefined('args'), args = []; end
+if notDefined('illuminantType'), illuminantType = 'd65'; end
+if notDefined('args'), args = []; end
 
 if (isempty(args) || isempty(args{1})), patchSize = 16;
 else patchSize = args{1};
@@ -646,7 +646,7 @@ return;
 function scene = sceneRGB(scene)
 %% Prepare a scene for RGB data.
 
-if ieNotDefined('scene'), scene.type = 'scene'; end
+if notDefined('scene'), scene.type = 'scene'; end
 
 scene = sceneSet(scene,'name','rgb');
 scene = sceneSet(scene,'type','scene');
@@ -677,8 +677,8 @@ function scene = sceneMackay(scene,radFreq,sz)
 % the digital domain.  So we double the radius.
 %
 
-if ieNotDefined('radFreq'), radFreq = 8; end
-if ieNotDefined('sz'),      sz = 256; end
+if notDefined('radFreq'), radFreq = 8; end
+if notDefined('sz'),      sz = 256; end
 
 scene = sceneSet(scene,'name','mackay');
 
@@ -713,8 +713,8 @@ return;
 function scene = sceneSweep(scene,sz,maxFreq)
 %%  These are always equal photon
 
-if ieNotDefined('sz'), sz = 128; end
-if ieNotDefined('maxFreq'), maxFreq = sz/16; end
+if notDefined('sz'), sz = 128; end
+if notDefined('maxFreq'), maxFreq = sz/16; end
 
 scene = sceneSet(scene,'name','sweep');
 scene = initDefaultSpectrum(scene,'hyperspectral');
@@ -751,7 +751,7 @@ function [scene,p] = sceneHarmonic(scene,parms, wave)
 
 scene = sceneSet(scene,'name','harmonic');
 
-if ieNotDefined('wave')
+if notDefined('wave')
     scene = initDefaultSpectrum(scene,'hyperspectral');
 else
     scene = initDefaultSpectrum(scene, 'custom',wave);
@@ -763,7 +763,7 @@ nWave = sceneGet(scene,'nwave');
 % other cases, they are simply attached to the global parameters in
 % vcSESSION.  We can get them by a getappdata call in here, but not if we
 % close the window as part of imageSetHarmonic
-if ieNotDefined('parms')
+if notDefined('parms')
     global parms; %#ok<REDEF>
     h   = imageSetHarmonic; waitfor(h);
     img = imageHarmonic(parms);
@@ -797,7 +797,7 @@ return;
 function scene = sceneRamp(scene,sz)
 %% Intensity ramp (see L-star chart for L* steps)
 
-if ieNotDefined('sz'), sz = 128; end
+if notDefined('sz'), sz = 128; end
 
 scene = sceneSet(scene,'name','ramp');
 scene = initDefaultSpectrum(scene,'hyperspectral');
@@ -827,9 +827,9 @@ function scene = sceneUniform(scene,spectralType,sz,varargin)
 % equal photon
 %
 
-if ieNotDefined('scene'), error('Scene required.'); end
-if ieNotDefined('spectralType'), spectralType = 'ep'; end
-if ieNotDefined('sz'), sz = 32; end
+if notDefined('scene'), error('Scene required.'); end
+if notDefined('spectralType'), spectralType = 'ep'; end
+if notDefined('sz'), sz = 32; end
 scene = sceneSet(scene,'name',sprintf('uniform-%s',spectralType));
 
 if isempty(varargin)
@@ -872,9 +872,9 @@ function scene = sceneLine(scene,spectralType,sz,offset)
 %% Create a single line scene.
 % This is used for computing linespreads and OTFs.
 
-if ieNotDefined('spectralType'), spectralType = 'ep'; end
-if ieNotDefined('sz'),     sz = 64; end
-if ieNotDefined('offset'), offset = 0; end
+if notDefined('spectralType'), spectralType = 'ep'; end
+if notDefined('sz'),     sz = 64; end
+if notDefined('offset'), offset = 0; end
 
 scene = sceneSet(scene,'name',sprintf('line-%s',spectralType));
 
@@ -924,8 +924,8 @@ function scene = sceneBar(scene,sz,width)
 % This is used for computing the effect of scene dot density, say for a
 % display with varying dots per inch.
 
-if ieNotDefined('sz'),     sz = 64; end
-if ieNotDefined('width'), width = 5; end
+if notDefined('sz'),     sz = 64; end
+if notDefined('width'), width = 5; end
 
 scene = sceneSet(scene,'name',sprintf('bar-%d',width));
 
@@ -1116,10 +1116,10 @@ function scene = sceneRadialLines(scene,imSize,spectralType,nLines)
 %  scene = sceneCreate('radialLines');
 %
 
-if ieNotDefined('scene'), error('Scene must be defined'); end
-if ieNotDefined('spectralType'), spectralType = 'ep'; end
-if ieNotDefined('imSize'), imSize = 256; end
-if ieNotDefined('nLines'), nLines = 8; end
+if notDefined('scene'), error('Scene must be defined'); end
+if notDefined('spectralType'), spectralType = 'ep'; end
+if notDefined('imSize'), imSize = 256; end
+if notDefined('nLines'), nLines = 8; end
 
 scene = sceneSet(scene,'name',sprintf('radialLine-%s',spectralType));
 scene = initDefaultSpectrum(scene,'hyperspectral');
@@ -1192,7 +1192,7 @@ return;
 function scene = sceneFOTarget(scene,parms)
 %% Frequency/Orientation target
 
-if ieNotDefined('parms'), parms = []; end
+if notDefined('parms'), parms = []; end
 
 scene = sceneSet(scene,'name','FOTarget');
 scene = initDefaultSpectrum(scene,'hyperspectral');
@@ -1224,7 +1224,7 @@ return;
 function scene = sceneMOTarget(scene,parms)
 %% Moire/Orientation target
 
-if ieNotDefined('parms'), parms = []; end
+if notDefined('parms'), parms = []; end
 
 scene = sceneSet(scene,'name','MOTarget');
 scene = initDefaultSpectrum(scene,'hyperspectral');
@@ -1253,10 +1253,10 @@ return;
 function scene = sceneCheckerboard(scene,checkPeriod,nCheckPairs,spectralType)
 %% Checkerboard
 
-if ieNotDefined('scene'), error('Scene required'); end
-if ieNotDefined('checkPeriod'), checkPeriod = 16; end
-if ieNotDefined('nCheckPairs'), nCheckPairs = 8; end
-if ieNotDefined('spectralType'), spectralType = 'ep'; end
+if notDefined('scene'), error('Scene required'); end
+if notDefined('checkPeriod'), checkPeriod = 16; end
+if notDefined('nCheckPairs'), nCheckPairs = 8; end
+if notDefined('spectralType'), spectralType = 'ep'; end
 
 scene = sceneSet(scene,'name',sprintf('Checker-%s',spectralType));
 scene = initDefaultSpectrum(scene,'hyperspectral');
@@ -1298,10 +1298,10 @@ function scene = sceneSlantedBar(scene,imSize,barSlope,fieldOfView,wave)
 %
 % The scene is set to equal photons across wavelength.
 
-if ieNotDefined('imSize'),      imSize = 384; end
-if ieNotDefined('barSlope'),    barSlope = 2.6; end
-if ieNotDefined('fieldOfView'), fieldOfView = 2; end
-if ieNotDefined('wave'),        wave = 400:10:700; end
+if notDefined('imSize'),      imSize = 384; end
+if notDefined('barSlope'),    barSlope = 2.6; end
+if notDefined('fieldOfView'), fieldOfView = 2; end
+if notDefined('wave'),        wave = 400:10:700; end
 scene = sceneSet(scene,'name','slantedBar');
 
 scene = sceneSet(scene,'wave',wave);
@@ -1346,8 +1346,8 @@ function scene = sceneZonePlate(scene,imSize,fieldOfView)
 %% Circular zone plate image
 %
 
-if ieNotDefined('imSize'), imSize = 256; end
-if ieNotDefined('fieldOfView'), fieldOfView = 4; end
+if notDefined('imSize'), imSize = 256; end
+if notDefined('fieldOfView'), fieldOfView = 4; end
 
 scene = sceneSet(scene,'name','zonePlate');
 scene = initDefaultSpectrum(scene,'hyperspectral');

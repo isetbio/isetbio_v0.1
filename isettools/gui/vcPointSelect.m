@@ -23,9 +23,9 @@ function pointLoc = vcPointSelect(obj,nPoints,msg)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('obj'), error('Object is required (isa,oi,scene ...)'); end
-if ieNotDefined('nPoints'), nPoints = 1; end
-if ieNotDefined('msg')
+if notDefined('obj'), error('Object is required (isa,oi,scene ...)'); end
+if notDefined('nPoints'), nPoints = 1; end
+if notDefined('msg')
     msg = sprintf('Right click to select point');
 end
 
@@ -53,5 +53,4 @@ end
 pointLoc(:,1) = y(list);
 pointLoc(:,2) = x(list);
 
-return;
-
+end

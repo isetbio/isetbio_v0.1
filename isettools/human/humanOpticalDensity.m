@@ -15,7 +15,7 @@ function inertP = humanOpticalDensity(visualField, wave)
 %  (c) VISTA lab 2012 HH
 
 %%
-if ieNotDefined('wave'), wave = 390:730; end
+if notDefined('wave'), wave = 390:730; end
 
 % Stash these variables
 inertP.visfield = visualField;

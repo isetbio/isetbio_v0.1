@@ -34,8 +34,8 @@ function figHdl = vcNewGraphWin(figHdl, fType, varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('figHdl'), figHdl = figure; end
-if ieNotDefined('fType'),  fType = 'upper left'; end
+if notDefined('figHdl'), figHdl = figure; end
+if notDefined('fType'),  fType = 'upper left'; end
 
 set(figHdl,'Name','ISET GraphWin','NumberTitle','off');
 set(figHdl,'CloseRequestFcn','ieCloseRequestFcn');
@@ -71,4 +71,4 @@ end
 ieSessionSet('graphwinfigure',figHdl);
 ieSessionSet('graphwinhandle',guidata(figHdl));
 
-return;
+end

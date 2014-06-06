@@ -39,7 +39,8 @@ notDefined = evalin('caller',cmd1);     % Check that the variable exists in the 
 if notDefined, return;                  % If it does not, return with a status of 0
 else 
     notDefined = evalin('caller',cmd2); % Check if the variable is empty in the caller space
-    if notDefined return;
+    if notDefined
+        return;
     end
 end
 

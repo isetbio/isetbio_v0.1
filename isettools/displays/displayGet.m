@@ -50,7 +50,7 @@ function val = displayGet(d,parm,varargin)
 % Copyright ImagEval 2011
 
 %% Check parameters
-if ieNotDefined('parm'), error('Parameter not found.');  end
+if notDefined('parm'), error('Parameter not found.');  end
 
 % Default is empty when the parameter is not yet defined.
 val = [];

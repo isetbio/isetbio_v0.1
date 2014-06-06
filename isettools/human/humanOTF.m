@@ -60,18 +60,18 @@ function [OTF2D, fSupport, wave] = humanOTF(pRadius, D0, fSupport, wave)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 % Default human pupil diameter is 3mm.  This code wants the radius.  
-if ieNotDefined('pRadius'), p = 0.0015; else p = pRadius; end 
+if notDefined('pRadius'), p = 0.0015; else p = pRadius; end 
 
 % dioptric power of unaccomodated eye (17 mm focal length)
-if ieNotDefined('D0'), D0 = 1/0.017; end   
+if notDefined('D0'), D0 = 1/0.017; end   
 
 % Wavelength in nanometers
-if ieNotDefined('wave'), wave = (400:700); end
+if notDefined('wave'), wave = (400:700); end
 nWave = length(wave);
 
 % We use a frequency support that covers 60 cyc/deg.
 % The frequency support runs from -60:60 by default.
-if ieNotDefined('fSupport')
+if notDefined('fSupport')
     maxF = 60;
     fList = unitFrequencyList(maxF);
     fList = fList*maxF;
@@ -121,4 +121,4 @@ for ii=1:nWave
     OTF2D(:,:,ii) = fftshift(tmp);
 end
 
-return;
+end

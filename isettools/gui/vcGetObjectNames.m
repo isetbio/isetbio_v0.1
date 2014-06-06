@@ -8,7 +8,7 @@ function objNames = vcGetObjectNames(objType)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('objType'), objType = 'scene'; end
+if notDefined('objType'), objType = 'scene'; end
 
 objects = vcGetObjects(objType);
 nObj = length(objects);
@@ -17,9 +17,9 @@ nObj = length(objects);
 % list of names.
 if nObj == 1 && isempty(objects{1})
     objNames = [];
-    return;
 else
-    % Every object should have a name.
+    % Every object should have a name
+    objNames = cell(nObj, 1);
     for ii=1:nObj
         if ~checkfields(objects{ii},'name')
             error('Missing object name.  %s\n',objType);
@@ -28,5 +28,5 @@ else
     end
 end
 
-return;
+end
 

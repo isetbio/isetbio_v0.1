@@ -24,7 +24,7 @@ function [support, spread, delta] = conePlot(xy,coneType, support, spread, delta
 %
 % Copyright ImagEval LLLC, 2009
 
-if ieNotDefined('delta'),   delta = 0.4; end  % Sampling in microns
+if notDefined('delta'),   delta = 0.4; end  % Sampling in microns
 % support and spread are adjusted below, after the grid is built
 
 % low = floor(min(xy(1,:))); high = ceil(max(xy(1,:)));
@@ -51,11 +51,11 @@ coneImage = reshape(coneImage,size(fgrid,1),size(fgrid,2),3);
 % mp = [0 0 0 ; 1 0 0 ; 0 1 0; 0 0 1]; image(fgrid); colormap(mp)
 
 % Blur the image by a Gaussian - we set blur and support here.
-if ieNotDefined('spread')
+if notDefined('spread')
     l = find(fgrid(1,:) > 0);  % Digital image spacing
     spread = (l(2)-l(1))/3;
 end
-if ieNotDefined('support'), support = round(3*[spread spread]); end
+if notDefined('support'), support = round(3*[spread spread]); end
 
 g = fspecial('gaussian',support,spread);
 tmp = imfilter(coneImage,g);
@@ -65,5 +65,4 @@ h = vcNewGraphWin;
 set(h,'Name','ISET: Human cone mosaic');
 imagescRGB(tmp);
 
-return;
-
+end

@@ -28,9 +28,9 @@ function [img,vci] = displayRender(img,vci,sensor)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('img'), error('Must define image'); end
-if ieNotDefined('vci'), vci = vcGetObject('vcimage'); end
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('img'), error('Must define image'); end
+if notDefined('vci'), vci = vcGetObject('vcimage'); end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
 
 % There are a couple of other ways we can do the rendering
 
@@ -72,6 +72,6 @@ img = (img/imgMax)*sensorGet(sensor,'response ratio');
 
 % figure; imagescRGB(vci.data.result);
 
-return;
+end
 
         

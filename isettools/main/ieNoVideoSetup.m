@@ -9,7 +9,9 @@ function ieNoVideoSetup(handles)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('handles'), error('Requires handles to the vcMainWindow.'); end
+if notDefined('handles')
+    error('Requires handles to the vcMainWindow.'); 
+end
 
 set(handles.btnVideo,'Visible','off')
 
@@ -42,4 +44,4 @@ p(2) = p(2)- s;
 set(handles.btnDisplayImage,'position',p);    
 
 set(handles.figure1,'units',u);
-return;
+end

@@ -38,8 +38,8 @@ function [u,v] = xyz2uv(xyz,format)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('xyz'), error('XYZ values required'); end
-if ieNotDefined('format'), format = ''; end
+if notDefined('xyz'), error('XYZ values required'); end
+if notDefined('format'), format = ''; end
 
 if size(xyz,2) ~= 3, error('XYZ should be n x 3'); end
 

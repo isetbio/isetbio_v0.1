@@ -30,7 +30,7 @@ objType = vcGetObjectType(obj);
 objType = vcEquivalentObjtype(objType);
 
 %%
-if ieNotDefined('val')
+if notDefined('val')
     val = vcGetSelectedObject(objType); 
     if isempty(val),  val = 1; end
 end

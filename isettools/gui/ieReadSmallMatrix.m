@@ -26,13 +26,13 @@ function gMat = ieReadSmallMatrix(mSize,defMatrix,fmt,prompt,yxPosition,outVarNa
 % clipboard.
 
 %%
-if ieNotDefined('mSize'),     mSize = [3,3];               end
-if ieNotDefined('defMatrix'), defMatrix = zeros(mSize);    end
-if ieNotDefined('fmt'),       fmt = '%.2f';                end
-if ieNotDefined('prompt'),    prompt ='Enter matrix';      end
-if ieNotDefined('yxPosition'),yxPosition = [100,500];      end
-if ieNotDefined('outVarName'),outVarName = 'matrixData';   end
-if ieNotDefined('cList'),     cList = [];                  end
+if notDefined('mSize'),     mSize = [3,3];               end
+if notDefined('defMatrix'), defMatrix = zeros(mSize);    end
+if notDefined('fmt'),       fmt = '%.2f';                end
+if notDefined('prompt'),    prompt ='Enter matrix';      end
+if notDefined('yxPosition'),yxPosition = [100,500];      end
+if notDefined('outVarName'),outVarName = 'matrixData';   end
+if notDefined('cList'),     cList = [];                  end
 
 %% 
 % Create the figure and main window
@@ -123,13 +123,13 @@ uiwait(gMat.fig);
 
 return;
 
-function editboxCallback(hObject, eventdata, varargin)
+function editboxCallback(~, ~, varargin)
 % Edit call back shouldn't really do anything, though it might adjust the
 % scale if we get really frisky.
 %
 return
 
-function doneCallback(hObject, eventdata, varargin)
+function doneCallback(~, ~, varargin)
 % The DONE button from the window is the object
 % Reads  values from all the edit boxes 
 

@@ -49,8 +49,8 @@ function result = mkInvGammaTable(gTable,numEntries)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('gTable'), error('Gamma table required.'); end
-if ieNotDefined('numEntries'), numEntries = 4*size(gTable,1); end
+if notDefined('gTable'), error('Gamma table required.'); end
+if notDefined('numEntries'), numEntries = 4*size(gTable,1); end
 
 ncol = size(gTable,2);
 result = zeros(numEntries,ncol);
@@ -61,9 +61,9 @@ for ii=1:ncol
  thisTable = gTable(:,ii);
 
 % Find the locations where this table is not monotonic
- list = find(diff(thisTable) <= 0);
+ list = find(diff(thisTable) <= 0, 1);
 
- if length(list) > 0
+ if ~isempty(list)
   announce = sprintf('Gamma table %d NOT MONOTONIC.  We are adjusting.',ii);
   disp(announce)
 
