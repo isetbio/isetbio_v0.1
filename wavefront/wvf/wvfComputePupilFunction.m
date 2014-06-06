@@ -35,6 +35,10 @@ function wvf = wvfComputePupilFunction(wvf, showBar)
 %
 % See also: wvfCreate, wvfGet, wfvSet, wvfComputePSF
 %
+% Example:
+%    wvf = wvfCreate;
+%    wvf = wvfComputePupilFunction(wvf);
+%
 % Original code provided by Heidi Hofer.
 %
 % 8/20/11 dhb      Rename function and pull out of supplied routine.
@@ -57,7 +61,8 @@ if ieNotDefined('showBar'), showBar = ieSessionGet('wait bar'); end
 % Only do this if we need to. It might already be computed
 if (~isfield(wvf,'pupilfunc') || ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPILFUNCTION_STALE)
     
-    % Make sure calculation pupil size is less than or equal measured size
+    % Make sure calculation pupil size is less than or equal to the pupil
+    % size that gave rise to the measured coefficients.
     calcPupilSizeMM = wvfGet(wvf,'calc pupil size','mm');
     measPupilSizeMM = wvfGet(wvf,'measured pupil size','mm');
     if (calcPupilSizeMM > measPupilSizeMM)
@@ -67,19 +72,21 @@ if (~isfield(wvf,'pupilfunc') || ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPI
     
     % Handle defocus relative to reference wavelength.
     %
-    % The explicit defocus correction is expressed as the difference in diopters between
-    % the defocus correction at measurement time and the defocus correction we're calculating for.
-    % This models lenses external to the observer's eye, which affect focus but
-    % not the accommodative state.
+    % The defocus correction for the calculation is expressed as the
+    % difference (diopters) between the defocus correction at measurement
+    % time and the defocus correction for this calculatiion. This models
+    % any lenses external to the observer's eye, which affect focus but not the
+    % accommodative state.
     defocusCorrectionDiopters = ...
         wvfGet(wvf,'calc observer focus correction') - ...
         wvfGet(wvf,'measured observer focus correction');
     
-    % Hmmm.  There is a function for this (wvfDefocusDioptersToMicrons).
-    % Not sure why the formulat is included here, and not the call.
-    % Someone comment, please.  I replaced the formula with the function (BW).
+    % I replaced the formula with the function (BW).
     %     defocusCorrectionMicrons = ...
     %         defocusCorrectionDiopters * (measPupilSizeMM )^2/(16*sqrt(3));
+    % with the function written for this purpose
+    % (wvfDefocusDioptersToMicrons). There was no difference, so I think we
+    % are OK.
     defocusCorrectionMicrons = wvfDefocusDioptersToMicrons(defocusCorrectionDiopters,measPupilSizeMM);
     
     % Convert wavelengths in nanometers to wavelengths in microns
@@ -148,9 +155,13 @@ if (~isfield(wvf,'pupilfunc') || ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPI
         % to microns so that we can add this in to the wavefront
         % aberrations.
         
-        % wvfLCAFromWavelengthDifference returns refractive error.  We flip
-        % the sign to describe change in optical power when we pass this
-        % through wvfDefocusDioptersToMicrons.
+        % wvfLCAFromWavelengthDifference returns the difference in
+        % refractive power for this wavelength relative to the measured
+        % wavelength (and there should only be one, although there may be
+        % multiple calc wavelengths).
+        %  
+        % We flip the sign to describe change in optical power when we pass
+        % this through wvfDefocusDioptersToMicrons.
         lcaDiopters = wvfLCAFromWavelengthDifference(wvfGet(wvf,'measured wavelength','nm'),thisWave);
         lcaMicrons = wvfDefocusDioptersToMicrons(-lcaDiopters,measPupilSizeMM);
         
@@ -167,9 +178,9 @@ if (~isfield(wvf,'pupilfunc') || ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPI
         
         % Get Zernike coefficients and add in appropriate info to defocus
         % Need to make sure the c vector is long enough to contain defocus
-        % term, because we handle that specially and it's easy just to
-        % make sure it is there.  This wastes a little time when we just
-        % compute diffraction, but that is the least of our worries.
+        % term, because we handle that specially and it's easy just to make
+        % sure it is there.  This wastes a little time when we just compute
+        % diffraction, but that is the least of our worries.
         c = wvfGet(wvf,'zcoeffs');
         if (length(c) < 5)
             c(length(c)+1:5) = 0;
@@ -197,28 +208,29 @@ if (~isfield(wvf,'pupilfunc') || ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPI
             end
         end
         
-        % Here is the phase of the pupil function, with unit amplitude everywhere
+        % Here is the phase of the pupil function, with unit amplitude
+        % everywhere
         wavefrontaberrations{ii} = wavefrontAberrationsUM;
         pupilfuncphase = exp(-1i * 2 * pi * wavefrontAberrationsUM/waveUM(ii));
         
         % Set values outside the pupil we're calculating for to 0 amplitude
         pupilfuncphase(norm_radius > calcPupilSizeMM/measPupilSizeMM)=0;
         
-        % Multiply phase by the pupil function amplitude function.  Important
-        % to zero out before this step, because computation of A doesn't know
-        % about the pupil size.
+        % Multiply phase by the pupil function amplitude function.
+        % Important to zero out before this step, because computation of A
+        % doesn't know about the pupil size.
         pupilfunc{ii} = A.*pupilfuncphase;
         
-        % We think the ratio of these two quantities tells us how
-        % much light is effectively lost in cone absorbtions because
-        % of the Stiles-Crawford effect.  They might as well be
-        % computed here, because they depend only on the pupil
-        % function and the sce params.
-        areapix(ii) = sum(sum(abs(pupilfuncphase)));
+        % We think the ratio of these two quantities tells us how much
+        % light is effectively lost in cone absorbtions because of the
+        % Stiles-Crawford effect.  They might as well be computed here,
+        % because they depend only on the pupil function and the sce
+        % params.
+        areapix(ii)     = sum(sum(abs(pupilfuncphase)));
         areapixapod(ii) = sum(sum(abs(pupilfunc{ii})));
         
-        % Area pix used to be computed in another way, check that we get same
-        % answer.
+        % Area pix used to be computed in another way, check that we get
+        % same answer.
         kindex = find(norm_radius <= calcPupilSizeMM/measPupilSizeMM);
         areapixcheck = numel(kindex);
         if (areapix(ii) ~= areapixcheck)
@@ -232,6 +244,9 @@ if (~isfield(wvf,'pupilfunc') || ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPI
     wvf.pupilfunc = pupilfunc;
     wvf.areapix = areapix;
     wvf.areapixapod = areapixapod;
+    
+    % Let the rest of the code know we just computed the pupil function and
+    % that a new PSF will be needed.
     wvf.PUPILFUNCTION_STALE = false;
     wvf.PSF_STALE = true;
     

@@ -40,11 +40,9 @@ s_initISET;
 % comparing to the diffraction limited PSF implemented in the PTB routine
 % AiryPattern.
 
-% Set up parameters structure
-measPupilMM = 4;
-calcPupilMM = 3;
+% Set up wvf parameters for the calculation 
 wvf0 = wvfCreate;
-wvf0 = wvfSet(wvf0,'measured pupil size',measPupilMM);
+calcPupilMM = 3;
 wvf0 = wvfSet(wvf0,'calc pupil size',calcPupilMM);
 
 % Plotting ranges for MM, UM, and Minutes of angle
@@ -55,7 +53,7 @@ maxMIN = 2;
 % Which wavelength index (wave(idx)) (there is only one) to plot
 wList = wvfGet(wvf0,'wave');
 
-% Calculate the PSF, normalized to peak of 1.
+%% Calculate the PSF, normalized to peak of 1.
 wvf0 = wvfComputePSF(wvf0);
 
 % Make sure psf computed this way (with zcoeffs zeroed) matches
@@ -74,7 +72,7 @@ if (measWavelength ~= calcWavelength)
     error('Measured and calculation wavelengths should match at this point');
 end
 
-% Make a graph of the PSF within maxUM of center
+%% Make a graph of the PSF within maxUM of center
 wvfPlot(wvf0,'2dpsf space','um',wList,maxUM);
 
 % Make a graph of the PSF within 2 arc min
@@ -84,9 +82,9 @@ wvfPlot(wvf0,'2dpsf angle','min',wList,maxMIN);
 wvfPlot(wvf0,'1d psf angle normalized','min',wList,maxMIN);
 hold on
 
-% Used for plotting comparisons below
-arcminutes = wvfGet(wvf0,'support arcmin','min',wList);
-arcminpersample = wvfGet(wvf0,'ref psf sample interval');
+%% Used for plotting comparisons below
+arcminutes       = wvfGet(wvf0,'support arcmin','min',wList);
+arcminpersample  = wvfGet(wvf0,'ref psf sample interval');
 arcminpersample1 = wvfGet(wvf0,'psf arcmin per sample',wList);
 arcminpersample2 = wvfGet(wvf0,'psf angle per sample',[],wList);
 if (arcminpersample1 ~= arcminpersample)
@@ -106,7 +104,7 @@ xlabel('Arc Minutes');
 ylabel('Normalized PSF');
 title(sprintf('Diffraction limited, %0.1f mm pupil, %0.f nm',calcPupilMM,calcWavelength));
 
-%% Do the same thing using vset functions, if they exist on the path
+%% Do the same thing using isetbio functions, if they exist on the path
 %
 % The conversion between VSET and these other methods is pretty good, too.
 % So, diffraction limited point spread, measured for 3.0mm is the same when
@@ -172,7 +170,6 @@ end
 %% Repeat the calculation with a different pupil size at original wavelength
 pupilMM = 7; 
 wvf2  = wvf0;
-wvf2 = wvfSet(wvf2,'measured pupil size',pupilMM);
 wvf2  = wvfSet(wvf2,'calc pupil size',pupilMM);
 wvf2  = wvfComputePSF(wvf2);
 wList = wvfGet(wvf2,'wave');

@@ -5,13 +5,14 @@ function val = oiGet(oi,parm,varargin)
 %
 %  Optical image parameters are stored in a structure. Some parameters are
 %  stored directly, others are calculated from  the data structure.  We
-%  store the unique values and  calculate many derived values. 
+%  store the unique values and calculate many derived values in this
+%  routine.
 %
 %  The optical image structures are stored in a cell array, vcSESSION.OPTICALIMAGE{}
 %
 %  To retrieve the currently selected optical image, use either
-%     [val, oi] = vcGetSelectedObject('OI');
 %     oi = vcGetObject('OI');
+%     [val, oi] = vcGetSelectedObject('OI');
 %
 %  A '*' indicates that the syntax sceneGet(scene,param,unit) can be used, where
 %  unit specifies the spatial scale of the returned value:  'm', 'cm', 'mm',

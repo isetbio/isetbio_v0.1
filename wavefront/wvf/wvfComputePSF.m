@@ -23,12 +23,12 @@ function wvf = wvfComputePSF(wvf, showBar)
 
 if ieNotDefined('showBar'), showBar = true; end
 
-% Only do this if we need to -- it might already be computed and stored
+% Only calculate if we need to -- PSF might already be computed and stored
 if (~isfield(wvf,'psf') || ~isfield(wvf,'PSF_STALE') || ...
         wvf.PSF_STALE || ~isfield(wvf,'pupilfunc') || ...
         ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPILFUNCTION_STALE) 
   
-    % Initialize parameters
+    % Initialize parameters.  These are calc wave.
     wList = wvfGet(wvf,'wave');
     nWave = wvfGet(wvf,'nwave');
     pupilfunc = cell(nWave,1);
@@ -39,7 +39,8 @@ if (~isfield(wvf,'psf') || ~isfield(wvf,'PSF_STALE') || ...
     % wave = wvfGet(wvf,'wave');
     psf = cell(nWave,1);
     for wl = 1:nWave
-        % Convert the pupil function to the PSF  Just this simple.
+        % Convert the pupil function to the PSF.
+        % Requires only an ff2. 
         % Scale so that psf sums to unity.
         pupilfunc{wl} = wvfGet(wvf,'pupil function',wList(wl));
         amp = fft2(pupilfunc{wl});
