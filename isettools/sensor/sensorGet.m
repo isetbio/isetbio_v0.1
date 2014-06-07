@@ -3,13 +3,22 @@ function val = sensorGet(sensor,param,varargin)
 %
 %     val = sensorGet(sensor,param,varargin)
 %
-%  The (very long) sensor parameter list is described below.  The image
-%  sensory array is often referred to as sensor, or sensor in the code.  The
-%  sensor array includes a pixel data structure, and this structure has its
-%  own accessor functions.  The pixel optics depend on microlens
-%  structures, and there is a separate microlens analysis toolkit.
+% The (very long) sensor parameter list is described below.  The image
+% sensory array is often referred to as sensor, or sensor in the code. The
+% sensor array includes a pixel data structure, and this structure has its
+% own accessor functions.  The pixel optics depend on microlens structures,
+% and there is a separate microlens analysis toolkit.
 %
 % A '*' indicates a routine that can return different spatial units.
+%
+% The pixel structure is attached to the sensor.  Ordinarily, you can
+% address the pixel structure using
+%    pixel = sensorGet(sensor,'pixel');
+%    v = pixelGet(pixel,'param');
+%
+% To simplify the code, you can also use sensorGet to retrieve pixel
+% parameters 
+%    v = sensorGet(sensor,'pixel param');
 %
 % Examples:
 %    val = sensorGet(sensor,'name')
@@ -22,6 +31,8 @@ function val = sensorGet(sensor,param,varargin)
 %    val = sensorGet(sensor,'nExposures')     % Number of exposures
 %    val = sensorGet(sensor,'filtercolornames')
 %    val = sensorGet(sensor,'exposurePlane'); % For bracketing simulation
+%    val = sensorGet(sensor,'pixel size','um');
+%    val = sensorGet(sensor,'pixel voltage swing');
 %
 % Basic sensor array parameters
 %      {'name'}                 - this sensor name
@@ -217,8 +228,21 @@ if ~exist('param','var') || isempty(param), error('Param must be defined.'); end
 % Default return value.
 val = [];
 
-param = ieParamFormat(param);
+% Is this a pixel call.
+[oType,param] = ieParameterOtype(param);
+switch oType
+    case 'pixel'
+        pixel = sensor.pixel;
+        if isempty(param), val = pixel;
+        elseif   isempty(varargin), val = pixelGet(pixel,param);
+        else     val = pixelGet(pixel,param,varargin{1});
+        end
+        return;
+    otherwise
+end
 
+% Onward, it is a real sensor call
+param = ieParamFormat(param);
 switch param
 
     % Descriptive

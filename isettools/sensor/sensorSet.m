@@ -6,12 +6,25 @@ function sensor = sensorSet(sensor,param,val,varargin)
 % This routine sets the ISET sensor parameters.  See sensorGet for the
 % longer list of derived parameters.
 %
+% In addition to setting sensor parameters, this routine can set the
+% parameters of the pixel structure attached to the sensor:
+%
+%     sensorSet(sensor,'pixel param',val);
+%
+% This is simpler than the previous approach
+%    pixel = sensorGet(sensor,'pixel');
+%    pixel = pixelSet(pixel,'param',val);
+%    sensor = sensorSet(sensor,'pixel',pixel);
+%
 % Examples:
 %    sensor = sensorSet(sensor,'PIXEL',pixel);
 %    sensor = sensorSet(sensor,'autoExposure',1);   ('on' and 'off' work, too)
 %    sensor = sensorSet(sensor,'sensorComputeMethod',baseName);
 %    sensor = sensorSet(sensor,'quantizationMethod','10 bit');
 %    sensor = sensorSet(sensor,'analogGain',5);
+%
+%    sensor = sensorSet(sensor,'pixel voltage swing',2);
+%    sensorGet(sensor,'pixel voltage swing')
 %
 % General
 %      {'name'} - This sensor's identifier
@@ -111,6 +124,26 @@ if ~exist('param','var') || isempty(param), error('Parameter field required.'); 
 
 % Empty is an allowed value.  So we don't use ieNotDefined.
 if ~exist('val','var'),   error('Value field required.'); end
+
+% Handling pixel sets via sensorSet call.
+[oType, param] = ieParameterOtype(param);
+if isequal(oType,'pixel')
+    if isempty(param)
+        % oi = oiSet(oi,'optics',optics);
+        sensor.pixel = val;
+        return;
+    else
+        if isempty(varargin), sensor.pixel = pixelSet(sensor.pixel,param,val);
+        elseif length(varargin) == 1
+            sensor.pixel = pixelSet(sensor.pixel,param,val,varargin{1});
+        elseif length(varargin) == 2
+            sensor.pixel = pixelSet(sensor.pixel,param,val,varargin{1},varargin{2});
+        end
+        return;
+    end
+elseif isempty(param)
+    error('oType %s. Empty param.\n',oType);
+end
 
 param = ieParamFormat(param);  % Lower case and remove spaces
 switch lower(param)

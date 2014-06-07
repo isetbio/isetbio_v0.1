@@ -3,8 +3,10 @@ function oi = oiSet(oi,parm,val,varargin)
 %
 %    oi = oiSet(oi,parm,val,varargin)
 %
-% All of the parameters of an optical iamge are set through the calls to
-% this routine.
+% The parameters of an optical image are set through the calls to this
+% routine.  Parameters of the optics, attached to this structure, can also
+% be set via this call or by retrieving the optics structure and setting it
+% directly (see below).
 %
 % The oi is the object; parm is the name of the parameter; val is the
 % value of the parameter; varargin allows some additional parameters in
@@ -12,26 +14,24 @@ function oi = oiSet(oi,parm,val,varargin)
 %
 % There is a corresponding oiGet routine.  Many fewer parameters are
 % available for 'oiSet' than 'oiGet'. This is because many of the
-% parameters derived from oiGet are derived from the few parameters
-% that can be set, and sometimes the derived quantities require some
-% knowledge of the optics as well.
+% parameters returned by oiGet are derived from the few parameters that can
+% be set.
+%
+% It is  possible to set to the values of the optics structure attached to
+% the oi structure.  To do this, use the syntax
+%
+%   oiSet(oi,'optics param',val) where param is the optics parameter.
+%
+% This synatx replaces the older and more tedious style  
+%    optics = oiGet(oi,'optics'); 
+%    optics = opticsSet(optics,'param',val);
+%    oi = oiSet(oi,'optics',optics);
 %
 % Examples:
-%    oi = oiSet(oi,'optics',optics);
 %    oi = oiSet(oi,'name','myName')
 %    oi = oiSet(oi,'filename','test')
-%
-% User-settable oi parameters
-%
-%      {'name'}
-%      {'type'}
-%      {'distance' }
-%      {'horizontal field of view'}
-%      {'magnification'}
-%
-%      {'data'}  - Irradiance information
-%        {'cphotons'}   - Compressed photons; can be set one waveband at a
-%                         time: oi = oiSet(oi,'cphotons',data,wavelength);
+%    oi = oiSet(oi,'optics',optics);
+%    oi = oiSet(oi,'optics fnumber',2.8); oiGet(oi,'optics fnumber')
 %
 % N.B.: Because of the large size of the photon data (row,col,wavelength)
 % and the high dynamic range, they are stored in a special compressed
@@ -47,6 +47,18 @@ function oi = oiSet(oi,parm,val,varargin)
 %
 % After writing to the photons field, the illuminance and mean illuminance
 % fields are set to empty.
+%
+% User-settable oi parameters
+%
+%      {'name'}
+%      {'type'}
+%      {'distance' }
+%      {'horizontal field of view'}
+%      {'magnification'}
+%
+%      {'data'}  - Irradiance information
+%        {'cphotons'}   - Compressed photons; can be set one waveband at a
+%                         time: oi = oiSet(oi,'cphotons',data,wavelength);
 %
 % Wavelength information
 %      {'spectrum'}            - Spectrum structure
@@ -90,6 +102,31 @@ function oi = oiSet(oi,parm,val,varargin)
 
 if ~exist('parm','var') || isempty(parm), error('Param must be defined.'); end
 if ~exist('val','var'), error('Value field required.'); end
+
+[oType,parm] = ieParameterOtype(parm);
+
+% Handling optics setting via oiSet call.
+if isequal(oType,'optics')
+    if isempty(parm)
+        % oi = oiSet(oi,'optics',optics);
+        oi.optics = val;
+        return;
+    else
+        % Allows multiple additional arguments
+        if isempty(varargin), oi.optics = opticsSet(oi.optics,parm,val);
+        elseif length(varargin) == 1
+            oi.optics = opticsSet(oi.optics,parm,val,varargin{1});
+        elseif length(varargin) == 2
+            oi.optics = opticsSet(oi.optics,parm,val,varargin{1},varargin{2});
+        elseif length(varargin) == 3
+            oi.optics = opticsSet(oi.optics,parm,val,varargin{1},varargin{2},varargin{3});
+        end
+        return;
+    end
+elseif isempty(parm)
+    error('oType %s. Empty param.\n',oType);
+end
+
 
 parm = ieParamFormat(parm);
 

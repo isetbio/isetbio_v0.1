@@ -18,6 +18,14 @@ function val = oiGet(oi,parm,varargin)
 %  unit specifies the spatial scale of the returned value:  'm', 'cm', 'mm',
 %  'um', 'nm'.  Default is meters ('m').
 %
+%  The optics data structure is stored in the oi as oi.optics.  There is a
+%  set of opticsGet/Set/Create calls.  It is possible, however, to retrieve
+%  the optics parameters by a call via oiGet by specifying optics in the
+%  call, as in
+%      v = oiGet(oi,'optics fnumber');
+%
+%  To see the full range of optics parameters, use doc opticsGet.
+%
 % Examples:
 %    oiGet(oi,'rows')
 %    oiGet(oi,'wave')
@@ -27,6 +35,7 @@ function val = oiGet(oi,parm,varargin)
 %    oiGet(oi,'angularresolution')
 %    oiGet(oi,'distPerSamp','mm')
 %    oiGet(oi,'spatial support','microns');   % Meshgrid of zero-centered (x,y) values
+%    oiGet(oi,'optics off axis method')
 %
 %  General properties
 %      {'name'}           - optical image name
@@ -112,6 +121,22 @@ function val = oiGet(oi,parm,varargin)
 val = [];
 if ~exist('parm','var') || isempty(parm), error('Param must be defined.'); end
 
+% See if this is really an optics call
+[oType,parm] = ieParameterOtype(parm);
+switch oType
+    case 'optics'
+        % If optics, then we either return the optics or an optics
+        % parameter.  We could add another varargin{} level.  Or even all.
+        optics = oi.optics;
+        if isempty(parm), val = optics;
+        elseif   isempty(varargin), val = opticsGet(optics,parm);
+        else     val = opticsGet(optics,parm,varargin{1});
+        end
+        return;
+    otherwise
+end
+
+% It appears to be an oi, so onward.
 parm = ieParamFormat(parm);
 switch parm
     
