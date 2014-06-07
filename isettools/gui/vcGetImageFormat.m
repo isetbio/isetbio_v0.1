@@ -29,10 +29,10 @@ function iFormat = vcGetImageFormat(data,wave)
 if ndims(data) == 3 && length(wave) == size(data,3)
     % Checks out as classic
     iFormat = 'RGB';
-elseif ndims(data) == 2 && length(wave) == 1
+elseif ismatrix(data) && length(wave) == 1
     % A matrix (image) with one wavelength
     iFormat = 'RGB';
-elseif ndims(data) == 2 && (length(wave) == size(data,2))
+elseif ismatrix(data) && (length(wave) == size(data,2))
     % A matrix as typical XW with columns -- wave
     iFormat = 'XW';
 elseif length(data) == length(wave)
