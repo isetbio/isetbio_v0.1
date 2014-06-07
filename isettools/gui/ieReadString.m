@@ -10,8 +10,8 @@ function ieString = ieReadString(prompt,defString)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('prompt'), prompt = 'Enter'; end
-if ieNotDefined('defString'), defString = ''; end
+if notDefined('prompt'), prompt = 'Enter'; end
+if notDefined('defString'), defString = ''; end
 
 ieString = [];
 
@@ -21,4 +21,4 @@ lineNo=1;
 answer = inputdlg(prompt,dlgTitle,lineNo,def);
 if ~isempty(answer), ieString = answer{1}; end
 
-return;
+end

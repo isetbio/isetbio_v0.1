@@ -15,7 +15,7 @@ function vci = displaySetMaxLuminance(vci)
 % TODO:
 % These should be part of displaySet() and displayGet()
 
-if ieNotDefined('vci'), [val,vci] = vcGetSelectedObject('VCIMAGE'); end
+if notDefined('vci'), [~,vci] = vcGetSelectedObject('VCIMAGE'); end
 
 Yw = imageGet(vci,'maxdisplayluminance');
 

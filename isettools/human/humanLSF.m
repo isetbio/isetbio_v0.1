@@ -32,10 +32,10 @@ function [lineSpread,xDim,wave] = humanLSF(pupilRadius,dioptricPower,unit,wave)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('pupilRadius'),   p  = 0.0015;   else p = pupilRadius;   end   % Default pupil radius is 3mm 
-if ieNotDefined('dioptricPower'), D0 = 59.9404;  else D0 = dioptricPower;end   % dioptric power of unaccomodated eye
-if ieNotDefined('unit'), unit = 'mm';    end
-if ieNotDefined('wave'), wave = 400:700; end  % Default wavelength sampes
+if notDefined('pupilRadius'),   p  = 0.0015;   else p = pupilRadius;   end   % Default pupil radius is 3mm 
+if notDefined('dioptricPower'), D0 = 59.9404;  else D0 = dioptricPower;end   % dioptric power of unaccomodated eye
+if notDefined('unit'), unit = 'mm';    end
+if notDefined('wave'), wave = 400:700; end  % Default wavelength sampes
 
 % We could put in a higher spatial sample frequency and get a finer spatial
 % sampling resolution.
@@ -80,4 +80,4 @@ switch lower(unit)
         error('Unknown unit %s',unit);
 end
 
-return;
+end

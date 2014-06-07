@@ -6,7 +6,7 @@ function [coneType, filters, filterNames] = mouseConeMosaic(sz,fHeight, rgbDensi
 %
 % Drafted by EC
 
-if ieNotDefined('sz'), error('Array size must be defined'); end
+if notDefined('sz'), error('Array size must be defined'); end
 
 if notDefined('sensor')
     % load filters data
@@ -17,7 +17,7 @@ else
     mouseFilters.wavelength = sensorGet(sensor, 'wave');
 end
 
-if ieNotDefined('fHeight')
+if notDefined('fHeight')
     fil =  load('~/psych221/mouseColorFilters.mat');
     fHeight = fil.fHeight; % default : [-0.5, -0.1, 0.1, 0.5]
     clear fil;
@@ -78,4 +78,4 @@ else
 end
 
 
-return
+end

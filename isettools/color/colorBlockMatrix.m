@@ -63,8 +63,8 @@ function bMatrix = colorBlockMatrix(wList,extrapVal)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('wList'), error('You must specify wavelengths'); end
-if ieNotDefined('extrapVal'), extrapVal = 0.0; end
+if notDefined('wList'), error('You must specify wavelengths'); end
+if notDefined('extrapVal'), extrapVal = 0.0; end
 
 % If wList a single number, then we interpret it as one of the common
 % visible wavelength ranges.  This feature is here for backwards

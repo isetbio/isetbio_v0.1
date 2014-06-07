@@ -14,9 +14,9 @@ function ieInWindowMessage(str,handles,duration)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('duration'), duration = []; end
-if ieNotDefined('str'), str = []; end
-if ieNotDefined('handles'), disp(str); return; end
+if notDefined('duration'), duration = []; end
+if notDefined('str'), str = []; end
+if notDefined('handles'), disp(str); return; end
 
 % Place the string in the message area.
 set(handles.txtMessage,'String',str);
@@ -27,4 +27,4 @@ if ~isempty(duration)
     set(handles.txtMessage,'String','');
 end
 
-return;
+end

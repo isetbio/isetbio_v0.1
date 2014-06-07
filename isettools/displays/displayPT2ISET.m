@@ -42,7 +42,7 @@ function d = displayPT2ISET(fname,iWave)
 %
 % Copyright ImagEval, 2011
 
-if ieNotDefined('fname'), error('No calibration file %s\s',fname); end
+if notDefined('fname'), error('No calibration file %s\s',fname); end
 
 % Initialize the display structure
 d = displayCreate;
@@ -58,7 +58,7 @@ wave = (0:(S(3)-1))*S(2) + S(1);
 d = displaySet(d,'wave',wave);
 
 % Why interpolate?  Why not leave it in 4nm steps?
-if ieNotDefined('iWave')
+if notDefined('iWave')
     iWave = wave;
     spd = cal.P_device;
 else

@@ -21,8 +21,8 @@ function [roiLocs,rect] = vcROISelect(obj,objFig)
 % TODO:  See proposal for ieOpenWindow below.  We should also add
 % ieRoiSelect to plan for deprecation of the vcXXX routines.
 
-if ieNotDefined('obj'), error('You must define an object (isa,oi,scene ...)'); end
-if ieNotDefined('objFig')
+if notDefined('obj'), error('You must define an object'); end
+if notDefined('objFig')
     objFig = vcGetFigure(obj); 
     if isempty(objFig)
         % We should add ieAddAndSelect()

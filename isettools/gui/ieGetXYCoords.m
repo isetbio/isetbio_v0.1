@@ -27,8 +27,7 @@ function [xy, button] = ieGetXYCoords(obj)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('obj'), error('You must define an object (isa,oi,scene ...)'); end
-if ieNotDefined('objFig'), objFig = vcGetFigure(obj); end
+if notDefined('obj'), error('You must define an object'); end
 
 % Figure out the figure associated with this object type
 if isfield(obj,'type'), t = obj.type; 

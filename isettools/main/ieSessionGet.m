@@ -85,7 +85,7 @@ function val = ieSessionGet(param)
 
 global vcSESSION
 
-if ieNotDefined('param'), error('You must specify a parameter.'); end
+if notDefined('param'), error('You must specify a parameter.'); end
 val = [];
 
 % Eliminate spaces and make lower case
@@ -260,4 +260,4 @@ switch param
     otherwise
         error('Unknown parameter')
 end
-return;
+end

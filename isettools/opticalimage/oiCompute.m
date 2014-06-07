@@ -56,8 +56,8 @@ function oi = oiCompute(scene,oi,opticsModel)
 %
 % Copyright ImagEval Consultants, LLC, 2005
 
-if ieNotDefined('scene'), error('Scene required.'); end
-if ieNotDefined('oi'), error('Opticalimage required.'); end
+if notDefined('scene'), error('Scene required.'); end
+if notDefined('oi'), error('Opticalimage required.'); end
 if strcmp(oi.type,'scene') && strcmp(scene.type,'opticalimage')
     % disp('oiCompute: flipping arguments')
     tmp = scene; scene = oi; oi = tmp; clear tmp
@@ -89,4 +89,4 @@ oi = oiSet(oi,'name',sceneGet(scene,'name'));
 % set to 0, though perhaps we should pad them with the mean distance.
 oi = oiSet(oi,'depth map',oiPadDepthMap(scene));
 
-return;
+end

@@ -12,11 +12,12 @@ function val = ieReadNumber(str,defaultValue,fmt)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('str'), str = 'Enter value'; end
-if ieNotDefined('defaultValue'), defaultValue = 1; end
-if ieNotDefined('fmt'), fmt = '  %.2e'; end
+if notDefined('str'), str = 'Enter value'; end
+if notDefined('defaultValue'), defaultValue = 1; end
+if notDefined('fmt'), fmt = '  %.2e'; end
 
-prompt={str}; def={num2str(defaultValue,fmt)}; dlgTitle= sprintf('ISET read number'); lineNo=1;
+prompt={str}; def={num2str(defaultValue,fmt)};
+dlgTitle= sprintf('ISET read number'); lineNo=1;
 answer = inputdlg(prompt,dlgTitle,lineNo,def);
 
 if   isempty(answer),  val = [];

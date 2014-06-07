@@ -42,8 +42,8 @@ function [lum, rg, by, positions] = poirsonSpatioChromatic(sampPerDeg,dimension)
 % Copyright ImagEval Consultants, LLC, 2005.
 
 
-if ieNotDefined('sampPerDeg'),sampPerDeg = 241; end
-if ieNotDefined('dimension'), dimension = 2; end
+if notDefined('sampPerDeg'),sampPerDeg = 241; end
+if notDefined('dimension'), dimension = 2; end
 
 % The filters are the weighted sum of two or three Gaussian functions.
 % These variables contain the parameters for generating the filters,
@@ -78,4 +78,4 @@ if nargout == 4
     positions = ([1:width] - centerPosition)*(1/sampPerDeg);
 end
 
-return;
+end

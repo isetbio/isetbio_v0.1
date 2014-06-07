@@ -27,10 +27,10 @@ function ls = westheimerLSF(xSec)
 % Copyright ImagEval Consultants, LLC, 2005.
 
 
-if ieNotDefined('xSec'), xSec = -300:1:300;	 end
+if notDefined('xSec'), xSec = -300:1:300;	 end
 
 xMin = xSec/60;
 ls = 0.47*exp(-3.3 *(xMin.^2)) + 0.53*exp(-0.93*abs(xMin));
 ls = ls / sum(ls);
 
-return;
+end

@@ -21,9 +21,9 @@ function m = macularSet(m,param,val,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2013.
 
-if ieNotDefined('m'), error('Macular structure required'); end
-if ieNotDefined('param'), error('param required'); end
-if ieNotDefined('val'), error('val required'); end
+if notDefined('m'), error('Macular structure required'); end
+if notDefined('param'), error('param required'); end
+if notDefined('val'), error('val required'); end
 
 %
 param = ieParamFormat(param);

@@ -41,13 +41,13 @@ function [oi,val] = oiCreate(oiType,val,optics,addObject,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('oiType'),  oiType = 'default'; end
-if ieNotDefined('val'),     val = vcNewObjectValue('OPTICALIMAGE'); end
-if ieNotDefined('optics'),  optics = opticsCreate('default'); end
+if notDefined('oiType'),  oiType = 'default'; end
+if notDefined('val'),     val = vcNewObjectValue('OPTICALIMAGE'); end
+if notDefined('optics'),  optics = opticsCreate('default'); end
 
 % We used to automatically add created OI objects to the list.  Stopped
 % doing this July, 2012
-if ieNotDefined('addObject'), addObject = 0; end
+if notDefined('addObject'), addObject = 0; end
 
 % Default is to use the diffraction limited calculation
 oi.type = 'opticalimage';
@@ -151,7 +151,7 @@ if addObject
     else vcReplaceAndSelectObject(oi,val); end
 end
 
-return;
+end
 
 %--------------------------------------------
 function oi = oiCreateUniformD65
@@ -176,7 +176,7 @@ oi = oiSet(oi,'optics',optics);
 oi = oiCompute(scene,oi);
 
 
-return;
+end
 
 %---------------------------------------------
 function oi = oiCreateUniformEE(sz,wave)
@@ -199,4 +199,4 @@ oi = oiSet(oi,'optics',optics);
 
 oi = oiCompute(scene,oi);
 
-return;
+end

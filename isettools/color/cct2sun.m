@@ -26,9 +26,9 @@ function spd = cct2sun(wave, cct, units)
 %
 % Last Updated: 08-14-00
 
-if ieNotDefined('wave'),wave = 400:700; end
-if ieNotDefined('cct'), error('Correlated color temperature required'); end
-if ieNotDefined('units'), units = 'energy'; end
+if notDefined('wave'),wave = 400:700; end
+if notDefined('cct'), error('Correlated color temperature required'); end
+if notDefined('units'), units = 'energy'; end
 
 % Calculate the xy chromaticity coordinates.
 mask = 1.*(cct>=4000 & cct<7000 ) + 2.*(cct>=7000 & cct<30000);

@@ -31,8 +31,8 @@ function obj = ieDeleteCustomAlgorithm(obj,algType,handles)
 
 error('Deprecated.')
 
-if ieNotDefined('obj'), error('Object must be defined.'); end
-if ieNotDefined('algType'), error('Algorithm type must be defined'); end
+if notDefined('obj'), error('Object must be defined.'); end
+if notDefined('algType'), error('Algorithm type must be defined'); end
 
 pauseTime = 2;  % sec
 

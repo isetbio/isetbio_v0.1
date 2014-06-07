@@ -8,7 +8,7 @@ function b = ieReadBoolean(question)
 %  b = ieReadBoolean('Will you marry me?')
 %
 
-if ieNotDefined('question'), question = 'Yes or No?'; end
+if notDefined('question'), question = 'Yes or No?'; end
 b = [];
 
 ButtonName=questdlg(question, ...
@@ -26,4 +26,4 @@ switch ButtonName,
         return;
 end
 
-return;
+end

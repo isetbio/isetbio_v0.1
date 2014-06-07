@@ -43,7 +43,7 @@ function d = displayCreate(displayName,varargin)
 
 
 %% Arguments
-if ieNotDefined('displayName'), displayName = 'default'; end
+if notDefined('displayName'), displayName = 'default'; end
 
 % Identify the object type
 d.type = 'display';

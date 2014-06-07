@@ -13,9 +13,9 @@ function mat = ieReadMatrix(defMatrix,fmt,prompt)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('defMatrix'), defMatrix = eye(3);           end
-if ieNotDefined('fmt'),       fmt = '   %.2e';              end
-if ieNotDefined('prompt'),    prompt={'Enter the matrix:'}; end
+if notDefined('defMatrix'), defMatrix = eye(3);           end
+if notDefined('fmt'),       fmt = '   %.2e';              end
+if notDefined('prompt'),    prompt={'Enter the matrix:'}; end
 
 def={num2str(defMatrix,fmt)};
 dlgTitle='Matrix Reader';

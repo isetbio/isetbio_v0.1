@@ -44,9 +44,9 @@ function T = ieColorTransform(sensor,targetSpace,illuminant,surface)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('targetSpace'), targetSpace = 'XYZ';     end
-if ieNotDefined('illuminant'),  illuminant  = 'D65';     end
-if ieNotDefined('surface'),     surface     = 'macbeth'; end
+if notDefined('targetSpace'), targetSpace = 'XYZ';     end
+if notDefined('illuminant'),  illuminant  = 'D65';     end
+if notDefined('surface'),     surface     = 'macbeth'; end
 
 wave     = sensorGet(sensor,'wave');
 sensorQE = sensorGet(sensor,'spectral QE');

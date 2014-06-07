@@ -17,7 +17,7 @@ function tickLocs = ieChooseTickMarks(val,nTicks)
 % This routine fails when nTicks > (mx-mn)
 %
 
-if ieNotDefined('nTicks'), nTicks = 10; end
+if notDefined('nTicks'), nTicks = 10; end
 
 % Choose a reasonable number of positive tick marks
 mx = round(max(val));
@@ -27,11 +27,11 @@ tickSpacing = round((mx-mn)/nTicks);
 E = floor(log10(mx-mn)); S = 10^(E-1);
 tickSpacing = S*round(tickSpacing/S);
 
-if mn < 0 & mx > 0
-    tickLocs = [0:tickSpacing:mx];
-    tickLocs = [fliplr(-1*[tickSpacing:tickSpacing:abs(mn)]),tickLocs];
+if mn < 0 && mx > 0
+    tickLocs = 0:tickSpacing:mx;
+    tickLocs = [fliplr(-1*(tickSpacing:tickSpacing:abs(mn))),tickLocs];
 else
-    tickLocs = [mn:tickSpacing:mx];
+    tickLocs = mn:tickSpacing:mx;
 end
 
-return;
+end

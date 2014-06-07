@@ -6,9 +6,9 @@ function scene = sceneFromFont(font,display,scene)
 % (BW) Vistasoft group, 2014
 
 %% Input arguments
-if ieNotDefined('font'),    font = fontCreate; end
-if ieNotDefined('display'), display = displayCreate('LCD-Apple'); end
-if ieNotDefined('scene'),   scene = sceneCreate; end
+if notDefined('font'),    font = fontCreate; end
+if notDefined('display'), display = displayCreate('LCD-Apple'); end
+if notDefined('scene'),   scene = sceneCreate; end
 
 % Initialize the display to match the scene and font properties
 if ischar(display), display = displayCreate(display); end

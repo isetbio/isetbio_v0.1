@@ -16,25 +16,17 @@ function ieRefreshWindow(objType)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('objType'), error('You must specify an object type.'); end
+if notDefined('objType'), error('You must specify an object type.'); end
 
 objType = vcEquivalentObjtype(objType);
 
 switch lower(objType)
-    case {'scene'}
-        h = sceneWindow; 
-
-    case {'opticalimage'}
-        h = oiWindow; 
-       
-    case {'isa'}
-        h = sensorImageWindow; 
-        
-    case {'vcimage'}
-        h = vcimageWindow; 
-        
+    case {'scene'}, sceneWindow; 
+    case {'opticalimage'}, oiWindow; 
+    case {'isa'}, sensorImageWindow;  
+    case {'vcimage'}, vcimageWindow; 
     otherwise
         error('Unknown object type');
 end
 
-return;
+end

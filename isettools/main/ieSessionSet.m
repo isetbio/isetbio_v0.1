@@ -99,7 +99,7 @@ function ieSessionSet(param,val,varargin)
 
 global vcSESSION
 
-if ieNotDefined('param'), error('You must specify a parameter.'); end
+if notDefined('param'), error('You must specify a parameter.'); end
 if ~exist('val','var'),   error('You must specify a value.');     end
 
 param = ieParamFormat(param);

@@ -19,16 +19,16 @@ function filterNames = ieSetFilterName(whichFilter,newFilterName,isa)
 % TODO:  This routine should become
 %        isa = sensorSet(isa,'editFilterList',whichFilter,newFilterName);
 
-if ieNotDefined('isa'), [val,isa] = vcGetSelectedObject('ISA'); end
+if notDefined('isa'), [~,isa] = vcGetSelectedObject('ISA'); end
 
 filterNames = sensorGet(isa,'filterNames');
 filterNames{whichFilter} = 'nofiltername';
-filterNames{whichFilter} = ieAdjustFilterName(newFilterName,filterNames,isa); 
+filterNames{whichFilter} = ieAdjustFilterName(newFilterName,filterNames); 
 
-return;
+end
 
 %----------------------------------
-function newName = ieAdjustFilterName(newName,filterNames,isa)
+function newName = ieAdjustFilterName(newName,filterNames)
 %
 %  newName = ieAdjustFilterName(newName,filterNames)
 %
@@ -51,4 +51,4 @@ for ii=1:length(filterNames)
     end
 end
 
-return;
+end

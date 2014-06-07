@@ -14,7 +14,7 @@ function oi = oiAdjustIlluminance(oi,newLevel,stat)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('stat'), stat = 'mean'; end
+if notDefined('stat'), stat = 'mean'; end
 
 % Get current OI illuminance
 illuminance = oiGet(oi,'illuminance');
@@ -34,4 +34,4 @@ oi = oiSet(oi,'cphotons',photons*s);
 oi = oiSet(oi,'illuminance',illuminance*s);
 oi = oiSet(oi,'meanilluminance',mean(illuminance(:))*s);
 
-return;
+end

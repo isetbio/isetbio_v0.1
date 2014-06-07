@@ -20,8 +20,8 @@ function imgLMS = xyz2lms(imgXYZ, cbType, varargin)
 % Inputs:
 %   imgXYZ      = XYZ image to transform
 %   cbType      = Type of colorblindness,
-%                 Brettel form:   1 = protanopia, 2 = deuteranopia, 3 = tritanopia
-%                 Zero filled:   -1 = protanopia, -2 = deuteranopia, -3 = tritanopia
+%     Brettel form:   1 = protanopia, 2 = deuteranopia, 3 = tritanopia
+%     Zero filled:   -1 = protanopia, -2 = deuteranopia, -3 = tritanopia
 %   whiteXYZ    = White point, needed for Brettel type calculation.
 %
 % Outputs:
@@ -49,7 +49,7 @@ function imgLMS = xyz2lms(imgXYZ, cbType, varargin)
 %% Parameters
 
 % Just convert to LMS by default.
-if ieNotDefined('cbType'), cbType = 0; end
+if notDefined('cbType'), cbType = 0; end
 % We read varargin within the conditions.
 
 % Appearance (Brettell) transformation
@@ -131,17 +131,6 @@ if cbType > 0
             imgLMS(:,:,2) = M;
             % vcNewGraphWin; imagescRGB(imgLMS);title('New formula');
 
-            %             for i = 1:sizeLMS(1)
-            %                 for n = 1:sizeLMS(2)
-            %                     if((imgLMS(i, n, 3) / imgLMS(i, n, 1)) < inflection)
-            %                         imgLMS(i, n, 2) = -(a1 * imgLMS(i, n, 1) + c1 * imgLMS(i, n, 3)) / b1;
-            %                     else
-            %                         imgLMS(i, n, 2) = -(a2 * imgLMS(i, n, 1) + c2 * imgLMS(i, n, 3)) / b2;
-            %                     end
-            %                 end
-            %             end
-            %             vcNewGraphWin; imagescRGB(imgLMS); title('Old formula');
-
         case 3          % Tritanopia
 
             % find for lam=660 and lam=485 */
@@ -165,17 +154,6 @@ if cbType > 0
             S(~lst) = -(a2*L(~lst) + b2*M(~lst))/ c2;
             imgLMS(:,:,3) = S;
             %vcNewGraphWin; imagescRGB(imgLMS);title('New formula');
-
-            %             for i = 1:sizeLMS(1)
-            %                 for n = 1:sizeLMS(2)
-            %                     if((imgLMS(i, n, 2) / imgLMS(i, n, 1)) < inflection)
-            %                         imgLMS(i, n, 3) = -(a1 * imgLMS(i, n, 1) + b1 * imgLMS(i, n, 2)) / c1;
-            %                     else
-            %                         imgLMS(i, n, 3) = -(a2 * imgLMS(i, n, 1) + b2 * imgLMS(i, n, 2)) / c2;
-            %                     end
-            %                 end
-            %             end
-            %             vcNewGraphWin; imagescRGB(imgLMS);title('Old formula');
 
     end
 

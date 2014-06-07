@@ -38,10 +38,10 @@ function [spectraS, XYZ, XYZ0, sBasis] = ieSpectraSphere(wave,spectrumE,N, sBasi
 
 
 %% Set up parameters
-if ieNotDefined('wave'), wave = 400:10:700; end
-if ieNotDefined('spectrumE'), spectrumE = zeros(size(wave)); end
-if ieNotDefined('N'), N = 8; end   % Matches default on sphere
-if ieNotDefined('sBasis'), sBasis = ieReadSpectra('cieDaylightBasis',wave); 
+if notDefined('wave'), wave = 400:10:700; end
+if notDefined('spectrumE'), spectrumE = zeros(size(wave)); end
+if notDefined('N'), N = 8; end   % Matches default on sphere
+if notDefined('sBasis'), sBasis = ieReadSpectra('cieDaylightBasis',wave); 
 elseif ischar(sBasis)
     % If it is a file name, read it. Otherwise, the user sent in the matrix
     % with columns as basis functions

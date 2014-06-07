@@ -61,13 +61,17 @@ function [OTF2D, frequencySupport, wave] = mouseOTF(pupilRadius, dioptricPower, 
 
 
 % Default mouse pupil radius is 0.00059 m = 0.59 mm.  
-if ieNotDefined('pupilRadius'), p = 0.00059; else p = pupilRadius; end 
+if notDefined('pupilRadius'), p = 0.00059; else p = pupilRadius; end 
 
 % dioptric power of unaccomodated mouse eye (0.001756m = 1.756 mm focal length, at 544nm)
-if ieNotDefined('dioptricPower'), D0 = 1/0.001756; else D0 = dioptricPower; end   
+if notDefined('dioptricPower')
+    D0 = 1/0.001756; 
+else
+    D0 = dioptricPower; 
+end
 
 % Wavelength in nanometers
-if ieNotDefined('wave'), wave = (400:700); end
+if ieNotDefined('wave'), wave = (400:700)'; end
 nWave = length(wave);
 
 % We use a frequency support that covers 2 cyc/deg.
@@ -141,4 +145,4 @@ end
 %close(wBar);
 
 % plot the OTF2D
-return;
+end

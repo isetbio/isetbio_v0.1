@@ -29,7 +29,7 @@ function dSize = ieFontChangeSize(fig,dSize)
 % This routine either receives a dSize or it gets it from the user.  When
 % dSize is changed here by the user, we also change the dSize in the Matlab
 % preferences.
-if ieNotDefined('dSize')
+if notDefined('dSize')
     % Find the increase or decrease in font size from the user.  This is
     % always relative to the current deltaFont value.
     dSize = ieReadNumber('Enter font size change (-6,6)',2,' %.0f');

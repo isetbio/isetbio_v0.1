@@ -11,7 +11,7 @@ function vcSaveSESSION(fname)
 
 global vcSESSION;
 
-if ieNotDefined('fname'), fname = ieSessionGet('name'); end
+if notDefined('fname'), fname = ieSessionGet('name'); end
 
 % Don't save the graph win and GUI figures. These are session dependent.
 if checkfields(vcSESSION,'GRAPHWIN'), GRAPHWIN = vcSESSION.GRAPHWIN; else GRAPHWIN = []; end

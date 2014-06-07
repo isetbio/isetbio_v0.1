@@ -18,9 +18,9 @@ function [oi,rect] = oiCrop(oi,rect)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('oi'), error('You must define an optical image.'); end
+if notDefined('oi'), error('You must define an optical image.'); end
 
-if ieNotDefined('rect'), 
+if notDefined('rect'), 
     [roiLocs,rect] = vcROISelect(oi); 
 else
     cmin = rect(1); cmax = rect(1)+rect(3);
@@ -49,7 +49,7 @@ oi = oiSet(oi,'wangular',(newSz(2)/sz(2))*wAngular);
 oi = oiSet(oi,'illuminance',illuminance);
 oi = oiSet(oi,'meanIlluminance',meanIll);
 
-return;
+end
 
 
 

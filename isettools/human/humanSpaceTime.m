@@ -33,9 +33,9 @@ function [sens,fs,ft] = humanSpaceTime(model,fs,ft)
 % Copyright ImagEval Consultants, LLC, 2005.
 
 
-if ieNotDefined('model'), model = 'kelly79'; end
-if ieNotDefined('fs'), fs = 10 .^ [-.5:.05:1.3]; end
-if ieNotDefined('ft'), ft = 10 .^ [-.5:.05:1.7]; end
+if notDefined('model'), model = 'kelly79'; end
+if notDefined('fs'), fs = 10 .^ (-.5:.05:1.3); end
+if notDefined('ft'), ft = 10 .^ (-.5:.05:1.7); end
 
 sens = [];
 
@@ -44,13 +44,13 @@ switch(lower(model))
         sens = kellySpaceTime(fs,ft);
     case {'watsonimpulseresponse'}
         % In this case, ft refers to time samples.
-        [sens,junk,t] = watsonImpulseResponse(ft);
+        [sens,~,~] = watsonImpulseResponse(ft);
     case {'watsontmtf'}
         lowestF = min(ft);         % Sample 1ms over the lowest frequency
         if lowestF == 0, period = 1; else period = 1/lowestF; end
-        t = [0.001:0.001:period];   %
+        t = 0.001:0.001:period;   %
         fs = [];
-        [a,b,tMTF,allFt] = watsonImpulseResponse(t);
+        [~,~,tMTF,allFt] = watsonImpulseResponse(t);
         sens = interp1(allFt,tMTF,ft);
     case {'poirsoncolor','wandellpoirsoncolorspace'}
         [lum, rg, by, positions] = poirsonSpatioChromatic([],2);
@@ -60,5 +60,4 @@ switch(lower(model))
         error('Unknown model');
 end
 
-return;
-
+end

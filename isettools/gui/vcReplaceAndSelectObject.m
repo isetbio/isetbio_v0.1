@@ -17,13 +17,13 @@ function vcReplaceAndSelectObject(obj,val)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 
-if ieNotDefined('obj'), errordlg('Object must be defined.'); end
+if notDefined('obj'), errordlg('Object must be defined.'); end
 objType = vcGetObjectType(obj);
 
-if ieNotDefined('val'), val = vcGetSelectedObject(objType); end
+if notDefined('val'), val = vcGetSelectedObject(objType); end
 if isempty(val), val = 1; end
 
 vcReplaceObject(obj,val);
 vcSetSelectedObject(objType,val);
 
-return;
+end

@@ -18,12 +18,12 @@ function object = initDefaultSpectrum(object,spectralType,wave)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('object'), error('Object required.'); end
-if ieNotDefined('spectralType'), spectralType = 'hyperspectral'; end
+if notDefined('object'), error('Object required.'); end
+if notDefined('spectralType'), spectralType = 'hyperspectral'; end
 
 switch lower(spectralType)
     case {'spectral','multispectral','hyperspectral'}
-        object.spectrum.wave = [400:10:700]';
+        object.spectrum.wave = (400:10:700)';
         
     case 'monochrome'
         object.spectrum.wave = 550;

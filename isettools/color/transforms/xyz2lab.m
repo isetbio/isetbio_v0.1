@@ -41,18 +41,16 @@ function lab = xyz2lab(xyz, whitepoint, useOldCode)
 % Or do we just specify in the methods
 % - BW ). 
 
-if ieNotDefined('xyz'), error('No data.'); end
-if ieNotDefined('whitepoint'), error('A whitepoint is required for conversion to CIELAB.'); end
-if ieNotDefined('useOldCode'), useOldCode = 0; end
+if notDefined('xyz'), error('No data.'); end
+if notDefined('whitepoint'), error('A whitepoint is required for conversion to CIELAB.'); end
+if notDefined('useOldCode'), useOldCode = 0; end
 
-if (exist('makecform') == 2) &&  ~useOldCode
+if (exist('makecform', 'file') == 2) &&  ~useOldCode
     % This is where we want to be, but it only exists in the relatively
     % recent Matlab routines.
     % Matlab's implementation is only for CIELAB 1976
     cform = makecform('xyz2lab','WhitePoint',whitepoint(:)');
     lab = applycform(xyz,cform);
-    return;
-
 else
     % Set the white point values
     if   (length(whitepoint)~=3 ), error('whitepoint must be a three vector')
@@ -60,14 +58,14 @@ else
     end
 
     if ndims(xyz) == 3
-        [r,c,w] = size(xyz);
+        [r,c,~] = size(xyz);
         lab = zeros(r*c,3);
 
         x = xyz(:,:,1)/Xn; x = x(:);
         y = xyz(:,:,2)/Yn; y = y(:);
         z = xyz(:,:,3)/Zn; z = z(:);
 
-    elseif ndims(xyz) == 2
+    elseif ismatrix(xyz)
         x = xyz(:,1)/Xn;
         y = xyz(:,2)/Yn;
         z = xyz(:,3)/Zn;
@@ -112,4 +110,4 @@ else
     if ndims(xyz) == 3, lab = XW2RGBFormat(lab,r,c); end
 end
 
-return;
+end

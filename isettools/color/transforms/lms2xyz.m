@@ -11,12 +11,12 @@ function xyz = lms2xyz(lms)
 %
 % (c) ImagEval, 2012
 
-if ieNotDefined('lms'), error('lms required'); end
+if notDefined('lms'), error('lms required'); end
 
 if ndims(lms) == 3
     % RGBW format
     xyz = imageLinearTransform(lms, colorTransformMatrix('lms2xyz'));
-elseif ndims(lms) == 2
+elseif ismatrix(lms)
     % XW format - Not debugged thoroughly
     if (size(lms,1) == 3) && size(lms,2) ~= 3
         xyz = lms * colorTransformMatrix('lms2xyz');

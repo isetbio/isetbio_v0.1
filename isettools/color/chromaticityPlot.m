@@ -32,10 +32,10 @@ function g = chromaticityPlot(pts,background,nPix,newFig)
 % Copyright ImagEval LLC 2011
 
 %% Defaults
-if ieNotDefined('pts'), pts = []; end
-if ieNotDefined('background'), background = 'gray'; end
-if ieNotDefined('nPix'), nPix = 256; end
-if ieNotDefined('newFig'), newFig = 1; end
+if notDefined('pts'), pts = []; end
+if notDefined('background'), background = 'gray'; end
+if notDefined('nPix'), nPix = 256; end
+if notDefined('newFig'), newFig = 1; end
 g = [];
 
 %% Create a mesh grid of points filled with xy values

@@ -20,8 +20,8 @@ function [otf,fSupport] = oiCalculateOTF(oi,wave,unit)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('wave'), wave = sceneGet(oi, 'wave'); end
-if ieNotDefined('unit'), unit = 'cyclesPerDegree'; end
+if notDefined('wave'), wave = sceneGet(oi, 'wave'); end
+if notDefined('unit'), unit = 'cyclesPerDegree'; end
 
 optics = oiGet(oi,'optics');
 opticsModel = opticsGet(optics,'model');
@@ -51,4 +51,4 @@ switch lower(opticsModel)
         error('Unknown optics model: %s',opticsModel);
 end
 
-return;
+end

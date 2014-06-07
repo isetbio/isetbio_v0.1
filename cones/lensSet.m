@@ -27,12 +27,12 @@ function lens = lensSet(lens,param,val,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if      ieNotDefined('lens'), error('Lens structure required');
+if      notDefined('lens'), error('Lens structure required');
 elseif ~isequal(lens.type,'lens'), error('Not a lens structure');
 end
 
-if ieNotDefined('param'), error('param required'); end
-if ieNotDefined('val'), error('val required'); end
+if notDefined('param'), error('param required'); end
+if notDefined('val'),   error('val required');   end
 
 
 param = ieParamFormat(param);

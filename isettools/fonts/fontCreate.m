@@ -20,10 +20,10 @@ function font = fontCreate(letter,family,sz,dpi)
 % (BW) Vistasoft group, 2014
 
 %
-if ieNotDefined('letter'), letter = 'g'; end
-if ieNotDefined('sz'), sz = 14; end
-if ieNotDefined('family'), family = 'Georgia'; end
-if ieNotDefined('dpi'), dpi = 96; end
+if notDefined('letter'), letter = 'g'; end
+if notDefined('sz'), sz = 14; end
+if notDefined('family'), family = 'Georgia'; end
+if notDefined('dpi'), dpi = 96; end
 
 font.type       = 'font';
 font.name       = lower(sprintf('%s-%s-%i-%i',letter,family,sz,dpi));

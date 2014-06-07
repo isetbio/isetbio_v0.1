@@ -20,9 +20,9 @@ function [spec, XYZ] = daylight( wave, cct, units )
 %
 % Copyright Imageval 2010
 
-if ieNotDefined('wave'), wave = 400:10:700; end
-if ieNotDefined('units'), units = 'energy'; end
-if ieNotDefined('cct'), cct = 6500; end
+if notDefined('wave'), wave = 400:10:700; end
+if notDefined('units'), units = 'energy'; end
+if notDefined('cct'), cct = 6500; end
 
 spec = cct2sun( wave, cct, units );
 

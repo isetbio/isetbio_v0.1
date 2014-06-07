@@ -35,8 +35,11 @@ function [cones,macularCorrection,wave] = humanCones(fileName,wave,macularDensit
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('fileName'), fileName = 'stockmanAbs'; includedDensity = 0.35; end
-if ieNotDefined('wave'), wave = 370:1:730; end
+if notDefined('fileName')
+    fileName = 'stockmanAbs'; 
+    includedDensity = 0.35;
+end
+if notDefined('wave'), wave = (370:730)'; end
 
 % Do not adjust for macular if it is not sent in.  If it is sent in, but
 % the includedDensity is not, we assume the cones are set to include a 0.35
@@ -54,7 +57,8 @@ else
     % If macularDensity has a value, then we strip off the included density
     % and include a new density corresponding to the included value.
     t = macular(includedDensity,wave);
-    macularCorrection = 10 .^ -(t.unitDensity * (macularDensity - includedDensity));
+    macularCorrection = 10 .^ -(t.unitDensity * ...
+                            (macularDensity - includedDensity));
     cones = diag(macularCorrection)*cones;
 end
 

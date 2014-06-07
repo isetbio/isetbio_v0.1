@@ -22,8 +22,8 @@ function [impResp,t,tMTF,freq] = watsonImpulseResponse(t,transientFactor)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('t'), t = 0.001:0.002:1.00; end
-if ieNotDefined('transientFactor'), transientFactor = 0.5; end
+if notDefined('t'), t = 0.001:0.002:1.00; end
+if notDefined('transientFactor'), transientFactor = 0.5; end
 
 % t must be greater than 0.  Sorry for that.
 tmp = t(t>0); t = tmp;
@@ -52,4 +52,4 @@ if nargout > 3, freq =1/max(t)*(1:length(t)); end
 % l = (freq < 100);
 % plot(freq(l), tMTF(l)); grid on
 
-return;
+end

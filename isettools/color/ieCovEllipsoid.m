@@ -30,9 +30,9 @@ function [eVec,h,ptsAndCrv] = ieCovEllipsoid(xyData,nSD,h,nSamp)
 %
 % Copyright Imageval 2012
 
-if ieNotDefined('xyData'), error('xyData required'); end
-if ieNotDefined('nSD'), nSD = 1; end
-if ieNotDefined('nSamp'), nSamp = 20; end
+if notDefined('xyData'), error('xyData required'); end
+if notDefined('nSD'), nSD = 1; end
+if notDefined('nSamp'), nSamp = 20; end
 
 dimensionality = size(xyData,2);
 

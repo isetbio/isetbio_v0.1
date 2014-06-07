@@ -9,9 +9,9 @@ function vSNR = xyz2vSNR(roiXYZ,whitePtXYZ,params)
 %
 % Copyright ImagEval Consultants, LLC, 2009
 
-if ieNotDefined('roiXYZ'), error('xyz data required'); end
-if ieNotDefined('whitePtXYZ'), error('xyz white point required'); end
-if ieNotDefined('params'), params = scParams; end
+if notDefined('roiXYZ'), error('xyz data required'); end
+if notDefined('whitePtXYZ'), error('xyz white point required'); end
+if notDefined('params'), params = scParams; end
 
 % figure(1); mesh(roiXYZ(:,:,2)); colormap(gray(255)); colormap(jet(255))
 % xlabel('Display col'); ylabel('Display row'); zlabel('Luminance')

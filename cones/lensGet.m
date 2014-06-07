@@ -27,8 +27,8 @@ function val = lensGet(lens,param,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('lens'), error('Lens structure required'); end
-if ieNotDefined('param'), error('param required'); end
+if notDefined('lens'), error('Lens structure required'); end
+if notDefined('param'), error('param required'); end
 
 %
 param = ieParamFormat(param);
