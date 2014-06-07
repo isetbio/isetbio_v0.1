@@ -23,4 +23,4 @@ Y(:,1:(s-n)) = Y(:,1:(s-n)) + Y(:,(n+1):s);
 % Clip the extent of the result
 Y=Y(1:m,1:n);
 
-return;
+end
