@@ -9,8 +9,8 @@ function [uData, pData, fNum] = wvfPlot(wvfP,pType,varargin)
 %
 % wvfP:     Wavefront structure
 % pType:    Plot type
-% varargin: These are used to set various parameters of the plot.
-%   units, wavelength, plotRange, 'window/no-window'
+% varargin: These are used to set various parameters of the plot.  The
+%  standard format is: units, wavelength, plotRange, 'window/no-window'
 %  This should change by using an argument reading function for
 %  parameters/value pairs.
 %    
@@ -20,12 +20,14 @@ function [uData, pData, fNum] = wvfPlot(wvfP,pType,varargin)
 % current window.
 %
 % Plot types:
-%   2d psf angle - mesh.  wvfPlot(wvfP,'2d psf angle','min',wave)
-%   2d psf space - mesh   wvfPlot(wvfP,'2d psf space','um',wave)
+%   wvf = wvfCreate; wvf = wvfComputePSF(wvf); 
+%   wave = wvfGet(wvf,'measured wavelength');
+%   + 2d psf angle - mesh.  wvfPlot(wvf,'2d psf angle','min',[], wave)
+%   + 2d psf space - mesh   wvfPlot(wvf,'2d psf space','um',wave,10)
 %   2d OTF       - mesh (e.g., linepairs/'um')
 %
-%   1d psf angle - graph (middle horizontal line)
-%   1d psf space - graph (middle horizontal line)
+%   + 1d psf angle - graph (middle horizontal line)
+%   + 1d psf space - graph (middle horizontal line)
 %
 %   image psf angle    - image ('min')
 %   image psf space    - image ('um')
@@ -34,19 +36,29 @@ function [uData, pData, fNum] = wvfPlot(wvfP,pType,varargin)
 %
 % Angle units are 'sec','min', or 'deg'   default - 'min'
 % Space units are 'm','cm','mm','um'      default - 'mm'
-%
-% Add the string 'normalized' to force the 2d and 1d graphs to be scaled to
-% a peak of 1.
+% + Add the string 'normalized' to force the 2d and 1d graphs to be scaled
+%   to a peak of 1.  See example below.
 %
 % Examples
-%    wvfP = wvfCreate; wvfP = wvfComputePSF(wvfP);
-%    unit = 'um'; wave = 550;
-%    [u,p]= wvfPlot(wvfP,'1d psf space',unit,wave);
+%  Start with a clean structure
+%    wvf = wvfCreate; wave = 550; wvf = wvfSet(wvf,'calc wave',wave); wvf = wvfComputePSF(wvf);
+%    unit = 'um'; 
+%    % u - data, p- figure properties
+%    [u,p]= wvfPlot(wvf,'1d psf space',unit,wave);
 %    set(p,'color','k','linewidth',2)
 %
+%  Change the calculated PSF wavelength and plot again
+%    wave = 500; wvf = wvfSet(wvf,'calc wave',wave); wvf = wvfComputePSF(wvf);
+%    unit = 'um'; 
+%    [u,p]= wvfPlot(wvf,'1d psf space',unit,wave); 
+%    set(p,'color','k','linewidth',2)
+%
+%  Plot in an existing window by appending 'no window'
+%  Also, plot normalized and not-normalized.
 %    vcNewGraphWin([],'tall');
-%    subplot(2,1,1), [u,p] = wvfPlot(wvfP,'1d psf space',unit,wave,'no window');
-%    subplot(2,1,2), wvfPlot(wvfP,'image psf',unit,wave,'no window');
+%    subplot(3,1,1), [u,p] = wvfPlot(wvf,'1d psf space',unit,wave,'no window');
+%    subplot(3,1,2), [u,p] = wvfPlot(wvf,'1d psf space normalized',unit,wave,'no window');
+%    subplot(3,1,3), wvfPlot(wvf,'image psf','um',wave,20,'no window');
 %
 % See also:  wvfComputePSF, v_wvfDiffractionPSF, vcNewGraphWin
 %
