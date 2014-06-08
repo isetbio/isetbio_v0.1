@@ -45,10 +45,10 @@ wvf4 = wvfComputePSF(wvf4);
 %% Prepare for plotting.  We don't use wvfPlot because we
 % want to see sampling and don't want to normalize.
 psfLine0 = wvfGet(wvf0,'1d psf',w);
-arcmin0 = wvfGet(wvf0,'samples angle','min',w);
+arcmin0 = wvfGet(wvf0,'psf angular samples','min',w);
 psfLine3 = wvfGet(wvf3,'1d psf',w);
-arcmin3 = wvfGet(wvf3,'samples angle','min',w);
-arcmin4 = wvfGet(wvf4,'samples angle','min',w);
+arcmin3 = wvfGet(wvf3,'psf angular samples','min',w);
+arcmin4 = wvfGet(wvf4,'psf angular samples','min',w);
 psfLine4 = wvfGet(wvf4,'1d psf',w);
 
 %% Compare to what we get from PTB AiryPattern function -- should match

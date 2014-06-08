@@ -90,7 +90,7 @@ for i = 1:length(theFiles)
     diffracpsf0 = wvfGet(wvf0,'psf',testData.theWavelength);
     diffracpsfLine0 =  diffracpsf0(wvfGet(wvf0,'middle row')+rowOffset,:);
     diffracpsfLine0Centered = wvfGet(wvf0,'1d psf',testData.theWavelength);
-    diffracarcmin0 = wvfGet(wvf0,'samples angle','min',testData.theWavelength);
+    diffracarcmin0 = wvfGet(wvf0,'psf angular samples','min',testData.theWavelength);
     arcminperpix0 = wvfGet(wvf0,'psf arcmin per sample',testData.theWavelength);
     
     % Compute observer PSF our way.  We have changed so that we pass the
@@ -100,7 +100,7 @@ for i = 1:length(theFiles)
     psf0 = wvfGet(wvf0,'psf',testData.theWavelength);
     psfLine0 = psf0(wvfGet(wvf0,'middle row')+rowOffset,:);
     psfLineCentered0 = wvfGet(wvf0,'1d psf',testData.theWavelength);
-    arcmin0 = wvfGet(wvf0,'samples angle','min',testData.theWavelength);
+    arcmin0 = wvfGet(wvf0,'psf angular samples','min',testData.theWavelength);
     
     % Make a comparison plot
     %

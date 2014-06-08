@@ -81,7 +81,7 @@ switch(pType)
             [unit, wList, pRange] = wvfReadArg(wvfP,varargin);
         end
         
-        samp = wvfGet(wvfP,'samples angle',unit,wList);
+        samp = wvfGet(wvfP,'psf angular samples',unit,wList);
         psf  = wvfGet(wvfP,'psf',wList);
         
         % Extract within the range
@@ -248,7 +248,7 @@ switch(pType)
         end
         
         psfLine = wvfGet(wvfP,'1d psf',wList);
-        samp = wvfGet(wvfP,'samples angle',unit,wList);
+        samp = wvfGet(wvfP,'psf angular samples',unit,wList);
         
         % Make a plot through of the returned PSF in the central region.
         index = find(abs(samp) < pRange);

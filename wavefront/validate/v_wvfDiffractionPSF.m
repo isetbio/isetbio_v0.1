@@ -78,7 +78,7 @@ wvfPlot(wvf0,'1d psf angle normalized','min',wList,maxMIN);
 hold on
 
 % Get parameters needed for plotting comparisons with PTB, below
-arcminutes       = wvfGet(wvf0,'support arcmin','min',wList);
+arcminutes       = wvfGet(wvf0,'psf angular samples','min',wList);
 arcminpersample  = wvfGet(wvf0,'ref psf sample interval');
 arcminpersample1 = wvfGet(wvf0,'psf arcmin per sample',wList);
 arcminpersample2 = wvfGet(wvf0,'psf angle per sample',[],wList);

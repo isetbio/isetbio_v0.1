@@ -483,7 +483,7 @@ switch parm
             end
         end
         
-    case {'psfangularsamples','samplesangle'} % 'samplesarcmin','supportarcmin'
+    case {'psfangularsamples'} % 'samplesangle' 'samplesarcmin','supportarcmin'
         % Return one-d slice of sampled angles for psf, centered on 0, for
         % a single wavelength
         % wvfGet(wvf,'psf angular samples',unit,waveIdx)
