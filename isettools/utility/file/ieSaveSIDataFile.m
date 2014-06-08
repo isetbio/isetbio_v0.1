@@ -1,4 +1,4 @@
-function fName = ieSaveSIDataFile(psf,wave,umPerSamp,fName)
+function fName = ieSaveSIDataFile(psf,wave,umPerSamp,fName) %#ok<INUSL>
 %Write file with data for shift-invariant optics
 %
 %  fName = ieSaveSIDataFile(psf,wave,umPerSamp,fName)

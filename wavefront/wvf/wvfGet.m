@@ -483,17 +483,19 @@ switch parm
             end
         end
         
-    case {'psfangularsamples','samplesangle','samplesarcmin','supportarcmin'}
+    case {'psfangularsamples','samplesangle'} % 'samplesarcmin','supportarcmin'
         % Return one-d slice of sampled angles for psf, centered on 0, for
         % a single wavelength
         % wvfGet(wvf,'psf angular samples',unit,waveIdx)
         % unit = 'min' (default), 'deg', or 'sec'
         % Should call routine below to get anglePerPix.
-        unit = varargin{1};
-        wList = varargin{2};
-        if (length(wList) > 1)
+        unit = 'min'; wList = wvfGet(wvf,'measured wavelength');
+        if ~isempty(varargin), unit = varargin{1}; end
+        if (length(varargin) > 1), wList = varargin{2}; end
+        if length(wList) > 1
             error('This only works for one wavelength at a time');
         end
+        
         anglePerPix = wvfGet(wvf,'psf angle per sample',unit,wList);
         middleRow = wvfGet(wvf,'middle row');
         nPixels = wvfGet(wvf,'spatial samples');
@@ -534,8 +536,10 @@ switch parm
         % This parameter matters for the OTF and PSF quite a bit.  It
         % is the number of um per degree on the retina.
         umPerDeg = (330*10^-6);
-        
-        unit = varargin{1}; wList = varargin{2};
+        unit = 'mm'; wList = wvfGet(wvf,'measured wavelength');
+        if ~isempty(varargin), unit = varargin{1}; end
+        if length(varargin) > 1, wList = varargin{2}; end
+        if length(wList) > 1, error('One wavelength only'); end
         
         % Get the samples in degrees
         val = wvfGet(wvf,'psf angular sample','deg',wList);

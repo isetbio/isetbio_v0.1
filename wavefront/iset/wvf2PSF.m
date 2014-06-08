@@ -26,18 +26,18 @@ function [siData, wvfP] = wvf2PSF(wvfP, showBar)
 %
 %    [d, wvfP] = wvf2PSF(wvfP);
 %    fName = sprintf('psfSI-%s',wvfGet(wvfP,'name'));
-%    ieSaveSIDataFile(d.psf,d.wave,d.umPerSample,fName);
+%    ieSaveSIDataFile(d.psf,d.wave,d.umPerSamp,fName);
 %  
 %    oi = oiCreate('human'); 
 %    optics = siSynthetic('custom',oi,d);
 %    flength = 0.017;  % Human focal length is 17 mm
-%    optics = opticsSet(optics,'fnumber',flength/pupilMM);     
-%    optics = opticsSet(optics,'flength',flength);   
+%    oi = oiSet(oi,'optics fnumber',flength/pupilMM);
+%    oi = oiSet(oi,'optics flength',flength);
 %    oi = oiSet(oi,'optics',optics);
 %
 %    vcNewGraphWin([],'tall');
-%    subplot(2,1,1), wvfPlot(wvfP,'image psf','um',1,30);
-%    subplot(2,1,2), wvfPlot(wvfP,'image psf','um',2,30);
+%    subplot(2,1,1), wvfPlot(wvfP,'image psf','um',550,15,'no window');
+%    subplot(2,1,2), wvfPlot(wvfP,'image psf','um',550,15,'no window');
 %
 % See also: wvf2oi
 %
@@ -46,8 +46,8 @@ function [siData, wvfP] = wvf2PSF(wvfP, showBar)
 %% Parameters
 if ieNotDefined('wvfP'), error('wvf parameters required.'); end
 if ieNotDefined('showBar'), showBar = true; end
-wave = wvfGet(wvfP,'wave');
-nWave = wvfGet(wvfP,'nwave');
+wave = wvfGet(wvfP,'calc wave');
+nWave = wvfGet(wvfP,'calc nwave');
 
 % Use WVF to compute the PSFs
 wvfP = wvfComputePSF(wvfP, showBar);
