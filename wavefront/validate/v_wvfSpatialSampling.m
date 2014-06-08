@@ -26,7 +26,7 @@ s_initISET
 %% Set up parameters structure
 wvf0 = wvfCreate;
 wvf0 = wvfComputePSF(wvf0);
-w = wvfGet(wvf0,'wave');
+w = wvfGet(wvf0,'calc wave');
 
 %% Change psf sampling and recompute
 wvf3 = wvf0;
@@ -53,7 +53,7 @@ psfLine4 = wvfGet(wvf4,'1d psf',w);
 
 %% Compare to what we get from PTB AiryPattern function -- should match
 radians3 = (pi/180)*(arcmin3/60);
-onedPSF3 = AiryPattern(radians3,wvfGet(wvf3,'calc pupil size'),wvfGet(wvf3,'wave'));
+onedPSF3 = AiryPattern(radians3,wvfGet(wvf3,'calc pupil size'),wvfGet(wvf3,'calc wave'));
 
 %% Make the plot
 %

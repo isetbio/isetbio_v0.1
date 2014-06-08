@@ -48,7 +48,7 @@ function [uData, pData, fNum] = wvfPlot(wvfP,pType,varargin)
 %    subplot(2,1,1), [u,p] = wvfPlot(wvfP,'1d psf space',unit,wave,'no window');
 %    subplot(2,1,2), wvfPlot(wvfP,'image psf',unit,wave,'no window');
 %
-% See also:  wvfComputePSF, vcNewGraphWin
+% See also:  wvfComputePSF, v_wvfDiffractionPSF, vcNewGraphWin
 %
 % (c) Wavefront Toolbox Team 2012 (bw)
 
@@ -410,7 +410,7 @@ if length(theseArgs) > 1, wList = theseArgs{2};
 else wList = [];
 end
 if isempty(wList)
-    wList = wvfGet(wvfP,'wave');
+    wList = wvfGet(wvfP,'calc wave');
     if length(wList) > 1
         warning('WVF:wList','Using 1st wave %d\n',wList(1));
         wList = wList(1);

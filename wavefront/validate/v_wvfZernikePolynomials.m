@@ -42,7 +42,7 @@ s_initISET;
 wvf0 = wvfCreate;
 wvf0 = wvfSet(wvf0,'calculated pupil',wvfGet(wvf0,'measured pupil','mm'));
 pupilfuncrangeMM = 4;
-wList = wvfGet(wvf0,'wave');
+wList = wvfGet(wvf0,'calc wave');
 jindices = 0:9;
 maxMM = 4; 
 for ii = jindices

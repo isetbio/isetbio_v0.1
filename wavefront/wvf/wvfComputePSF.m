@@ -29,8 +29,8 @@ if (~isfield(wvf,'psf') || ~isfield(wvf,'PSF_STALE') || ...
         ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPILFUNCTION_STALE) 
   
     % Initialize parameters.  These are calc wave.
-    wList = wvfGet(wvf,'wave');
-    nWave = wvfGet(wvf,'nwave');
+    wList = wvfGet(wvf,'calc wave');
+    nWave = wvfGet(wvf,'calc nwave');
     pupilfunc = cell(nWave,1);
 
     % Make sure pupil function is computed.  

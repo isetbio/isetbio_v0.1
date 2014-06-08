@@ -315,7 +315,7 @@ switch parm
     %% Calculation parameters
     % These parameters are used for the specific calculations with this,
     % interpolating the measured values that are stored above.
-    case {'calcpupilsize' 'calculatedpupil','calculatedpupildiameter'}
+    case {'calcpupilsize', 'calcpupildiameter', 'calculatedpupil','calculatedpupildiameter'}
         % Pupil diameter in mm - must be smaller than measurements
         if (val > wvf.measpupilMM)
             error('Pupil diamter used for calculation must be smaller than that used for measurements');
