@@ -12,12 +12,10 @@ function val = sceGet(sceP,parm,varargin)
 %
 % (c) Wavefront Toolbox Team, 2012
 
-if ~exist('sceP','var') || isempty(sceP), error('sceP must be defined.'); end
-if ~exist('parm','var') || isempty(parm), error('Parameter must be defined.'); end
+if notDefined('sceP'), error('sceP must be defined.'); end
+if notDefined('parm'), error('Parameter must be defined.'); end
 
 % Default is empty when the parameter is not yet defined.
-val = [];
-
 parm = ieParamFormat(parm);
 
 switch parm
@@ -40,4 +38,4 @@ switch parm
         error('Unknown parameter %s\n',parm);
 end
 
-return
+end

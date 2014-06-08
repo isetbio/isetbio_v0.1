@@ -1,4 +1,4 @@
-function energy = Quanta2Energy(wavelength,photons)
+function energy = Quanta2Energy(wavelength, photons)
 %Convert quanta (photons) to energy (watts)
 %
 %  energy = Quanta2Energy(WAVELENGTH,PHOTONS)
@@ -22,8 +22,8 @@ function energy = Quanta2Energy(wavelength,photons)
 %   figure; plot(wave,e')
 %
 %   p1 = blackbody(wave,5000,'photons');
-%   e = Quanta2Energy(wave,p1);              % e is a row vector, space-wavelength (XW) format
-%   p2 = Energy2Quanta(wave,transpose(e));   % Notice the TRANSPOSE
+%   e = Quanta2Energy(wave,p1);            % e is a row vector in XW format
+%   p2 = Energy2Quanta(wave,transpose(e)); % Notice the TRANSPOSE
 %   figure; plot(wave,p1,'ro',wave,p2,'k-')
 %
 % Copyright ImagEval Consultants, LLC, 2003.
@@ -34,47 +34,33 @@ function energy = Quanta2Energy(wavelength,photons)
 %   Old legacy issues, sigh.
 
 if isempty(photons), energy = []; return; end
+wavelength = wavelength(:)'; % make wave as row vector
 
-% Make sure wavelength is a column vector
-s = size(wavelength); n = length(wavelength);
-if prod(s) ~= n, error('Wavelength must be a vector')
-else
-    % In this routine, we need wavelength to be a row vector.  If photons
-    % is a vector, it must be a row vector, too.
-    wavelength = wavelength(:)';
-end
-
-% Fundamental constants.  These should probably be in vcConstants
-%
+% Fundamental constants
 h = vcConstants('h');		% Planck's constant [J sec]
 c = vcConstants('c');		% speed of light [m/sec]
 
 % Main routine handles RGB or XW formats
-iFormat = vcGetImageFormat(photons,wavelength);
+iFormat = vcGetImageFormat(photons, wavelength);
 
 switch iFormat
     case 'RGB'
         [n,m,w] = size(photons);
         if w ~= length(wavelength)
-            error('Quanta2Energy:  photons third dimension must be numWave');
+            error('Quanta2Energy:  photons third dimension must be nWave');
         end
         photons = RGB2XWFormat(photons);
-        energy = (h*c/(1e-9))*(photons ./ repmat(wavelength,n*m,1) );
+        % energy = (h*c/(1e-9))*(photons ./ repmat(wavelength,n*m,1) );
+        energy = (h*c/1e-9) * bsxfun(@rdivide, photons, wavelength);
         energy = XW2RGBFormat(energy,n,m);
 
     case 'XW'
-
-        [n,m] = size(photons);
-
         % If photons is a vector, it must be a row
-        if (n == 1 || m == 1), photons = photons(:)'; [n,m] = size(photons);end
-        if m ~= length(wavelength)
-            errordlg('Quanta2Energy:  quanta must have col length equal to numWave');
+        if isvector(photons), photons = photons(:)'; end
+        if size(photons, 2) ~= length(wavelength)
+            error('Quanta2Energy: quanta must have length of nWave');
         end
-
-        energy = (h*c/(1e-9))*(photons ./ repmat(wavelength,n,1));
-
-
+        energy = (h*c/1e-9) * bsxfun(@rdivide, photons, wavelength);
     otherwise
         error('Unknown image format');
 

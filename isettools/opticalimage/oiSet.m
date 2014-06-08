@@ -183,9 +183,11 @@ switch parm
         if isempty(varargin)
             % Insert the whole photon data set
             % oi = oiSet(oi,'cphotons',data);
-            [oi.data.photons,mn,mx] = ieCompressData(val,bitDepth);
-            oi = oiSet(oi,'datamin',mn);
-            oi = oiSet(oi,'datamax',mx);
+            
+            % [oi.data.photons,mn,mx] = ieCompressData(val,bitDepth);
+            % oi = oiSet(oi,'datamin',mn);
+            % oi = oiSet(oi,'datamax',mx);
+            oi.data.photons = val;
         elseif length(varargin) == 1
             % Insert a wavelength plane.
             % oi = oiSet(oi,'cphotons',data,wavelength);

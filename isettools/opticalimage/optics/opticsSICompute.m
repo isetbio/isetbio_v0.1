@@ -11,8 +11,8 @@ function oi = opticsSICompute(scene,oi)
 %    
 % Copyright ImagEval Consultants, LLC, 2005
 
-if ieNotDefined('scene'), error('Scene required.'); end
-if ieNotDefined('oi'), error('Opticalimage required.'); end
+if notDefined('scene'), error('Scene required.'); end
+if notDefined('oi'), error('Opticalimage required.'); end
 showWbar = ieSessionGet('waitbar');
 
 % This is the default compute path

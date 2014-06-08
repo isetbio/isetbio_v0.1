@@ -18,27 +18,16 @@ function bool = checkfields(s,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-nArgs = length(varargin);
-str = 's';
-tst = eval(str);
+bool  = 1;
+tst   = s;
 
-for ii=1:nArgs
-    if isfield(tst,varargin{ii})
-        % Append the argument to the current string
-        str = sprintf('%s.%s',str,varargin{ii});
-
-        % If this is the last one, return succesfully
-        if ii==nArgs
-            bool = 1;
-            return;
-        else
-            tst = eval(str);
-        end
+for ii = 1 : length(varargin)
+    if isfield(tst, varargin{ii})
+        tst = tst.(varargin{ii});
     else
         bool = 0;
-        return;
+        break;
     end
 end
 
-% Should never get here
-error('checkfields: Error')
+end

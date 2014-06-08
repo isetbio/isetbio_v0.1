@@ -30,17 +30,17 @@ if ieNotDefined('direction'), direction = 'both'; end
 
 % We make sure padSize matches the dimensionality of photons.
 % Probably not necessary.  But ...
-if ndims(padSize) == 2, padSize(3) = 0; end
+if ismatrix(padSize), padSize(3) = 0; end
 
 
 photons = oiGet(oi,'photons');
-% To prevent ieCompressData error, we set the surrounding region 10^4 lower
-% than the max.
-padval = oiGet(oi,'data max')*1e-4;
+% To prevent ieCompressData error, we set the surrounding region as the
+% mean of the data
+padval = mean(photons(:));
 
 try
     photons = padarray(photons,padSize,padval,direction);
-catch MEmemory
+catch
     % Memory problem.  Try it one one wavelength at a time at single
     % precision.
     
