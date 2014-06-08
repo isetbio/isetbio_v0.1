@@ -19,6 +19,7 @@
 %% Initialize
 s_initISET
 maxUM = 10;
+scene = sceneCreate; vcAddObject(scene);
 
 %% Convert WVF human data to ISET
 % This cell shows that the conversion for  WVF to ISET work well for one
@@ -35,7 +36,7 @@ zCoefs = wvfLoadThibosVirtualEyes(pupilMM);
 wvfP = wvfCreate('wave',wave,'zcoeffs',zCoefs,'name',sprintf('human-%d',pupilMM));
 wvfP = wvfComputePSF(wvfP);
 
-thisWave = wvfGet(wvfP,'wave');
+thisWave = wvfGet(wvfP,'calc wave');
 [u,p,f] = wvfPlot(wvfP,'2d psf space','um',thisWave,maxUM);
 set(gca,'xlim',[-maxUM maxUM],'ylim',[-maxUM maxUM]);
 
@@ -80,7 +81,7 @@ zCoefs = wvfLoadThibosVirtualEyes(pupilMM);
 wvfP = wvfCreate('wave',wave,'zcoeffs',zCoefs,'name',sprintf('human-%d',pupilMM));
 wvfP = wvfComputePSF(wvfP);
 
-thisWave = wvfGet(wvfP,'wave');
+thisWave = wvfGet(wvfP,'calc wave');
 [u,p,f] = wvfPlot(wvfP,'2d psf space','um',thisWave);
 set(gca,'xlim',[-maxUM maxUM],'ylim',[-maxUM maxUM]);
 

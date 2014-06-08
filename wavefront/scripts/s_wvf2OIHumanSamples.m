@@ -10,12 +10,15 @@
 
 
 %% Initialize
-% s = which('s_wvf2OIHumanSamples');
-% cd(fileparts(s));
 s_initISET
+
+%%
 maxUM = 10;
 wave = 400:10:700; wave = wave(:);
 pupilMM = 3;
+
+scene = sceneCreate; vcAddObject(scene);
+oi = oiCreate('human'); vcAddObject(oi);
 
 %%  Create some examples.
 % Can use either Thibos statistical model, or read in the measurements we

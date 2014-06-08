@@ -28,8 +28,9 @@
 % Set the largest size in microns for plotting
 % Set the pupil diameter in millimeters
 s_initISET
-maxUM = 40;    
-pupilMM = 4.5; 
+maxUM = 30;    
+measPupilMM = 4.5;    % This selects which Thibos data set
+calcPupilMM = 3.0;    % For this pupil size
 
 %%  Load the statistical wavefront properties 
 % The Zernike coefficients describing the wavefront aberrations are each
@@ -37,7 +38,7 @@ pupilMM = 4.5;
 % coefficients.  The covariance is summarized in the variable S.  The mean
 % values across a large sample of eyes measured by Thibos and gang are in
 % the variable sample_mean.
-[sample_mean S] = wvfLoadThibosVirtualEyes(pupilMM);
+[sample_mean S] = wvfLoadThibosVirtualEyes(measPupilMM);
 
 %% Plot the means and covariance (not)
 vcNewGraphWin([],'tall');
@@ -76,23 +77,26 @@ z(1:13) = sample_mean(1:13);
 % Create the example subject
 thisGuy = wvfCreate;                                  % Initialize
 thisGuy = wvfSet(thisGuy,'zcoeffs',z);                % Zernike
-thisGuy = wvfSet(thisGuy,'measured pupil',pupilMM);   % Data
-thisGuy = wvfSet(thisGuy,'calculated pupil',pupilMM); % What we calculate
-thisGuy = wvfSet(thisGuy,'measured wl',550);
-thisGuy = wvfSet(thisGuy,'wavelength',[450 100 3]);     % SToWls format
+thisGuy = wvfSet(thisGuy,'measured pupil',measPupilMM);   % Data
+thisGuy = wvfSet(thisGuy,'calculated pupil',calcPupilMM); % What we calculate
+thisGuy = wvfSet(thisGuy,'measured wavelength',550);
+thisGuy = wvfSet(thisGuy,'calc wave',[450:100:650]');     % Must be a column vector 
 thisGuy = wvfComputePSF(thisGuy);
 
 %% Plot the PSFs of the sample mean subject for several wavelengths
+
 % These illustrate the strong axial chromatic aberration.
 
-wave  = wvfGet(thisGuy,'wave');
-nWave = wvfGet(thisGuy,'nwave');
+wave  = wvfGet(thisGuy,'calc wave');
+nWave = wvfGet(thisGuy,'calc nwave');
 vcNewGraphWin([],'tall');
 for ii=1:nWave
     subplot(nWave,1,ii)
-    wvfPlot(thisGuy,'image psf space','um',ii,maxUM);
+    wvfPlot(thisGuy,'image psf space','um',wave(ii),maxUM,'no window');
     title(sprintf('%d nm',wave(ii)));
+    colorbar
 end
+colormap(gray(256));
 
 %% Calculate the PSFs from the coeffcients
 % Here we illustrate the variance between different subjects.
@@ -104,20 +108,46 @@ z = zeros(65,1);     % Allocate space for the Zernicke coefficients
 
 % Create the example subject
 thisGuy = wvfCreate;                                % Initialize
-thisGuy = wvfSet(thisGuy,'measuredpupil',pupilMM);  % Data
-thisGuy = wvfSet(thisGuy,'calculatedpupil',pupilMM);% What we calculate
+thisGuy = wvfSet(thisGuy,'measured pupil',measPupilMM);  % Data
+thisGuy = wvfSet(thisGuy,'calculated pupil',calcPupilMM);% What we calculate
 
 vcNewGraphWin([],'tall');
+thisWave = wave(1);
 for ii = 1:nSubjects
     
     % Choose different coefficients and compute for each subject
     z(1:13) = Zcoeffs(1:13,whichSubjects(ii));
     thisGuy = wvfSet(thisGuy,'zcoeffs',z);              % Zernike
+    
+    thisGuy = wvfSet(thisGuy,'calc wave',thisWave);
     thisGuy = wvfComputePSF(thisGuy);
 
     subplot(nSubjects,1,ii)
-    wvfPlot(thisGuy,'image psf space','um',1,maxUM);
-    title(sprintf('Subject %d\n',ii))
+    wvfPlot(thisGuy,'image psf space','um',thisWave,maxUM,'no window');
+    title(sprintf('Subject %i, wave %i\n',ii,thisWave));
+    colorbar;
 end
+colormap(gray(256));
+
+
+vcNewGraphWin([],'tall');
+thisWave = wave(2);
+for ii = 1:nSubjects
+    
+    % Choose different coefficients and compute for each subject
+    z(1:13) = Zcoeffs(1:13,whichSubjects(ii));
+    thisGuy = wvfSet(thisGuy,'zcoeffs',z);              % Zernike
+    
+    thisGuy = wvfSet(thisGuy,'calc wave',thisWave);
+    thisGuy = wvfComputePSF(thisGuy);
+
+    subplot(nSubjects,1,ii)
+    wvfPlot(thisGuy,'image psf space','um',thisWave,maxUM,'no window');
+    title(sprintf('Subject %i, wave %i\n',ii,thisWave));
+    colorbar;
+end
+colormap(gray(256));
+
+%% END
 
 

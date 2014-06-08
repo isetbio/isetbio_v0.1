@@ -1,5 +1,7 @@
 % wvfComputeAverageObserverConePSF
 %
+%  OBSOLETE - NEEDS TO BE REWRITTEN
+%
 % Compute the cone PSFs of an average observer.  Done by combining measurements
 % from a dataset of Zernike coefficients for a number of observers.
 %
@@ -15,6 +17,8 @@
 % 8/29/11  dhb  Wrote it.
 
 %% Clear
+error('This function is obsolete.');
+
 clear; close all;
 
 %% Load cone sensitivities, set weighting spectrum.
