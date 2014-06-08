@@ -59,11 +59,11 @@ wvfPlot(wvfParams,'2dpsf angle','min',wave, maxMIN);
 
 %% Plot the middle row of the psf, scaled to peak of 1
 vcNewGraphWin;
-wvfPlot(wvfParams,'1d psf angle','min',wave, maxMIN);
+wvfPlot(wvfParams,'1d psf angle normalized','min',wave, maxMIN);
 hold on
 
 % Used for plotting comparisons below
-arcminutes = wvfGet(wvfParams,'support arcmin');
+arcminutes = wvfGet(wvfParams,'psf angular samples','min',wave);
 index = find(abs(arcminutes) < 2);
 radians = (pi/180)*(arcminutes/60);
 
@@ -83,7 +83,7 @@ wvfParams1 = wvfSet(wvfParams1,'in focus wavelength', newWave);
 wvfParams = wvfComputePSF(wvfParams1);
 
 vcNewGraphWin;
-wvfPlot(wvfParams,'1d psf angle','min',maxMIN)
+wvfPlot(wvfParams,'1d psf angle','min',newWave,maxMIN)
  
 hold on
 onedPSF2 = AiryPattern(radians,wvfGet(wvfParams,'calculated pupil'),wvfParams.wls(1));
