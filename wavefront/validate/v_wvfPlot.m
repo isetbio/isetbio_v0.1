@@ -48,12 +48,26 @@ wvfPlot(wvf,'image psf angle',unit,wave);
 %% A multiple axis window
 
 vcNewGraphWin([],'tall');
-subplot(3,1,1), [u,p] = wvfPlot(wvf,'1d psf space',unit,wave,'no window');
-subplot(3,1,2), [u,p] = wvfPlot(wvf,'1d psf space normalized',unit,wave,'no window');
+subplot(3,1,1), wvfPlot(wvf,'1d psf space',unit,wave,'no window');
+subplot(3,1,2), wvfPlot(wvf,'1d psf space normalized',unit,wave,'no window');
 subplot(3,1,3), wvfPlot(wvf,'image psf','um',wave,20,'no window');
 
 %% Pupil phase
 unit = 'mm'; maxMM = 2;
 wvfPlot(wvf,'image pupil phase',unit,wave,maxMM);
+
+wvfPlot(wvf,'image pupil amp',unit,wave,maxMM);
+
+%%  Mesh plots of the psf in angle and space
+
+unit = 'min'; maxMIN = 10;
+wvfPlot(wvf,'2d psf angle',unit,wave,maxMIN);
+
+unit = 'mm'; maxMM = .050;
+wvfPlot(wvf,'2d psf space',unit,wave,maxMM);
+
+% These are linepairs / unit and maximum frequency
+unit = 'mm'; maxF = 300;
+wvfPlot(wvf,'2d otf',unit,wave,maxF);
 
 %% END

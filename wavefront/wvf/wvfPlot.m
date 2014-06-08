@@ -216,22 +216,21 @@ switch(pType)
         % wvfPlot(wvfP,'2d otf',unit,waveIdx, plotRangeFreq);
         % wvfPlot(wvfP,'2d otf','mm',2, []);
         if ~isempty(varargin)
-            [unit, wList, pRange] = wvfReadArg(wvfP,varargin);
+            [unit, wave, pRange] = wvfReadArg(wvfP,varargin);
         end
         
         % Get the data and if the string contains normalized ...
-        psf = wvfGet(wvfP,'psf',wList);
+        psf = wvfGet(wvfP,'psf',wave);
         if ~isempty(strfind(pType,'normalized'))
             psf = psf/max(psf(:));
         end
         
-        % This stuff should move into wvfGet() - BW
-        % Maybe freq = wvfGet(wvfP,'samples frequency',unit,waveIdx);
-        samp = wvfGet(wvfP,'samples space',unit,wList);
-        nSamp = length(samp);
-        dx = samp(2) - samp(1);
-        nyquistF = 1 / (2*dx);   % Line pairs (cycles) per unit space
-        freq = unitFrequencyList(nSamp)*nyquistF;
+        freq = wvfGet(wvfP,'otf support',unit,wave);
+        %         samp = wvfGet(wvfP,'samples space',unit,wList);
+        %         nSamp = length(samp);
+        %         dx = samp(2) - samp(1);
+        %         nyquistF = 1 / (2*dx);   % Line pairs (cycles) per unit space
+        %         freq = unitFrequencyList(nSamp)*nyquistF;
         
         % Compute OTF
         otf = fftshift(fft2(psf));
@@ -247,7 +246,6 @@ switch(pType)
         vcNewGraphWin; mesh(freq,freq,abs(otf))
         str = sprintf('Freq (lines/%s)',unit);
         xlabel(str); ylabel(str);
-        wave = wvfGet(wvfP,'wave','nm',wList);
         title(sprintf('OTF %.0f',wave));
         uData.fx = freq; uData.fy = freq; uData.otf = abs(otf);
         set(gcf,'userdata',uData);

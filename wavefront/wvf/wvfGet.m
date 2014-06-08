@@ -590,13 +590,20 @@ switch parm
     case {'otfsupport'}
         % wvfGet(wvf,'otfsupport',unit,wave)
         unit = 'mm'; wave = wvfGet(wvf,'calc wave');
-        if ~isempty(varargin), unit = varargin{1}; end
+        if ~isempty(varargin),   unit = varargin{1}; end
         if length(varargin) > 1, wave = varargin{2}; end
         
-        s = wvfGet(wvf,'psf spatial sample',unit,wave);
-        n = wvfGet(wvf,'nsamples');   % Should specify psf or pupil, but I thik they are the same
-        val = (0:(n-1))*(s*n);   % Cycles per unit
-        val = val - mean(val);
+        %         s = wvfGet(wvf,'psf spatial sample',unit,wave);
+        %         n = wvfGet(wvf,'nsamples');   % Should specify psf or pupil, but I thik they are the same
+        %         val = (0:(n-1))*(s*n);   % Cycles per unit
+        %         val = val - mean(val);
+        %
+        samp = wvfGet(wvf,'samples space',unit,wave);
+        nSamp = length(samp);
+        dx = samp(2) - samp(1);
+        nyquistF = 1 / (2*dx);   % Line pairs (cycles) per unit space
+        val = unitFrequencyList(nSamp)*nyquistF;
+        
 
     case {'lsf'}
         % wave = wvfGet(wvf,'calc wave');
