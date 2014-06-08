@@ -92,6 +92,13 @@ function val = wvfGet(wvf,parm,varargin)
 %   z = wvfGet(wvfP,'zcoeffs');z(4) = 0.3; wvfP = wvfSet(wvfP,'zcoeffs',z);
 %   wvfP = wvfComputePSF(wvfP); wvfGet(wvfP,'strehl',550)
 %
+%   wvf = wvfCreate; wvf = wvfComputePSF(wvf); 
+%   otf = wvfGet(wvf,'otf'); f = wvfGet(wvf,'otf support','mm');
+%   vcNewGraphWin; mesh(f,f,otf);
+%
+%   lsf = wvfGet(wvf,'lsf'); x = wvfGet(wvf,'lsf support','mm');
+%   vcNewGraphWin; plot(x,lsf);
+%
 % See also: wvfSet, wvfCreate, wvfComputePupilFunction, wvfComputePSF,
 % sceCreate, sceGet
 %
@@ -104,6 +111,7 @@ val = [];
 
 parm = ieParamFormat(parm);
 if strcmp(parm,'wave'), warning('Change wave to calc wave'); dbstop; end
+if strcmp(parm,'samplesamples'), warning('Change wave to nsamples'); dbstop; end
 
 %% We will subdivide the gets over time
 %  We plan to create get functions, such as wvfpsfGet(), or wvfsceGet, to
@@ -252,12 +260,17 @@ switch parm
     case {'sampleintervaldomain'}
         % What's held constant with calculated wavelength.
         % Choices are 'psf' and 'pupil'
+        % This really needs a better explanation.  It has to do with
+        % accounting for the index of refraction, undoubtedly.
         val = wvf.constantSampleIntervalDomain;
         
-    case {'numberspatialsamples','spatialsamples', 'npixels', 'fieldsizepixels'}
-        % Number of pixels for both the pupil and psf planes  discretation
-        % This is a master value - which means that this is the finest
-        % resolution.
+    case {'numberspatialsamples','nsamples','spatialsamples', 'npixels', 'fieldsizepixels'}
+        % Number of pixels for both the pupil and psf planes
+        % discretization This is a master value - which means that this is
+        % the finest resolution.  
+        % Why are there both psf and pupil plane spatial samples?
+        % Something about the index of refraction for the separation, but
+        % not for the number ...
         val = wvf.nSpatialSamples;
         
     case {'refpupilplanesize', 'refpupilplanesizemm', 'fieldsizemm'}
@@ -475,6 +488,7 @@ switch parm
         % a single wavelength
         % wvfGet(wvf,'psf angular samples',unit,waveIdx)
         % unit = 'min' (default), 'deg', or 'sec'
+        % Should call routine below to get anglePerPix.
         unit = varargin{1};
         wList = varargin{2};
         if (length(wList) > 1)
@@ -485,10 +499,22 @@ switch parm
         nPixels = wvfGet(wvf,'spatial samples');
         val = anglePerPix*((1:nPixels)-middleRow);
         
+    case {'psfangularsample'}
+        % wvfGet(wvf,'psf angular sample',unit,waveIdx)
+        % unit = 'min' (default), 'deg', or 'sec'
+        unit = varargin{1};
+        wList = varargin{2};
+        if (length(wList) > 1)
+            error('This only works for one wavelength at a time');
+        end
+        val = wvfGet(wvf,'psf angle per sample',unit,wList);
+
     case {'psfspatialsamples','samplesspace','supportspace','spatialsupport'}
         % wvfGet(wvf,'samples space','um',wList)
         % Spatial support in samples, centered on 0
         % Unit and wavelength must be specified
+        % Should call case below to get one val, and then scale up by
+        % number of pixels.
         
         % This parameter matters for the OTF and PSF quite a bit.  It
         % is the number of um per degree on the retina.
@@ -498,6 +524,20 @@ switch parm
         
         % Get the samples in degrees
         val = wvfGet(wvf,'psf angular samples','deg',wList);
+        
+        % Convert to meters and then to selected spatial scale
+        val = val*umPerDeg;  % Sample in meters assuming 300 um / deg
+        val = val*ieUnitScaleFactor(unit);
+        
+    case {'psfspatialsample'}
+        % This parameter matters for the OTF and PSF quite a bit.  It
+        % is the number of um per degree on the retina.
+        umPerDeg = (330*10^-6);
+        
+        unit = varargin{1}; wList = varargin{2};
+        
+        % Get the samples in degrees
+        val = wvfGet(wvf,'psf angular sample','deg',wList);
         
         % Convert to meters and then to selected spatial scale
         val = val*umPerDeg;  % Sample in meters assuming 300 um / deg
@@ -520,7 +560,7 @@ switch parm
         % wvfGet(wvf,'pupil spatial sample','mm',wList)
         % Spatial support in samples, centered on 0
 
-        unit = 'mm'; wList = wvfGet(wvf,'calc wavelength');
+        unit = 'mm'; wList = wvfGet(wvf,'calc wave');
         if ~isempty(varargin), unit = varargin{1}; end
         if length(varargin) > 1, wList = varargin{2}; end
         
@@ -543,8 +583,38 @@ switch parm
         val = fftshift(psf2otf(psf));   % vcNewGraphWin; mesh(val)
         
     case {'otfsupport'}
-        % wvfGet(wvf,'otfsupport')
-        wvfGet(wvf,'pupil spatial samples','mm')
+        % wvfGet(wvf,'otfsupport',unit,wave)
+        unit = 'mm'; wave = wvfGet(wvf,'calc wave');
+        if ~isempty(varargin), unit = varargin{1}; end
+        if length(varargin) > 1, wave = varargin{2}; end
+        
+        s = wvfGet(wvf,'psf spatial sample',unit,wave);
+        n = wvfGet(wvf,'nsamples');   % Should specify psf or pupil, but I thik they are the same
+        val = (0:(n-1))*(s*n);   % Cycles per unit
+        val = val - mean(val);
+
+    case {'lsf'}
+        % wave = wvfGet(wvf,'calc wave');
+        % lsf = wvfGet(wvf,'lsf',unit,wave); vcNewGraphWin; plot(lsf)
+        % For the moment, this only runs if we have precomputed the PSF and
+        % we have a matching wavelength in the measured and calc
+        % wavelengths.  We need to think this through more.
+        wave = wvfGet(wvf,'calc wave');
+        if length(varargin) > 1, wave = varargin{1}; end
+        
+        otf  = wvfGet(wvf,'otf',wave);
+        mRow = wvfGet(wvf,'middle row');
+        val  = fftshift(abs(fft(otf(mRow,:))));
+        
+    case {'lsfsupport'}
+        % wvfGet(wvf,'lsf support');
+        %
+        unit = 'mm'; wave = wvfGet(wvf,'calc wave');
+        if ~isempty(varargin), unit = varargin{1}; end
+        if length(varargin) > 1, wave = varargin{2}; end
+        val = wvfGet(wvf,'psf spatial samples',unit,wave);
+        
+        
         %% Stiles Crawford Effect
         % Account for angle sensitivity of the cone photoreceptors
         %
