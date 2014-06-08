@@ -518,15 +518,16 @@ switch parm
         
         % This parameter matters for the OTF and PSF quite a bit.  It
         % is the number of um per degree on the retina.
-        umPerDeg = (330*10^-6);
+        mPerDeg = (330*10^-6);      % Meters per deg
+        unit = 'deg'; wave = wvfGet(wvf,'calc wave');
+        if ~isempty(varargin), unit = varargin{1}; end
+        if length(varargin) > 1, wave = varargin{2}; end
         
-        unit = varargin{1}; wList = varargin{2};
-        
-        % Get the samples in degrees
-        val = wvfGet(wvf,'psf angular samples','deg',wList);
+        % Get the angular samples in degrees
+        val = wvfGet(wvf,'psf angular samples','deg',wave);
         
         % Convert to meters and then to selected spatial scale
-        val = val*umPerDeg;  % Sample in meters assuming 300 um / deg
+        val = val*mPerDeg;  % Sample in meters 
         val = val*ieUnitScaleFactor(unit);
         
     case {'psfspatialsample'}

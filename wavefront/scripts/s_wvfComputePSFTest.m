@@ -42,23 +42,24 @@ s_initISET
 
 % Set up parameters structure
 wvfParams0 = wvfCreate;
+maxMM = 1;
+wave  = wvfGet(wvfParams0,'measured wavelength');
 
 % Calculate the PSF, normalized to peak of 1.
 wvfParams = wvfComputePSF(wvfParams0);
 
 % Make a graph of the PSF within 1 mm of center
 vcNewGraphWin;
-maxMM = 1;
-wvfPlot(wvfParams,'2dpsf space','mm',maxMM);
+wvfPlot(wvfParams,'2dpsf space','mm',wave, maxMM);
 
 % Make a graph of the PSF within 2 arc min
 vcNewGraphWin;
 maxMIN = 2;
-wvfPlot(wvfParams,'2dpsf angle','min',maxMIN);
+wvfPlot(wvfParams,'2dpsf angle','min',wave, maxMIN);
 
 %% Plot the middle row of the psf, scaled to peak of 1
 vcNewGraphWin;
-wvfPlot(wvfParams,'1d psf angle','min',maxMIN);
+wvfPlot(wvfParams,'1d psf angle','min',wave, maxMIN);
 hold on
 
 % Used for plotting comparisons below

@@ -114,7 +114,7 @@ switch(pType)
         end
         
         samp = wvfGet(wvfP,'psf spatial samples',unit,wList);
-        psf = wvfGet(wvfP,'psf',wList);
+        psf  = wvfGet(wvfP,'psf',wList);
         if ~isempty(strfind(pType,'normalized'))
             psf = psf/max(psf(:));
         end
