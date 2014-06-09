@@ -1,16 +1,12 @@
-function yesorno = isParallelToolboxThere()
+function ret = isParallelToolboxThere()
 % Checks wheter the parallel computing toolbox is installed
 % 
-%   yesorno = isParallelToolboxThere()
+%   ret = isParallelToolboxThere()
 %
 % (c) Stanford Synapse Team 2010
 
 % Returns all of the toolbox names
-vv = ver;
+vv  = ver;
+ret = any(strcmp({vv.Name}, 'Parallel Computing Toolbox'));
 
-yesorno = 0;
-for ii = 1:length(vv)
-    yesorno = yesorno || isequal('Parallel Computing Toolbox',vv(ii).Name);
 end
-
-return
