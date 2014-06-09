@@ -37,6 +37,7 @@ if isempty(emType), error('eye movement type not defined'); end
 
 % Init positions
 pos = sensorGet(sensor, 'sensor positions');
+if isempty(pos), error('sensor positions length unknown'); end
 pos = zeros(size(pos));
 
 % Load general parameters
@@ -48,12 +49,12 @@ coneWidth = pixelGet(sensorGet(sensor, 'pixel'), 'width');
 %% Generate eye movement for tremor
 if emType(1)
     % Load parameters
-    params    = sensorGet(sensor, 'em tremor');
-    amplitude = params.amplitude * mperdeg / coneWidth; 
+    tremor    = sensorGet(sensor, 'em tremor');
+    amplitude = tremor.amplitude * mperdeg / coneWidth; 
     
     % Compute time of tremor occurs
-    t = params.interval + randn(seqLen,1) * params.intervalSD;
-    t(t < 0.001) = 0.001;
+    t = tremor.interval + randn(seqLen, 1) * tremor.intervalSD;
+    t(t < 0.001) = 0.001; % get rid of negative values
     t = cumsum(t);
     tPos = round(t / sampTime);
     tPos = tPos(1:find(tPos <= seqLen, 1, 'last'));

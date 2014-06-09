@@ -21,15 +21,12 @@ function [OTF2D, fSupport] = customOTF(oi,fSupport,wavelength,units)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('oi'),         error('Optical image required.'); end
-if ieNotDefined('wavelength'), wavelength = oiGet(oi,'wavelength'); end
+if notDefined('oi'),         error('Optical image required.'); end
+if notDefined('wavelength'), wavelength = oiGet(oi,'wavelength'); end
 
 % In the custom case, I think the units should always be millimeters.
-if ieNotDefined('units'),      units = 'mm'; end  
-
-% These numbers appear a little off when the scene size is odd.
-% 
-if ieNotDefined('fSupport'),   fSupport = oiGet(oi,'fSupport',units); end
+if notDefined('units'),      units = 'mm'; end  
+if notDefined('fSupport'),   fSupport = oiGet(oi,'fSupport',units); end
 
 fx    = fSupport(:,:,1); fy = fSupport(:,:,2);
 nX    = size(fx,2);      nY = size(fy,1);
@@ -50,6 +47,7 @@ optics     = oiGet(oi,'optics');
 % BW, 2010 May
 otfSupport = opticsGet(optics,'otfSupport');  
 [X,Y]      = meshgrid(otfSupport{1},otfSupport{2});
+
 
 % Find the OTF at each wavelength. We may be interpolating from the custom
 % data.
@@ -88,8 +86,7 @@ else
         tmp = opticsGet(optics,'otfData',wavelength(ii));
         OTF2D(:,:,ii) = ...
             fftshift(interp2(X, Y, fftshift(tmp), fx, fy, '*linear',0));
-
     end
 end
 
-return;
+end

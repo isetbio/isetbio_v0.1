@@ -53,7 +53,7 @@ if ~isequal(size(xi),size(yi))
     if isvector(xi) && isvector(yi)
         % Could check that isequal(sort(X),X)
         % Could check diff(X) is constant
-        [xi yi] = meshgrid(xi,yi);
+        [xi, yi] = meshgrid(xi,yi);
     else
         error('%s and %s must be equal size',inputname(4),inputname(5));
     end
@@ -62,7 +62,7 @@ end
 if isvector(X) && isvector(Y)
     % Could check that isequal(sort(X),X)
     % Could check diff(X) is constant
-    [X Y] = meshgrid(X,Y);
+    [X, Y] = meshgrid(X,Y);
 end
 
 % Library array error checking (size only)
