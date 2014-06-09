@@ -193,7 +193,8 @@ switch parm
             end
             wvf.zcoeffs(idx) = val;
         end
-        
+        wvf.PUPILFUNCTION_STALE = true;
+
         %% Spatial sampling parameters
         %
         % In the end, we calculate using discretized sampling.  Because
