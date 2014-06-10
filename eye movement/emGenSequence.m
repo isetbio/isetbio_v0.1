@@ -36,7 +36,7 @@ emType = sensorGet(sensor, 'em type');
 if isempty(emType), error('eye movement type not defined'); end
 
 % Init positions
-pos = sensorGet(sensor, 'sensor positions');
+pos = sensorGet(sensor, 'sensorpositions');
 if isempty(pos), error('sensor positions length unknown'); end
 pos = zeros(size(pos));
 
@@ -63,6 +63,7 @@ if emType(1)
     direction = rand(length(tPos),1);
     pos(tPos, :) = amplitude * [direction sqrt(1-direction.^2)];
     pos = pos .* (2*(randn(size(pos))>0)-1); % shuffle the sign
+    pos = cumsum(pos, 1);
 end
 
 %% Generate eye movement for drift
@@ -73,17 +74,50 @@ if emType(2)
     speedSD   = params.speedSD * sampTime * mperdeg / coneWidth;
     
     % Generate random move at each sample time
-    direction = rand(seqLen, 1);
-    direction = [direction sqrt(1-direction.^2)];
-    direction = direction .* (2*randn(size(direction))>0-1);
-    pos = pos + (speed + speedSD * randn(seqLen,2)/sqrt(2)) .* direction;
+    theta = 360 * randn + 0.1 * (1 : seqLen)';
+    direction = [cosd(theta) sind(theta)];
+    s = speed + speedSD * randn(seqLen, 1);
+    pos = filter(1, [1 -1], bsxfun(@times, direction, s)) + pos;
 end
 
 %% Generate eye movement for micro-saccade
 if emType(3)
+    % Load parameters
+    params     = sensorGet(sensor, 'em msaccade');
+    interval   = params.interval;
+    intervalSD = params.intervalSD;
+    dirSD      = params.dirSD;
+    speed      = params.speed * sampTime * mperdeg / coneWidth;
+    speedSD    = params.speedSD * sampTime * mperdeg / coneWidth;
+    
+    % compute time of occurance
+    t = interval + randn(seqLen, 1) * intervalSD;
+    t(t < 0.3) = 0.3 + 0.1*rand; % get rid of negative values
+    t = cumsum(t);
+    tPos = round(t / sampTime);
+    tPos = tPos(1:find(tPos <= seqLen, 1, 'last'));
+    
+    % Compute positions
+    for ii = 1 : length(tPos)
+        curPos = pos(tPos(ii), :);
+        duration = round(sqrt(curPos(1)^2 + curPos(2)^2)/speed);
+        direction = atand(curPos(2) / curPos(1)) + dirSD * randn;
+        direction = [cosd(direction) sind(direction)];
+        direction = abs(direction) .* (2*(curPos < 0) - 1);
+        
+        offset = zeros(seqLen, 2);
+        indx = tPos(ii):min(tPos(ii) + duration - 1, seqLen);
+        curSpeed = speed + speedSD * randn;
+        if curSpeed < 0, curSpeed = speed; end
+        offset(indx, 1) = curSpeed*direction(1);
+        offset(indx, 2) = curSpeed*direction(2);
+        
+        pos = pos + cumsum(offset);
+    end
 end
 
 %% Set sensor position back to sensor
-pos = round(cumsum(pos, 1));
-sensor = sensorSet(sensor, 'sensor positions', pos);
+%  pos = round(cumsum(pos, 1));
+pos = round(pos);
+sensor = sensorSet(sensor, 'sensorpositions', pos);
 end

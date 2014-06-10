@@ -223,7 +223,9 @@ function val = sensorGet(sensor,param,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ~exist('param','var') || isempty(param), error('Param must be defined.'); end
+if ~exist('param', 'var') || isempty(param)
+    error('Param must be defined.');
+end
 
 % Default return value.
 val = [];
@@ -244,7 +246,6 @@ end
 % Onward, it is a real sensor call
 param = ieParamFormat(param);
 switch param
-
     % Descriptive
     case {'name'}
         if checkfields(sensor,'name'), val = sensor.name; end

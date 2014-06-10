@@ -65,4 +65,4 @@ end
 % figure; mesh(spatialFall)
 optics = opticsSet(optics,'cos4thdata',spatialFall);
 
-return;
+end

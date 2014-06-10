@@ -554,7 +554,7 @@ switch lower(param)
         % total time of exposure
         sampTime = sensorGet(sensor, 'time interval');
         seqLen = round(val/sampTime);
-        pos = sensorGet(sensor, 'sensor positions');
+        pos = sensorGet(sensor, 'sensorpositions');
         if isempty(pos)
             pos = zeros(seqLen, 2);
         elseif size(pos,1) < seqLen
@@ -562,7 +562,7 @@ switch lower(param)
         else
             pos = pos(1:seqLen, :);
         end
-        sensor = sensorSet(sensor, 'sensor positions', pos);
+        sensor = sensorSet(sensor, 'sensorpositions', pos);
         
     case {'eyemove', 'eyemovement'}
         % eye movement structure
