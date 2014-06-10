@@ -58,14 +58,13 @@ function val = sensorGet(sensor,param,varargin)
 % * Units are meters by default but can be set to 'um','mm', etc.
 %
 %  Sensor optics related
-%      {'fov'}                  - sensor horizontal field of view
-%      {'chief Ray Angle'}        - chief ray angle in radians at each pixel
-%          sensorGet(sensor,'chiefRayAngle',sourceFocaLengthMeters)
-%      {'chief Ray Angle Degrees'} - chief ray angle in degrees at each pixel
-%          sensorGet(sensor,'chiefRayAngleDegrees',sourceFocaLengthMeters)
-%      {'sensor Etendue'}        - optical efficiency at each pixel
-%      {'micro Lens'}            - microlens data structure, accessed using
-%          mlensGet() and mlensSet (optics toolbox only)
+%      {'fov'}                     - sensor horizontal field of view
+%      {'chief Ray Angle'}         - chief ray angle in rad at each pixel
+%      {'chief Ray Angle Degrees'} - chief ray angle in deg at each pixel
+%      {'sensor Etendue'}          - optical efficiency at each pixel
+%      {'micro Lens'}              - microlens data structure, accessed
+%                                    using mlensGet() and mlensSet (optics
+%                                    toolbox only)
 %
 % Sensor array data
 %      {'volts'}          - Sensor output in volts
@@ -77,16 +76,15 @@ function val = sensorGet(sensor,param,varargin)
 %      {'roi locs'}       - Stored region of interest (roiLocs)
 %      {'roi rect'}       - Rect.  Format is [cmin,rmin,width,height]
 %      {'roi volts'}      - Volts inside of stored region of interest
-%         If there is no stored region of interest, ask the user to select.
-%      {'roi electrons'}  - Electrons inside of stored ROI, or user selects
+%                           If no ROI stored, ask the user to select.
+%      {'roi electrons'}  - Electrons inside of ROI, or user selects
 %      {'roi volts mean'} - The mean values in each band
 %      {'roi electrons mean'} - As above but electrons
-%      {'hline volts'}    - Volts along a horizontal line
-%          sensorGet(sensor,'hline volts',50);
+%      {'hline volts'}     - Volts along a horizontal line
 %      {'hline electrons'} - horizontal line electrons
 %      {'vline volts'}     - vertical line volts
 %      {'vline electrons'} - vertical line electrons
-%      {'response Ratio'} - Peak data voltage divided by largest pixel voltage
+%      {'response Ratio'}  - Peak data voltage / largest pixel voltage
 %
 % Sensor roi
 %     {'roi'} - rectangle representing current region of interest
@@ -94,16 +92,16 @@ function val = sensorGet(sensor,param,varargin)
 %
 % Sensor array electrical processing properties
 %      {'analog Gain'}     - A scale factor that divides the sensor voltage
-%                           prior to clipping
-%      {'analog Offset'}   - Added to the voltage to stay away from zero, sometimes used
-%                           to minimize the effects of dark noise at the low levels
-%         Formula for offset and gain: (v + analogOffset)/analogGain)
+%                            prior to clipping
+%      {'analog Offset'}   - Added to the voltage to stay away from zero,
+%                            sometimes used to minimize the effects of dark
+%                            noise at the low levels. Formula for offset
+%                            and gain: (v + analogOffset)/analogGain)
 %
-%      {'sensor Dynamic Range'} - Computed
-%
-%      {'quantization}   -  Quantization structre
-%        {'nbits'}                - number of bits in quantization method
-%        {'max output'}            -
+%      {'sensor Dynamic Range'} - dynamic range
+%      {'quantization}          -  Quantization structre
+%        {'nbits'}              - number of bits in quantization method
+%        {'max output'}
 %        {'quantization lut'}
 %        {'quantization method'}
 %
@@ -113,39 +111,45 @@ function val = sensorGet(sensor,param,varargin)
 %       {'binwidth'}  - difference between wavelength samples
 %       {'nwave'}     - number of wavelength samples
 %     {'color'}
-%       {'filter transmissivities'} - Filter transmissivity as a function of wave
-%       {'infrared filter'} - Normally the IR, but we sometimes put other
-%        filters, such as macular pigment, in the ir slot.
+%       {'filter transmissivities'} - Filter transmissivity as a function 
+%                                     of wavelength
+%       {'infrared filter'}         - Normally the IR, but we sometimes put
+%                                     other filters, such as macular
+%                                     pigment, in the ir slot.
 %
 %      {'cfa Name'}     - Best guess at conventional CFA architecture name
 %      {'filter Names'} - Cell array of filter names. The first letter of
-%        each filter should indicate the filter color see sensorColorOrder
-%        comments for more information
+%                         each filter should indicate the filter color see
+%                         sensorColorOrder comments for more information
 %      {'nfilters'}    - number of color filters
 %      {'filter Color Letters'} - A string with each letter being the first
-%        letter of a color filter; the letters are from the list in
-%        sensorColorOrder. The pattern field(see below) describes their
-%        position in array.
-%      {'filter Color Letters Cell'} -  As above, but returned in a cell array
-%         rather than a string
+%                                 letter of a color filter; the letters are
+%                                 from the list in sensorColorOrder. The
+%                                 pattern field(see below) describes their
+%                                 position in array.
+%      {'filter Color Letters Cell'} -  As above, but returned in a cell 
+%                                       array rather than a string
 %      {'filter plotcolors'} - one of rgbcmyk for plotting for this filter
-%      {'spectral QE'} - Product of photodetector QE, IR and color filters
-%           Does not include vignetting or pixel fill factor.
-%      {'pattern'}     - Matrix that defines the color filter array
-%        pattern; e.g. [1 2; 2 3] if the spectrra are RGB and the pattern
-%        is a conventional Bayer [r g; g b]
+%      {'spectral QE'}       - Product of photodetector QE, IR and color
+%                              filters, vignetting or pixel fill factor not
+%                              included.
+%      {'pattern'}           - Matrix that defines the color filter array
+%                              pattern; e.g. [1 2; 2 3] if the spectrra are
+%                              RGB and the pattern is a conventional Bayer
+%                              [r g; g b]
 %
 % Noise properties
-%      {'dsnu sigma'}           - Dark signal nonuniformity (DSNU) parameter (volts)
-%      {'prnu sigma'}           - Photoresponse nonuniformity (PRNU) parameter (std dev percent)
+%      {'dsnu sigma'}           - Dark signal nonuniformity (DSNU) in volts
+%      {'prnu sigma'}           - Photoresponse nonuniformity (PRNU) in std
+%                                 dev percent
 %      {'fpn parameters'}       - (dsnusigma,prnusigma)
 %      {'dsnu image'}           - Dark signal non uniformity (DSNU) image
-%      {'prnu image',}          - Photo response non uniformity (PRNU) image
+%      {'prnu image',}          - Photo response non uniformity (PRNU)
 %      {'column fpn'}           - Column (offset,gain) parameters
-%      {'column dsnu'}          - The column offset parameters (Volts)
-%      {'column prnu'}          - The column gain parameters (std dev in Volts)
-%      {'col offset fpnvector'}  - The sensor column offset data
-%      {'col gain fpnvector'}    - The sensor column gain data
+%      {'column dsnu'}          - The column offset (Volts)
+%      {'column prnu'}          - The column gain (std dev in Volts)
+%      {'col offset fpnvector'} - The sensor column offset data
+%      {'col gain fpnvector'}   - The sensor column gain data
 %      {'noise flag'}           - Governs sensorCompute noise calculations 
 %                                 0 no noise at all
 %                                 1 shot noise, no electronics noise
@@ -161,21 +165,21 @@ function val = sensorGet(sensor,param,varargin)
 %      {'exposure time'}   - Exposure time (sec)
 %      {unique exptimes'}  - Unique values from the exposure time list
 %      {'exposure plane'}  - Select exposure for display when bracketing
-%      {'cds'}            - Correlated double-sampling flag
+%      {'cds'}             - Correlated double-sampling flag
 %      {'pixel vignetting'}- Include pixel optical efficiency in
 %             sensorCompute.
 %             val = 1 Means vignetting only.
 %             val = 2 means microlens included. (Microlens shifting NYI).
 %             otherwise, skip both vignetting and microlens.
 %      {'sensor compute','sensor compute method'}
-%         % Swap in a sensorCompute routine.  If this is empty, then the
-%         % standard vcamera\sensor\mySensorCompute routine will be used.
+%         Swap in a sensorCompute routine.  If this is empty, then the
+%         standard vcamera\sensor\mySensorCompute routine will be used.
 %      {'nsamples perpixel','npixel samples for computing'}
-%         % Default is 1.  If not parameter is not set, we return the default.
+%         Default is 1.  If parameter is not set, we return the default.
 %      {'consistency'}
-%         % If the consistency field is not present, assume false and set it
-%         % false.  This checks whether the parameters and the displayed
-%         % image are consistent/updated.
+%         If the consistency field is not present, set it false.  This
+%         checks whether the parameters and the displayed image are
+%         consistent/updated.
 %
 % Human sensor special case
 %    {'human'} - The structure with all human parameters.  Applies only
@@ -208,16 +212,16 @@ function val = sensorGet(sensor,param,varargin)
 %       {'sensor movement'}     - A structure of sensor motion information
 %       {'movement positions'}  - Nx2 vector of (x,y) positions in deg
 %       {'frames per position'} - N vector of exposures per position
-%       {'positions x'}         - 1st column (x) of movement positions (deg)
-%       {'positions y'}         - 2nd column (y) of movement positions (deg)
+%       {'positions x'}         - 1st column (x) of movement positions
+%       {'positions y'}         - 2nd column (y) of movement positions
 %
 % Miscellaneous - Macbeth color checker (MCC)
 %   More chart handling is being introduced.  See chart<TAB>
 %
-%     {'mcc rect handles'}  - Handles for the rectangle selections in an MCC
-%     {'mcc corner points'} - Corner points for the MCC chart
+%    {'mcc rect handles'}  - Handles for the rectangle selections in an MCC
+%    {'mcc corner points'} - Corner points for the MCC chart
 %
-%     {'rgb'}               - Display image in sensorImageWindow
+%    {'rgb'}               - Display image in sensorImageWindow
 %
 % See also:  sensorSet
 %
@@ -300,14 +304,17 @@ switch param
         nRows = sensorGet(sensor,'rows');
         nCols = sensorGet(sensor,'cols');
         pSize = pixelGet(sensorGet(sensor,'pixel'),'size');
-        val.y = linspace(-nRows*pSize(1)/2 + pSize(1)/2, nRows*pSize(1)/2 - pSize(1)/2,nRows);
-        val.x = linspace(-nCols*pSize(2)/2 + pSize(2)/2,nCols*pSize(2)/2 - pSize(2)/2,nCols);
+        val.y = linspace(-nRows*pSize(1)/2 + pSize(1)/2, ...
+                          nRows*pSize(1)/2 - pSize(1)/2,nRows);
+        val.x = linspace(-nCols*pSize(2)/2 + pSize(2)/2, ...
+                          nCols*pSize(2)/2 - pSize(2)/2,nCols);
         if ~isempty(varargin)
             val.y = val.y*ieUnitScaleFactor(varargin{1});
             val.x = val.x*ieUnitScaleFactor(varargin{1});
         end
 
-    case {'chiefrayangle','cra','chiefrayangleradians','craradians','craradian','chiefrayangleradian'}
+    case {'chiefrayangle','cra','chiefrayangleradians', ...
+          'craradians','craradian','chiefrayangleradian'}
         % Return the chief ray angle for each pixel in radians
         % sensorGet(sensor,'chiefRayAngle',sourceFLMeters)
         support = sensorGet(sensor,'spatialSupport');   %Meters
@@ -324,7 +331,8 @@ switch param
         % Chief ray angle of every pixel in radians
         val = atan(sqrt(X.^2 + Y.^2)/sourceFL);
 
-    case {'chiefrayangledegrees','cradegrees','cradegree','chiefrayangledegree'}
+    case {'chiefrayangledegrees', 'cradegrees', ...
+          'cradegree','chiefrayangledegree'}
         % sensorGet(sensor,'chiefRayAngleDegrees',sourceFL)
         if isempty(varargin),
             optics = oiGet(vcGetObject('OI'),'optics');
@@ -339,8 +347,9 @@ switch param
         % for calculating the optimal placement of the microlens
         % (mlRadiance). We store the bare etendue (no microlens) in the
         % vignetting location.  The improvement due to the microlens array
-        % can be calculated by sensor.etendue/sensor.data.vignetting.  We need to
-        % be careful about clearing these fields and data consistency.
+        % can be calculated by sensor.etendue/sensor.data.vignetting. We
+        % need to be careful about clearing these fields and data
+        % consistency.
         if checkfields(sensor,'etendue'), val = sensor.etendue; end
 
 
@@ -351,7 +360,9 @@ switch param
         % below.
         %
         if checkfields(sensor,'data','volts'), val = sensor.data.volts; end
-        if ~isempty(varargin), val = sensorColorData(val,sensor,varargin{1}); end
+        if ~isempty(varargin)
+            val = sensorColorData(val,sensor,varargin{1});
+        end
     case{'volts2maxratio','responseratio'}
         v = sensorGet(sensor,'volts');
         pixel = sensorGet(sensor,'pixel');
@@ -381,7 +392,9 @@ switch param
         val = sensorGet(sensor,'volts')/pixelGet(pixel,'conversionGain');
 
         % Pull out a particular color plane
-        if ~isempty(varargin), val = sensorColorData(val,sensor,varargin{1}); end
+        if ~isempty(varargin)
+            val = sensorColorData(val,sensor,varargin{1});
+        end
         % Electrons are ints
         val = round(val);
 
@@ -411,13 +424,14 @@ switch param
         if checkfields(sensor,'roi')
             roiLocs = sensorGet(sensor,'roi locs');
             val = vcGetROIData(sensor,roiLocs,'volts');
-        else warning('ISET:nosensorroi','No sensor.roi field.  Returning empty voltage data.');
+        else
+            warning('ISET:nosensorroi', 'No roi field. empty returned.');
         end
     case {'roielectrons','roidatae','roidataelectrons'}
         if checkfields(sensor,'roi')
             roiLocs = sensorGet(sensor,'roi locs');
             val = vcGetROIData(sensor,roiLocs,'electrons');
-        else warning('ISET:nosensorroi','No sensor.roi field.  Returning empty electron data.');
+        else warning('ISET:nosensorroi','No roi field. empty returned');
         end
     case {'roivoltsmean'}
         % sensorGet(sensor,'roi volts mean')
@@ -460,8 +474,10 @@ switch param
         nSensors = sensorGet(sensor,'n sensors');
         
         % Check if the data are in sensor
-        if     strfind(param,'volts'), d = sensorGet(sensor,'volts');
-        elseif strfind(param,'electrons'), d = sensorGet(sensor,'electrons');
+        if     strfind(param,'volts')
+            d = sensorGet(sensor,'volts');
+        elseif strfind(param,'electrons')
+            d = sensorGet(sensor,'electrons');
         end
         if isempty(d)
             warning('sensorGet:Nolinedata','No data'); 
@@ -496,7 +512,9 @@ switch param
     case {'quantization','quantizationstructure'}
         val = sensor.quantization;
     case {'nbits','bits'}
-        if checkfields(sensor,'quantization','bits'), val = sensor.quantization.bits; end
+        if checkfields(sensor,'quantization','bits')
+            val = sensor.quantization.bits;
+        end
     case {'max','maxoutput'}
         nbits = sensorGet(sensor,'nbits');
         if isempty(nbits),
@@ -505,9 +523,13 @@ switch param
         else val = 2^nbits;
         end
     case {'lut','quantizationlut'}
-        if checkfields(sensor,'quantization','lut'), val = sensor.quantization.lut; end
+        if checkfields(sensor,'quantization','lut')
+            val = sensor.quantization.lut;
+        end
     case {'qMethod','quantizationmethod'}
-        if checkfields(sensor,'quantization','method'), val = sensor.quantization.method; end
+        if checkfields(sensor,'quantization','method')
+            val = sensor.quantization.method;
+        end
 
         % Color structure
     case 'color'
@@ -534,6 +556,7 @@ switch param
         % The pattern field(see below) describes the position for each
         % filter in the block pattern of color filters.
         names = sensorGet(sensor,'filternames');
+        val = zeros(length(names), 1);
         for ii=1:length(names), val(ii) = names{ii}(1); end
         val = char(val);
     case {'filtercolorletterscell'}
@@ -542,11 +565,13 @@ switch param
         val = cell(nFilters,1);
         for ii=1:length(cNames), val{ii} = cNames(ii); end
 
-    case {'filternamescellarray','filtercolornamescellarray','filternamescell'}
+    case {'filternamescellarray', 'filtercolornamescellarray', ...
+            'filternamescell'}
         % N.B.  The order of filter colors returned here corresponds to
         % their position in the columns of filterspectra.  The values in
         % pattern (see below) describes their position in array.
         names = sensorGet(sensor,'filternames');
+        val = cell(length(names), 1);
         for ii=1:length(names), val{ii} = char(names{ii}(1)); end
     case {'filterplotcolor','filterplotcolors'}
         % Return an allowable plotting color for this filter, based on the
@@ -566,15 +591,17 @@ switch param
     case {'ir','infraredfilter','irfilter','otherfilter'}
         % We sometimes put other filters, such as macular pigment, in this
         % slot.  Perhaps we should have an other filter slot.
-        if checkfields(sensor,'color','irFilter'), val = sensor.color.irFilter; end
+        if checkfields(sensor,'color','irFilter')
+            val = sensor.color.irFilter;
+        end
     case {'spectralqe','sensorqe','sensorspectralqe'}
         val = sensorSpectralQE(sensor);
 
-        % There should only be a spectrum associated with the
-        % sensor, not with the pixel.  I am not sure how to change over
-        % to a single spectral representation, though.  If pixels never
-        % existed without an sensor, ... well I am not sure how to get the sensor
-        % if only the pixel is passed in.  I am not sure how to enforce
+        % There should only be a spectrum associated with the sensor, not
+        % with the pixel.  I am not sure how to change over to a single
+        % spectral representation, though.  If pixels never existed without
+        % an sensor, ... well I am not sure how to get the sensor if only
+        % the pixel is passed in.  I am not sure how to enforce
         % consistency. -- BW
     case {'spectrum','sensorspectrum'}
         val = sensor.spectrum;
@@ -630,7 +657,8 @@ switch param
         % Is this still used?
         pixel = sensorGet(sensor,'pixel');
         p = pixelGet(pixel,'pixelSize','m');
-        [X,Y] = meshgrid((0:(size(cfa.pattern,2)-1))*p(2),(0:(size(cfa.pattern,1)-1))*p(1));
+        [X,Y] = meshgrid((0:(size(cfa.pattern,2)-1))*p(2), ...
+                         (0:(size(cfa.pattern,1)-1))*p(1));
         val = [X(:),Y(:)];
     
     case {'patterncolors','pcolors','blockcolors'}
@@ -648,7 +676,9 @@ switch param
         val = filterColorLetters(pattern);
 
     case {'pattern','cfapattern'}
-        if checkfields(sensor,'cfa','pattern'), val = sensor.cfa.pattern; end
+        if checkfields(sensor,'cfa','pattern')
+            val = sensor.cfa.pattern;
+        end
     case 'cfaname'
         % We look up various standard names
         val = sensorCFAName(sensor);
@@ -665,27 +695,34 @@ switch param
 
         % Pixel-wise FPN parameters
     case {'fpnparameters','fpn','fpnoffsetgain','fpnoffsetandgain'}
-        val = [sensorGet(sensor,'sigmaOffsetFPN'),sensorGet(sensor,'sigmaGainFPN')];
-    case {'dsnulevel','sigmaoffsetfpn','offsetfpn','offset','offsetsd','dsnusigma','sigmadsnu'}
+        val = [sensorGet(sensor,'sigmaOffsetFPN'), ...
+               sensorGet(sensor,'sigmaGainFPN')];
+    case {'dsnulevel','sigmaoffsetfpn','offsetfpn', ...
+          'offset','offsetsd','dsnusigma','sigmadsnu'}
         % This value is stored in volts
         val = sensor.sigmaOffsetFPN;
-    case {'sigmagainfpn','gainfpn','gain','gainsd','prnusigma','sigmaprnu','prnulevel'}
+    case {'sigmagainfpn', 'gainfpn', 'gain', 'gainsd', ...
+          'prnusigma', 'sigmaprnu', 'prnulevel'}
         % This is a percentage, between 0 and 100, always.
         val = sensor.sigmaGainFPN;
     
-    case {'dsnuimage','offsetfpnimage'} % Dark signal non uniformity (DSNU) image
+    case {'dsnuimage','offsetfpnimage'} % Dark signal non uniformity (DSNU)
         % These should probably go away because we compute them afresh
         % every time.
-        if checkfields(sensor,'offsetFPNimage'), val = sensor.offsetFPNimage; end
-    case {'prnuimage','gainfpnimage'}  % Photo response non uniformity (PRNU) image
+        if checkfields(sensor,'offsetFPNimage')
+            val = sensor.offsetFPNimage;
+        end
+    case {'prnuimage','gainfpnimage'}  % Photo response non uniformity
         % These should probably go away because we compute them afresh
         % every time.
-        if checkfields(sensor,'gainFPNimage'), val = sensor.gainFPNimage; end
+        if checkfields(sensor,'gainFPNimage')
+            val = sensor.gainFPNimage;
+        end
 
         % These are column-wise FPN parameters
     case {'columnfpn','columnfixedpatternnoise','colfpn'}
         % This is stored as a vector (offset,gain) standard deviations in
-        % volts.  This is unlike the storage format for array dsnu and prnu.
+        % volts.  This is unlike the storage format for array dsnu and prnu
         if checkfields(sensor,'columnFPN'), val = sensor.columnFPN; 
         else
             val = [0,0];
@@ -714,9 +751,11 @@ switch param
     case {'noiseseed'}
         if checkfields(sensor,'noiseSeed'), val = sensor.noiseSeed; end
 
-    case {'ngridsamples','pixelsamples','nsamplesperpixel','npixelsamplesforcomputing'}
-        % Default is 1.  If not parameter is not set, we return the default.
-        if checkfields(sensor,'samplesPerPixel'),val = sensor.samplesPerPixel;
+    case {'ngridsamples', 'pixelsamples', ...
+          'nsamplesperpixel', 'npixelsamplesforcomputing'}
+        % Default is 1. If parameter is not set, we return the default.
+        if checkfields(sensor,'samplesPerPixel')
+            val = sensor.samplesPerPixel;
         else val = 1;
         end
 
@@ -730,7 +769,9 @@ switch param
         elseif isvector(tmp),  val = 'bracketedExposure';
         elseif isequal(size(p),size(tmp)),  val = 'cfaExposure';
         end
-    case {'integrationtime','integrationtimes','exptime','exptimes','exposuretimes','exposuretime','exposureduration','exposuredurations'}
+    case {'integrationtime','integrationtimes','exptime','exptimes', ...
+          'exposuretimes','exposuretime','exposureduration', ...
+          'exposuredurations'}
         % This can be a single number, a vector, or a matrix that matches
         % the size of the pattern slot. Each one of these cases is handled
         % differently by sensorComputeImage.  The units are seconds by
@@ -768,7 +809,9 @@ switch param
         val = sensor.CDS;
 
         % Microlens related
-    case {'vignettingflag','vignetting','pixelvignetting','bareetendue','sensorbareetendue','nomicrolensetendue'}
+    case {'vignettingflag','vignetting', ...
+          'pixelvignetting','bareetendue', ...
+          'sensorbareetendue','nomicrolensetendue'}
         % If the vignetting flag has not been set, treat it as 'skip',
         % which is 0.
         if checkfields(sensor,'data','vignetting'),
@@ -831,9 +874,10 @@ switch param
         % focal distance).
         if isempty(oi)
             distance = opticsGet(opticsCreate,'focal length');
-            fprintf('Sensor fov estimated using focal length = %f m\n',distance);
+            fprintf('Fov estimated using focal length = %f m\n',distance);
         else
-            distance = opticsGet(oiGet(oi,'optics'),'focal plane distance',sDist);
+            distance = opticsGet(oiGet(oi,'optics'), ...
+                'focal plane distance',sDist);
         end
         width = sensorGet(sensor,'arraywidth');
         val = ieRad2deg(2*atan(0.5*width/distance));
@@ -890,8 +934,10 @@ switch param
     case {'sensorcompute','sensorcomputemethod'}
         % Swap in a sensorCompute routine.  If this is empty, then the
         % standard vcamera\sensor\mySensorCompute routine will be used.
-        if checkfields(sensor,'sensorComputeMethod'), val = sensor.sensorComputeMethod;
-        else  val = 'mySensorCompute';  end
+        if checkfields(sensor,'sensorComputeMethod')
+            val = sensor.sensorComputeMethod;
+        else  val = 'mySensorCompute';
+        end
     case {'consistency','computationalconsistency'}
         % If the consistency field is not present, assume false and set it
         % false.  This checks whether the parameters and the displayed
@@ -903,10 +949,14 @@ switch param
     case {'mccrecthandles'}
         % These are handles to the squares on the MCC selection regions
         % see macbethSelect
-        if checkfields(sensor,'mccRectHandles'), val = sensor.mccRectHandles; end
+        if checkfields(sensor,'mccRectHandles')
+            val = sensor.mccRectHandles;
+        end
     case {'mccpointlocs','mcccornerpoints'}
         % Corner points for the whole MCC chart
-        if checkfields(sensor,'mccCornerPoints'), val = sensor.mccCornerPoints; end
+        if checkfields(sensor,'mccCornerPoints')
+            val = sensor.mccCornerPoints;
+        end
 
         % Display image
     case {'rgb'}
@@ -925,7 +975,9 @@ switch param
         % Only applies when the name field has the string 'human' in it.
         if checkfields(sensor,'human'), val = sensor.human; end
     case {'humancone'}
-        val = sensor.human.cone;
+        if checkfields(sensor,'human')
+            val = sensor.human.cone;
+        end
     case {'humanlens', 'lens'}
         if checkfields(sensor,'human', 'lens')
             val = sensor.human.lens;
@@ -941,7 +993,8 @@ switch param
     case {'humanmaculardensity', 'macdens','maculardensity'}
         macular = sensorGet(sensor, 'human macular');
         val = macularGet(macular, 'density');
-    case {'humanmaculartransmittance','maculartrans','maculartransmittance'}
+    case {'humanmaculartransmittance', 'maculartrans', ...
+          'maculartransmittance'}
         % senosrGet(sensor,'macular transmittance')
         macular = sensorGet(sensor, 'human macular');
         val = macularGet(macular, 'transmittance');
@@ -1065,10 +1118,10 @@ switch param
         if checkfields(sensor, 'human', 'eyemove')
             val = sensor.human.eyemove;
         end
-    case {'emtype'}
+    case {'emflag'}
         % eye movement type
-        if checkfields(sensor, 'human', 'eyemove', 'emType')
-            val = sensor.human.eyemove.emType;
+        if checkfields(sensor, 'human', 'eyemove', 'emFlag')
+            val = sensor.human.eyemove.emFlag;
         end
     case {'emtremor'}
         % eye movemenet tremor structure
@@ -1089,7 +1142,7 @@ switch param
         error('Unknown sensor parameter.');
 end
 
-return;
+end
 
 %--------------------------------
 function cfaName = sensorCFAName(sensor)
@@ -1147,7 +1200,7 @@ else
     cfaName = 'Other';
 end
 
-return;
+end
 
 %------------------------------------------
 function spectralQE = sensorSpectralQE(sensor)
@@ -1177,12 +1230,12 @@ else
         pixelQE = ones(size(sensorIR(:)));
     end
     
-    % Compute the combined wavelength sensitivity including the ir filter, the
-    % pixel QE, and the color filters.
+    % Compute the combined wavelength sensitivity including the ir filter,
+    % the pixel QE, and the color filters.
     spectralQE = diag(pixelQE(:) .* sensorIR(:)) * cf;
 end
 
-return
+end
 
 %------------------------
 function val = sensorColorData(data,sensor,whichSensor)
@@ -1212,7 +1265,7 @@ thisSensor = rgb(:,:,whichSensor);
 l   = ~isnan(thisSensor);
 val = thisSensor(l);
 
-return;
+end
 
 % TODO:
 %

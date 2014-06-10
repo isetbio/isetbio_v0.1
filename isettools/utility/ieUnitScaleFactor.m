@@ -31,10 +31,10 @@ function sFactor = ieUnitScaleFactor(unitName)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('unitName'), error('Unit name must be defined.'); end
+if notDefined('unitName'), error('Unit name must be defined.'); end
+unitName = ieParamFormat(unitName);
 
-switch lower(unitName)
-    
+switch unitName
     % Convert space
     case {'nm','nanometer''nanometers'}
         sFactor = 1e9;
@@ -71,7 +71,7 @@ switch lower(unitName)
         sFactor = (180/pi)*60*60;
         
     otherwise
-        errordlg('Unknown spatial unit specification');
+        error('Unknown spatial unit specification');
 end
 
 return;

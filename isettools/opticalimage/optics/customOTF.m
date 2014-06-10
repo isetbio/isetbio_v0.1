@@ -51,7 +51,7 @@ otfSupport = opticsGet(optics,'otfSupport');
 
 % Find the OTF at each wavelength. We may be interpolating from the custom
 % data.
-if isscalar(wavelength) == 1
+if isscalar(wavelength)
     % Should we be interpolating here?
     OTF2D = opticsGet(optics,'otfData',wavelength);
     % figure(1); mesh(X,Y,OTF2D); 

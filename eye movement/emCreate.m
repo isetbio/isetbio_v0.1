@@ -11,11 +11,11 @@ function em = emCreate(params)
 %     .sampTime - sampling time in secs, e.g. 0.001 stands for 1ms per
 %                 sample
 %     .totTime  - total time of eye-movement sequence in secs, will be
-%                 rounded to a multiple of sampTime
+%                 rounded to a multiple of sampTime (removed)
 %     .tremor   - parameters for tremor, could include
 %        .interval   = mean of occurring interval in secs
 %        .intervalSD = standard deviation of interval
-%        .amplitude  = the randomness of tremor in degrees
+%        .amplitude  = the randomness of tremor in rad
 %        
 %     .drift    - parameters for drift, could include
 %        .speed     = speed of the slow drifting
@@ -24,8 +24,8 @@ function em = emCreate(params)
 %                 .microsaccade, could include fields as
 %        .interval   = mean of occurring interval in secs
 %        .intervalSD = standard deviation of interval
-%        .dirSD      = the randomness of moving direction
-%        .speed      = speed of micro-saccade
+%        .dirSD      = the randomness of moving direction (rad)
+%        .speed      = speed of micro-saccade (rad / sec)
 %        .speedSD    = standard deviation of speed
 %
 % Output Parameter:
@@ -68,27 +68,29 @@ if notDefined('params'), params = []; end
 
 % set params to default values
 % set general fields
-p.emType   = zeros(3,1); % emType - no eye movement
+p.name     = 'em structure';
+p.type     = 'eye movement';
+p.emFlag   = zeros(3,1); % emType - no eye movement
 p.sampTime = 0.001; % sample time interval - 1 ms
-p.totTime  = 5;     % total time of eye-movement - 5 secs
+% p.totTime  = 5;     % total time of eye-movement - 5 secs
 
 % set fields for tremor
-p.tremor.interval   = 0.012;   % Tremor mean frequency - 83 Hz
-p.tremor.intervalSD = 0.001;   % std of tremor frequency - 60~100 Hz
-p.tremor.amplitude  = 18/3600; % Tremor amplitude - around 1 cones width
+p.tremor.interval   = 0.012;          % Tremor mean frequency - 83 Hz
+p.tremor.intervalSD = 0.001;          % std of tremor frequency - 60~100 Hz
+p.tremor.amplitude  = 18/3600*pi/180; % Tremor amplitude -  18 arcsec
 
 % set fields for drift
 % There's a big difference for drift speed between literatures, we just
 % pick a reasonable value among them
-p.drift.speed   = 3/60;   % drift speed - drift mean speed
-p.drift.speedSD = 2/60;   % std of drift speed
+p.drift.speed   = 3/60*pi/180;   % drift speed - drift speed, rad/sec
+p.drift.speedSD = 1/60*pi/180;   % std of drift speed
 
 % set fields for micro-saccades
-p.msaccade.interval   = 0.6;   % micro-saccade interval - 0.6 secs
-p.msaccade.intervalSD = 0.3;   % std for micro-saccade interval
-p.msaccade.dirSD      = 5;     % std for direction
-p.msaccade.speed      = 15;    % micro saccade speed - 15 deg/s
-p.msaccade.speedSD    = 5;     % std for micro saccade speed
+p.msaccade.interval   = 0.6;       % micro-saccade interval - 0.6 secs
+p.msaccade.intervalSD = 0.3;       % std for micro-saccade interval
+p.msaccade.dirSD      = 5*pi/180;  % std for direction
+p.msaccade.speed      = 15*pi/180; % micro saccade speed - 15 rad/s
+p.msaccade.speedSD    = 5*pi/180;  % std for micro saccade speed
 
 % p.msaccade.duration   = 0.015; % duration of microsaccade
 
@@ -99,9 +101,9 @@ if ~isfield(params, 'msaccade') && isfield(params, 'microsaccade')
     params = rmfield(params, 'microsaccade');
 end
 em = setstructfields(p, params);
-em.totTime = round(em.totTime/em.sampTime)*em.sampTime;
+% em.totTime = round(em.totTime/em.sampTime)*em.sampTime;
 
 % some checks for params
-assert(numel(em.emType)==3, 'emType should be 3x1 logical vector');
+assert(numel(em.emFlag)==3, 'emType should be 3x1 logical vector');
 
 end
