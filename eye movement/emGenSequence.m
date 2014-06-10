@@ -32,8 +32,8 @@ if isempty(rSeed)
 else
     rng(rSeed);
 end
-emType = sensorGet(sensor, 'em type');
-if isempty(emType), error('eye movement type not defined'); end
+emFlag = sensorGet(sensor, 'em flag');
+if isempty(emFlag), error('eye movement type not defined'); end
 
 % Init positions
 pos = sensorGet(sensor, 'sensorpositions');
@@ -41,19 +41,21 @@ if isempty(pos), error('sensor positions length unknown'); end
 pos = zeros(size(pos));
 
 % Load general parameters
-sampTime  = sensorGet(sensor, 'sample time interval');
+em        = sensorGet(sensor, 'eye movement');
+sampTime  = emGet(em, 'sample time');
 seqLen    = size(pos, 1);
-mperdeg   = vcConstants('mmperdeg') / 1000;
-coneWidth = pixelGet(sensorGet(sensor, 'pixel'), 'width');
+% mperdeg   = vcConstants('mmperdeg') / 1000;
+% coneWidth = pixelGet(sensorGet(sensor, 'pixel'), 'width');
 
 %% Generate eye movement for tremor
-if emType(1)
+if emFlag(1)
     % Load parameters
-    tremor    = sensorGet(sensor, 'em tremor');
-    amplitude = tremor.amplitude * mperdeg / coneWidth; 
+    amplitude  = emGet(em, 'tremor amplitude', 'cones/sample');
+    interval   = emGet(em, 'tremor interval');
+    intervalSD = emGet(em, 'tremor interval SD');
     
     % Compute time of tremor occurs
-    t = tremor.interval + randn(seqLen, 1) * tremor.intervalSD;
+    t = interval + randn(seqLen, 1) * intervalSD;
     t(t < 0.001) = 0.001; % get rid of negative values
     t = cumsum(t);
     tPos = round(t / sampTime);
@@ -67,11 +69,10 @@ if emType(1)
 end
 
 %% Generate eye movement for drift
-if emType(2)
+if emFlag(2)
     % Load Parameters
-    params    = sensorGet(sensor, 'em drift');
-    speed     = params.speed * sampTime * mperdeg / coneWidth;
-    speedSD   = params.speedSD * sampTime * mperdeg / coneWidth;
+    speed     = emGet(em, 'drift speed', 'cones/sample');
+    speedSD   = emGet(em, 'drift speed SD', 'cones/sample');
     
     % Generate random move at each sample time
     theta = 360 * randn + 0.1 * (1 : seqLen)';
@@ -81,14 +82,13 @@ if emType(2)
 end
 
 %% Generate eye movement for micro-saccade
-if emType(3)
+if emFlag(3)
     % Load parameters
-    params     = sensorGet(sensor, 'em msaccade');
-    interval   = params.interval;
-    intervalSD = params.intervalSD;
-    dirSD      = params.dirSD;
-    speed      = params.speed * sampTime * mperdeg / coneWidth;
-    speedSD    = params.speedSD * sampTime * mperdeg / coneWidth;
+    interval   = emGet(em, 'msaccade interval');
+    intervalSD = emGet(em, 'msaccade interval SD');
+    dirSD      = emGet(em, 'msaccade dir SD', 'deg');
+    speed      = emGet(em, 'msaccade speed', 'cones/sample');
+    speedSD    = emGet(em, 'msaccade speed SD', 'cones/sample');
     
     % compute time of occurance
     t = interval + randn(seqLen, 1) * intervalSD;
