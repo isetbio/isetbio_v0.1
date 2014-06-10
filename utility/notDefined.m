@@ -41,7 +41,7 @@ cmd = [cmd1, ' || ',cmd2];
 
 % If either of these conditions holds, then not defined is true
 ndef = evalin('caller', cmd); % Check if variables exist in caller space
-if ndef && ~isempty(fieldString)
+if ~ndef && ~isempty(fieldString)
     ndef = evalin('caller', cmd3); % Check if field exists in structure
 end
 
