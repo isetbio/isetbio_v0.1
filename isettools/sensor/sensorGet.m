@@ -1044,8 +1044,8 @@ switch param
         % This is a vector with some number of exposures for each x,y
         % position (deg)
         warning('This field might be removed in the future');
-        disp(['For a general eyemovement sequence'...
-            'just set sensor positions to the sensor.']);
+        disp(['For a general eyemovement sequence '...
+            'set sensor positions to the sensor.']);
         
         if checkfields(sensor,'movement','framesPerPosition')
             val = sensor.movement.framesPerPosition;

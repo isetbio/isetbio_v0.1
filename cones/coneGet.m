@@ -13,8 +13,8 @@ function val = coneGet(cone, param, varargin)
 %  Supported params:
 %    {'name'}                        - user defined name of the cone
 %    {'type'}                        - should be 'cone'
-%    {'species', 'kind'}             - cone species, generally 'human'
-%    {'density', 'cone density'}     - density of each cone type, for
+%    {'species'}                     - cone species, generally 'human'
+%    {'cone spatial density'}        - density of each cone type, for
 %                                      human, it should be [K,L,M,S]
 %    {'wave', 'wavelength'}          - wavelength of samples in cones
 %    {'PODs','POD'}                  - pigment density vector for [L,M,S]

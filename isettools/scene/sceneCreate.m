@@ -141,13 +141,14 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %      {'linearIntensityRamp'}  -
 %      {'uniformEqualEnergy'}   - Equal energy
 %      {'uniformEqualPhoton'}   - Equal photon density
-%      {'uniformd65'}           -
+%      {'uniformd bb'}          - Blackbody, uniform
 %      {'whitenoise'}           - Noise pattern for testing
 %
 %    The uniform patterns are small by default (32,32).  If you would like
 %    them at a higher density (not much point), you can use
 %
-%        sceneCreate('uniformD65',256)
+%        sceneCreate('uniform D65',256)
+%        sceneCreate('uniform bb',128,6500)    - 6500 deg
 %
 %    where 256 is the image size in pixels.
 %
@@ -315,14 +316,12 @@ switch sceneName
         end
         scene = sceneUniform(scene,'D65',sz);
     case {'uniformbb'}
-        % scene = sceneCreate('uniformBB',64,5000,400:700);
-        if ~isempty(varargin)
-            if length(varargin) >= 1, sz = varargin{1}; end
-            if length(varargin) >= 2, cTemp = varargin{2}; end
-            if length(varargin) >= 3, scene = sceneSet(scene,'wave',varargin{3}); end
-        else
-            sz = 32; cTemp = 5000;
-        end
+        % scene = sceneCreate('uniform bb',64,5000,400:700);
+        sz = 32; cTemp = 5000; wave = 400:10:700;
+        if ~isempty(varargin),    sz    = varargin{1}; end
+        if length(varargin) >= 2, cTemp = varargin{2}; end
+        if length(varargin) >= 3, wave  = varargin{3}; end
+        scene = sceneSet(scene,'wave',wave);
         scene = sceneUniform(scene,'BB',sz,cTemp);
     case {'uniformmonochromatic'}
         % scene = sceneCreate('uniform monochromatic',sz,wavelength);
@@ -369,13 +368,13 @@ switch sceneName
         if length(varargin) >=2, width = varargin{2};   end
         scene = sceneBar(scene,sz,width);
     case {'vernier'}
-        % sceneCreate('vernier',type, params)
-        type = 'object'; params = [];
-        if length(varargin) >=1, type = varargin{1}; end
-        if length(varargin) >=2, params = varargin{2}; end
+        % sceneCreate('vernier',size,width,offset)
+        sz = 65; width = 3; offset = 3;
+        if length(varargin) >=1, sz     = varargin{1};   end
+        if length(varargin) >=2, width  = varargin{2};   end
+        if length(varargin) ==3, offset = varargin{3};   end
         
-        
-        scene = sceneVernier(scene, type,params);
+        scene = sceneVernier(scene,sz,width,offset);
     case {'whitenoise','noise'}
         % sceneCreate('noise',[128 128])
         sz = 128; contrast = 20;
@@ -847,7 +846,7 @@ spectralType = ieParamFormat(spectralType);
 switch lower(spectralType)
     case {'d65','equalenergy','equalphotons','ee'}
         il = illuminantCreate(spectralType,wave);
-    case {'blackbody'}
+    case {'blackbody','bb'}
         if isempty(varargin), cTemp = 5000;
         else                  cTemp = varargin{1};
         end
