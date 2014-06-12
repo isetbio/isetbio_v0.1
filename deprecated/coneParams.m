@@ -9,13 +9,14 @@ function p = coneParams(coneAperture,scene)
 %   scene = sceneSet(scene,'fov',1);
 %   p = coneParams(2e-6,scene);
 %
-%   p = coneParms;
+%   p = coneParams;
 %   h = sensorCreate('human',[],p);
 %
 % See also: sensorCreateConeMosaic, sensorCreate;
 %
 % (c) Stanford VISTA, Wandell, 2010
 
+warning('This function is deprecated. Use coneCreate instead');
 if notDefined('coneAperture'), coneAperture = 1.5e-6; end
 
 % Cone aperture in meters.

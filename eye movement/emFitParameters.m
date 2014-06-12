@@ -71,3 +71,5 @@ disp('covariance:'); disp(Sigma);
 %% Evaluate how well the data fits Gaussian
 skewness([xDiff yDiff])
 kurtosis([xDiff yDiff])
+
+end

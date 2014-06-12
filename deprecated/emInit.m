@@ -31,6 +31,7 @@ function [sensor, params] = emInit(emType, sensor, params)
 % (HJ) Copyright PDCSOFT TEAM 2013
 
 %% Check inputs and Init
+warning('This function is deprecated. Use emCreate, eyemoveInit instead');
 if notDefined('emType'), error('eye movement type required'); end
 if notDefined('sensor'), error('sensor required.'); end
 if notDefined('params'), error('parameters required.'); end

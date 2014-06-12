@@ -26,6 +26,7 @@ function [sensor,ic] = ctInitEyeMovements(sensor, scene, oi, nSamples, randSeed)
 % (HJ) Copyright PDCSOFT TEAM 2013
 
 %% Check inputs and Init
+warning('This function is not in use. See emCreate instead');
 if isempty(sensor)
     sensor = sensorCreate('human');
     sensor = sensorSet(sensor,'exp time',0.05);

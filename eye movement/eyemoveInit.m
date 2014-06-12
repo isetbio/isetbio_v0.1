@@ -1,7 +1,7 @@
-function sensor = eyemovementInit(sensor, params)
+function sensor = eyemoveInit(sensor, params)
 %% Init eye movement parameters in the sensor structure
 %
-%   sensor = eyemovementInit(sensor, [params])
+%   sensor = eyemoveInit(sensor, [params])
 %
 % Inputs:
 %   sensor:  human sensor structure (see sensorCreate)
@@ -72,73 +72,26 @@ function sensor = eyemovementInit(sensor, params)
 %
 % (HJ) Copyright PDCSOFT TEAM 2014
 
-warning('This function is under development. Please do not use it');
-% Make emCreate/Get/Set
-% Add ieParameterOtype() to isetbio, put it in oiGet/Set and sensorGet/Set
-% Attach this whole structure (after eliminating redundancy) to sensor.
-% 
-% See if we can simplify the optics modules.  (dlCore, all that jazz)
-%
-
 %% Init
 if notDefined('sensor'), sensor = sensorCreate('human'); end
 if notDefined('params'), params = []; end
 
 %% Generate eye-movement parameters
-params = emFillParams(params);
+em = emCreate(params);
 
 %% Set eye-movement parameters to sensor
-sensor = sensorSet(sensor, 'sample time interval', params.sampTime);   % Typically about 1 ms.
-sensor = sensorSet(sensor, 'total time', params.totTime);              % Should use n samples
-sensor = sensorSet(sensor, 'em type', params.emType);
-sensor = sensorSet(sensor, 'em tremor', params.tremor);
-sensor = sensorSet(sensor, 'em drift', params.drift);
-sensor = sensorSet(sensor, 'em microsaccade', params.msaccade);
-
+sensor = sensorSet(sensor, 'eye movement', em);
+nSamples = 5000;
+if isfield(params, 'nSamples')
+    nSamples = params.nSamples;
+elseif isfield(params, 'totTime')
+    sampTime = sensorGet(sensor, 'sample time inerval');
+    nSamples = round(params.totTime / sampTime);
 end
+pos = zeros(nSamples, 2);
+sensor = sensorSet(sensor, 'sensorpositions', pos);
 
-%% Aux-function: generate default params
-function params = emFillParams(params)
-% Fill in default values for missing fields in params
-if notDefined('params'), params = []; end
-
-% set params to default values
-% set general fields
-p.emType   = zeros(3,1); % emType - no eye movement
-p.sampTime = 0.001; % sample time interval - 1 ms
-p.totTime  = 5;     % total time of eye-movement - 5 secs
-
-% set fields for tremor
-p.tremor.interval   = 0.012;   % Tremor mean frequency - 83 Hz
-p.tremor.intervalSD = 0.001;   % std of tremor frequency - 60~100 Hz
-p.tremor.amplitude  = 18/3600; % Tremor amplitude - around 1 cones width
-
-% set fields for drift
-% There's a big difference for drift speed between literatures, we just
-% pick a reasonable value among them
-p.drift.speed   = 3/60;   % drift speed - drift mean speed
-p.drift.speedSD = 2/60;   % std of drift speed
-
-% set fields for micro-saccades
-p.msaccade.interval   = 0.6;   % micro-saccade interval - 0.6 secs
-p.msaccade.intervalSD = 0.3;   % std for micro-saccade interval
-p.msaccade.dirSD      = 5;     % std for direction
-p.msaccade.speed      = 15;    % micro saccade speed - 15 deg/s
-p.msaccade.speedSD    = 5;     % std for micro saccade speed
-
-% p.msaccade.duration   = 0.015; % duration of microsaccade
-
-
-% merge params with default values
-if ~isfield(params, 'msaccade') && isfield(params, 'microsaccade')
-    params.msaccade = params.microsaccade;
-    params = rmfield(params, 'microsaccade');
-end
-params = setstructfields(p, params);
-params.totTime = round(params.totTime/params.sampTime)*params.sampTime;
-
-% some checks for params
-assert(numel(params.emType)==3, 'emType should be 3x1 logical vector');
+sensor = emGenSequence(sensor);
 
 end
 %% END

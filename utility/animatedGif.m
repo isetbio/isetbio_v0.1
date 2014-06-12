@@ -1,4 +1,4 @@
-function fName = animatedGif(pImg,fName)
+function fName = animatedGif(pImg, fName)
 % Save an animated gif from a 3D volume of gray scale images
 %
 %
@@ -12,8 +12,8 @@ function fName = animatedGif(pImg,fName)
 %
 % BW,HJ PDCSOFT Team 2013
 
-if ieNotDefined('pImg'), error('3D volume of data needed'); end
-if ieNotDefined('fName'), fName = fullfile(pwd,'tmp.gif'); end
+if notDefined('pImg'), error('3D volume of data needed'); end
+if notDefined('fName'), fName = fullfile(pwd,'tmp.gif'); end
 
 % Look forever
 loops=65535;
@@ -35,4 +35,4 @@ end
 
 fprintf('Finished creating animated gif in file %s\n',fName);
 
-%%
+end

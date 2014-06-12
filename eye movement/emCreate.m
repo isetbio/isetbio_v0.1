@@ -72,7 +72,6 @@ p.name     = 'em structure';
 p.type     = 'eye movement';
 p.emFlag   = zeros(3,1); % emType - no eye movement
 p.sampTime = 0.001; % sample time interval - 1 ms
-% p.totTime  = 5;     % total time of eye-movement - 5 secs
 
 % set fields for tremor
 p.tremor.interval   = 0.012;          % Tremor mean frequency - 83 Hz
@@ -91,9 +90,6 @@ p.msaccade.intervalSD = 0.3;       % std for micro-saccade interval
 p.msaccade.dirSD      = 5*pi/180;  % std for direction
 p.msaccade.speed      = 15*pi/180; % micro saccade speed - 15 rad/s
 p.msaccade.speedSD    = 5*pi/180;  % std for micro saccade speed
-
-% p.msaccade.duration   = 0.015; % duration of microsaccade
-
 
 % merge params with default values
 if ~isfield(params, 'msaccade') && isfield(params, 'microsaccade')

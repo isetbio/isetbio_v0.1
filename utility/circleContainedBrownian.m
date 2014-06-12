@@ -1,4 +1,4 @@
-function [locs defs] = circleContainedBrownian(t, param)
+function [locs, defs] = circleContainedBrownian(t, param)
 % create a random-walk path confined to a circle for timepoints t
 %
 %  locs = circleContainedBrownian(t, param)
