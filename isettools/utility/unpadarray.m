@@ -22,5 +22,5 @@ else
     outArray = inArray(rows,cols);
 end
 
-return
+end
 

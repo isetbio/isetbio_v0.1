@@ -64,3 +64,5 @@ colorbar ; shading flat ; axis square tight ;
 if nargout>0
     Hout=H;
 end
+
+end

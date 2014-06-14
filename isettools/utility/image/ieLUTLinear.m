@@ -11,7 +11,8 @@ function DAC = ieLUTLinear(RGB, gTable)
 %
 % We define
 %  * The gamma table maps the digital values to the display intensity.
-%  * The inverse gamma table maps the display intensity to the digital values.
+%  * The inverse gamma table maps the display intensity to the digital
+%    values.
 %
 %  We expect a gTable to have size 2^nBits x 3.  If the gTable has size
 %  2^nBits x 1, we assume the three channels are the same. In this

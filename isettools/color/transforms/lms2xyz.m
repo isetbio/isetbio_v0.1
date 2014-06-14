@@ -27,5 +27,5 @@ elseif ismatrix(lms)
     end
 end
 
-return
+end
 

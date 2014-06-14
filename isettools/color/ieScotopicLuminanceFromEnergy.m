@@ -1,4 +1,4 @@
-function lum = ieScotopicLuminanceFromEnergy(energy,wave)
+function lum = ieScotopicLuminanceFromEnergy(energy, wave)
 % Compute the scotopic (rod) luminance from spectral energy
 %
 %  lum = ieScotopicLuminanceFromEnergy(energy,wave)
@@ -12,8 +12,8 @@ function lum = ieScotopicLuminanceFromEnergy(energy,wave)
 %   The energy data format can be either XW or RGB.  WAVE describes the
 %   wavelength samples.
 %
-%   The CIE defines a formula to compute scotopic luminance from the spectral radiance
-%   distribution (energy).
+%   The CIE defines a formula to compute scotopic luminance from the
+%   spectral radiance distribution (energy).
 %
 %       scotopicLuminance = Km * (xwData*Vprime) * deltaLambda;
 %
@@ -38,7 +38,9 @@ function lum = ieScotopicLuminanceFromEnergy(energy,wave)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-% xwData = ieConvert2XW(energy,wave);
+if notDefined('wave'), error('wavelength required'); end
+if notDefined('energy'), error('energy required'); end
+
 switch vcGetImageFormat(energy,wave)
     case 'RGB'
         xwData = RGB2XWFormat(energy);
@@ -51,10 +53,8 @@ fName = fullfile(isetRootPath,'data','human','rods.mat');
 Vprime = ieReadSpectra(fName,wave);
 
 if numel(wave) > 1,  dWave = wave(2) - wave(1);
-else                 dWave = 10;   disp('10 nm band assumed');
+else                 dWave = 10; disp('10 nm band assumed');
 end
 lum = 1745*(xwData*Vprime) * dWave;
 
-return;
-
-
+end

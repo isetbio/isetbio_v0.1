@@ -42,7 +42,7 @@ function lab = xyz2lab(xyz, whitepoint, useOldCode)
 % - BW ). 
 
 if notDefined('xyz'), error('No data.'); end
-if notDefined('whitepoint'), error('A whitepoint is required for conversion to CIELAB.'); end
+if notDefined('whitepoint'), error('Whitepoint is required'); end
 if notDefined('useOldCode'), useOldCode = 0; end
 
 if (exist('makecform', 'file') == 2) &&  ~useOldCode
@@ -53,7 +53,7 @@ if (exist('makecform', 'file') == 2) &&  ~useOldCode
     lab = applycform(xyz,cform);
 else
     % Set the white point values
-    if   (length(whitepoint)~=3 ), error('whitepoint must be a three vector')
+    if   (numel(whitepoint)~=3 ), error('whitepoint must be 3x1')
     else Xn = whitepoint(1); Yn = whitepoint(2); Zn = whitepoint(3);
     end
 

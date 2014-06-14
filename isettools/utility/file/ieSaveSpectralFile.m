@@ -27,31 +27,29 @@ function fullpathname = ieSaveSpectralFile(wavelength,data,comment,fullpathname,
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('data') , error('data required.'); end
-if ieNotDefined('wavelength'), error('wavelength required'); end
-if ieNotDefined('comment'), comment = ''; end
+if notDefined('data') , error('data required.'); end
+if notDefined('wavelength'), error('wavelength required'); end
+if notDefined('comment'), comment = ''; end
 
 % Check data format for match with wavelength
 if ndims(data) == 3
     % Data are in RGB format
     if length(wavelength) ~= size(data,3)
-        errordlg('The 3rd dimension of data must match number of wavelengths');
+        error('Third dimension of data must match number of wavelengths');
     end
-elseif ndims(data) == 2
+elseif ismatrix(data)
     % Data are in the columns
     if length(wavelength) ~= size(data,1)
-        errordlg('The row dimension of data must match number of wavelengths');
+        errordlg('Row dimension of data must match number of wavelengths');
     end
 end
 
 if ieNotDefined('fullpathname')
-    fullpathname = vcSelectDataFile([isetRootPath,filesep,'data'],'w','mat');
-    if isempty(fullpathname)
-        disp('User canceled');
-        return;
-    end
+    fullpathname = vcSelectDataFile([isetRootPath,filesep,'data'],...
+                                    'w','mat');
+    if isempty(fullpathname), disp('User canceled'); return; end
 end
-if ieNotDefined('dFormat'), dFormat = 'double'; end
+if notDefined('dFormat'), dFormat = 'double'; end
 
 % Manage data format for compression.
 % This was put in for handling the hyperspectral face data.  The file sizes
@@ -62,7 +60,7 @@ switch dFormat
         % Do nothing - Typical for filters and simple data
     case 'single'
         % Not yet used
-        data = single(data); %#ok<NASGU>
+        data = single(data);
     case 'compressed32'
         % Compression is used for image data
         [s, mn, mx] = ieCompressData(data,32);
@@ -76,6 +74,6 @@ switch dFormat
         error('Unknown data format %s\n',dFormat);
 end
 
-save(fullpathname,'wavelength','data','comment','dFormat');
+save fullpathname wavelength data comment dFormat;
 
-return;
+end

@@ -62,7 +62,7 @@ set(gca,'xlim',[350 750]), grid on
 % phosphors are in the columns of the matrix on the right, and the
 % xbar,ybar,zbar functions are in the rows of the matrix on the left.
 
-maxXYZ = XYZ'*phosphors
+maxXYZ = XYZ'*phosphors;
 
 % The luminance of each phosphor is given by the Y values.  The
 % maximum value is when the phosphors are set to maximum intensity.
@@ -116,7 +116,7 @@ title('SPD of Red and Blue Phosphors combined');
 % the XYZ values.  This matrix is
 % 
 
-mon2XYZ = XYZ'*phosphors
+mon2XYZ = XYZ'*phosphors;
 
 % Take a look at this matrix and think about its entries.  Notice that the
 % first column contains the XYZ values associated with the red phosphor,
@@ -129,9 +129,7 @@ mon2XYZ = XYZ'*phosphors
 % XYZ values of the spectrum?  For this, we need a matrix that converts XYZ
 % to monitor linear gun intensities, the inverse of the matrix that we
 % have.  So, we calculate this new matrix as
-
-XYZ2mon = inv(mon2XYZ)
-marsRGB = XYZ2mon*marsXYZ
+marsRGB = mon2XYZ\marsXYZ;
 
 % The spectrum we should display, therefore, is equal to 
 
@@ -233,6 +231,7 @@ grid on
 % functions.  To see the code enter "type mkInvGammaTable"
 
 invGamTable = mkInvGammaTable(monitorGam,1000);
+% invGamTable = ieLUTInvert(monitorGam, 1000);
 plot((1:1000)/1000,invGamTable), grid on
 xlabel('Relative intensity')
 ylabel('Frame buffer level')
@@ -250,13 +249,13 @@ title('Inverse Gamma Table Values');
 % intensities of [.1 .3 .5 .7 .9] we calculate as
 
 intensity = (.1:.2:.9);
-intensityX = round(intensity*1000)
-fb = round(invGamTable(intensityX,1))
+intensityX = round(intensity*1000);
+fb = round(invGamTable(intensityX,1));
 
 % Now, let's see how well we did.  Here are the intensities we
 % will obtain with these frame buffer values.
 
-obtainedIntensity = monitorGam(fb,1)
+obtainedIntensity = monitorGam(fb,1);
 
 % We can plot the obtained and desired intensities in a graph
 % We are close, but because of the quantization of the device we
@@ -278,12 +277,12 @@ title('Ideal vs Obtained Intensity');
 % phosphors are set to maximum intensity.  These can be computed
 % as
 
-whitePoint = chromaticity(sum(maxXYZ,2)')'
+whitePoint = chromaticity(sum(maxXYZ,2)')';
 
 % The (x,y) chromaticity coordinates of the phosphors can be
 % computed individually as
 
-xyMonitor = chromaticity(maxXYZ')'
+xyMonitor = chromaticity(maxXYZ')';
 
 % We can build a graph describing the chromaticity coordinates of
 % the phosphors and the white point by first computing the xy

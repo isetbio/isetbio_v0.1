@@ -1,4 +1,4 @@
-function [spec, XYZ] = daylight( wave, cct, units )
+function [spec, XYZ] = daylight(wave, cct, units)
 % Generate a daylight SPD with a correlated color temperature
 %
 % [SPD, XYZ, wave] = daylight( WAVE, cct )
@@ -14,17 +14,18 @@ function [spec, XYZ] = daylight( wave, cct, units )
 %   w = 400:700; spd = daylight(w,6500,'energy'); plot(w,spd)
 %   w = 400:700; spd = daylight(w,6500,'photons'); plot(w,spd)
 %
-%   w = 400:700; [spd, XYZ] = daylight(w,[4000 6500],'photons'); plot(w,spd)
+%   w = 400:700; [spd, XYZ] = daylight(w,[4000 6500],'photons');
+%   plot(w,spd)
 %
 % See also: blackbody, cct2sun
 %
 % Copyright Imageval 2010
 
-if notDefined('wave'), wave = 400:10:700; end
+if notDefined('wave'),  wave = 400:10:700; end
 if notDefined('units'), units = 'energy'; end
-if notDefined('cct'), cct = 6500; end
+if notDefined('cct'),   cct = 6500; end
 
-spec = cct2sun( wave, cct, units );
+spec = cct2sun(wave, cct, units);
 
 % Scale so first spectrum is 100 cd/m^2.
 units = ieParamFormat(units);
@@ -46,4 +47,4 @@ if nargout == 2
 end
 
 
-return
+end

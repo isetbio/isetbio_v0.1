@@ -268,7 +268,7 @@ switch parm
         else
             fov = varargin{1};
             imageDistance = opticsGet(optics,'focal plane distance');
-            val = 2*imageDistance*tan(ieDeg2rad(fov/2));
+            val = 2*imageDistance*tand(fov/2);
             if length(varargin) < 2, return;
             else val = ieUnitScaleFactor(varargin{2})*val;
             end
@@ -282,7 +282,7 @@ switch parm
         else
             fov = varargin{1};
             imageDistance = opticsGet(optics,'focalplanedistance');
-            val = 2*imageDistance*tan(ieDeg2rad(fov/2));
+            val = 2*imageDistance*tand(fov/2);
             if length(varargin) < 2, return;
             else val = ieUnitScaleFactor(varargin{2})*val;
             end
@@ -549,16 +549,16 @@ switch parm
         % adjacent edge of the right triangle from the image plane to the lens.
         %
         % 1 deg of visual angle is
-        %   tan(opp/(1/D0)) = ieDeg2rad(1)           (rad)
-        %   opp/(1/D0) = atan(ieDeg2rad(1))          (1/rad)
-        %   opp = atan(ieDeg2rad(1))*(1/D0)          (1/rad * meter)
-        %   c = 1/opp = 1/ (atan(ieDeg2rad(1))*(1/D0))   1 / ((1/rad) * meter) = rad/meter
+        %   tan(opp/(1/D0)) = 1             (deg)
+        %   opp/(1/D0) = atand(1)           (1/rad)
+        %   opp = atand(1)*(1/D0)           (1/rad * meter)
+        %   1/opp = 1/ (atand(1)*(1/D0))    (rad/meter)
         %
         % The conversion is: (cycles/rad) * (rad/meter) = cycles/meter
         units = 'm'; 
         if ~isempty(varargin), units = varargin{1}; end
         D0 = opticsGet(optics,'power',units); 
-        val = 1/( (1/D0) * atan(ieDeg2rad(1)) );  
+        val = 1/(1/D0 * atand(1));  
         
     case {'distperdeg','distanceperdegree'}
         units = 'm';

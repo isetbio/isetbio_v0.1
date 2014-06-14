@@ -51,7 +51,7 @@ currentFOV  = sensorGet(sensor,'fov horizontal',scene,oi);
 % val = ieRad2deg(2*atan(0.5*width/distance));
 % desired width is
 % distance     = opticsGet(oiGet(oi,'optics'),'focallength');
-% desiredWidth = 2*distance*tan(ieDeg2rad(deg)/2);
+% desiredWidth = 2*distance*tand(deg/2);
 newSize = round(sz * (newFOV/currentFOV) );
 
 % The new sensor has to have at least the number of pixels in the cfa block

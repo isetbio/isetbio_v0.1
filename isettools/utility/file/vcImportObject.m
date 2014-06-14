@@ -24,9 +24,9 @@ function [newVal,fullName] = vcImportObject(objType,fullName,preserveDataFlag)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('objType'), objType = 'SCENE'; end
-if ieNotDefined('fullName'), fullName = []; end
-if ieNotDefined('preserveDataFlag')
+if notDefined('objType'), objType = 'SCENE'; end
+if notDefined('fullName'), fullName = []; end
+if notDefined('preserveDataFlag')
     switch lower(objType)
         case {'scene','opticalimage','oi','isa','sensor','vcimage'}
             preserveDataFlag = 0;
@@ -69,7 +69,7 @@ switch lower(objType)
 end
 
 
-return;
+end
 
 %----------------------------------------------------------
 function [obj,fullName] = vcLoad(objType,fullName)
@@ -80,7 +80,7 @@ function [obj,fullName] = vcLoad(objType,fullName)
 
 obj = [];
 
-if ieNotDefined('fullName')
+if notDefined('fullName')
     windowTitle = sprintf('Select %s file name',objType);
     fullName = vcSelectDataFile('session','r','mat',windowTitle);
     if isempty(fullName), return; end
@@ -99,6 +99,6 @@ switch(lower(objType))
         error('Unknown object type');
 end
 
-return;
+end
 
 

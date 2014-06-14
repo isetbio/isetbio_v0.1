@@ -20,30 +20,19 @@ function [fullName, imageType] = vcSelectImage(imageType,imgDir,ext)
 % Programming notes:
 %  I am concerned whether the imageType is always determined correctly.
 
-if ieNotDefined('imageType'), imageType = ''; end
-if ieNotDefined('ext'), ext = '*'; end
+if notDefined('imageType'), imageType = ''; end
+if notDefined('ext'), ext = '*'; end
 
 curDir = pwd;
-
-switch lower(imageType)
-    case 'rgb'
-        fileFilter = '*.*';
-    case 'multispectral'
-        fileFilter = '*.mat';
-    case {'monochrome','unispectral'}
-        imageType = 'unispectral';
-        fileFilter = '*.*';
-    otherwise
-        fileFilter = '*.*';
+if notDefined('imgDir')
+    imgDir = fullfile(isetRootPath,'data','images',imageType);
 end
-
-windowTitle = sprintf('Select %s file',imageType);
-if ieNotDefined('imgDir'), imgDir = fullfile(isetRootPath,'data','images',imageType); end
 
 chdir(imgDir)
 fullName = vcSelectDataFile('stayput','r',ext);
 
-if isempty(fullName), imageType = ''; return;
+if isempty(fullName)
+    imageType = '';
 elseif nargout == 2
     % Try to determine the image type, if this is requested.
     imageType = ieImageType(fullName);
@@ -51,5 +40,5 @@ end
 
 chdir(curDir)
 
-return;
+end
 

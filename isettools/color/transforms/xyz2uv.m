@@ -27,7 +27,7 @@ function [u,v] = xyz2uv(xyz,format)
 %
 % Example:
 %  wave = 400:10:700;
-%  d65 = vcReadSpectra('D65',wave);
+%  d65 = ieReadSpectra('D65',wave);
 %  XYZ = ieXYZFromEnergy(d65',wave);   
 %  [uP,vP] = xyz2uv(XYZ)
 %  u = uP, v = vP/1.5
@@ -59,4 +59,5 @@ v(nz) = 9*xyz(nz,2) ./ B(nz);
 
 % Check if the old 1960s (u,v), not (u',v') is being requested.
 if isequal(format,'uv'), v = v/1.5; end
+
 end

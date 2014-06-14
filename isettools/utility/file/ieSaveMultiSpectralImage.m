@@ -22,40 +22,30 @@ function fullName = ieSaveMultiSpectralImage(fullName,mcCOEF,basis,comment,imgMe
 %    spd = imageLinearTransform(mcCOEF,basis');
 %
 % See also: mcCreateMultispectralBases, CombineExposureColor
-%
-% Example:
-%
-%  ieSaveMultiSpectralImage('c:\user\Matlab\data\Tungsten','MacbethChart-hdrs',mcCOEF,basis,basisLights,illuminant,comment)
-%
-% See also:  multicapture repository on github
+% See also: multicapture repository on github
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
 
-if ieNotDefined('mcCOEF'),     error('Coefficients required');     end
-if ieNotDefined('basis'),      error('Basis function required.');  end
-if ieNotDefined('comment'),    comment = sprintf('Date: %s\n',date); end %#ok<NASGU>
-
-% See Programming TODO above.
-if ieNotDefined('illuminant'), error('Illuminant required'); end
-% If the illuminant is not in the modern illuminant format, we should
-% convert it to that format here.
-% illuminant = illuminantModernize(illuminant);
-
-if ieNotDefined('fullName')
-    fullName = vcSelectDataFile('stayput','w','mat','Save multispectral data file.');
+if notDefined('mcCOEF'),  error('Coefficients required');     end
+if notDefined('basis'),   error('Basis function required.');  end
+if notDefined('comment'), comment = sprintf('Date: %s\n',date); end
+if notDefined('illuminant'), error('Illuminant required'); end
+if notDefined('fullName')
+    fullName = vcSelectDataFile('stayput', ...
+                        'w','mat','Save multispectral data file.');
 end
  
 % Write out the matlab data file with all of the key information needed.
 % Sometimes we save out data approximated using only the SVD
 % Other times, we use a principal component method and have an image mean
 %
-if ieNotDefined('imgMean'), 
-    save(fullName,'mcCOEF','basis','comment','illuminant');
+if notDefined('imgMean'), 
+    save fullName mcCOEF basis comment illuminant;
 else
-    save(fullName,'mcCOEF','basis','imgMean','comment','illuminant');
+    save fullName mcCOEF basis imgMean comment illuminant;
 end
 
-return;
+end
 
 

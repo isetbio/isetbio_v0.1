@@ -40,7 +40,8 @@ function fullFileName = ieSaveColorFilter(inData,fullFileName)
 %     isa = sensorCreate;
 %     ieSaveColorFilter(isa);
 %
-%     filterStruct = load(fullfile(isetRootPath,'data','sensor','colorfilters','NikonD100'));
+%     filterStruct = load(fullfile(isetRootPath, ...
+%                       'data','sensor','colorfilters','NikonD100'));
 %     filterStruct.filterNames{1} = 'r_Nikon';
 %     filterStruct.filterNames{2} = 'g_Nikon';
 %     filterStruct.filterNames{3} = 'b_Nikon';
@@ -51,7 +52,9 @@ function fullFileName = ieSaveColorFilter(inData,fullFileName)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 %%
-if ieNotDefined('fullFileName'), fullFileName = vcSelectDataFile('sensor','w','mat'); end
+if notDefined('fullFileName')
+    fullFileName = vcSelectDataFile('sensor','w','mat');
+end
 
 
 %% Sensor and structure cases
@@ -66,9 +69,10 @@ if isfield(inData,'type') && strcmp(sensorGet(inData,'type'),'ISA')
     comment     = ieReadString('Sensor comment field');
     if ieNotDefined('Units'), units = 'photons'; end
 
-    save(fullFileName,'wavelength','data','comment','filterNames','units');
+    save fullFileName wavelength data comment filterNames units;
 
-elseif isfield(inData,'data') && isfield(inData,'wavelength') && isfield(inData,'filterNames')
+elseif isfield(inData,'data') && ...
+       isfield(inData,'wavelength') && isfield(inData,'filterNames')
     
     % Structure case
     wavelength  = inData.wavelength;
@@ -80,7 +84,7 @@ elseif isfield(inData,'data') && isfield(inData,'wavelength') && isfield(inData,
     if isfield(inData,'units'), units = inData.units;
     else units = 'photons';
     end
-    save(fullFileName,'wavelength','data','comment','filterNames','units');
+    save fullFileName wavelength data comment filterNames units;
 
     % We now check for additional fields and save those as well.  The user
     % can insert these fields even though they are not stored as part of
@@ -89,12 +93,13 @@ elseif isfield(inData,'data') && isfield(inData,'wavelength') && isfield(inData,
     % If there are field structures not in the default list, append them to
     % the data file.  The user may want them.
     for ii=1:length(fldNames)
-        if ~strcmp(fldNames{ii},{'wavelength','data','comment','filterNames','units'})
-            eval([fldNames{ii},' = inData.',fldNames{ii},';']);
-            % Write the user-defined field to the file: save(fullFileName,'thisField')
+        if ~strcmp(fldNames{ii}, ...
+                {'wavelength','data','comment','filterNames','units'})
+            fldNames{ii} = inData.(fldNames{ii});
+            % Write the user-defined field to the file
             eval(['save(fullFileName,''-append'',''',fldNames{ii},''')']);
         end
     end
 end
 
-return;
+end

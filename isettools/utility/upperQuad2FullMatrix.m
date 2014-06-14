@@ -38,5 +38,5 @@ end
 
 fullmatrix = [upperLeft, upperRight; lowerLeft, lowerRight];
 
-return;
+end
 

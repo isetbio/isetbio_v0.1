@@ -57,6 +57,4 @@ else                 dWave = 10;   disp('10 nm band assumed');
 end
 lum = 683*(xwData*V) * dWave;
 
-return;
-
-
+end

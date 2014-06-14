@@ -20,6 +20,6 @@ sformatted = lower(s);
 % Remove spaces
 sformatted = strrep(sformatted,' ','');
 
-return;
+end
 
 

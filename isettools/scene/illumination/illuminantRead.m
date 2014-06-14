@@ -44,7 +44,7 @@ function spectralRadiance = illuminantRead(illP,lightName)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('illP')
+if notDefined('illP')
     if ieNotDefined('lightName')
         name = 'd65';
         warndlg('No illuminant name.  Assuming D65');
@@ -60,7 +60,7 @@ end
 
 name = ieParamFormat(name);
 
-switch lower(name)
+switch name
     case {'tungsten'}
         SPD = ieReadSpectra('data/lights/Tungsten',wave);
     case {'illuminantc'}
@@ -69,7 +69,7 @@ switch lower(name)
         SPD = ieReadSpectra('data/lights/D50',wave);
     case {'fluorescent'}
         SPD = ieReadSpectra('data/lights/Fluorescent',wave);
-    case {'d65','D65'}
+    case {'d65'}
         SPD = ieReadSpectra('data/lights/D65',wave);
         
     case {'white','uniform','equalenergy'}
@@ -89,7 +89,7 @@ switch lower(name)
     case {'555nm','monochrome'}
         SPD = zeros(length(wave),1);
         % Set the wavelength closest to 555 to 1
-        [v,idx] = min(abs(wave - 555));
+        [~, idx] = min(abs(wave - 555));
         SPD(idx) = 1;
         
     otherwise   
@@ -106,4 +106,4 @@ spectralRadiance = (SPD / currentL) * luminance;
 %  ieLuminanceFromEnergy(spectralRadiance',wave)
 %  ieXYZFromEnergy(spectralRadiance',wave)
 
-return
+end

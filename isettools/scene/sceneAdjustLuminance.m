@@ -22,16 +22,7 @@ function scene = sceneAdjustLuminance(scene,meanL)
 currentMeanL  = sceneGet(scene,'mean luminance');
 photons       = sceneGet(scene,'photons');
 
-try
-    photons   = photons*(meanL/currentMeanL);
-catch err
-    % Probably the data are too big for memory.  So scale the photons
-    % one waveband at a time.
-    nWave = sceneGet(scene,'wave');
-    for ii=1:nWave
-        photons(:,:,ii) = photons(:,:,ii)*(meanL/currentMeanL);
-    end
-end
+photons    = photons * (meanL/currentMeanL);
 
 % We scale the photons and the illuminant data by the same amount to keep
 % the reflectances in 0,1 range.
@@ -40,4 +31,4 @@ illuminant = sceneGet(scene,'illuminant photons');
 illuminant = illuminant*(meanL/currentMeanL);
 scene      = sceneSet(scene,'illuminant photons',illuminant);
 
-return;
+end

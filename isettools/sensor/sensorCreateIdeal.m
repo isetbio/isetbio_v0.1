@@ -114,7 +114,7 @@ switch lower(idealType)
         % scaling is required.
         fname  = fullfile(isetRootPath,'data','human','XYZQuanta.mat');
         wave = sensorGet(sensor(1),'wave');
-        transmissivities = vcReadSpectra(fname, wave);   %Load and interpolate filters
+        transmissivities = ieReadSpectra(fname, wave);   %Load and interpolate filters
         transmissivities = transmissivities/max(transmissivities(:));        
         filterNames = {{'rX'}, {'gY'}, {'bZ'}};          %Names for color plots    
         for ii=1:3
@@ -165,7 +165,7 @@ switch lower(idealType)
         % scaling is not optional.
         fname  = fullfile(isetRootPath,'data','human','XYZQuanta.mat');
         wave = 400:10:700;
-        transmissivities = vcReadSpectra(fname, wave);   %Load and interpolate filters
+        transmissivities = ieReadSpectra(fname, wave);   %Load and interpolate filters
         transmissivities = transmissivities/max(transmissivities(:));
         
         filterNames = {{'rX'}, {'gY'}, {'bZ'}};          %Names for color plots    

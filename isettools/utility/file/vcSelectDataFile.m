@@ -31,7 +31,7 @@ function fullName = vcSelectDataFile(dataType,rw,ext,windowTitle)
 %
 % Examples
 %  fullName = vcSelectDataFile('session','r')
-%  fullName = vcSelectDataFile('session','r','tif')  -- Select only files with a .tif extension.
+%  fullName = vcSelectDataFile('session','r','tif')
 %  fullName = vcSelectDataFile('data','w')
 %  data = ieReadSpectralData(vcSelectDataFile('sensor'))
 %
@@ -42,9 +42,9 @@ function fullName = vcSelectDataFile(dataType,rw,ext,windowTitle)
 % TODO
 % Possibly, we should enforce the extension on the returned file name?
 
-if ieNotDefined('dataType'), dataType = 'session'; end
-if ieNotDefined('rw'), rw = 'r'; end
-if ieNotDefined('ext'), ext = '*'; end
+if notDefined('dataType'), dataType = 'session'; end
+if notDefined('rw'), rw = 'r'; end
+if notDefined('ext'), ext = '*'; end
 
 curDir = pwd;
 
@@ -67,7 +67,7 @@ switch lower(dataType)
     case {'data'}
         fullPath = fullfile(isetRootPath,'data');
 
-        % Check that directory exists.  If not, try using the last directory.
+        % Check that directory exists. If not, try using the last directory
         % Otherwise, just go to data.
         if ~exist(fullPath,'dir'),
             if  ~isempty(pDir), fullPath = pDir;
@@ -102,7 +102,7 @@ switch lower(rw)
         error('Read/Write set incorrectly')
 end
 
-% Clean up and go home
+% Clean up and return
 chdir(curDir)
 if isequal(fname,0) || isequal(pname,0), fullName = [];
 else
@@ -110,4 +110,4 @@ else
     pDir = pname;
 end
 
-return;
+end

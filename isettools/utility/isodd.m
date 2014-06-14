@@ -3,8 +3,7 @@ function bool = isodd(x)
 %
 % bool = isodd(x)
 %
-%   Perhaps there should be an 'iseven' routine?  I guess ~isodd will just
-%   have to do.
+%   Perhaps there should be an 'iseven' routine
 %
 % Example:
 %   if isodd(3), disp('hello world'), end;
@@ -13,4 +12,4 @@ function bool = isodd(x)
 
 bool = mod(x,2);
 
-return;
+end

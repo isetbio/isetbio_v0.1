@@ -62,7 +62,7 @@ if isempty(bType)
 else
     % Figure out the basis functions using hypercube computation
     photons = photons(1:3:end,1:3:end,:);
-    [imgMean, basisData, coef ,varExplained] = hcBasis(photons,bType,mType); %#ok<ASGLU>
+    [imgMean, basisData, coef, varExplained] = hcBasis(photons,bType,mType); %#ok<ASGLU>
     clear photons;
     
     % Plot the basis functions

@@ -1,4 +1,4 @@
-function mpd = dpi2mperdot(dpi,unit)
+function mpd = dpi2mperdot(dpi, unit)
 % Convert dots per inch to meters format
 %
 %    mpd = dpi2mperdot(dpi,[unit])
@@ -14,7 +14,7 @@ function mpd = dpi2mperdot(dpi,unit)
 %
 % See also: mperdot2dpi
 
-if ieNotDefined('unit'), unit = 'um'; end
+if notDefined('unit'), unit = 'um'; end
 
 % (X dot/inch * inch/micron )^-1 yields microns/dot
 % 2.54*1e4 microns/inch and (1/(2.54*1e4)) inch/micron
@@ -29,4 +29,4 @@ end
 mpd = mpd*10^-6;  % Meters per dot
 mpd = mpd*ieUnitScaleFactor(unit);
 
-return
+end

@@ -1,4 +1,4 @@
-function [ temp, uv ] = spd2cct( wave, spds, units )
+function [temp, uv] = spd2cct(wave, spds, units)
 % Convert a spectral power distribution to a correlated color temperature 
 %
 % [ CCT, uv ] = spd2cct( WAVE, SPD, UNITS )
@@ -30,7 +30,7 @@ XYZ = ieXYZFromEnergy(spds',wave);
 
 % ISET returns uprime and vprime, which were defined in the 1960s. The flag
 % makes sure we get 'uv' instead.
-[u,v] =  xyz2uv(XYZ,'uv');
+[u,v] =  xyz2uv(XYZ, 'uv');
 
 uv = [u,v]';   % Format Jeff wrote for cct.  u in first row, v in second
 

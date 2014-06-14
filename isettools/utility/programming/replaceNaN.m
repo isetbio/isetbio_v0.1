@@ -8,4 +8,4 @@ function dat = replaceNaN(dat,val)
 l = isnan(dat);
 dat(l) = val;
 
-return;
+end

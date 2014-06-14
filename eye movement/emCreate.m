@@ -97,7 +97,6 @@ if ~isfield(params, 'msaccade') && isfield(params, 'microsaccade')
     params = rmfield(params, 'microsaccade');
 end
 em = setstructfields(p, params);
-% em.totTime = round(em.totTime/em.sampTime)*em.sampTime;
 
 % some checks for params
 assert(numel(em.emFlag)==3, 'emType should be 3x1 logical vector');

@@ -17,7 +17,7 @@ function Tc = cct(uvs)
 % Reference: Wyszecki & Stiles pgs. 227-228
 %
 % correlatedColorTemperature
-% UV  : [u1,u2,u3 ...; v1, v2, v3 ...] chromaticity coordinates as a column vector.
+% UV  : chromaticity coordinates as a column vector [u1 u2 ...; v1 v2 ...]
 %
 %Example:
 %  colorTemp = cct([.31,.32]')
@@ -33,7 +33,7 @@ function Tc = cct(uvs)
 % structure.
 
 if notDefined('uvs'), error('uv coordinates are required');
-elseif (size(uvs,1) ~= 2), error('uv must have two rows.'); 
+elseif (size(uvs, 1) ~= 2), error('uv must be 2xN'); 
 end
 
 tmp = load('cct.mat');
@@ -75,4 +75,4 @@ end
 Tc = 1 ./ ...
    ( 1./T(j) + d(j)./(d(j)-d(j+1)).*(1./T(j+1) - 1./T(j)) );
 
-return;
+end

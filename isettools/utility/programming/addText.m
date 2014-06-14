@@ -13,6 +13,6 @@ function txt = addText(txt,str)
 %  
 % Copyright ImagEval Consultants, LLC, 2003.
 
-txt = [txt,sprintf(str)];
+txt = [txt, sprintf(str)];
 
-return;
+end

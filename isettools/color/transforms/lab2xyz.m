@@ -1,4 +1,4 @@
-function xyz = vcLAB2xyz(lab,whitepoint,useOldCode,exp)
+function xyz = lab2xyz(lab,whitepoint,useOldCode,exp)
 % Convert CIE LAB values to CIE XYZ values
 %
 %    xyz = vcLAB2xyz(lab,whitepoint,exp,useOldCode)
@@ -56,7 +56,7 @@ else
     % We will always work in XW format. If input is in RGB format, we
     % reshape it
     if ndims(lab) == 3
-        [r,c,w] = size(lab);
+        [r,c,~] = size(lab);
         lab = RGB2XWFormat(lab);
     end
     
@@ -91,4 +91,4 @@ else
     
 end
 
-return;
+end

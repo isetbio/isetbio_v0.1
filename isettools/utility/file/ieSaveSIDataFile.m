@@ -21,13 +21,13 @@ function fName = ieSaveSIDataFile(psf,wave,umPerSamp,fName) %#ok<INUSL>
 %
 % Copyright ImagEval Consultants, LLC, 2010
 
-if ieNotDefined('psf'),  error('psf volume required'); end
-if ieNotDefined('wave'), error('wavelength samples required (nm)'); end
-if ieNotDefined('umPerSamp'), error('Microns per sample(2-vector) required'); end
-if ieNotDefined('fName'), fName = vcSelectDataFile('stayPut','w'); end
+if notDefined('psf'),  error('psf volume required'); end
+if notDefined('wave'), error('wavelength samples required (nm)'); end
+if notDefined('umPerSamp'), error('Microns per sample required'); end
+if notDefined('fName'), fName = vcSelectDataFile('stayPut','w'); end
 
 notes.timeStamp = datestr(now);
 
 save(fName,'psf','wave','umPerSamp','notes');
 
-return;
+end

@@ -1,4 +1,4 @@
-function [responsivity,sFactor] = ieResponsivityConvert(responsivity, wave, method);
+function [responsivity,sFactor] = ieResponsivityConvert(responsivity, wave, method)
 % Convert sensory responsivity in photons to energy, or in energy to photons
 %
 %  [responsivity,sFactor] = ieResponsivityConvert(responsivity, wave,[method='e2q']);
@@ -64,11 +64,13 @@ function [responsivity,sFactor] = ieResponsivityConvert(responsivity, wave, meth
 % Copyright ImagEval Consultants, LLC, 2005.
 
 
-if notDefined('responsivity'), error('Must define color responsivity functions'); end
+if notDefined('responsivity')
+    error('Must define color responsivity functions');
+end
 if notDefined('wave'), error('Must define wavelength in nanometers'); end
 if notDefined('method'), method = 'e2q'; end
 
-if length(wave) ~= size(responsivity,1)
+if length(wave) ~= size(responsivity, 1)
     error('Mis-match between wavelength and color filters.');
 end
 
@@ -89,4 +91,4 @@ end
 % The throughput at max should be the same
 responsivity = responsivity*(maxTrans/(max(responsivity(:))));
 
-return;
+end

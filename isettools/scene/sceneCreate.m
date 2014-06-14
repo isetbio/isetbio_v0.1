@@ -207,8 +207,10 @@ switch sceneName
         % Patch size in pixels
         pSize = 24;
         % Default surface files
-        sFiles{1} = fullfile(isetRootPath,'data','surfaces','reflectances','MunsellSamples_Vhrel.mat');
-        sFiles{2} = fullfile(isetRootPath,'data','surfaces','reflectances','Food_Vhrel.mat');
+        sFiles{1} = fullfile(isetRootPath,'data','surfaces', ...
+                            'reflectances','MunsellSamples_Vhrel.mat');
+        sFiles{2} = fullfile(isetRootPath,'data','surfaces', ...
+                            'reflectances','Food_Vhrel.mat');
         % Surface samples from the files
         sSamples = [64 64];
         
@@ -232,8 +234,9 @@ switch sceneName
         
         % Monochrome,RGB and multispectral add only a little.  Mostly created in sceneFromFile
     case {'monochrome','unispectral'}
-        % sceneMonochrome is used for images with only one spectral band.
-        scene = sceneMonochrome(scene);
+        % Used for images with only one spectral band.
+        scene = sceneSet(scene,'name','monochrome');
+        scene = initDefaultSpectrum(scene,'monochrome');
     case {'multispectral','hyperspectral'}
         scene = sceneMultispectral(scene);
     case 'rgb'
@@ -259,12 +262,10 @@ switch sceneName
         elseif length(varargin) == 1
             parms = varargin{1};
             [scene,parms] = sceneHarmonic(scene,parms);
-        elseif length(varargin) == 2
+        else
             parms = varargin{1};
             wave = varargin{2};
             [scene,parms] = sceneHarmonic(scene,parms, wave);
-        else
-            error('Wrong number of parameters! Input params structure and optional wavelengths.')
         end
     case {'sweep','sweepfrequency'}
         % These are always equal photon type.  Could add a third argument
@@ -292,7 +293,7 @@ switch sceneName
         if length(varargin) > 1, wavelength = varargin{2}; end
         scene = sceneSet(scene,'wave',wavelength(:));
         scene = sceneUniform(scene,'equalenergy',sz);
-    case {'uniformequalphoton','uniformephoton'}        %Equal photon density
+    case {'uniformequalphoton','uniformephoton'} %Equal photon density
         % sceneCreate('uniformEqualPhoton',128);
         if isempty(varargin)
             sz = 32;
@@ -300,12 +301,10 @@ switch sceneName
         elseif length(varargin) == 1
             sz = varargin{1};
             scene = sceneUniform(scene,'equal photons',sz);
-        elseif length(varargin) == 2
+        else
             sz = varargin{1};
             wave = varargin{2};
             scene = sceneUniform(scene,'equal photons',sz, wave);
-        else
-            error('Wrong number of arguments : looking for size (optional), wavelengths (optional)');
         end
     case 'uniformd65'
         % sceneCreate('uniformEqualPhoton',64);
@@ -407,12 +406,13 @@ switch sceneName
         if length(varargin) >= 3, spectralType = varargin{3}; end
         scene = sceneCheckerboard(scene,period,spacing,spectralType);
         
-    case {'demosaictarget','freqorientpattern','frequencyorientation','freqorient'}
+    case {'demosaictarget','freqorientpattern', ...
+            'frequencyorientation','freqorient'}
         %   parms.angles = linspace(0,pi/2,5);
         %   parms.freqs =  [1,2,4,8,16];
         %   parms.blockSize = 64;
         %   parms.contrast = .8;
-        % scene = sceneCreate('freqorient',parms);
+        %   scene = sceneCreate('freqorient',parms);
         if isempty(varargin), scene = sceneFOTarget(scene);
         else
             % First argument is parms structure
@@ -434,7 +434,7 @@ switch sceneName
     case {'slantedbar','iso12233','slantededge'}
         % scene = sceneCreate('slantedEdge',sz, slope, fieldOfView, wave);
         % scene = sceneCreate('slantedEdge',128,1.33);  % size, slope
-        % scene = sceneCreate('slantedEdge',128,1.33,[], (380:4:1064));  % size, slope, wave
+        % scene = sceneCreate('slantedEdge',128,1.33,[], 380:4:780);
         barSlope = []; fov = []; wave = []; imSize = [];
         if length(varargin) >= 1, imSize = varargin{1}; end
         if length(varargin) >= 2, barSlope = varargin{2};  end
@@ -469,7 +469,7 @@ switch sceneName
         if ischar(display), display = displayCreate(display); end
         
         scene = sceneFromFont(font,display);
-        return;  % Do not adjust luminance or other properties.  Return.
+        return;  % Do not adjust luminance or other properties
         
     otherwise
         error('Unknown scene format.');
@@ -490,26 +490,23 @@ scene = sceneInitSpatial(scene);
 % (in photons) produces the appropriate peak reflectance (default = 1).
 %
 % Also, a best guess is made about one known reflectance.
-if checkfields(scene,'data','photons') && ~isempty(scene.data.photons)
-    
-    if isempty(sceneGet(scene,'knownReflectance')) && checkfields(scene,'data','photons')
-        
-        % nWave = sceneGet(scene,'nWave');
-        
+if ~notDefined('scene.data.photons')
+    if isempty(sceneGet(scene,'knownReflectance')) && ...
+            checkfields(scene,'data','photons')       
         % If there is no illuminant yet, set the illuminant to equal
-        % photons at 100 cd/m2.
+        % photons at 100 cd/m2
+        wave = sceneGet(scene, 'wave');
         if isempty(sceneGet(scene,'illuminant'))
-            il = illuminantCreate('equal photons',sceneGet(scene,'wave'),100);
-            scene = sceneSet(scene,'illuminant',il);
+            il = illuminantCreate('equal photons', wave, 100);
+            scene = sceneSet(scene, 'illuminant', il);
         end
         
         % There is no knownReflectance, so we set the peak radiance to a
         % reflectance of 0.9.
-        v = sceneGet(scene,'peakRadianceAndWave');
-        wave = sceneGet(scene,'wave');
+        v = sceneGet(scene, 'peakRadianceAndWave');
         idxWave = find(wave == v(2));
-        p = sceneGet(scene,'photons',v(2));
-        [tmp,ij] = max2(p); %#ok<ASGLU>
+        p = sceneGet(scene, 'photons', v(2));
+        [tmp, ij] = max2(p); %#ok<ASGLU>
         v = [0.9 ij(1) ij(2) idxWave];
         scene = sceneSet(scene,'knownReflectance',v);
     end
@@ -522,7 +519,7 @@ if checkfields(scene,'data','photons') && ~isempty(scene.data.photons)
     scene = sceneAdjustLuminance(scene,100);
 end
 
-return;
+end
 
 %---------------------------------------------------
 function scene = sceneNoise(scene,sz,contrast)
@@ -559,7 +556,7 @@ scene = sceneSet(scene,'photons',photons);
 % sceneInitSpatial() when this returns
 scene = sceneSet(scene,'fov',1);
 
-return;
+end
 
 
 %----------------------------------
@@ -617,20 +614,7 @@ spectrum = sceneGet(scene,'spectrum');
 macbethChartObject = macbethChartCreate(patchSize,(1:24),spectrum);
 scene = sceneCreateMacbeth(macbethChartObject,lightSource,scene);
 
-return;
-
-%--------------------------------------------------
-function scene = sceneMonochrome(scene)
-%% Default monochrome - should probably be eliminated
-scene = sceneSet(scene,'name','monochrome');
-
-% Probably should be eliminated.
-
-% We set a default spectrum, but this is usually over-ridden, see
-% sceneFromFile.
-scene = initDefaultSpectrum(scene,'monochrome');
-
-return;
+end
 
 %--------------------------------------------------
 function scene = sceneMultispectral(scene)
@@ -639,7 +623,7 @@ function scene = sceneMultispectral(scene)
 scene = sceneSet(scene,'name','multispectral');
 scene = initDefaultSpectrum(scene,'multispectral');
 
-return;
+end
 
 %--------------------------------------------------
 function scene = sceneRGB(scene)
@@ -657,7 +641,7 @@ wave = sceneGet(scene,'wave');
 il = illuminantCreate('d65',wave,100);
 scene = sceneSet(scene,'illuminant',il);
 
-return;
+end
 
 %--------------------------------------------------
 function scene = sceneMackay(scene,radFreq,sz)
@@ -706,7 +690,7 @@ wave = sceneGet(scene,'wave');
 il = illuminantCreate('equal photons',wave,100);
 scene = sceneSet(scene,'illuminant',il);
 
-return;
+end
 
 %--------------------------------------------------
 function scene = sceneSweep(scene,sz,maxFreq)
@@ -733,7 +717,7 @@ img       = img*diag(illP);
 img       = XW2RGBFormat(img,r,c);
 scene     = sceneSet(scene,'photons',img);
 
-return;
+end
 
 %--------------------------------------------------
 function [scene,p] = sceneHarmonic(scene,parms, wave)
@@ -790,7 +774,7 @@ img = img*diag(illP);
 img = XW2RGBFormat(img,r,c);
 scene = sceneSet(scene,'photons',img);
 
-return;
+end
 
 %--------------------------------------------------
 function scene = sceneRamp(scene,sz)
@@ -816,7 +800,7 @@ img = img*diag(illP);
 img = XW2RGBFormat(img,r,c);
 scene = sceneSet(scene,'photons',img);
 
-return;
+end
 
 %--------------------------------------------------
 function scene = sceneUniform(scene,spectralType,sz,varargin)
@@ -864,7 +848,7 @@ for ii=1:nWave, d(:,:,ii) = d(:,:,ii)*illP(ii); end
 
 scene = sceneSet(scene,'cphotons',d);
 
-return;
+end
 
 %--------------------------------------------------
 function scene = sceneLine(scene,spectralType,sz,offset)
@@ -914,8 +898,7 @@ for ii=1:nWave, photons(:,:,ii) = photons(:,:,ii)*p(ii); end
 
 scene = sceneSet(scene,'photons',photons);
 
-
-return;
+end
 
 %--------------------------------------------------
 function scene = sceneBar(scene,sz,width)
@@ -949,7 +932,7 @@ for ii=1:nWave, photons(:,:,ii) = photons(:,:,ii)*p(ii); end
 % Attach the photons to the scene
 scene = sceneSet(scene,'photons',photons);
 
-return
+end
 
 %------------------------
 function scene = sceneVernier(scene, type, params)
@@ -1093,7 +1076,7 @@ if isfield(params, 'meanLum')
     scene = sceneAdjustLuminance(scene, params.meanLum);
 end
 
-return
+end
 
 %------------------------
 function scene = sceneRadialLines(scene,imSize,spectralType,nLines)
@@ -1185,7 +1168,7 @@ for ii=1:nWave, photons(:,:,ii) = img(:,:)*p(ii); end
 
 scene = sceneSet(scene,'photons',photons);
 
-return;
+end
 
 %-----------------------
 function scene = sceneFOTarget(scene,parms)
@@ -1217,8 +1200,7 @@ img = img*diag(illP);
 img = XW2RGBFormat(img,r,c);
 scene = sceneSet(scene,'photons',img);
 
-return;
-
+end
 %-----------------------
 function scene = sceneMOTarget(scene,parms)
 %% Moire/Orientation target
@@ -1229,8 +1211,8 @@ scene = sceneSet(scene,'name','MOTarget');
 scene = initDefaultSpectrum(scene,'hyperspectral');
 nWave = sceneGet(scene,'nwave');
 
-% Select one among sinusoidalim, squareim, sinusoidalim_line, squareim_line, flat
-% img = MOTarget('squareim',parms);
+% Select one among sinusoidalim, squareim, sinusoidalim_line,
+% squareim_line, flat img = MOTarget('squareim',parms);
 img = MOTarget('sinusoidalim',parms);
 
 
@@ -1246,7 +1228,7 @@ wave = sceneGet(scene,'wave');
 illPhotons = ones(size(wave))*sceneGet(scene,'data max');
 scene = sceneSet(scene,'illuminantPhotons',illPhotons);
 
-return;
+end
 
 %-------------------
 function scene = sceneCheckerboard(scene,checkPeriod,nCheckPairs,spectralType)
@@ -1286,7 +1268,7 @@ illP = illuminantGet(il,'photons');
 for ii=1:nWave, img(:,:,ii) = d*illP(ii); end
 scene = sceneSet(scene,'photons',img);
 
-return
+end
 
 %---------------------------------------------------------------
 function scene = sceneSlantedBar(scene,imSize,barSlope,fieldOfView,wave)
@@ -1338,7 +1320,7 @@ scene = sceneSet(scene,'photons',photons);
 % Set the field of view
 scene = sceneSet(scene,'horizontalfieldofview',fieldOfView);
 
-return;
+end
 
 %-----------------------
 function scene = sceneZonePlate(scene,imSize,fieldOfView)
@@ -1359,7 +1341,7 @@ img = ieClip(img,1e-4,1);
 scene = sceneSet(scene,'cphotons',repmat(img,[1,1,nWave]));
 scene = sceneSet(scene,'horizontalfieldofview',fieldOfView);
 
-return
+end
 
 %-----------------------
 function scene = sceneLstarSteps(scene,barWidth,nBars,deltaE)
@@ -1398,4 +1380,4 @@ end
 % The level is scaled on return to a mean of 100 cd/m2.
 scene = sceneSet(scene,'photons',photons);
 
-return
+end

@@ -201,8 +201,8 @@ wvf3 = wvf0;
 
 % This makes a colormap that is like the spectral colors
 pupilMM  = 3.0;
-thisWave = [420:10:650];
-cmap = squeeze(xyz2srgb(XW2RGBFormat(vcReadSpectra('XYZ',thisWave),length(thisWave),1)));
+thisWave = 420:10:650;
+cmap = squeeze(xyz2srgb(XW2RGBFormat(ieReadSpectra('XYZ',thisWave),length(thisWave),1)));
 
 % We compare many the wavelengths and the average across them (white)
 wvf3 = wvfSet(wvf3,'calc wave',thisWave);

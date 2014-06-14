@@ -27,7 +27,7 @@ function [idx1,idx2] = ieFieldHeight2Index(fieldHeightList,height)
 % interpolation 
 
 % This is the index with a value closest to height
-[v,idx1] = min(abs(fieldHeightList - height));
+[~, idx1] = min(abs(fieldHeightList - height));
 
 % Determine two indices that bound the height value.
 if nargout == 2
@@ -41,4 +41,4 @@ if nargout == 2
     end
 end
 
-return;
+end

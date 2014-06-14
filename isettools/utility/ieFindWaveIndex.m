@@ -21,9 +21,9 @@ function idx = ieFindWaveIndex(wave,waveVal,perfect)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('wave'), error('Must define list of all wavelengths'); end
-if ieNotDefined('waveVal'), error('Must define wavelength values'); end
-if ieNotDefined('perfect'), perfect = 1; end
+if notDefined('wave'), error('Must define list of all wavelengths'); end
+if notDefined('waveVal'), error('Must define wavelength values'); end
+if notDefined('perfect'), perfect = 1; end
 
 if perfect
     % Find only perfect matches
@@ -32,7 +32,7 @@ else
     idx = false(1,length(wave));   % Assume not a member
     % For each waveVal, find the index in wave that is closest.
     for ii=1:length(waveVal)
-        [tmp,entry] = min( abs(wave - waveVal(ii)) );
+        [~, entry] = min( abs(wave - waveVal(ii)) );
         idx(entry) = 1;
     end
     % Check how we whether the same idx matched two waveVal entries
@@ -42,6 +42,4 @@ else
     end
 end
 
-
-  
-return;
+end

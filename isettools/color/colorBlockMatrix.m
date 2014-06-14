@@ -110,12 +110,9 @@ end
 % As currently configured, the default sets equal photon input to (1,1,1).
 % That is
 %   ones(1,length(wList)) * bMatrix = (1,1,1)
-
 % Examples below show how to change from default in which equal photon
 % equal to (1,1,1) 
-
 % We should think about whether we want whiteSPD to persistent
-
 % We used to set this with ieSessionSet and manage it with ieSessionGet and
 % matlab setpref/getpref.  Now, not so much.  This code is left here as a
 % reminder that we might reconsider.
@@ -143,4 +140,4 @@ else bMatrix = diag(1./whiteSPD(:))*bMatrix;
 end
 % vcNewGraphWin; plot(bMatrix)
 
-return;
+end

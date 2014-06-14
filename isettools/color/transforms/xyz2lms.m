@@ -65,12 +65,12 @@ if cbType > 0
     imgLMS = imageLinearTransform(imgXYZ, colorTransformMatrix('xyz2lms'));
 
     % These anchor values are derived in the paper and used to compute the
-    % missing cone value.  At the moment, they are sometimes negative, sigh.
+    % missing cone value.  At the moment, they are sometimes negative
     %
-    % Load the LMS anchor-point values for lambda = 475 & 485 nm (for protans &
-    % deutans) and the LMS values for lambda = 575 & 660 nm (for tritans).  I
-    % think these anchor points are the Stockman fundamentals values. After
-    % checking, they are close.  See below.
+    % Load the LMS anchor-point values for lambda = 475 & 485 nm (for
+    % protans & deutans) and the LMS values for lambda = 575 & 660 nm (for
+    % tritans).  I think these anchor points are the Stockman fundamentals
+    % values. After checking, they are close.  See below.
     %
     % LMS for 475, I guess. Closest to 473. ieReadSpectra('stockman',[473])
     anchor(1) = 0.08008;  anchor(2) = 0.1579;   anchor(3) = 0.5897;
@@ -87,7 +87,7 @@ if cbType > 0
 
     % Depending on color blindness type
     switch cbType
-        case 1          % Protanopia
+        case 1 % Protanopia
             % These formula are Equation (8) in the Bretell paper.
             % find a,b,c for lam=575nm and lam=475
 
@@ -110,7 +110,7 @@ if cbType > 0
             L(~lst) = -(b2*M(~lst) + c2*S(~lst)) / a2;
             imgLMS(:,:,1) = L;
             % vcNewGraphWin; imagescRGB(imgLMS);
-        case 2          % Deuternopia
+        case 2 % Deuternopia
             % find a,b,c for lam=575nm and lam=475, again.
             % Less than inflection
             a1 = anchor_e(2) * anchor(9) - anchor_e(3) * anchor(8);
@@ -131,7 +131,7 @@ if cbType > 0
             imgLMS(:,:,2) = M;
             % vcNewGraphWin; imagescRGB(imgLMS);title('New formula');
 
-        case 3          % Tritanopia
+        case 3 % Tritanopia
 
             % find for lam=660 and lam=485 */
             % Less than the inflection
@@ -178,4 +178,4 @@ else  % cbType <= 0
 end
 
 
-return
+end

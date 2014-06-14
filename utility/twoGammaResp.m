@@ -1,4 +1,4 @@
-function [resp defs] = twoGammaResp(t, param)
+function [resp, defs] = twoGammaResp(t, param)
 % Create a temporal response composed of the difference of 2 gamma functions
 %
 % It is still be used for defining the coupling and feedback (cpTR and
@@ -80,5 +80,4 @@ resp = f(1) *  resp1 - f(2) * resp2;
 % Normalize response to coincide with stimulus intensity
 resp = (resp ./ norm(resp));
 
-return
-
+end

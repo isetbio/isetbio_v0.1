@@ -19,4 +19,4 @@ function srgb = lms2srgb(lms)
 
 srgb = xyz2srgb(imageLinearTransform(lms, colorTransformMatrix('lms2xyz')));
 
-return
+end

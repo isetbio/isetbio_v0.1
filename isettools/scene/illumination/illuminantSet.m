@@ -22,9 +22,9 @@ function il = illuminantSet(il,param,val,varargin)
 % (c) Imageval Consulting, LLC, 2012
 
 %%
-if ~exist('il','var') || isempty(il), error('illuminant structure required'); end
-if ~exist('param','var') || isempty(param), error('param required'); end
-if ~exist('val','var') , error('val is required'); end
+if notDefined('il'),     error('illuminant structure required'); end
+if notDefined('param'),  error('param required'); end
+if ~exist('val', 'var'), error('val is required'); end
 
 %%
 param = ieParamFormat(param);

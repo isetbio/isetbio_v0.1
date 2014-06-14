@@ -41,9 +41,4 @@ monitor2cones = cones'*spd;
 coneIsolating = inv(monitor2cones);
 
 
-return;
-
-
-
-
-
+end

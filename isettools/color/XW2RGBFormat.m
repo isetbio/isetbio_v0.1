@@ -25,14 +25,14 @@ function imRGB = XW2RGBFormat(imXW,row,col)
 
 
 if notDefined('imXW'), error('No image data.'); end
-if notDefined('row'), error('No row size.'); end
-if notDefined('col'), error('No col size.'); end
+if notDefined('row'),  error('No row size.');   end
+if notDefined('col'),  error('No col size.');   end
 
-x = size(imXW,1);
-w = size(imXW,2);
+x = size(imXW, 1);
+w = size(imXW, 2);
 
 if row*col ~= x, error('XW2RGBFormat:  Bad row, col values'); end
 
 imRGB = reshape(imXW,row,col,w);
 
-return;
+end

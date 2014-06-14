@@ -44,12 +44,12 @@ function [img,parms] = imageHarmonic(parms)
 
 if ~exist('parms','var'), parms = []; end
 
-if checkfields(parms,'ang'), ang = parms.ang; else ang = 0; parms.ang = ang; end
-if checkfields(parms,'contrast'), contrast = parms.contrast; else contrast = 1; parms.contrast = contrast; end
-if checkfields(parms,'freq'), freq = parms.freq; else freq = 1; parms.freq = freq; end
-if checkfields(parms,'ph'), ph = parms.ph; else ph = pi/2; parms.ph = ph; end
-if checkfields(parms,'row'), row = parms.row; else row = 64; parms.row = row; end
-if checkfields(parms,'col'), col = parms.col; else col = 64; parms.col = col; end
+if isfield(parms,'ang'), ang = parms.ang; else ang = 0; parms.ang = ang; end
+if isfield(parms,'contrast'), contrast = parms.contrast; else contrast = 1; parms.contrast = contrast; end
+if isfield(parms,'freq'), freq = parms.freq; else freq = 1; parms.freq = freq; end
+if isfield(parms,'ph'), ph = parms.ph; else ph = pi/2; parms.ph = ph; end
+if isfield(parms,'row'), row = parms.row; else row = 64; parms.row = row; end
+if isfield(parms,'col'), col = parms.col; else col = 64; parms.col = col; end
 
 % The Gabor Flag is a non-zero value that specifies the standard deviation
 % of the Gaussian as a fraction of the image size.  For example, if the
@@ -90,4 +90,4 @@ end
 
 % figure; imagesc(img); colormap(gray); axis image
 
-return;
+end

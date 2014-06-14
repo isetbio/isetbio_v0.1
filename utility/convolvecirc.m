@@ -17,10 +17,10 @@ function Y = convolvecirc(X,h)
 Y = conv2(X,h);
 
 [r,s] = size(Y);
-Y(1:(r-m),:) = Y(1:(r-m),:) + Y((m+1):r,:);
-Y(:,1:(s-n)) = Y(:,1:(s-n)) + Y(:,(n+1):s);
+Y(1:(r-m),:) = Y(1:(r-m), :) + Y((m+1):r, :);
+Y(:,1:(s-n)) = Y(:, 1:(s-n)) + Y(:,(n+1):s);
 
 % Clip the extent of the result
-Y=Y(1:m,1:n);
+Y=Y(1:m, 1:n);
 
 end

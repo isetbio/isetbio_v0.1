@@ -221,6 +221,6 @@ end
 % This format works with imageLinearTransform
 result = result';
 
-return;
+end
 
 

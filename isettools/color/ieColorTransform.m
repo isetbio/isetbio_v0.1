@@ -1,7 +1,8 @@
 function T = ieColorTransform(sensor,targetSpace,illuminant,surface)
 % Gateway routine to transform sensor data into a target color space
 %
-%    T = ieColorTransform(sensor,[targetSpace='XYZ'],[illuminant='D65'],[surface='Macbeth'])
+%    T = ieColorTransform(sensor, [targetSpace='XYZ'], ...
+%                         [illuminant='D65'], [surface='Macbeth'])
 %
 % This is a gateway to a collection of methods that find color space
 % transformations to map sensor data into a target color space. This
@@ -62,10 +63,12 @@ switch lower(targetSpace)
         % specific surface reflectance target under some illuminant.
         
         % Make case correct for filename
-        if     isequal(lower(targetSpace),'xyz'),     targetSpace = 'XYZ'; 
-        elseif isequal(lower(targetSpace),'stockman'),targetSpace = 'stockman';
+        if     isequal(lower(targetSpace),'xyz')
+            targetSpace = 'XYZ'; 
+        elseif isequal(lower(targetSpace),'stockman')
+            targetSpace = 'stockman';
         end
-        targetSpace = sprintf('%sQuanta.mat',targetSpace);
+        targetSpace = sprintf('%sQuanta.mat', targetSpace);
         targetQE = ieReadSpectra(targetSpace,wave);
         
         % This is where the transform is calculated
@@ -75,7 +78,6 @@ switch lower(targetSpace)
             case {'esser'}
                 T = imageEsserTransform(sensorQE,targetQE,illuminant,wave);
         end
-        
     case {'linear srgb','lrgb'}
         T = linearsrgb(sensorQE,illuminant,wave);
     case {'sensor'}
@@ -83,7 +85,7 @@ switch lower(targetSpace)
         nSensor = sensorGet(sensor,'nSensors');
         T = eye(nSensor,nSensor);
     case 'manifold'
-        warning('Not yet implemented -- Returning T = identity'); %#ok<WNTAG>
+        warning('Not yet implemented -- Returning T = identity');
         T = eye(3,3);
     otherwise
         error('Unknown optimization method.');
@@ -112,7 +114,7 @@ function T = linearsrgb(sensorQE,illuminant,wave)
 % patchSize = 1; patchList = 1:24;
 % macbethChartObject = macbethChartCreate(patchSize,patchList);
 % load('MCClRGB','lrgbValuesMCC','patchOrder');
-wave = 400:700;    % nanometers
+if notDefined('wave'), wave = 400:10:700; end
 load('macbethChartLinearRGB');
 idealMacbeth = mcc.lrgbValuesMCC;
 
@@ -130,6 +132,6 @@ d65    = ieReadSpectra(illuminant,wave);
 sensorMacbeth = (sensorQE'*diag(d65)*surRef)';
 
 % Solve: sensorMacbeth*T = lrgbValuesMCC
-T = pinv(sensorMacbeth)*idealMacbeth;
+T = pinv(sensorMacbeth) * idealMacbeth;
 
 end

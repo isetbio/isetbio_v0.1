@@ -56,7 +56,7 @@ spectrumE = spectrumE(:);
 
 %% Make a sphere with sample points are (N+1)*(N+1)
 
-[X Y Z] = sphere(N);
+[X, Y, Z] = sphere(N);
 % surf(X,Y,Z); colormap(hot)
 
 % These will be the change in XYZ around the center
@@ -84,6 +84,4 @@ end
 % XYZ = ieXYZFromEnergy(spectraS',wave)
 % plot3(XYZ(:,1),XYZ(:,2),XYZ(:,3),'o'); axis equal
 
-return
-
-
+end

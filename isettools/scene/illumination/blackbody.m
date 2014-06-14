@@ -1,4 +1,4 @@
-function [specRad XYZ] = blackbody( wave, temps, unitType , eqWave)
+function [specRad, XYZ] = blackbody( wave, temps, unitType , eqWave)
 %Generate the spectral power distribution of a blackbody radiator
 %
 %  [spec XYZ] = blackbody( wave, colortemperature, [unitType = 'energy'], [eqWave = 550] )
@@ -39,13 +39,13 @@ function [specRad XYZ] = blackbody( wave, temps, unitType , eqWave)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('wave'), error('Must define wavelength.'); end
-if ieNotDefined('temps'), error('Must define color temperature'); end
-if ieNotDefined('unitType'), unitType = 'watts'; end
-if ieNotDefined('eqWave'), eqWave = 550; end
+if notDefined('wave'),  error('Must define wavelength.'); end
+if notDefined('temps'), error('Must define color temperature'); end
+if notDefined('unitType'), unitType = 'watts'; end
+if notDefined('eqWave'), eqWave = 550; end
 
 % Find index to the wavelength closest to eqWave
-[v,idx] = min(abs(wave - eqWave)); %#ok<ASGLU>
+[~, idx] = min(abs(wave - eqWave));
 
 % We could check that these are vectors if we had such a utility.  Make
 % one, please.
@@ -113,4 +113,4 @@ if nargout == 2
     end
 end
 
-return;
+end

@@ -56,21 +56,4 @@ if y(end)/max(y) > 0.1
     warning('The total duration (t) is probably too short.');
 end
 
-return;
-
-
-%%  Example
-t = 0:.05:10;
-n = 2;
-tau = [0.5 1 1.5 2];
-
-%
-clf
-for ii=1:length(tau)
-    y = (t ./ tau(ii)).^(n-1) .* exp(-t ./ tau(ii)) / (tau(ii)*factorial(n - 1));
-    y = y/sum(y);
-    plot(t,y); hold on
 end
-
-xlabel('Time (s)')
-ylabel('Response')

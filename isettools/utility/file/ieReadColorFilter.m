@@ -34,8 +34,8 @@ function [data,newFilterNames,fileData] = ieReadColorFilter(wave,fname)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('wave'), wave = 400:10:700; end
-if ieNotDefined('fname')
+if notDefined('wave'), wave = 400:10:700; end
+if notDefined('fname')
     fname = vcSelectDataFile('sensor'); 
     if isempty(fname), data = []; newFilterNames = []; return; end
 end
@@ -46,10 +46,10 @@ if isempty(data)
     error('Cannot find %s\n',fname);
 elseif ( (max(data(:)) > 1) || (min(data(:)) < 0))
     if min(data(:)) >= 0
-        questdlg('Data values greater than 1. Scaling data to a maximum of 1.','Read Data','OK','OK');
-        data = ieScale(data,1);
+        warning('Data values greater than 1. Scaling data.');
+        data = data / max(data(:));
     else
-        errordlg('Data values less than 0. Adjust the data file.');
+        error('Data values less than 0. Adjust the data file.');
     end
 end
 
@@ -71,4 +71,4 @@ end
 % structure can contain auxiliary data, saved by ieSaveColorFilter, that
 % the user might have tucked into the file.
 
-return;
+end

@@ -12,8 +12,8 @@ function m = ieMemoryCheck(unit,level)
 %
 % Copyright ImagEval, LLC, 2005
 
-if ieNotDefined('unit'), unit = 'b'; end
-if ieNotDefined('level'), level = 'caller'; end
+if notDefined('unit'),  unit = 'b'; end
+if notDefined('level'), level = 'caller'; end
 
 m = 0; 
 t = evalin(level,'whos');  
@@ -25,9 +25,10 @@ switch lower(unit)
     case 'kb'
         s = 1e3;
     otherwise
-        s = 1
+        s = 1;
 end
 
-fprintf('Memory %f %s\n',m/s,unit);
+if nargout == 0, fprintf('Memory %f %s\n',m/s,unit); end
 
-return;
+
+end

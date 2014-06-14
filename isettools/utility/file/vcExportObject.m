@@ -11,13 +11,13 @@ function fullName = vcExportObject(obj,fullName,clearDataFlag)
 % If fullName is not specified, a GUI opens to choose the name.
 %   
 % Examples
-%  fullName = vcExportObject(scene,'c:\myhome\ISET-Objects\SCENE\myCompany');
+%  fullName = vcExportObject(scene,'./myCompany');
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('obj'), error('You must define an object to save.'); end
-if ieNotDefined('clearDataFlag'), clearDataFlag = 0;   end
-if ieNotDefined('fullName'),    fullName = []; end
+if notDefined('obj'), error('You must define an object to save.'); end
+if notDefined('clearDataFlag'), clearDataFlag = 0;   end
+if notDefined('fullName'),    fullName = []; end
 
 objType = obj.type;
 objType = vcEquivalentObjtype(objType);
@@ -25,9 +25,8 @@ objType = vcEquivalentObjtype(objType);
 switch(lower(objType))     
     case {'scene','opticalimage','isa','vcimage'}
         if clearDataFlag, obj.data = []; end
-        
     case 'optics'
-        
+        error('NYI');
     otherwise
         error('Unknown object type');
 end
@@ -35,5 +34,4 @@ end
 fullName = vcSaveObject(obj,fullName);
 
 
-return;
-
+end

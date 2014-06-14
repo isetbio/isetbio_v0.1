@@ -20,7 +20,4 @@ if exist('hidden', 'var')
 end
 
 clear all
-
 clear fun
-
-return;

@@ -39,7 +39,6 @@ if notDefined('newFig'), newFig = 1; end
 g = [];
 
 %% Create a mesh grid of points filled with xy values
-
 % Create nPix (x,y) samples between 0 and 1.
 x = linspace(0.001,1,nPix);
 y = linspace(0.001,1,nPix);
@@ -62,7 +61,8 @@ xyY = horzcat(xy,ones(size(xy,1),1)*Y_val);
 wave = 380:5:700;
 spectrumLocus = chromaticity(ieReadSpectra('XYZ',wave));
 
-inPoints = inpolygon(xy(:,1),xy(:,2),spectrumLocus(:,1),spectrumLocus(:,2));
+inPoints = inpolygon(xy(:,1), xy(:,2), ...
+                     spectrumLocus(:,1),spectrumLocus(:,2));
 % vcNewGraphWin; imagesc(XW2RGBFormat(color_me,nRows,nCols));
 % axis xy; axis equal
 nOutside = sum(~inPoints);
@@ -101,7 +101,4 @@ grid on
 set(gca,'xlim',[0 0.8],'ylim',[0 0.85])
 xlabel('CIE-x'); ylabel('CIE-y');
 
-return
-
-
-
+end

@@ -16,7 +16,7 @@ function [slope, offset] = ieFitLine(x,y,method)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('method'), method = 'leastSquares'; end
+if notDefined('method'), method = 'leastSquares'; end
 method = ieParamFormat(method);
 
 nData = size(y,2);
@@ -54,4 +54,4 @@ switch method
         error('unknown method')
 end
 
-return;
+end

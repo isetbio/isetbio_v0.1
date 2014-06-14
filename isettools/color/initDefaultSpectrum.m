@@ -29,11 +29,13 @@ switch lower(spectralType)
         object.spectrum.wave = 550;
         
     case 'custom'
-        if ieNotDefined('wave'), error('wave required for custom spectrum'); end
+        if notDefined('wave')
+            error('wave required for custom spectrum');
+        end
         object.spectrum.wave = wave(:);
         
     otherwise,
         error('spectralType not yet defined.');
 end
 
-return;
+end

@@ -14,13 +14,17 @@ function spd = cct2sun(wave, cct, units)
 %
 % Reference: 
 %    http://en.wikipedia.org/wiki/Standard_illuminant
-%    Judd, Macadam, Wyszecki - http://www.opticsinfobase.org/abstract.cfm?URI=josa-54-8-1031
+%    Judd, Macadam, Wyszecki
+%       http://www.opticsinfobase.org/abstract.cfm?URI=josa-54-8-1031
 % See also: daylight.m
 %
 % Examples:
-%   wave = 400:5:700; cct = 4000; spd = cct2sun(wave, cct); plot(wave,spd);
-%   wave = 400:2:700; cct = 6500; spd = cct2sun(wave, cct, 'photons'); plot(wave,spd);
-%   wave = 400:2:700; cct = 6500; spd = cct2sun(wave, cct, 'energy'); plot(wave,spd);
+%   wave = 400:5:700; cct = 4000;
+%   spd = cct2sun(wave, cct); plot(wave,spd);
+%   wave = 400:2:700; cct = 6500;
+%   spd = cct2sun(wave, cct, 'photons'); plot(wave,spd);
+%   wave = 400:2:700; cct = 6500;
+%   spd = cct2sun(wave, cct, 'energy'); plot(wave,spd);
 %
 %   w = 400:700; spd = cct2sun(w,[4000 6500],'photons'); plot(w,spd)
 %
@@ -69,4 +73,4 @@ switch lower(units)
     otherwise
 end
 
-return;
+end

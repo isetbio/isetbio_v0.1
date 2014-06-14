@@ -1,4 +1,4 @@
-function dCell = cellDelete(c,dList);
+function dCell = cellDelete(c,dList)
 % Delete some cells from a list of cells 
 %
 %   dCell = cellDelete(c,dList);
@@ -15,27 +15,10 @@ function dCell = cellDelete(c,dList);
 if ieNotDefined('c'), error('Cell required.'); end
 if ieNotDefined('dList'), error('Delete list required.'); end
 
-if max(dList) > length(c) | min(dList < 1), error('Bad dList'); end
+if max(dList) > length(c) || min(dList < 1), error('Bad dList'); end
 
 % there is actually a simple and much faster way to do that:
 dCell = c;
 dCell(dList)=[];
-
-% keepList = logical(ones(1,length(c)));
-% keepList(dList) = 0;
-% 
-% % For some reason, cell arrays don't use the cell{keepList} syntax.  So, we
-% % loop.
-% jj = 1; dCell = [];
-% for ii=1:length(keepList)
-%     if keepList(ii)
-%         dCell{jj} = c{ii};
-%         jj = jj+1;
-%     end
-% end
     
-return;
-
-% Debug
-% a = {'a','b','c','d'};
-% cellDelete(a,[1,3])
+end

@@ -25,41 +25,43 @@ function fullName = vcSaveObject(obj,fullName)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('obj'), error('Object required.'); end
+if notDefined('obj'), error('Object required.'); end
 
 objType = vcGetObjectType(obj); 
 objType = vcEquivalentObjtype(objType);
 
-if ieNotDefined('fullName'), fullName = vcSelectDataFile(objType,'w','mat'); end
+if notDefined('fullName')
+    fullName = vcSelectDataFile(objType,'w','mat'); 
+end
 if isempty(fullName), return; end
 
 switch(lower(objType))
     case 'scene'
         scene = obj;
-        save(fullName,'scene');
+        save fullName scene;
         
     case 'optics'
         optics = obj;
-        save(fullName,'optics');
+        save fullName optics;
         
     case 'opticalimage'
         opticalimage = obj;
-        save(fullName,'opticalimage');
+        save fullName opticalimage;
         
     case 'isa'
         isa = obj;
-        save(fullName,'isa');
+        save fullName isa;
         
     case 'pixel'
         pixel = obj;
-        save(fullName,'pixel');
+        save fullName pixel;
         
     case 'vcimage'
         vcimage = obj;
-        save(fullName,'vcimage');
+        save fullName vcimage;
    
     otherwise
         error('Unknown object type');
 end
 
-return;
+end

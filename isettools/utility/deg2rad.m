@@ -1,7 +1,7 @@
-function r = ieDeg2rad(d)
+function r = deg2rad(d)
 %Convert degrees to radians
 %
-%  r = ieDeg2rad(d)
+%  r = deg2rad(d)
 %
 % See also: ieRad2deg.  
 %    Perhaps this routine should also adopt the varargin structure in that
@@ -11,4 +11,4 @@ function r = ieDeg2rad(d)
 
 r = (pi/180)*d;
 
-return;
+end

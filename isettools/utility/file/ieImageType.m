@@ -19,10 +19,10 @@ function imageType = ieImageType(fullName)
 [p,imageType,ext] = fileparts(fullName);
 switch(lower(ext))
     case {'.jpg','.jpeg','.tif','.tiff','.bmp','.gif'}
-        if findstr(fullName,'data\images\Targets'), 
+        if strfind(fullName,'data\images\Targets'), 
             % Could be an EIA target.
             imageType = 'monochrome';
-        elseif findstr(fullName,'data\images\Monochrome')
+        elseif strfind(fullName,'data\images\Monochrome')
             imageType = 'monochrome';
         else       
             imageType = 'rgb';
@@ -35,14 +35,15 @@ while ~isempty(imageType)
     imageType = lower(imageType);
     
     % If this is not a recognized type, ask the user.
-    if (strcmp(imageType,'monochrome') | ...
-            strcmp(imageType,'multispectral') | ...
+    if (strcmp(imageType,'monochrome') || ...
+            strcmp(imageType,'multispectral') || ...
             strcmp(imageType,'rgb') )
         return;
     end
-    [p,imageType] = fileparts(p);
+    [p, imageType] = fileparts(p);
 end
 
 % If nothing in the path matches one of the known types, ask the user.
-imageType = ieReadString('Enter file type {monochrome,rgb, or multispectral}','rgb')
-return;
+imageType = ieReadString('Enter file type {monochrome, rgb, or multispectral}','rgb');
+
+end

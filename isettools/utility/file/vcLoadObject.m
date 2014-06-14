@@ -25,19 +25,19 @@ function [newVal,fullName] = vcLoadObject(objType,fullName,val)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 %%
-if ieNotDefined('objType'), objType = 'scene'; end
-if ieNotDefined('val'), newVal = vcNewObjectValue(objType);
-else                    newVal = val; end
+if notDefined('objType'), objType = 'scene'; end
+if notDefined('val'), newVal = vcNewObjectValue(objType);
+else newVal = val; end
 
 % Parse the object type
 objType  = vcEquivalentObjtype(objType);
 
 % Set up the full file name
-if ieNotDefined('fullName')
+if notDefined('fullName')
     fullName = vcSelectDataFile('stayput','r','mat');
     if isempty(fullName), newVal = []; return; end
 end
-[p,objName] = fileparts(fullName);
+[~, objName] = fileparts(fullName);
 
 %%
 switch(lower(objType))
@@ -58,9 +58,9 @@ switch(lower(objType))
         % Mathworks kindly changes my variable name.  We trap this
         % condition here and handle it.  But if we have to do it lots of
         % places, we are in trouble.
-        warning('off');
+        % warning('off');
         data = load(fullName,'isa');
-        warning('on');
+        % warning('on');
 
         % This is what they rename the variable in Matlab 7.04
         if checkfields(data,'isa_'), data.isa = data.isa_; end
@@ -76,6 +76,4 @@ switch(lower(objType))
         error('Unknown object type');
 end
 
-return;
-
-
+end

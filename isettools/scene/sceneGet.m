@@ -179,10 +179,10 @@ switch parm
         %  d = sqrt((opp1^2) + (opp1^2))
         %  diagonalFOV = ieRad2deg(atan2(d,vd))       
         vd = sceneGet(scene,'distance');
-        rW = ieDeg2rad(sceneGet(scene,'wAngular'));
-        rH = ieDeg2rad(sceneGet(scene,'hAngular'));
-        d = sqrt( (vd*tan(rW))^2 + (vd*tan(rH))^2 );
-        val = ieRad2deg(atan2(d,vd));
+        rW = sceneGet(scene,'wAngular');
+        rH = sceneGet(scene,'hAngular');
+        d = sqrt(tand(rW)^2 + tand(rH)^2) * vd;
+        val = atan2d(d,vd);
 
     case 'aspectratio'
         r = sceneGet(scene,'rows'); c = sceneGet(scene,'cols'); 
@@ -425,7 +425,7 @@ switch parm
         % Maybe we should use the same method as in 'height'?
         d = sceneGet(scene,'distance');
         w = sceneGet(scene,'wangular');  % Field of view (horizontal, width)
-        val = 2*d*tan(ieDeg2rad(w/2));
+        val = 2*d*tand(w/2);
         if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
 
     case {'diagonal','diagonalsize'}

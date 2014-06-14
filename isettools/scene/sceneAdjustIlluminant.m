@@ -57,7 +57,7 @@ end
 % The units should be in the file, really.  But they aren't always.  So we
 % check the value.
 if max(illEnergy) > 10^5
-    warning('Illuminant energy values are high; may be photons, not energy.')
+    warning('Illuminant energy values are high; maybe photons, not energy')
 end
 
 % Start the conversion
@@ -108,5 +108,4 @@ scene = sceneAdjustLuminance(scene,mLum);
 
 scene = sceneSet(scene,'illuminant comment',fullName);
 
-return;
-
+end

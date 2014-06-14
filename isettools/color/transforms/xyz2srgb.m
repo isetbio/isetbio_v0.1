@@ -80,5 +80,4 @@ lrgb = imageLinearTransform(xyz, matrix);
 % the Wikipedia page.
 srgb = lrgb2srgb(ieClip(lrgb,0,1));
 
-return;
-
+end

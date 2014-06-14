@@ -25,7 +25,7 @@ function fList = unitFrequencyList(N)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('N'), N = 6; end
+if notDefined('N'), N = 6; end
 
 % Figure out which entry represents DC
 if isodd(N), mid = (N+1)/2; else mid = N/2 + 1; end
@@ -39,7 +39,7 @@ c = c - c(mid);
 % Normalize so that the largest value is +/-1
 fList = c/max(abs(c(:)));
 
-return;
+end
 
 %-------------------------
 % This is the old code.  I am afraid it was off by 1 location.  I am not

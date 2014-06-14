@@ -28,7 +28,7 @@ function luv = xyz2luv(xyz, whitepoint)
 if notDefined('xyz'), error('XYZ values required.'); end
 if notDefined('whitepoint'), error('White point required.'); end
 
-if ( length(whitepoint)~=3 ),  error('whitepoint must be a three vector'); end
+if (numel(whitepoint)~=3 ),  error('whitepoint must be 3x1 vector'); end
 
 if ndims(xyz) == 3
     iFormat = 'RGB';
@@ -52,7 +52,7 @@ luv(:,3) = 13*luv(:,1).*(v - vn);
 % then we need to change it to that format.
 if strcmp(iFormat,'RGB'), luv = XW2RGBFormat(luv,r,c); end
 
-return;
+end
 
 
 

@@ -37,4 +37,4 @@ backCones = cones'*backgroundSPD(:);  % The background is always positive
 sigCones = cones'*(signalSPD(:)); % Signal can be an increment or decrement
 coneContrast = sigCones ./ backCones;
 
-return;
+end

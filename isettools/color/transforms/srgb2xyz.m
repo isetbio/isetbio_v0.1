@@ -26,5 +26,5 @@ lrgb = srgb2lrgb(srgb);  %imtool(lrgb/max(lrgb(:)))
 matrix = colorTransformMatrix('lrgb2xyz');
 xyz = imageLinearTransform(lrgb, matrix);  
 
-return;
+end
 

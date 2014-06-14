@@ -37,5 +37,5 @@ xyz(:,1) = (xyy(:,1)./xyy(:,2)) .* xyy(:,3);
 % Z = (X + Y + Z) - Y - X
 xyz(:,3) = sXYZ - xyy(:,3) - xyz(:,1);
 
-return;
+end
 

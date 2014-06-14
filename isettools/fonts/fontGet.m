@@ -1,4 +1,4 @@
-function val = fontGet(font,parm,varargin)
+function val = fontGet(font,param,varargin)
 %Get font parameters and derived properties 
 %
 %     val = fontGet(font,parm,varargin)
@@ -6,14 +6,14 @@ function val = fontGet(font,parm,varargin)
 %
 % (HJ/BW)  PDCSoft Team, 2014.
 
-if ~exist('parm','var') || isempty(parm), error('Parameter must be defined.'); end
+if notDefined('param'), error('Parameter must be defined.'); end
 
 % Default is empty when the parameter is not yet defined.
 val = [];
 
-parm = ieParamFormat(parm);
+param = ieParamFormat(param);
 
-switch parm
+switch param
     
     % Book keeping
     case 'type'
@@ -55,8 +55,8 @@ switch parm
         
         
     otherwise
-        disp(['Unknown parameter: ',parm]);
+        disp(['Unknown parameter: ',param]);
         
  end
 
-return;
+end

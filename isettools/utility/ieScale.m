@@ -21,7 +21,7 @@ function [im,mn,mx] = ieScale(im,b1,b2)
 % 
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('im'), error('Input data must be defined.'); end
+if notDefined('im'), error('Input data must be defined.'); end
 
 % Find data range
 mx = max(im(:));
@@ -50,4 +50,4 @@ end
 range = b2 - b1;
 im = range*im + b1;
 
-return;
+end

@@ -30,7 +30,7 @@ sLAB = scComputeSCIELAB(roiXYZ,whitePtXYZ,params);
 
 % Get the middle of the region to avoid edge artifacts from the S-CIELAB
 % process
-[r,c,w] = size(sLAB);
+[r,c,~] = size(sLAB);
 mid = round(0.8*[r,c]);
 sLAB = getMiddleMatrix(sLAB,mid);
 % xyz  = lab2xyz(sLAB,whitePtXYZ);
@@ -49,4 +49,4 @@ L = std(m1(:))^2; A = std(m2(:))^2; B = std(m3(:))^2;
 % Here is the formula from the pixel binning paper
 vSNR = 1/sqrt(A+B+L); % When std <1 SNR > 0
 
-return
+end

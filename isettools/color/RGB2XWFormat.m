@@ -35,4 +35,4 @@ XW = reshape(imRGB,s(1)*s(2),s(3));
 
 r = s(1); c = s(2); w = s(3);
 
-return;
+end

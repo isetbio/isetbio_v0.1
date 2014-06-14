@@ -39,7 +39,7 @@ function photons = Energy2Quanta(wavelength,energy)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if size(wavelength,2) ~= 1 && size(wavelength,1) ~= 1
+if ~isvector(wavelength)
         error('Energy2Quanta:  Wavelength must be a vector');
 else    wavelength = wavelength(:);      % Force to column
 end
@@ -51,7 +51,7 @@ c = vcConstants('c');		% speed of light [m/sec]
 if ndims(energy) == 3
     [n,m,w] = size(energy);
     if w ~= length(wavelength)
-        error('Energy2Quanta:  energy must have third dimension length equal to numWave');
+        error('%s:  size(energy, 3) must equal numWave', mfilename);
     end
     energy = reshape(energy,n*m,w)';
     photons = (energy/(h*c)) .* (1e-9 * wavelength(:,ones(1,n*m)));
@@ -59,9 +59,9 @@ if ndims(energy) == 3
 else
     [n,m] = size(energy);
     if n ~= length(wavelength)
-        errordlg('Energy2Quanta:  energy must have row length equal to numWave');
+        error('%s:  energy must have length of numWave', mfilename);
     end
-    photons = (energy/(h*c)) .* (1e-9 * wavelength(:,ones(1,m)));
+    photons = (energy/(h*c)) .* (1e-9 * wavelength(:,ones(1, m)));
 end
 
-return
+end

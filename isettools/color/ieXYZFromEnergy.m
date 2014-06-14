@@ -1,5 +1,6 @@
 function XYZ = ieXYZFromEnergy(energy,wave)
-% CIE XYZ values from spectral radiance (watts/nm/sr/m2) or irradiance (watts/nm/m2)
+% CIE XYZ values from spectral radiance (watts/nm/sr/m2) or irradiance
+% (watts/nm/m2)
 %
 %    XYZ = ieXYZFromEnergy(energy,wave)
 %
@@ -33,7 +34,8 @@ function XYZ = ieXYZFromEnergy(energy,wave)
 %
 %    patchSize = 1;
 %    macbethChart = sceneCreate('macbeth',patchSize); 
-%    p = sceneGet(macbethChart,'photons'); wave = sceneGet(macbethChart,'wave'); e = Quanta2Energy(wave,p);
+%    p = sceneGet(macbethChart,'photons');
+%    wave = sceneGet(macbethChart,'wave'); e = Quanta2Energy(wave,p);
 %    XYZ = ieXYZFromEnergy(e,wave);  
 %
 % Copyright ImagEval Consultants, LLC, 2003.
@@ -81,7 +83,7 @@ switch iFormat
     case 'RGB'
         XYZ = XW2RGBFormat(XYZ,r,c);
     otherwise
-        % XW format
+        % XW format, do nothing
 end
 
-return;
+end

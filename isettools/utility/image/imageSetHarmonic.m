@@ -4,28 +4,31 @@ function varargout = imageSetHarmonic(varargin)
 %  varargout = imageSetHarmonic(varargin)
 %  IMAGESETHARMONIC M-file for imageSetHarmonic.fig
 %
-%      imageSetHarmonic, by itself, creates a new IMAGEHARMONIC or raises the existing
-%      singleton*.
-%
-%      H = imageSetHarmonic returns the handle to a new IMAGEHARMONIC or the handle to
+%      imageSetHarmonic, by itself, creates a new IMAGEHARMONIC or raises
 %      the existing singleton*.
+%
+%      H = imageSetHarmonic returns the handle to a new IMAGEHARMONIC or
+%      the handle to the existing singleton*.
 %
 %      I have not found a good way to return the parameters of the harmonic
 %      function.  These are frequency, contrast, phase, angle, Gaussian
 %      window, and row,col.  To get them back, I create global parms, read
-%      it, and then destroy it. This is really dumb.  There must be a better way.
+%      it, and then destroy it. This is really dumb.  There must be a
+%      better way.
 % 
 %          parms.freq, parms.contras, parms.ph, parms.ang, parms.row,
 %          parms.col, parms.GaborFlag  
 %
-%      imageSetHarmonic('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in IMAGESETHARMONIC.M with the given input arguments.
+%      imageSetHarmonic('CALLBACK',hObject,eventData,handles,...) calls the
+%      local function named CALLBACK in IMAGESETHARMONIC.M with the given
+%      input arguments.
 %
-%      imageSetHarmonic('Property','Value',...) creates a new IMAGESETHARMONIC or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before imageSetHarmonic_OpeningFunction gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to imageSetHarmonic_OpeningFcn via varargin.
+%      imageSetHarmonic('Property','Value',...) creates a new
+%      IMAGESETHARMONIC or raises the existing singleton*.  Starting from
+%      the left, property value pairs are applied to the GUI before
+%      imageSetHarmonic_OpeningFunction gets called.  An unrecognized
+%      property name or invalid value makes property application stop.  All
+%      inputs are passed to imageSetHarmonic_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
@@ -46,7 +49,7 @@ gui_State = struct('gui_Name',       mfilename, ...
                    'gui_OutputFcn',  @imageSetHarmonic_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
-if nargin & isstr(varargin{1})
+if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
 

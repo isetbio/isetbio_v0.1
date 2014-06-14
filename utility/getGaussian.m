@@ -24,8 +24,8 @@ function gaussianDistribution =  getGaussian(rfSupport, rfCov)
 gaussFunc = @(M, S)(1/(2*pi*sqrt(det(rfCov))))*exp(-(1/2)*(M')*(rfCov\M));
 
 %% Check input
-if notDefined('rfSupport'), error('rfSupport.X and rfSupport.Y required'); end
-if notDefined('rfCov'),      error('rfCov required'); end
+if notDefined('rfSupport'), error('rfSupport.X / .Y required'); end
+if notDefined('rfCov'),     error('rfCov required'); end
 
 % Make sure the covariance matrix has sensible properties
 if any(size(rfCov) ~= [2 2]), error('rfCov has to be a 2x2 matrix'); end

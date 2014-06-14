@@ -39,4 +39,4 @@ big = (rgb > 0.04045);
 rgb(~big) = rgb(~big)/12.92;
 rgb(big) = ((rgb(big)+0.055)/1.055).^ (2.4);
 
-return;
+end

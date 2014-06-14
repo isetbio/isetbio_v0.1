@@ -231,9 +231,10 @@ switch lower(imageType)
             end
             
             % Deal with the illuminant
-            if ieVarInFile(variables,'illuminant'), load(fullname,'illuminant')
+            if ieVarInFile(variables,'illuminant')
+                load(fullname,'illuminant')
             else
-                illuminant = [];
+                % illuminant = [];
                 warndlg('No illuminant information in %s\n',fullname);
             end
             
@@ -292,11 +293,8 @@ switch lower(imageType)
         end
         
     otherwise
-        fprintf('%s',imageType);
+        fprintf('%s\n',imageType);
         error('Unknown image type.');
 end
 
-return;
-
-
-
+end

@@ -69,9 +69,9 @@ function [zzgrid, xvec] = ffndgrid(x, f, delta,limits,aver)
 % NORWAY
 
 
-error(nargchk(2,5,nargin))		
+narginchk(2,5)		
 
-[r, c] = size(x);
+[r, ~] = size(x);
 if r==1,% Make sure x is a column vector.
   x = x(:);
 end
@@ -90,13 +90,13 @@ xyz(2:2:2*D) = max(x,[],1);
 
 
 % take average of values for each point (default)
-if (nargin < 5)|isempty(aver),     aver = 1; end
-if (nargin >= 4) & ~isempty(limits), 
+if (nargin < 5)|| isempty(aver),     aver = 1; end
+if (nargin >= 4) && ~isempty(limits), 
   nlim = length(limits);
   ind  = find(~isnan(limits(1:min(7,nlim))));
   if any(ind), xyz(ind) = limits(ind);end
 end
-if nargin>=3&~isempty(delta), 
+if nargin>=3 && ~isempty(delta), 
   Nd  =length(delta);
   delta =  delta(1:min(Nd,D));
   if Nd ==1, delta = repmat(delta,1,D);end
@@ -150,7 +150,7 @@ end
 % Fast gridding
 fgrid = sparse(binx,1,f,Nf,1);% z-coordinate
 
-if n0~=0 | aver,
+if n0~=0 || aver,
   ngrid = sparse(binx,1,ones(N,1),Nf, 1); % no. of obs per grid cell
   if(n0 < 0),  n0 = -n0*N; end % n0 is given as  percentage
   
@@ -217,4 +217,4 @@ elseif D==2,% no output, then plot
  title(str);
 end
 
-return;
+end

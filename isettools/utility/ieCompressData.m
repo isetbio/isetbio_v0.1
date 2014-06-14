@@ -52,11 +52,11 @@ switch bitDepth
             % One waveband at a time
             cData = zeros(r,c,w,'uint32');
             for ii=1:w
-                cData(:,:,ii) = uint32(round(mxCompress*(data(:,:,ii) - mn)/(s)));
+                cData(:,:,ii) = uint32(round(mxCompress*(data(:,:,ii) - mn)/s));
             end
         else
             % All at once.  
-            cData = uint32(round(mxCompress * (data - mn)/(s)));
+            cData = uint32(round(mxCompress * (data - mn)/s));
         end
     case 16
         % uint16 precision - the old days.
@@ -64,11 +64,11 @@ switch bitDepth
             % One wavelength at a time
             cData = zeros(r,c,w,'uint16');
             for ii=1:w
-                cData(:,:,ii) = uint16(round(mxCompress*(data(:,:,ii) - mn)/(s)));
+                cData(:,:,ii) = uint16(round(mxCompress*(data(:,:,ii) - mn)/s));
             end
         else
             % Do it all at once.
-            cData = uint16(round(mxCompress * (data - mn)/(s)));
+            cData = uint16(round(mxCompress * (data - mn)/s));
         end
 
     otherwise

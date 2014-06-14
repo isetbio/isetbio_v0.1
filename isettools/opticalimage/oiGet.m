@@ -409,14 +409,7 @@ switch parm
         end
     case {'nwave','nwaves'}
         % oiGet(oi,'n wave')
-        % Changed July 2012.
         val = length(oiGet(oi,'wave'));
-        %         if checkfields(oi,'spectrum'), val = length(oi.spectrum.wave);
-        %         elseif strcmp(oiGet(oi,'type'),'opticalimage')
-        %             % When the optical image doesn't exist, we can use the scene
-        %             % values instead.  But is this a good idea?
-        %             val = oiGet(vcGetObject('scene'),'nwave');
-        %         end
         
     case 'height'
         % Height in meters is default
@@ -425,26 +418,34 @@ switch parm
         if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
     case {'width'}
         % Width in meters is default - We need to handle 'skip' case 
-        d = oiGet(oi,'focalPlaneDistance');    % Distance from lens to image
-        fov = oiGet(oi,'wangular');       % Field of view (horizontal, width)
+        d = oiGet(oi,'focalPlaneDistance');  % Distance from lens to image
+        fov = oiGet(oi,'wangular');          % FOV (horizontal, width)
         % ieRad2deg(2*atan((0.5*width)/imageDistance)) = fov
-        val = 2*d*tan(ieDeg2rad(fov/2));
-        if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
+        val = 2*d*tand(fov/2);
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1});
+        end
 
     case {'diagonal','diagonalsize'}
         val = sqrt(oiGet(oi,'height')^2 + oiGet(oi,'width')^2);
-        if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1});
+        end
 
     case {'heightwidth','heightandwidth'}
         val(1) = oiGet(oi,'height');
         val(2) = oiGet(oi,'width');
-        if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1});
+        end
      
     case {'area','areameterssquared'}
         % oiGet(oi,'area')    %square meters
         % oiGet(oi,'area','mm') % square millimeters
         val = oiGet(oi,'height')*oiGet(oi,'width');
-        if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1})^2; end
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1})^2;
+        end
 
     case {'centerpixel','centerpoint'}
         val = [oiGet(oi,'rows'),oiGet(oi,'cols')];
@@ -468,7 +469,9 @@ switch parm
             end
         end
         val = h/r;
-        if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1});
+        end
 
     case {'wspatialresolution','widthspatialresolution','wres'}   
         % Size in m per pixel is default.
@@ -489,19 +492,26 @@ switch parm
             
         end
         val = w/c; 
-        if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1});
+        end
 
     case {'spatialresolution','distancepersample','distpersamp'}
         % oiGet(oi,'distPerSamp','mm')
-        val = [oiGet(oi,'hspatialresolution'), oiGet(oi,'wspatialresolution')];
-        if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
+        val = [oiGet(oi,'hspatialresolution') ...
+               oiGet(oi,'wspatialresolution')];
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1});
+        end
 
     case {'distperdeg','distanceperdegree'}
         % This routine should call 
         % opticsGet(optics,'dist per deg',unit) rather than compute it
         % here.
         val = oiGet(oi,'width')/oiGet(oi,'fov');
-        if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1});
+        end
     
     case {'degreesperdistance','degperdist'}
         % oiGet(oi,'degrees per distance')
@@ -522,7 +532,9 @@ switch parm
         sSupport = oiSpatialSupport(oi);
         [xSupport, ySupport] = meshgrid(sSupport.x,sSupport.y);
         val(:,:,1) = xSupport; val(:,:,2) = ySupport;
-        if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1});
+        end
         
     case {'angularsupport','angularsamplingpositions'}
         % Angular values of sample points 
@@ -549,8 +561,8 @@ switch parm
                     aSupport.x = aSupport.x*60*60;
                     aSupport.y = aSupport.y*60*60;
                 case 'radians'
-                    aSupport.x = ieDeg2rad(aSupport.x);
-                    aSupport.y = ieDeg2rad(aSupport.y);
+                    aSupport.x = deg2rad(aSupport.x);
+                    aSupport.y = deg2rad(aSupport.y);
                 otherwise
                     error('Unknown angular unit %s\n',unit);
             end
