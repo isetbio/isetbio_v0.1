@@ -15,6 +15,7 @@ function params = imageHparams
 %
 % Copyright ImagEval Consultants, LLC, 2009
 
+warning('Deprecated. Use [~, params] = imageHarmonic; instead.');
 params.freq = 2;
 params.contrast = 1;
 params.ang = 0;
@@ -23,4 +24,4 @@ params.row = 128;
 params.col = 128;
 params.GaborFlag = 0;
 
-return;
+end

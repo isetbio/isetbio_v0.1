@@ -90,9 +90,9 @@ warning('on','MATLAB:interp1:NaNinY');
 % If the optical image is smaller than the sensor, the interpolation will
 % yield out of range values, NaNs. We replace these NaNs with 0.
 % That way, they end up with noise in them as we go through the pipeline.
-flatSCDI = replaceNaN(flatSCDI,0);
+flatSCDI(isnan(flatSCDI)) = 0;
 
-return;
+end
 
 %-----------------------------
 function interpolatedCFAN = interpcfaSCDI(rPos, cPos, sensor,spacing)
@@ -125,5 +125,4 @@ cCoords = floor(spacing*(0:length(cPos)-1));
 % indices of cfaN are Matlab values that (must) start at 1.
 interpolatedCFAN = cfaN(rCoords+1,cCoords+1);
 
-return;
-
+end

@@ -51,8 +51,8 @@ function s = ieHwhm2SD(h,gDim)
 %
 % Copyright ImagEval Consultants, LLC, 2007.
 
-if ieNotDefined('h'), error('Half width half max required'); end
-if ieNotDefined('gDim'), gDim = 2; end;
+if notDefined('h'), error('Half width half max required'); end
+if notDefined('gDim'), gDim = 2; end;
 
 switch gDim
     case 1
@@ -63,4 +63,4 @@ switch gDim
         error('Not implemented for %f dimensional Gaussian',gDim);
 end
 
-return;
+end

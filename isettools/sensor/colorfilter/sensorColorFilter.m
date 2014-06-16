@@ -27,15 +27,15 @@ function [fData, wave] = sensorColorFilter(cfType,varargin)
 %  
 % Copyright ImagEval Consultants, LLC, 2010
 
-if ieNotDefined('cfType'), cfType = 'gaussian'; end
+if notDefined('cfType'), cfType = 'gaussian'; end
 
 switch lower(cfType)
     case 'gaussian'  
         if isempty(varargin), wave = 400:700; 
         else wave = varargin{1}; end
-        if length(varargin)<2, cPos = [450,550,650]; 
+        if length(varargin) < 2, cPos = [450,550,650]; 
         else cPos = varargin{2}; end
-        if length(varargin)<3, widths = ones(size(cPos))*40; 
+        if length(varargin) < 3, widths = ones(size(cPos))*40; 
         else widths = varargin{3}; end
 
         nFilters = length(cPos);
@@ -48,4 +48,4 @@ switch lower(cfType)
         error('Unknown filter type')
 end
 
-return
+end

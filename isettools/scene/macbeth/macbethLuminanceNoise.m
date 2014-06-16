@@ -14,26 +14,24 @@ function [yNoise,mRGB] = macbethLuminanceNoise(vci,pointLoc)
 % Programming notes:  Could add display gamut to chromaticity plot
 
 %% Arguments
-if ieNotDefined('vci'),vci = vcGetObject('vcimage'); end
-if ieNotDefined('pointLoc'), pointLoc=[]; end
+if notDefined('vci'),vci = vcGetObject('vcimage'); end
+if notDefined('pointLoc'), pointLoc=[]; end
 
 %% Return the full data from all the patches
 mRGB = macbethSelect(vci,0,1,pointLoc);
 
 % Compute the std dev and mean for each patch.  The ratio is the contrast
 % noise.
-jj = 1;
 gSeries = 4:4:24;
 yNoise = zeros(1,length(gSeries));
-for ii = gSeries
-    rgb = mRGB{ii};
+for ii = 1 : length(gSeries)
+    rgb = mRGB{gSeries(ii)};
     % Convert linear RGB values of the display to XYZ and then luminance
     macbethXYZ = imageRGB2XYZ(vci,rgb);
-    Y = macbethXYZ(:,2);
+    Y = macbethXYZ(:, 2);
     
     % Calculate noise
-    yNoise(jj) = 100*(std(Y)/mean(Y));
-    jj = jj+1;
+    yNoise(ii) = 100*(std(Y)/mean(Y));
 end
 
 %% Show it
@@ -47,5 +45,4 @@ xlabel('Gray patch (white to black)')
 ylabel('Percent luminance noise (std(Y)/mean(Y))x100');
 legend({'data','1000 photon (33 db) '},'Location','NorthWest')
 
-return;
-
+end

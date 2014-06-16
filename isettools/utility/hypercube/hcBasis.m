@@ -30,9 +30,9 @@ function [imgMean, basis, coef, varExplained] = hcBasis(hc,bType,mType)
 % Copyright ImagEval Consultants, LLC, 2012.
 
 %% Check arguments
-if ieNotDefined('hc'), error('Hypercube data required'); end
-if ieNotDefined('bType'), bType = 0.995; end
-if ieNotDefined('mType'), mType = 'canonical'; end
+if notDefined('hc'), error('Hypercube data required'); end
+if notDefined('bType'), bType = 0.995; end
+if notDefined('mType'), mType = 'canonical'; end
 
 % The basis methods are
 %  1 - Return the mean in the first column and the svd basis in the 2nd
@@ -140,4 +140,4 @@ switch mType
 end
 varExplained = relativeVariance(nbases);
 
-return
+end

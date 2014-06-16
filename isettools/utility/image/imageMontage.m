@@ -1,7 +1,7 @@
 function [figH,m, cbH] = imageMontage(hc, slices, numCols, figNum)
 %Create a window with a montage of the slices in the hypercube data
 %
-% [figH,m,cbH] = imageMontage(hc, [slices=[]],   [numCols=[]], figNum=figure )
+% [figH,m,cbH] = imageMontage(hc, [slices=[]], [numCols=[]], figNum=figure)
 %
 % hc:          Hypercube data
 % wavebands:   Indices into the cube, not the actual wavelengths
@@ -22,10 +22,10 @@ function [figH,m, cbH] = imageMontage(hc, slices, numCols, figNum)
 %
 % (c) Imageval, 2012
 
-if ieNotDefined('slices'), slices = []; end
-if(~exist('numCols','var')), numCols = [];end
-if(~exist('figNum','var')), figH = figure;
-else                        figH = figure(figNum);
+if notDefined('slices'), slices = []; end
+if ~exist('numCols','var'), numCols = [];end
+if ~exist('figNum','var'), figH = figure;
+else figH = figure(figNum);
 end
 
 %% 

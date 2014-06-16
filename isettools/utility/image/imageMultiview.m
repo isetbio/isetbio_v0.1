@@ -26,8 +26,8 @@ function selectedObjs = imageMultiview(objType, selectedObjs, singlewindow)
 %
 % Copyright Imageval Consultants, LLC, 2013
 
-if ieNotDefined('objType'), error('Object type required.'); end
-if ieNotDefined('singlewindow'), singlewindow = false; end
+if notDefined('objType'), error('Object type required.'); end
+if notDefined('singlewindow'), singlewindow = false; end
 
 % Allows some aliases to be used
 objType = vcEquivalentObjtype(objType);
@@ -40,7 +40,7 @@ if  isempty(objList)
 end
 
 % Show a subset or all
-if ieNotDefined('selectedObjs')
+if notDefined('selectedObjs')
     lst = cell(1,nObj);
     for ii=1:nObj, lst{ii} = objList{ii}.name; end
     selectedObjs = listdlg('ListString',lst);
@@ -93,5 +93,3 @@ for ii=selectedObjs
 end
 
 end
-
-

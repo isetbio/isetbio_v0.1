@@ -54,11 +54,11 @@ macbethChartObject.name = 'Macbeth Chart';
 macbethChartObject.type = 'scene';
 
 % This is the size in pixels of each Macbeth patch
-if ieNotDefined('patchSize'), patchSize = 16;   end
+if notDefined('patchSize'), patchSize = 16;   end
 
 % These are the patches we are trying to get
 % If we want just the gray series we can set patchList = 19:24;
-if ieNotDefined('patchList'), patchList = 1:24; end
+if notDefined('patchList'), patchList = 1:24; end
 
 %% Surface reflectance spectrum
 if ieNotDefined('spectrum'), 

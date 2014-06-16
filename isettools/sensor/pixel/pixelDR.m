@@ -17,12 +17,12 @@ function DR = pixelDR(ISA,integrationTime)
 %
 % Copyright ImagEval Consultants, LLC, 2003
 
-if ieNotDefined('ISA'), ISA = vcGetObject('ISA'); end
+if notDefined('ISA'), ISA = vcGetObject('ISA'); end
 
 pixel = sensorGet(ISA,'pixel');
 
-if ieNotDefined('integrationTime'), 
-    integrationTime = sensorGet(ISA,'integrationTime');
+if notDefined('integrationTime'), 
+    integrationTime = sensorGet(ISA, 'integrationTime');
     if integrationTime == 0, 
         DR = [];
         return;
@@ -30,8 +30,8 @@ if ieNotDefined('integrationTime'),
 end
 
 % Define local variables
-darkVoltage = pixelGet(pixel,'darkvolt');           % Volts/sec
-readNoiseSD = pixelGet(pixel,'readNoiseVolts');     % Volts
+darkVoltage = pixelGet(pixel, 'darkvolt');           % Volts/sec
+readNoiseSD = pixelGet(pixel, 'readNoiseVolts');     % Volts
 
 % Calculate the total voltage rise in the dark.  The darkVoltage is per
 % second, so we multiply by integration time
@@ -53,11 +53,10 @@ maxVoltage = pixelGet(pixel,'voltageswing') - darkVoltage*integrationTime;
 % here.  Otherwise, DR is the voltage range divided by the noise level
 % (computed in decibels).
 if noiseSD == 0,  DR = Inf;
-else, DR = 20 * log10(maxVoltage ./ noiseSD);
+else DR = 20 * log10(maxVoltage ./ noiseSD);
 end
 
-return;
-
+end
 %  An alternative form of the (same) calculation is below:
 %
 % maxCurrent = (q*wellCapacity/integrationTime) - darkCurrent;

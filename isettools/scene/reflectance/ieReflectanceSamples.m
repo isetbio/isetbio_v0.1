@@ -1,4 +1,4 @@
-function [reflectances, sSamples] = ieReflectanceSamples(sFiles,sSamples,wave,sampling)
+function [reflectances, sSamples] = ieReflectanceSamples(sFiles,sSamples,wave,replacement)
 % Return a sample of reflectances 
 %
 %   [reflectances, sSamples] = ieReflectanceSamples(sFiles,sSamples,[wave],[sampling])
@@ -25,16 +25,16 @@ function [reflectances, sSamples] = ieReflectanceSamples(sFiles,sSamples,wave,sa
 %
 % Copyright ImagEval Consultants, LLC, 2010.
 
-if ieNotDefined('sFiles'), error('Surface files required'); 
-else                       nFiles = length(sFiles);
+if notDefined('sFiles'), error('Surface files required'); 
+else                     nFiles = length(sFiles);
 end
 
-if ieNotDefined('sSamples'), sSamples = zeros(1,nFiles);
+if notDefined('sSamples'), sSamples = zeros(1,nFiles);
 elseif length(sSamples) ~= nFiles
     error('Mis-match between number of files and sample numbers');
 end
-if ieNotDefined('wave'), wave = 400:10:700; end
-if ieNotDefined('sampling'), sampling = 'r'; end % With replacement
+if notDefined('wave'), wave = 400:10:700; end
+if notDefined('replacement'), replacement = 'r'; end % With replacement
 
 % sSamples might be a vector, indicating the number of samples, or a cell
 % array specifying which samples.
@@ -61,18 +61,18 @@ for ii=1:nFiles
     % Generate the random list of surfaces.  They are sampled with
     % replacement.
     if ~iscell(sSamples)
-        if strncmp(sampling,'r',1)  % With replacement
+        if strncmp(replacement, 'r', 1)  % With replacement
             % randi doesn't exist in 2008 Matlab.
-            if exist('randi','builtin')
+            if exist('randi', 'builtin')
                 sampleList{ii} = randi(nRef,[1 sSamples(ii)]);
             else
                 sampleList{ii} = ceil(rand([1 sSamples(ii)])*nRef);
             end
         else  % Without replacement
-            if sSamples(ii) > nRef, error('Not enough samples in %s\n',sFiles{ii});
+            if sSamples(ii) > nRef
+                error('Not enough samples in %s\n',sFiles{ii});
             else
-                list = randperm(nRef);
-                sampleList{ii} = list(1:sSamples(ii));
+                sampleList{ii} = randperm(nRef, sSamples(ii));
             end
         end
         % fprintf('Choosing %d of %d samples\n',sSamples(ii),nRef);
@@ -92,5 +92,4 @@ if max(reflectances(:)) > 1, error('Bad reflectance data'); end
 % and get the same reflectances.
 sSamples = sampleList;
 
-return
-
+end

@@ -43,10 +43,12 @@ function target  = macbethIdealColor(illuminant,colorSpace)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('illuminant'), illuminant = 'D65'; end
-if ieNotDefined('colorSpace'), colorSpace = 'XYZ'; end
-if checkfields(illuminant,'spectrum','wave'), wave = illuminant.spectrum.wave;
-else                           wave = 400:10:700;
+if notDefined('illuminant'), illuminant = 'D65'; end
+if notDefined('colorSpace'), colorSpace = 'XYZ'; end
+if checkfields(illuminant,'spectrum','wave')
+    wave = illuminant.spectrum.wave;
+else
+    wave = (400:10:700)';
 end
 
 % For the order of the reflectances, see the comment in macbethChartCreate
@@ -100,4 +102,4 @@ switch lower(colorSpace)
         error('Unknown color space.')
 end
 
-return;
+end

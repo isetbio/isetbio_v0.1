@@ -1,32 +1,32 @@
-function [scene, dPlane] = sceneDepthRange(scene,depthEdges)
+function [scene, dPlane] = sceneDepthRange(scene, depthEdges)
 % Create a scene with photons restricted to a particular depth range
 %
-%  [scene, dPlane] = sceneDepthRange(scene,depthRange)
+%  [scene, dPlane] = sceneDepthRange(scene, depthRange)
 %
 %  
 % dPlane:  A mask indicating the locations at this depth plane
 %          dPlane = sceneGet(scene,'depth plane',depthEdges);
 %
 % Example:
-%   Load piano shelf
+%   load piano shelf
 %   depthEdges = [0.3625, 0.5289];
 % 
 % Copyright ImagEval Consultants, LLC, 2011.
 
-if ieNotDefined('scene'), error('Scene required'); end
-if ieNotDefined('depthEdges'), error('Depth edges required'); end
+if notDefined('scene'), error('Scene required'); end
+if notDefined('depthEdges'), error('Depth edges required'); end
 
 % Should be in meters from the lens - to double check with Maya ...
 dMap = sceneGet(scene,'depth map');
 % imagesc(dMap)
 
-% Find the pixels in the current depth range (logical)?
+% Find the pixels in the current depth range
 dPlane = (depthEdges(1) <= dMap) & (dMap < depthEdges(2));
 % imagesc(dPlane)
 
 % Mask out the photons that are outside of the depth edges.  The returned
 % scene has 0 photons outside of the range.
-nWave = sceneGet(scene,'nWave');
+nWave   = sceneGet(scene,'nWave');
 photons = sceneGet(scene,'photons');
 
 % Be careful using 'cphotons' with gets and sets.  Keep better notes.  When
@@ -54,6 +54,4 @@ scene   = sceneSet(scene,'cphotons',photons);
 dMap  = sceneGet(scene,'depth map');
 scene = sceneSet(scene,'depth map',dMap .* dPlane);
 
-return;
-
-
+end

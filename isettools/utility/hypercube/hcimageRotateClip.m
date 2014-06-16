@@ -14,9 +14,9 @@ function [cImg, cPixels] = hcimageRotateClip(hc,clipPrctile,nRot)
 %
 % (c) Imageval, 2012
 
-if ieNotDefined('hc'); error('hyper cube image required'); end
-if ieNotDefined('clipPrctile'), clipPrctile = 99.9; end
-if ieNotDefined('nRot'), nRot = 1; end
+if notDefined('hc'); error('hyper cube image required'); end
+if notDefined('clipPrctile'), clipPrctile = 99.9; end
+if notDefined('nRot'), nRot = 1; end
 
 [r,c,w] = size(hc);
 if abs(nRot) == 1
@@ -37,7 +37,7 @@ for ii=1:w
         tmp = rot90(double(hc(:,:,ii)),nRot);
     end
     if clipPrctile < 100
-        mx = prctile(tmp(:),clipPrctile);
+        mx = iePrctile(tmp(:),clipPrctile);
         cPixels =  cPixels + (tmp > mx);
         tmp( tmp>mx ) = 0;
     end
@@ -48,4 +48,4 @@ close(h)
 % subplot(1,2,1), imagesc(tmp); axis image; colormap(gray);
 % subplot(1,2,2), imagesc(foo); axis image; colormap(gray);
 % 
-return
+end

@@ -11,8 +11,8 @@ function patchLocs = macbethROIs(currentLoc,delta)
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
-if ieNotDefined('currentLoc'), error('current location in MCC required'); end
-if ieNotDefined('delta'), delta = 10; end  % Get a better algorithm for size
+if notDefined('currentLoc'), error('current location in MCC required'); end
+if notDefined('delta'), delta = 10; end  % Get a better algorithm for size
 
 rect(1) = currentLoc(2) - round(delta/2);
 rect(2) = currentLoc(1) - round(delta/2);
@@ -21,5 +21,4 @@ rect(4) = delta;
 
 patchLocs = ieRoi2Locs(rect);
 
-return;
-
+end

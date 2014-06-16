@@ -23,10 +23,10 @@ function figNum = macbethEvaluationGraphs(L,sensorRGB,idealRGB,sName)
 % Copyright ImagEval Consultants, LLC, 2010.
 
 %% Arguments
-if ieNotDefined('L'), L = eye(3,3); end
-if ieNotDefined('sensorRGB'), error('No sensor RGB data'); end
-if ieNotDefined('idealRGB'),  idealRGB = macbethIdealColor('d65','lrgb'); end
-if ieNotDefined('sName'),     sName = 'sensor'; end
+if notDefined('L'), L = eye(3,3); end
+if notDefined('sensorRGB'), error('No sensor RGB data'); end
+if notDefined('idealRGB'),  idealRGB = macbethIdealColor('d65','lrgb'); end
+if notDefined('sName'),     sName = 'sensor'; end
 
 %% Linear sensor rgb to estimated linear RGB representation of the MCC
 
@@ -82,4 +82,4 @@ userData.rgbL     = rgbL;
 userData.dE = dE(:);
 set(gcf,'userdata',userData);
 
-return;
+end

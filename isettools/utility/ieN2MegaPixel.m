@@ -13,4 +13,4 @@ if ieNotDefined('precision'), precision = 1; end
 
 MP = round(N*1e-6* (10^precision))/10^precision;
 
-return;
+end

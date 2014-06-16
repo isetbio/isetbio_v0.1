@@ -22,7 +22,7 @@ function sensor = sensorComputeNoise(sensor,wBar)
 % Copyright ImagEval Consultants, LLC, 2011.
 
 %% Define parameters
-if ~exist('sensor','var') || isempty(sensor), errordlg('Image sensor array required.'); end
+if ~exist('sensor','var') || isempty(sensor), error('Image sensor array required.'); end
 if ~exist('wBar','var') || isempty(wBar), showWaitBar = 0; else showWaitBar = 1; end
 
 
@@ -79,4 +79,4 @@ switch lower(sensorGet(sensor,'quantizationmethod'))
         sensor = sensorSet(sensor,'digitalvalues',analog2digital(sensor,'linear'));
 end
 
-return
+end

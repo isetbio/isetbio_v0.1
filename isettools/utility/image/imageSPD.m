@@ -34,10 +34,10 @@ function RGB = imageSPD(SPD,wList,gam,row,col,displayFlag,xcoords,ycoords)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('gam'), gam = 1; end
-if ieNotDefined('displayFlag'), displayFlag = 1; end
+if notDefined('gam'), gam = 1; end
+if notDefined('displayFlag'), displayFlag = 1; end
 
-if ieNotDefined('wList')
+if notDefined('wList')
     w = size(SPD, ndims(SPD));
     if     w == 31,  wList = (400:10:700); 
     elseif w == 301, wList = (400:1:700);
@@ -70,7 +70,7 @@ end
 % values. 
 if displayFlag >= 1
     if ~isscalar(gam), RGB = RGB.^gam; end
-    if ieNotDefined('xcoords') || ieNotDefined('ycoords')
+    if notDefined('xcoords') || ieNotDefined('ycoords')
         imagescRGB(RGB); axis image; 
     else
         RGB = RGB/max(RGB(:));

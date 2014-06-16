@@ -24,9 +24,11 @@ function img = imageInterpolate(inImg,r,c)
 %   B = IMRESIZE(A,M,METHOD) 
 %   Hmmm.   It doesn't appear to be invertible.
 
-if ieNotDefined('r'), error('Must specify new row size.'); end
-if ieNotDefined('c'), error('Must specify new col size.'); end
-if ieNotDefined('inImg'), error('Input image required.'); end
+warning('Deprecated. Use IMRESIZE instead');
+
+if notDefined('r'), error('Must specify new row size.'); end
+if notDefined('c'), error('Must specify new col size.'); end
+if notDefined('inImg'), error('Input image required.'); end
 
 [r0,c0,w] = size(inImg);
 img = zeros(r,c,w);
@@ -41,4 +43,4 @@ for ii = 1:w
     img(:,:,ii) = imresize(inImg(:,:,ii),s,'bilinear');
 end
 
-return;
+end

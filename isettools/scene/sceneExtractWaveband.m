@@ -17,15 +17,11 @@ function sceneW = sceneExtractWaveband(scene,waveList)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('scene'), scene = vcGetObject('scene'); end
-if ieNotDefined('waveList'), error('Wave list must be defined'); end
+if notDefined('scene'), scene = vcGetObject('scene'); end
+if notDefined('waveList'), error('Wave list must be defined'); end
 
 sceneW = scene;
 sceneW = sceneSet(sceneW,'cphotons',sceneGet(scene,'photons',waveList));
 sceneW = sceneSet(sceneW,'wave',waveList);
 
-% if length(waveList) == 1,  sceneW = sceneSet(sceneW,'binwidth',1);
-% else                       sceneW = sceneSet(sceneW,'binWidth',waveList(2) - waveList(1));
-% end
-
-return;
+end

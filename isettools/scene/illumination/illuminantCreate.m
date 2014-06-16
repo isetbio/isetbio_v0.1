@@ -37,7 +37,7 @@ function il = illuminantCreate(ilName,wave, varargin)
 % Copyright ImagEval Consultants, LLC, 2005.
 
 %% Initialize parameters
-if ieNotDefined('ilName'), ilName = 'd65'; end
+if notDefined('ilName'), ilName = 'd65'; end
 
 il.name = ilName;
 il.type = 'illuminant';
@@ -48,8 +48,8 @@ if exist('wave','var') && ~isempty(wave), il.spectrum.wave = wave; end
 % The absence of a default could be a problem.
 
 switch ieParamFormat(ilName)
-    
-    case {'d65','d50','tungsten','fluorescent','555nm','equalenergy','illuminantc','equalphotons'}
+    case {'d65','d50','tungsten','fluorescent', ...
+          '555nm','equalenergy','illuminantc','equalphotons'}
         % illuminantCreate('d65',luminance)
         illP.name = ilName;
         illP.luminance = 100;
@@ -82,4 +82,4 @@ end
 %% Set the photons and return
 il = illuminantSet(il,'photons',iPhotons);  % [photons/(s sr m^2 nm)]
 
-return;
+end

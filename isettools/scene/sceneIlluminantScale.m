@@ -25,7 +25,7 @@ function scene = sceneIlluminantScale(scene)
 %
 % Copyright ImagEval Consultants, LLC, 2010.
 
-if ieNotDefined('scene'), scene = vcGetObject('scene'); end
+if notDefined('scene'), scene = vcGetObject('scene'); end
 
 illuminantSPD = sceneGet(scene,'illuminant photons');
 if isempty(illuminantSPD), error('Scene requires an illuminant'); end
@@ -39,7 +39,7 @@ if isempty(v)
     v = sceneGet(scene,'peak radiance and wave');
     idxWave = find(wave == v(2));
     p = sceneGet(scene,'photons',v(2));
-    [tmp, ij] = max2(p);
+    [~, ij] = max2(p);
     v = [0.9 ij(1) ij(2) idxWave];
     scene = sceneSet(scene,'knownReflectance',v);
 end
@@ -54,4 +54,4 @@ sceneRadiance = photon(v(2),v(3));
 s = (sceneRadiance/reflectance)/illuminantSPD(v(4));
 scene = sceneSet(scene,'illuminantPhotons',s*illuminantSPD);
 
-return;
+end

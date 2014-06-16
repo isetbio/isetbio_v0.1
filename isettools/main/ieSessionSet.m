@@ -190,80 +190,80 @@ switch param
         % This is just the figure number, usually.
         vcSESSION.GRAPHWIN.hObject = val;
         
-        % DEPRECATED
-        % These custom parameters are cell arrays of user defined routines for
-        % these various operations.  As far as we know, these are no longer
-        % used anywhere.  Access to them has been removed from the GUI.  We
-        % should probably delete the case statements below here.
-    case {'custom'}
-        vcSESSION.CUSTOM = val;
-    case {'customdemosaiclist','demosaiclist','setdemosaiclist'}
-        vcSESSION.CUSTOM.demosaic = val;
-    case {'adddemosaic','adddemosaicmethod'}
-        l = ieSessionGet('demosaicList');
-        vcSESSION.CUSTOM.demosaic = cellMerge(l,val);
-    case {'deletedemosaic','deletedemosaicmethod'}
-        vcSESSION.CUSTOM.demosaic = cellDelete(vcSESSION.CUSTOM.demosaic,val);
-        
-    case {'customcolorbalancelist','colorbalancelist','setcolorbalancelist'}
-        vcSESSION.CUSTOM.colorBalance = val;
-    case {'addcolorbalance','addcolorbalancemethod'}
-        l = ieSessionGet('colorbalancelist');
-        vcSESSION.CUSTOM.colorBalance = cellMerge(l,val);
-    case {'deletecolorbalance','deletecolorbalancemethod'}
-        vcSESSION.CUSTOM.colorBalance = cellDelete(vcSESSION.CUSTOM.colorBalance,val);
-        
-    case {'customcolorconversionlist','colorconversionlist','setcolorconversionlist'}
-        vcSESSION.CUSTOM.colorConversion = val;
-    case {'addcolorconversion','addconversion','addcolorconversionmethod'}
-        l = ieSessionGet('colorconversionlist');
-        vcSESSION.CUSTOM.colorConversion = cellMerge(l,val);
-    case {'deletecolorconversion','deletecolorconversionmethod'}
-        vcSESSION.CUSTOM.colorConversion = cellDelete(vcSESSION.CUSTOM.colorConversion,val);
-        
-    case {'renderlist','setrenderlist'}
-        % ieSessionSet('setrenderlist',algListCellArray);
-        vcSESSION.CUSTOM.render = val;
-    case {'addrender','addrendermethod'}
-        % ieSessionSet('addrender',newAlg);
-        l = ieSessionGet('renderlist');
-        vcSESSION.CUSTOM.render = cellMerge(l,val);
-    case {'deleterender','deleterendermethod'}
-        % ieSessionSet('deleterender',[5 8]);
-        vcSESSION.CUSTOM.render = cellDelete(vcSESSION.CUSTOM.render,val);
-        
-    case {'setoicomputelist','oicomputelist'}
-        % ieSessionSet('setOIComputeList',algListCellArray);
-        vcSESSION.CUSTOM.oicompute = val;
-    case {'addoicompute','addoicomputemethod'}
-        % ieSessionSet('addOIComputeMethod',newAlg);
-        l = ieSessionGet('OIComputelist');
-        vcSESSION.CUSTOM.oicompute = cellMerge(l,val);
-    case {'deleteoicompute','deleteOIComputemethod'}
-        % ieSessionSet('deleteOIcomputeMethod',newAlg);
-        vcSESSION.CUSTOM.oicompute = cellDelete(vcSESSION.CUSTOM.oicompute,val);
-        
-    case {'setsensorcomputelist','sensorcomputelist'}
-        % ieSessionSet('setSensorComputeList',algListCellArray);
-        vcSESSION.CUSTOM.sensorcompute = val;
-    case {'addsensorcompute','addsensorcomputemethod'}
-        % ieSessionSet('addSensorComputeMethod',newAlg);
-        l = ieSessionGet('sensorcomputelist');
-        vcSESSION.CUSTOM.sensorcompute = cellMerge(l,val);
-    case {'deletesensorcompute','deletesensorcomputemethod'}
-        % ieSessionSet('deleteSensorComputeMethod',newAlg);
-        vcSESSION.CUSTOM.sensorcompute = cellDelete(vcSESSION.CUSTOM.sensorcompute,val);
-        
-    case {'setedgealgorithmlist','edgealgorithmlist'}
-        % ieSessionSet('edgeAlgorithmList',algListCellArray);
-        vcSESSION.CUSTOM.edgeAlgorithm = val;
-    case {'addedgealgorithm','addedgealgorithmmethod'}
-        % ieSessionSet('addSensorComputeMethod',newAlg);
-        l = ieSessionGet('edgealgorithmlist');
-        vcSESSION.CUSTOM.edgeAlgorithm = cellMerge(l,val);
-    case {'deleteedgealgorithm','deleteedgealgorithmmethod'}
-        % ieSessionSet('deleteSensorComputeMethod',newAlg);
-        vcSESSION.CUSTOM.edgeAlgorithm = cellDelete(vcSESSION.CUSTOM.sensorcompute,val);
+        % DEPRECATED These custom parameters are cell arrays of user
+        % defined routines for these various operations.  As far as we
+        % know, these are no longer used anywhere.  Access to them has been
+        % removed from the GUI.  We should probably delete the case
+        % statements below here.
+%     case {'custom'}
+%         vcSESSION.CUSTOM = val;
+%     case {'customdemosaiclist','demosaiclist','setdemosaiclist'}
+%         vcSESSION.CUSTOM.demosaic = val;
+%     case {'adddemosaic','adddemosaicmethod'}
+%         l = ieSessionGet('demosaicList');
+%         vcSESSION.CUSTOM.demosaic = cellMerge(l,val);
+%     case {'deletedemosaic','deletedemosaicmethod'}
+%         vcSESSION.CUSTOM.demosaic = cellDelete(vcSESSION.CUSTOM.demosaic,val);
+%         
+%     case {'customcolorbalancelist','colorbalancelist','setcolorbalancelist'}
+%         vcSESSION.CUSTOM.colorBalance = val;
+%     case {'addcolorbalance','addcolorbalancemethod'}
+%         l = ieSessionGet('colorbalancelist');
+%         vcSESSION.CUSTOM.colorBalance = cellMerge(l,val);
+%     case {'deletecolorbalance','deletecolorbalancemethod'}
+%         vcSESSION.CUSTOM.colorBalance = cellDelete(vcSESSION.CUSTOM.colorBalance,val);
+%         
+%     case {'customcolorconversionlist','colorconversionlist','setcolorconversionlist'}
+%         vcSESSION.CUSTOM.colorConversion = val;
+%     case {'addcolorconversion','addconversion','addcolorconversionmethod'}
+%         l = ieSessionGet('colorconversionlist');
+%         vcSESSION.CUSTOM.colorConversion = cellMerge(l,val);
+%     case {'deletecolorconversion','deletecolorconversionmethod'}
+%         vcSESSION.CUSTOM.colorConversion = cellDelete(vcSESSION.CUSTOM.colorConversion,val);
+%         
+%     case {'renderlist','setrenderlist'}
+%         % ieSessionSet('setrenderlist',algListCellArray);
+%         vcSESSION.CUSTOM.render = val;
+%     case {'addrender','addrendermethod'}
+%         % ieSessionSet('addrender',newAlg);
+%         l = ieSessionGet('renderlist');
+%         vcSESSION.CUSTOM.render = cellMerge(l,val);
+%     case {'deleterender','deleterendermethod'}
+%         % ieSessionSet('deleterender',[5 8]);
+%         vcSESSION.CUSTOM.render = cellDelete(vcSESSION.CUSTOM.render,val);
+%         
+%     case {'setoicomputelist','oicomputelist'}
+%         % ieSessionSet('setOIComputeList',algListCellArray);
+%         vcSESSION.CUSTOM.oicompute = val;
+%     case {'addoicompute','addoicomputemethod'}
+%         % ieSessionSet('addOIComputeMethod',newAlg);
+%         l = ieSessionGet('OIComputelist');
+%         vcSESSION.CUSTOM.oicompute = cellMerge(l,val);
+%     case {'deleteoicompute','deleteOIComputemethod'}
+%         % ieSessionSet('deleteOIcomputeMethod',newAlg);
+%         vcSESSION.CUSTOM.oicompute = cellDelete(vcSESSION.CUSTOM.oicompute,val);
+%         
+%     case {'setsensorcomputelist','sensorcomputelist'}
+%         % ieSessionSet('setSensorComputeList',algListCellArray);
+%         vcSESSION.CUSTOM.sensorcompute = val;
+%     case {'addsensorcompute','addsensorcomputemethod'}
+%         % ieSessionSet('addSensorComputeMethod',newAlg);
+%         l = ieSessionGet('sensorcomputelist');
+%         vcSESSION.CUSTOM.sensorcompute = cellMerge(l,val);
+%     case {'deletesensorcompute','deletesensorcomputemethod'}
+%         % ieSessionSet('deleteSensorComputeMethod',newAlg);
+%         vcSESSION.CUSTOM.sensorcompute = cellDelete(vcSESSION.CUSTOM.sensorcompute,val);
+%         
+%     case {'setedgealgorithmlist','edgealgorithmlist'}
+%         % ieSessionSet('edgeAlgorithmList',algListCellArray);
+%         vcSESSION.CUSTOM.edgeAlgorithm = val;
+%     case {'addedgealgorithm','addedgealgorithmmethod'}
+%         % ieSessionSet('addSensorComputeMethod',newAlg);
+%         l = ieSessionGet('edgealgorithmlist');
+%         vcSESSION.CUSTOM.edgeAlgorithm = cellMerge(l,val);
+%     case {'deleteedgealgorithm','deleteedgealgorithmmethod'}
+%         % ieSessionSet('deleteSensorComputeMethod',newAlg);
+%         vcSESSION.CUSTOM.edgeAlgorithm = cellDelete(vcSESSION.CUSTOM.sensorcompute,val);
         
     otherwise
         error('Unknown parameter')

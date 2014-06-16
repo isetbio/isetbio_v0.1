@@ -23,7 +23,7 @@
 
 %% Create the large Gretag chart
 fName = fullfile(isetRootPath,'data','surfaces','gretagDigitalColorSG.mat');
-[reflectance wave]= ieReadSpectra(fName);
+[reflectance, wave]= ieReadSpectra(fName);
 
 %% Create the chart
 nWave = 36;

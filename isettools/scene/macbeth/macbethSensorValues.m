@@ -25,14 +25,14 @@ function [sensorImg,sensorSD,cornerPoints] = macbethSensorValues(sensor,showSele
 
 %TODO:  showSelection is not working any more.
 
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
-if ieNotDefined('showSelection'), showSelection = true; end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('showSelection'), showSelection = true; end
 fullData = true;
 % Get the raw sensor data
 if ieNotDefined('cornerPoints')
-    [fullRGB, mLocs, pSize, cornerPoints] = macbethSelect(sensor,showSelection,fullData);
+    [fullRGB, ~, ~, cornerPoints] = macbethSelect(sensor,showSelection,fullData);
 else
-    [fullRGB, mLocs, pSize, cornerPoints] = macbethSelect(sensor,showSelection,fullData,cornerPoints);
+    [fullRGB, ~, ~, cornerPoints] = macbethSelect(sensor,showSelection,fullData,cornerPoints);
 end
 
 nSensors   = size(fullRGB{1},2);
@@ -49,4 +49,4 @@ for ii=1:24  % For each chip
     end
 end
 
-return;
+end

@@ -21,18 +21,13 @@ function macbethChart = macbethReadReflectance(wave,patchList)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('wave'), wave = (400:700); end
-if ieNotDefined('patchList'), patchList = 1:24; end
+if notDefined('wave'), wave = (400:700); end
+if notDefined('patchList'), patchList = 1:24; end
 
 fName = fullfile(isetRootPath,'data','surfaces','macbethChart.mat');
 macbethChart = ieReadSpectra(fName,wave);
 
 macbethChart = macbethChart(:,patchList);
-
-% In the old days, we did this. But then we changed the data file.
-%
-% list = [4 3 2 1 8 7 6 5 12 11 10 9 16 15 14 13 20 19 18 17 24 23 22 21];
-% macbethChart(:,list) = macbethChart;
 
 end
 

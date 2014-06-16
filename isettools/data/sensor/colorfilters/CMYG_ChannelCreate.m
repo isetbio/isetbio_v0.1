@@ -13,7 +13,7 @@ gFile = fullfile(isetRootPath,'data','sensor','colorfilters','G');
 
 % Merge the data sets
 data = [cmyData,gData];
-filterNames = cellMerge(cmyFilterNames,gFilterNames);
+filterNames = [cmyFilterNames, gFilterNames];
 
 % Fastest way to save the color filter is to dummy up a sensor, add the
 % filters and filternames, and have ieSaveColorFilter pull everything out
@@ -24,4 +24,3 @@ sensor = sensorSet(sensor,'colorfilters',data);
 sensor = sensorSet(sensor,'filterNames',filterNames);
 fName = fullfile(isetRootPath,'data','sensor','colorfilters','CMYG.mat');
 ieSaveColorFilter(sensor,fName);
-

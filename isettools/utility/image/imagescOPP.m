@@ -26,9 +26,9 @@ function [res,cmap] = imagescOPP(oppImg,gam,nTable,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2010.
 
-if ieNotDefined('oppImg'), error('Opponent image required.'); end
-if ieNotDefined('gam'),    gam = 0.3; end
-if ieNotDefined('nTable'), nTable = 256; end
+if notDefined('oppImg'), error('Opponent image required.'); end
+if notDefined('gam'),    gam = 0.3; end
+if notDefined('nTable'), nTable = 256; end
 
 res = zeros(size(oppImg));
 cmap = zeros(nTable,3,3);
@@ -57,4 +57,4 @@ for ii=1:3
     colormap(cmap(:,:,ii)); axis image; axis off; truesize
 end
 
-return
+end

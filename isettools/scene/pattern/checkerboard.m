@@ -18,12 +18,10 @@ function im = checkerboard(checkPeriod,nCheckPairs)
 % Copyright ImagEval Consultants, LLC, 2005.
 
 
-if ieNotDefined('checkPeriod'), checkPeriod = 16; end
-if ieNotDefined('nCheckPairs'),   nCheckPairs = 8; end
+if notDefined('checkPeriod'), checkPeriod = 16; end
+if notDefined('nCheckPairs'), nCheckPairs =  8; end
 
-basicPattern = kron([0,1; 1 ,0],ones(checkPeriod));
+basicPattern = kron([0,1; 1 ,0], ones(checkPeriod));
 im = repmat(basicPattern,nCheckPairs,nCheckPairs);
 
-return;
-
-
+end

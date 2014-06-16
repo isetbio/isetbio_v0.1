@@ -44,10 +44,10 @@ function varExplained = sceneToFile(fname,scene,bType,mType)
 %   Add depth image as potential output
 
 
-if ieNotDefined('fname'), error('Need output file name for now'); end
-if ieNotDefined('scene'), error('scene structure required'); end
-if ieNotDefined('bType'), bType = [];  end  % See hcBasis
-if ieNotDefined('mType'), mType = [];  end  % See hcBasis
+if notDefined('fname'), error('Need output file name for now'); end
+if notDefined('scene'), error('scene structure required'); end
+if notDefined('bType'), bType = [];  end  % See hcBasis
+if notDefined('mType'), mType = [];  end  % See hcBasis
 
 % We need to save the key variables
 photons    = sceneGet(scene,'photons');
@@ -62,7 +62,7 @@ if isempty(bType)
 else
     % Figure out the basis functions using hypercube computation
     photons = photons(1:3:end,1:3:end,:);
-    [imgMean, basisData, coef, varExplained] = hcBasis(photons,bType,mType); %#ok<ASGLU>
+    [imgMean, basisData, ~, varExplained] = hcBasis(photons,bType,mType);
     clear photons;
     
     % Plot the basis functions

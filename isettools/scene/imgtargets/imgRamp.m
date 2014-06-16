@@ -18,7 +18,7 @@ function img  = imgRamp(imSize)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('imSize'), imSize = 128; end
+if notDefined('imSize'), imSize = 128; end
 
 % X positions in the image.
 mx = round(imSize/2);
@@ -27,8 +27,6 @@ xImage = mn:mx;
 
 yContrast = ((imSize:-1:1)/imSize);
 img = (yContrast'*xImage) + 0.5;
-img =  ieScale(img,1,256);
+img =  ieScale(img,0,255);
 
-return;
-
-% Debug
+end

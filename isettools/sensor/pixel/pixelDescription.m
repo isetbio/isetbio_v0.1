@@ -21,7 +21,7 @@ txt = addText(txt,newText);
 newText = sprintf('Well capacity\t%.0f e-\n',pixelGet(PIXEL,'wellcapacity'));
 txt = addText(txt,newText);
 
-[val,ISA] = vcGetSelectedObject('ISA');
+[~, ISA] = vcGetSelectedObject('ISA');
 dr = pixelDR(ISA,0.001);    % DR assumes a 10 ms exposure
 if ~isempty(dr)
     newText = sprintf('DR (1 ms):\t%.1f dB\n',dr);
@@ -37,4 +37,4 @@ if sensorGet(ISA,'wavelength') ~= pixelGet(PIXEL,'wavelength')
     txt = addText(txt,newText);
 end
 
-return;
+end

@@ -1,4 +1,4 @@
-function RGB = FOTarget(pattern,parms)
+function RGB = FOTarget(pattern,params)
 %Create a frequency/orientation image
 %
 %  target = FOTarget(pattern,parms)
@@ -32,42 +32,29 @@ function RGB = FOTarget(pattern,parms)
 % Copyright ImagEval Consultants, LLC, 2005.
 
 % Read the input parameters
-if ~isfield(parms,'angles'),   angles = linspace(0,pi/2,8); else angles = parms.angles;end
-if ~isfield(parms,'freqs'),    freqs =  1:8;   else freqs = parms.freqs;         end
-if ~isfield(parms,'contrast'), contrast = 1;   else contrast = parms.contrast;   end
-if ~isfield(parms,'blockSize'),blockSize = 32; else blockSize = parms.blockSize; end
+if notDefined('params'), params = []; end
+try angles = params.angles; catch, angles = linspace(0,pi/2,8); end
+try freqs = params.freqs(:); catch, freqs = (1:8)'; end
+try contrast = params.contrast; catch, contrast = 1; end
+try blockSize = params.blockSize; catch, blockSize = 32; end
 
 % Create the spatial grid
-x = [0:blockSize-1]/blockSize;
-[X Y] = meshgrid(x,x);
-
-% Initialize parameters
-ii = 0; im = [];
+x = (0:blockSize-1)/blockSize;
+[X, Y] = meshgrid(x, x);
 
 switch lower(pattern)
 case 'sine'
-    for f=freqs
-        thisBlock = [];
-        for theta = angles
-            thisBlock = [thisBlock, 0.5*(1 + contrast*sin(2*pi*f*(cos(theta)*X + sin(theta)*Y)))];
-        end
-        im = [im ; thisBlock];
-    end
+    thisBlock = kron(cos(angles), X) + kron(sin(angles), Y);
+    im = (1 + contrast * sin(2*pi * kron(freqs, thisBlock))) / 2;
 case 'square'
-    for f=freqs
-        thisBlock = [];
-        for theta = angles
-            thisBlock = [thisBlock, 0.5*(1 + contrast*square(2*pi*f*(cos(theta)*X + sin(theta)*Y)))];
-        end
-        im = [im ; thisBlock];
-    end
+    thisBlock = kron(cos(angles), X) + kron(sin(angles), Y);
+    im = (1 + contrast * square(2*pi * kron(freqs, thisBlock))) / 2;
 otherwise
-    error('FOTarget:  Unrecognized pattern');
+    error('%s:  Unrecognized pattern', mfilename);
 end
 
 % We prefer the frequency variation from left to right.
 im = im';
-RGB = repmat(im,[1 1 3]);
-% imshow(RGB)
+RGB = im(:,:, ones(3,1));
 
-return;
+end

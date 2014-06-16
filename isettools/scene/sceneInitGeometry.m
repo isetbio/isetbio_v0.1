@@ -13,6 +13,8 @@ function scene = sceneInitGeometry(scene)
 
 
 % Set scene distance in meters
-if ~isfield(scene,'distance'), scene = sceneSet(scene,'distance',1.2); end
+if notDefined('scene.distance')
+    scene = sceneSet(scene,'distance',1.2);
+end
 
-return;
+end

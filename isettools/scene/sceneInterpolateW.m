@@ -28,10 +28,10 @@ function scene = sceneInterpolateW(scene,newWave,pLum)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 %% Initialize parameters
-if ieNotDefined('pLum'),  pLum = 1; end
-if ieNotDefined('scene'), scene = vcGetSelectedObject('scene');
+if notDefined('pLum'),  pLum = 1; end
+if notDefined('scene'), scene = vcGetSelectedObject('scene');
 elseif ~strcmp(sceneGet(scene,'type'),'scene')
-    errordlg('sceneInterpolationW structure not a scene!');
+    error('sceneInterpolationW structure not a scene!');
 end
 
 % Check whether or not to show wait bar
@@ -43,7 +43,7 @@ col   = sceneGet(scene,'col');
 curWave = sceneGet(scene,'wave');
 
 % If the user didn't send in new wavelengths, we ask.
-if ieNotDefined('newWave')
+if notDefined('newWave')
     handles = ieSessionGet('scene image handle');
     prompt={'Start (nm)','Stop (nm)','Spacing (nm)'};
     def={num2str(curWave(1)),num2str(curWave(end)),num2str(sceneGet(scene,'binwidth'))};
@@ -54,7 +54,7 @@ if ieNotDefined('newWave')
     
     low = str2double(val{1}); high = str2double(val{2}); skip = str2double(val{3});
     if high > low,       waveSpectrum.wave = low:skip:high;
-    elseif high == low,  waveSpectrum.wave = low;     % User made monochrome, so onlyl 1 sample
+    elseif high == low,  waveSpectrum.wave = low; % User made monochrome
     else
         ieInWindowMessage('Bad wavelength ordering:  high < low. Data unchanged.',handles,5);
         return;
@@ -64,7 +64,7 @@ else
     waveSpectrum.wave = newWave;
 end
 
-if logical(min(newWave) < min(curWave)) ||  logical(max(newWave) > max(curWave))
+if min(newWave) < min(curWave) ||  max(newWave) > max(curWave)
     error('Wavelength extrapolation not allowed.  Only interpolation');
 end
 
@@ -107,12 +107,9 @@ if ~isempty(photons)
         for rr=1:r
             % Get a row
             pRow = squeeze(photons(rr,:,:))';
-            % Interpolate all the columns in that row and put it in its place
+            % Interpolate all the columns in that row and put it in place
             newPhotons(rr,:,:) = interp1(curWave(:),pRow,...
                 waveSpectrum.wave(:),'linear')';
-            % Replaced 2013.09.29 for speed
-            %   newPhotons(rr,:,:) = interp1(curWave(:),pRow,...
-            %        waveSpectrum.wave(:),'linear',min(photons(:))*1e-3)';
         end
     end
     
@@ -152,6 +149,4 @@ if pLum && ~isempty(photons)
     scene = sceneAdjustLuminance(scene,meanL);
 end
 
-
-return;
-
+end

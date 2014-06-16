@@ -20,23 +20,19 @@ function scene = scenePointArray(scene,sz,pointSpacing,spectralType)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('scene'), error('Scene structure required'); end
-if ieNotDefined('sz'), sz = 128; end
-if ieNotDefined('pointSpacing'), pointSpacing = 16; end
-if ieNotDefined('spectralType'), spectralType = 'd65'; end
+if notDefined('scene'), error('Scene structure required'); end
+if notDefined('sz'), sz = 128; end
+if notDefined('pointSpacing'), pointSpacing = 16; end
+if notDefined('spectralType'), spectralType = 'd65'; end
 
-scene = sceneSet(scene,'name','pointarray');
+scene = sceneSet(scene, 'name', 'pointarray');
 
 scene = initDefaultSpectrum(scene,'multispectral');
 wave  = sceneGet(scene,'wave');
 nWave = sceneGet(scene,'nwave');
 
-d = zeros(sz);
-for ii=(pointSpacing/2):pointSpacing:sz
-    for jj=(pointSpacing/2):pointSpacing:sz
-        d(ii,jj) = 1;
-    end
-end
+d = zeros(sz); idx = round(pointSpacing/2):pointSpacing:sz;
+d(idx, idx) = 1;
 
 switch lower(spectralType)
     case {'d65'}
@@ -49,7 +45,7 @@ switch lower(spectralType)
         error('Unknown spectral type:%s\n',spectralType);
 end
 
-for ii=1:nWave, data(:,:,ii) = d*illPhotons(ii); end
+data = bsxfun(@times, d, reshape(illPhotons, [1 1 nWave]));
 
 scene = sceneSet(scene,'illuminantPhotons',illPhotons);
 
@@ -57,4 +53,4 @@ scene = sceneSet(scene,'illuminantPhotons',illPhotons);
 scene = sceneSet(scene,'cphotons',data);
 scene = sceneSet(scene,'fov',40);
 
-return;
+end

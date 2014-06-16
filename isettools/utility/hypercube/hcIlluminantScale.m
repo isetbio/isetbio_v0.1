@@ -20,7 +20,7 @@ function [illScale, meanSPD] = hcIlluminantScale(hcIlluminant)
 %
 % Copyright Imageval, LLC , 2013
 
-if ieNotDefined('hcIlluminant'), error('hypercube illuminant required');end
+if notDefined('hcIlluminant'), error('hypercube illuminant required');end
 
 [hcIlluminant,r,c] = RGB2XWFormat(hcIlluminant);
 meanSPD = mean(hcIlluminant,1);

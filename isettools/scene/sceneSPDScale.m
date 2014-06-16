@@ -57,9 +57,9 @@ function [scene,fullName] = sceneSPDScale(scene,fullName,op,skipIlluminant)
 
 % TODO - validate input data
 
-if ieNotDefined('scene'), [val,scene] = vcGetSelectedObject('SCENE'); end
-if ieNotDefined('fullName'), fullName = vcSelectDataFile('lights'); end
-if ieNotDefined('skipIlluminant'),  skipIlluminant = 0; end
+if notDefined('scene'), [~, scene] = vcGetSelectedObject('SCENE'); end
+if notDefined('fullName'), fullName = vcSelectDataFile('lights'); end
+if notDefined('skipIlluminant'),  skipIlluminant = 0; end
 if isempty(fullName), return; end
 
 % NOTE:  Check that the wavelength representations of the different objects
@@ -87,18 +87,20 @@ switch op
     % I think these operations might be handled using RGB2XWFormat more
     % efficiently.
     case {'/','divide'}
-        for ii=1:nWave
-            energy(:,:,ii) = energy(:,:,ii)/spd(ii);
-        end
+        % for ii=1:nWave
+        %    energy(:,:,ii) = energy(:,:,ii)/spd(ii);
+        % end
+        energy = bsxfun(@rdivide, energy, reshape(spd, [1 1 nWave]));
         if ~skipIlluminant
             illE = sceneGet(scene,'illuminantEnergy');
             illE = illE(:)./spd(:);
         end
 
     case {'multiply','*'}
-        for ii=1:nWave
-            energy(:,:,ii) = energy(:,:,ii)*spd(ii);
-        end
+        % for ii=1:nWave
+        %     energy(:,:,ii) = energy(:,:,ii)*spd(ii);
+        % end
+        energy = bsxfun(@times, energy, reshape(spd, [1 1 nWave]));
         if ~skipIlluminant
             illE = sceneGet(scene,'illuminantEnergy');
             if isempty(illE)
@@ -107,21 +109,23 @@ switch op
             illE = illE(:).*spd(:);
         end
 
-    case {'add','+','sum'}
-        for ii=1:nWave
-            energy(:,:,ii) = energy(:,:,ii) + spd(ii);
-        end
-    case {'subtract','-'}
-        for ii=1:nWave
-            energy(:,:,ii) = energy(:,:,ii) - spd(ii);
-        end
+    case {'add','+','sum', 'plus'}
+        % for ii=1:nWave
+        %     energy(:,:,ii) = energy(:,:,ii) + spd(ii);
+        % end
+        energy = bsxfun(@plus, energy, reshape(spd, [1 1 nWave]));
+    case {'subtract','-', 'minus'}
+%         for ii=1:nWave
+%             energy(:,:,ii) = energy(:,:,ii) - spd(ii);
+%         end
+        energy = bsxfun(@minus, energy, reshape(spd, [1 1 nWave]));
     otherwise
         error('Unknown operation.')
 end
 
 % Place the adjusted data in the scene structure
-[XW,r,c,w] = RGB2XWFormat(energy); %#ok<NASGU>
-photons = XW2RGBFormat(Energy2Quanta(wave,XW')',r,c);  % Sorry, but ugly
+[XW,r,c,~] = RGB2XWFormat(energy);
+photons = XW2RGBFormat(Energy2Quanta(wave,XW')',r,c);
 scene   = sceneSet(scene,'cphotons',photons);
 if ~skipIlluminant
     scene   = sceneSet(scene,'illuminant energy',illE);
@@ -132,4 +136,4 @@ end
 scene = sceneSet(scene,'luminance',lum);
 scene = sceneSet(scene,'meanl',meanL);
 
-return;
+end

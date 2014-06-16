@@ -14,7 +14,7 @@ function imT = imageFlip(im,flipType)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 if ndims(im)~=3, error('Input must be rgb image (row x col x w)'); end
-if ieNotDefined('flipType'), flipType = 'l'; end
+if notDefined('flipType'), flipType = 'l'; end
 
 imT = zeros(size(im));
 switch lower(flipType(1))
@@ -29,4 +29,4 @@ switch lower(flipType(1))
         end
 end
 
-return;
+end

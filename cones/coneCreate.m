@@ -46,9 +46,8 @@ switch species
         % photopigment optical densities for L,M,S
         cone.opticalDensity = [0.5 0.5 0.4]';
         
-        
         % load absorbance data
-        cone.absorbance = ieReadSpectra('coneAbsorbance',cone.wave);
+        cone.absorbance = 10.^ieReadSpectra('coneAbsorbance',cone.wave);
         
         % Peak absorptance efficiency
         % Note that the actual peak efficiency is the product of this value
@@ -73,5 +72,4 @@ for ii=1:2:(n-1)
     cone = coneSet(cone,varargin{ii},varargin{ii+1});
 end
 
-return
-
+end

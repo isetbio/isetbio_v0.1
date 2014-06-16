@@ -1,4 +1,4 @@
-function [noisyImage,theNoise] = noiseShot(ISA)
+function [noisyImage, theNoise] = noiseShot(ISA)
 % Add shot noise (Poisson electron noise) into the image data
 %
 %    [noisyImage,theNoise] = noiseShot(ISA)
@@ -24,9 +24,7 @@ function [noisyImage,theNoise] = noiseShot(ISA)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-volts          = sensorGet(ISA,'volts');
-conversionGain = pixelGet(ISA.pixel,'conversion gain');
-electronImage  = volts/conversionGain;
+electronImage = sensorGet(ISA, 'electrons');
 
 % N.B. The noise is Poisson in electron  units. But the distribution in
 % voltage units is NOT Poisson.  The voltage signal, however, does have the
@@ -50,22 +48,21 @@ noisyImage = round(electronImage + theNoise);
 % toolbox being present, so we use this Poisson sampler from Knuth. Create
 % and copy the Poisson samples into the noisyImage
 poissonCriterion = 15;
-[r,c] = find(electronImage < poissonCriterion);
+idx = find(electronImage(:) < poissonCriterion);
 v = electronImage(electronImage < poissonCriterion);
 if ~isempty(v)
     vn = iePoisson(v);  % Poisson samples
-    for ii=1:length(r)
-        theNoise(r(ii),c(ii))   = vn(ii);
+    % for ii=1:length(r)
+    %    theNoise(r(ii),c(ii))   = vn(ii);
         % For low mean values, we *replace* the mean value with the Poisson
-        % noise; we do not *add* the Poisson noise to the mean. Hence the
-        % following line is incorrected and was replaced with the
-        % subsequent line:
-        % noisyImage(r(ii),c(ii)) = electronImage(r(ii),c(ii)) + vn(ii);  
-        noisyImage(r(ii),c(ii)) = vn(ii);  
-    end
+        % noise; we do not *add* the Poisson noise to the mean
+    %    noisyImage(r(ii),c(ii)) = vn(ii);  
+    %end
+    theNoise(idx) = vn;
+    noisyImage(idx) = vn;
 end
 
 % Convert the noisy electron image back into the voltage signal
-noisyImage = conversionGain*noisyImage;
+noisyImage = sensorGet(ISA, 'pixel conversion gain') * noisyImage;
 
-return;
+end

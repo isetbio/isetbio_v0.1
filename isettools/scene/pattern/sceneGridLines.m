@@ -18,10 +18,10 @@ function scene = sceneGridLines(scene,sz,lineSpacing,spectralType)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('scene'), error('Scene structure required'); end
-if ieNotDefined('sz'), sz = 128; end
-if ieNotDefined('lineSpacing'), lineSpacing = 16; end
-if ieNotDefined('spectralType'), spectralType = 'ep'; end
+if notDefined('scene'), error('Scene structure required'); end
+if notDefined('sz'), sz = 128; end
+if notDefined('lineSpacing'), lineSpacing = 16; end
+if notDefined('spectralType'), spectralType = 'ep'; end
 
 scene = sceneSet(scene,'name','gridlines');
 
@@ -30,8 +30,8 @@ wave = sceneGet(scene,'wave');
 nWave = sceneGet(scene,'nwave');
 
 d = zeros(sz);
-for ii=(lineSpacing/2):lineSpacing:sz, d(ii,:) = 1; end
-for jj=(lineSpacing/2):lineSpacing:sz, d(:,jj) = 1; end
+d(round(lineSpacing/2):lineSpacing:sz, :) = 1;
+d(:, round(lineSpacing/2):lineSpacing:sz) = 1;
 
 % To reduce rounding error problems for large dynamic range, we set the
 % lowest value to something slightly more than zero.  This is due to the
@@ -51,9 +51,7 @@ switch lower(spectralType)
         error('Unknown spectral type:%s\n',spectralType);
 end
 
-
-data = zeros(size(d,1),size(d,2),nWave);
-for ii=1:nWave, data(:,:,ii) = d*illPhotons(ii); end
+data = bsxfun(@times, d, reshape(illPhotons, [1 1 nWave]));
 
 scene = sceneSet(scene,'illuminantPhotons',illPhotons);
 
@@ -61,4 +59,4 @@ scene = sceneSet(scene,'illuminantPhotons',illPhotons);
 scene = sceneSet(scene,'cphotons',data);
 scene = sceneSet(scene,'fov',40);
 
-return;
+end

@@ -47,10 +47,10 @@ else
     for ii=1:nWave
         if showBar, waitbar(ii/nWave,h); end
         tmp = r(:,:,ii);
-        peakReflectanceBand(ii) = prctile(tmp(:),prct);
+        peakReflectanceBand(ii) = iePrctile(tmp(:),prct);
     end
     if showBar, close(h); end
-    peakReflectance = prctile(peakReflectanceBand,prct);
+    peakReflectance = iePrctile(peakReflectanceBand,prct);
 end
 
 if peakReflectance > 1

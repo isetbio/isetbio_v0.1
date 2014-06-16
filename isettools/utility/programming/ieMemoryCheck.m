@@ -30,5 +30,4 @@ end
 
 if nargout == 0, fprintf('Memory %f %s\n',m/s,unit); end
 
-
 end

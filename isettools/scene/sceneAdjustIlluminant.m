@@ -32,11 +32,11 @@ function scene = sceneAdjustIlluminant(scene,illEnergy)
 %
 % Copyright ImagEval Consultants, LLC, 2010.
 
-if ieNotDefined('scene'), scene = vcGetObject('scene'); end
+if notDefined('scene'), scene = vcGetObject('scene'); end
 
 % Make sure we have the illuminant data in the form of energy
 wave = sceneGet(scene,'wave');
-if ieNotDefined('illEnergy')
+if notDefined('illEnergy')
     % Read from a user-selected file
     fullName = vcSelectDataFile([]);
     illEnergy = ieReadSpectra(fullName,wave);
@@ -82,11 +82,12 @@ mLum     = sceneGet(scene,'mean luminance');
 illPhotons = Energy2Quanta(illEnergy,wave);
 switch sceneGet(scene,'illuminant format')
     case 'spectral'
-        % Convert the illuminant energy to photons and find the multiplier ratio
+        % Convert the illuminant energy to photons and find the multiplier
+        % ratio
         illFactor  = illPhotons ./ curIll;
         
         % Adjust both the radiance data and the illuminant by the illFactor
-        skipIlluminant = 0;  % Don't skip changing the illuminant (do change it!)
+        skipIlluminant = 0;  % Don't skip changing the illuminant
         scene = sceneSPDScale(scene,illFactor,'*',skipIlluminant);
     case 'spatial spectral'
         % Input is a vector.  We turn it into a spatial spectral

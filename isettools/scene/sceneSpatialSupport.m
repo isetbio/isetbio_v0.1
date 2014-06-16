@@ -17,7 +17,7 @@ function sSupport = sceneSpatialSupport(scene,units)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('units'), units = 'meters'; end
+if notDefined('units'), units = 'meters'; end
 
 sr = sceneGet(scene,'spatialResolution',units);
 nRows = sceneGet(scene,'rows');
@@ -26,4 +26,4 @@ nCols = sceneGet(scene,'cols');
 sSupport.y = linspace(-nRows*sr(1)/2 + sr(1)/2, nRows*sr(1)/2 - sr(1)/2,nRows);
 sSupport.x = linspace(-nCols*sr(2)/2 + sr(2)/2, nCols*sr(2)/2 - sr(2)/2,nCols);
           
-return;
+end

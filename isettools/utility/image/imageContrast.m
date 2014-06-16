@@ -17,4 +17,4 @@ for ii=1:size(data,3)
     cData(:,:,ii) = (data(:,:,ii) - m) / m;
 end
 
-return;
+end

@@ -67,7 +67,9 @@ switch model
     case {'watson'}
         % From the Watson paper.  
         % This is the estimated optical MTF at 555 nm.
-        if notDefined('pupilD'), error('pupil diameter (2-6 mm) required'); end
+        if notDefined('pupilD')
+            error('pupil diameter (2-6 mm) required');
+        end
         if pupilD > 6 || pupilD < 2
             warning('pupil size out of bound given in paper (2 ~ 6mm)');
         end
@@ -88,3 +90,4 @@ switch model
 end
 
 % END
+end

@@ -209,10 +209,6 @@ switch sensorName
         else wave = 400:10:700;
         end
         
-        %         if isfield(params,'tInteval'), tInteval = params.tInteval;
-        %         else tInteval = 0.001; % time series sampling time inteval
-        %         end
-        
         % Add the default human pixel with StockmanQuanta filters.
         sensor = sensorSet(sensor,'wave',wave);
         %         sensor = sensorSet(sensor,'time interval', tInteval);
@@ -252,8 +248,9 @@ if sensorCheckHuman(sensor)
     sensor = sensorSet(sensor, 'exp time', 0.05); % 50 ms
 else
     sensor = sensorSet(sensor,'integrationTime',0);
+    sensor = sensorSet(sensor,'autoexposure',1);
 end
-sensor = sensorSet(sensor,'autoexposure',1);    
+
 sensor = sensorSet(sensor,'CDS',0);
 
 % Put in a default infrared filter.  All ones.

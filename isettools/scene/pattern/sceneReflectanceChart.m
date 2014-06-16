@@ -41,25 +41,25 @@ function [scene, sSamples, reflectance, rcSize] = sceneReflectanceChart(sFiles,s
 %
 % Copyright ImagEval Consultants, LLC, 2010.
 
-if ieNotDefined('sFiles'), error('Surface files required'); 
+if notDefined('sFiles'), error('Surface files required'); 
 else                       nFiles = length(sFiles);
 end
 
-if ieNotDefined('pSize'),    pSize = 32; end
-if ieNotDefined('grayFlag'), grayFlag = 1; end
-if ieNotDefined('sampling'), sampling = 'r'; end %With replacement by default
+if notDefined('pSize'),    pSize = 32; end
+if notDefined('grayFlag'), grayFlag = 1; end
+if notDefined('sampling'), sampling = 'r'; end %With replacement by default
 
 % Default scene
 scene = sceneCreate;
-if ieNotDefined('wave'), wave = sceneGet(scene,'wave');
-else                     scene = sceneSet(scene,'wave',wave);
+if notDefined('wave'), wave = sceneGet(scene,'wave');
+else                   scene = sceneSet(scene,'wave',wave);
 end
 nWave = length(wave);
 defaultLuminance = 100;  % cd/m2
 
 % Get the reflectance samples
 if iscellstr(sFiles)
-    if ieNotDefined('sSamples'), error('Surface samples required'); end
+    if notDefined('sSamples'), error('Surface samples required'); end
     if length(sSamples) ~= nFiles
         error('Mis-match between number of files and sample numbers');
     end
@@ -84,16 +84,16 @@ r = ceil(sqrt(nSamples)); c = ceil(nSamples/r);
 % gray surface reflectances.
 if grayFlag
     % Create a column of gray surfaces, 20 percent reflectance
-    g = 0.2*ones(nWave,r);
+    g = 0.2*ones(nWave, r);
     reflectance = [reflectance, g];
     c = c + 1;
 end
-rcSize = [r,c];
+rcSize = [r, c];
 
 % Convert the scene reflectances into photons assuming an equal energy
 % illuminant.
-ee         = ones(nWave,1);           % Equal energy vector
-e2pFactors = Energy2Quanta(wave,ee);  % Energy to photon factor
+ee         = ones(nWave,1);            % Equal energy vector
+e2pFactors = Energy2Quanta(wave, ee);  % Energy to photon factor
 
 % Illuminant
 illuminantPhotons = diag(e2pFactors)*ones(nWave,1);
@@ -102,27 +102,19 @@ illuminantPhotons = diag(e2pFactors)*ones(nWave,1);
 % Data from first file are in the left columns, second file next set of
 % cols, and so forth. There may be a gray strip at the end.
 % Scale reflectances by incorporating energy to photon scale factr
-radiance = diag(e2pFactors)*reflectance;    
+radiance = diag(e2pFactors) * reflectance;    
 
 % Put these into the scene data structure.  These are in photon units, but
 % they are not scaled to reasonable photon values.
-sData = zeros(rcSize(1),rcSize(2),nWave);
-for rr=1:rcSize(1)
-    for cc=1:rcSize(2)
-        idx = sub2ind(rcSize,rr,cc);
-        if idx <= size(radiance,2)
-            sData(rr,cc,:) = radiance(:,idx);
-        else
-            sData(rr,cc,:) = 0.2*illuminantPhotons;
-        end
-    end
-end
+sData = reshape([radiance 0.2 * illuminantPhotons(:, ...
+            ones(r*c-size(radiance, 2),1))], [nWave r c]);
+sData = permute(sData, [2 3 1]);
 
 % Build up the size of the image regions - still reflectances
-sData = imageIncreaseImageRGBSize(sData,pSize);
+sData = imageIncreaseImageRGBSize(sData, pSize);
 
 % Add data to scene, using equal energy illuminant
-scene = sceneSet(scene,'cphotons',sData);
+scene = sceneSet(scene,'photons',sData);
 scene = sceneSet(scene,'illuminantPhotons',illuminantPhotons);
 scene = sceneSet(scene,'illuminantComment','Equal energy');
 scene = sceneSet(scene,'name','Reflectance Chart (EE)');
@@ -132,7 +124,6 @@ scene = sceneSet(scene,'name','Reflectance Chart (EE)');
 scene = sceneAdjustLuminance(scene,defaultLuminance);
 % vcAddAndSelectObject(scene); sceneWindow;
 
-return
-
+end
 
 

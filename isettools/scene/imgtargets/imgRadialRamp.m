@@ -14,12 +14,12 @@ function img = imgRadialRamp(sz, expt, origin)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('sz'),      sz = [256,256]; end
-if ieNotDefined('expt'),    expt = 1;  end
-if ieNotDefined('origin'),  origin = (sz+1)/2; end
+if notDefined('sz'),      sz = [128, 128]; end
+if notDefined('expt'),    expt = 1;  end
+if notDefined('origin'),  origin = (sz+1)/2; end
 
-[xramp,yramp] = meshgrid( [1:sz(2)]-origin(2), [1:sz(1)]-origin(1) );
+[xramp,yramp] = meshgrid( (1:sz(2))-origin(2), (1:sz(1))-origin(1) );
 
 img = (xramp.^2 + yramp.^2).^(expt/2);
 
-return;
+end

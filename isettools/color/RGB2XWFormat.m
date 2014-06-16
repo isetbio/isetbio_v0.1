@@ -19,7 +19,7 @@ function [XW,r,c,w] = RGB2XWFormat(imRGB)
 %
 % The inverse routine is XW2RGBFormat
 %
-% See also, imageSPD, imagescRGB, imagescM, XW2RGBFormat
+% See also, imageSPD, imagescRGB, XW2RGBFormat
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 

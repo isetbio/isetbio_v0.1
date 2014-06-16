@@ -34,7 +34,8 @@ function DAC = ieLUTLinear(RGB, gTable)
 %
 % (c) Imageval Consulting, LLC 2013
 
-if (nargin==1), gTable = 2.2; end
+if notDefined('RGB'), error('RGB value required'); end
+if notDefined('gTable'), gTable = 2.2; end
 
 if (numel(gTable) == 1)
     % Single number.  Raise to a power.
@@ -57,4 +58,3 @@ else
     end
     
 end
-

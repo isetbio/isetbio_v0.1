@@ -63,7 +63,7 @@ return;
 
 
 % --- Executes just before imageSetHarmonic is made visible.
-function imageSetHarmonic_OpeningFcn(hObject, eventdata, handles, varargin)
+function imageSetHarmonic_OpeningFcn(hObject, ~, handles, varargin)
 
 % Choose default command line output for imageSetHarmonic
 handles.output = hObject;
@@ -79,15 +79,13 @@ return;
 % --- Outputs from this function are returned to the command line.
 function varargout = imageSetHarmonic_OutputFcn(hObject, eventdata, handles)
 
-if ieNotDefined('parms'), parms = []; end
-
 varargout{1} = handles.output;
 varargout{2} = btnDone_Callback(hObject, eventdata, handles, 0);
 
 return;
 
 % --- Executes during object creation, after setting all properties.
-function editFreq_CreateFcn(hObject, eventdata, handles)
+function editFreq_CreateFcn(hObject, ~, ~)
 
 if ispc
     set(hObject,'BackgroundColor','white');
@@ -177,19 +175,17 @@ return;
 
 
 % --- Executes on button press in btnDone.
-function parms = btnDone_Callback(hObject, eventdata, handles, closeMe)
+function params = btnDone_Callback(hObject, eventdata, handles, closeMe)
 
-if ieNotDefined('closeMe'), closeMe = 1; end
+if notDefined('closeMe'), closeMe = 1; end
 
-global parms
-
-parms.freq =      str2num(get(handles.editFreq,'String'));
-parms.contrast =  str2num(get(handles.editContrast,'String'));
-parms.ph =        str2num(get(handles.editPh,'String'));
-parms.ang =       str2num(get(handles.editAng,'String'));
-parms.row =       str2num(get(handles.editRow,'String'));
-parms.col =       str2num(get(handles.editCol,'String'));
-parms.GaborFlag = get(handles.btnGabor,'Value');
+params.freq =      str2double(get(handles.editFreq,'String'));
+params.contrast =  str2double(get(handles.editContrast,'String'));
+params.ph =        str2double(get(handles.editPh,'String'));
+params.ang =       str2double(get(handles.editAng,'String'));
+params.row =       str2double(get(handles.editRow,'String'));
+params.col =       str2double(get(handles.editCol,'String'));
+params.GaborFlag = get(handles.btnGabor,'Value');
 
 if closeMe, close(gcbf); end
 

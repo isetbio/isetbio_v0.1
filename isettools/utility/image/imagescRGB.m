@@ -37,14 +37,13 @@ s = max(rgbim(:));
 if s ~= 0, rgbim = rgbim/max(rgbim(:)); end
 
 
-if ndims(rgbim) == 2
-    
-    if  nargin - 1 < 2, error('2-dimensional input requires row and col arguments.');
-    else                row = varargin{1}; col = varargin{2};
+if ismatrix(rgbim)
+    if  nargin < 3, error('XW input requires row and col arguments.');
+    else row = varargin{1}; col = varargin{2};
     end
     
     rgbim = XW2RGBFormat(rgbim,row,col);
-    if nargin - 1 >= 3
+    if nargin > 3
         gam = varargin{3};
         rgbim = rgbim .^ gam;
     end
@@ -52,7 +51,7 @@ if ndims(rgbim) == 2
 elseif ndims(rgbim) == 3
     % row = size(rgbim,1); 
     % col = size(rgbim,2);
-    if nargin - 1 >= 1
+    if nargin > 1
         gam = varargin{1};
         rgbim = rgbim .^ gam;
     end
@@ -63,4 +62,4 @@ end
 imshow(rgbim);
 axis image;
 
-return;
+end

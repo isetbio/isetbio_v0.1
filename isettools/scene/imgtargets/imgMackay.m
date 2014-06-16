@@ -13,8 +13,8 @@ function img  = imgMackay(radialFrequency,imSize)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('radialFrequency'), radialFrequency = 8; end
-if ieNotDefined('imSize'),          imSize = 128; end
+if notDefined('radialFrequency'), radialFrequency = 8; end
+if notDefined('imSize'),          imSize = 128; end
 
 mx = round(imSize/2); mn = -(mx-1);
 [x, y] = meshgrid(mn:mx, mn:mx);
@@ -22,6 +22,6 @@ l = (x == 0);
 x(l) = eps;
 
 img = cos(atan(y./x)*2*radialFrequency);
-img =  ieScale(img,1,256);
+img =  ieScale(img, 0, 255);
 
-return;
+end

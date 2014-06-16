@@ -16,6 +16,8 @@ function scene = sceneInitSpatial(scene)
 
 
 % Degrees
-if ~checkfields(scene,'wAngular'),  scene = sceneSet(scene,'fov',10);  end
+if notDefined('scene.wAngular')
+    scene = sceneSet(scene,'fov',10);
+end
 
-return;
+end

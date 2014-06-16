@@ -16,21 +16,20 @@ function fName = sceneSaveImage(scene,fName,gam)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 
-if ~exist('scene','var') || isempty(scene), scene = vcGetObject('scene'); end
+if notDefined('scene'), scene = vcGetObject('scene'); end
 
 % Get RGB file name (tif)
-if ieNotDefined('fName')
+if notDefined('fName')
     fName = vcSelectDataFile('session','w','tif','Image file (tif)');
 end
 
 % open window.
-if ~exist('gam','var')
+if notDefined('gam')
     RGB = sceneGet(scene,'rgb image');
 else
-    RGB = sceneGet(scene,'rgb image',gam);
+    RGB = sceneGet(scene,'rgb image', gam);
 end
 
-imwrite(RGB,fName,'tif');
+imwrite(RGB, fName, 'tif');
 
-
-return;
+end

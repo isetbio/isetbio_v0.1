@@ -69,9 +69,13 @@ switch param
         val = il.type;
     
     case {'datamin'}
-        val = il.data.min;
+        if checkfields(il, 'data', 'min')
+            val = il.data.min;
+        end
     case {'datamax'}
-        val = il.data.max;    
+        if checkfields(il, 'data', 'max')
+            val = il.data.max;
+        end
     case 'photons'
         % illuminantGet(il,'photons')
         % Would be nice to have:  illuminantGet(il,'photons',wave);

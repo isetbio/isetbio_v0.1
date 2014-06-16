@@ -19,8 +19,8 @@ function scene = sceneAdjustLuminance(scene,meanL)
 %
 
 % Verify that current luminance exists, or calculate it
-currentMeanL  = sceneGet(scene,'mean luminance');
-photons       = sceneGet(scene,'photons');
+currentMeanL  = sceneGet(scene, 'mean luminance');
+photons       = sceneGet(scene, 'photons');
 
 photons    = photons * (meanL/currentMeanL);
 
@@ -28,7 +28,7 @@ photons    = photons * (meanL/currentMeanL);
 % the reflectances in 0,1 range.
 scene      = sceneSet(scene,'photons',photons);
 illuminant = sceneGet(scene,'illuminant photons');
-illuminant = illuminant*(meanL/currentMeanL);
+illuminant = illuminant * (meanL/currentMeanL);
 scene      = sceneSet(scene,'illuminant photons',illuminant);
 
 end

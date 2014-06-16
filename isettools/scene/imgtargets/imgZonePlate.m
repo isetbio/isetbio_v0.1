@@ -16,9 +16,9 @@ function img = imgZonePlate(sz, amp, ph)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('sz'),  sz = [256 256]; end
-if ieNotDefined('amp'), amp = 1; end
-if ieNotDefined('ph'),  ph = 0;   end
+if notDefined('sz'),  sz = [256 256]; end
+if notDefined('amp'), amp = 1; end
+if notDefined('ph'),  ph = 0;   end
 
 if (length(sz) == 1),  sz = [sz,sz]; end
 
@@ -28,6 +28,5 @@ mxsz = max(sz(1),sz(2));
 img = amp * cos( (pi/mxsz) * imgRadialRamp(sz,2) + ph ) + 1;
 % img = ieScale(img,0,1);
 
-return;
-
+end
 

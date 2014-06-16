@@ -25,14 +25,14 @@ function [embRGB,mRGB,pSize] = macbethCompareIdeal(mRGB,pSize,illType)
 vci = vcGetObject('vci');
 
 % If the mRGB or pSize not defined, we need to do some processing.
-if ieNotDefined('mRGB') || ieNotDefined('pSize')
+if notDefined('mRGB') || ieNotDefined('pSize')
     % Now, we get the RGB values for the image data displayed in the
     % image processing window.  We treat this as lRGB (not sRGB) data.
-    [mRGB, macbethLocs, pSize]= macbethSelect(vci);
+    [mRGB, ~, pSize]= macbethSelect(vci);
     mRGB = reshape(mRGB,4,6,3);
     mRGB = mRGB/max(mRGB(:));
 end
-if ieNotDefined('illType'), illType = 'd65'; end
+if notDefined('illType'), illType = 'd65'; end
 
 %% Calculate the lRGB values under this illuminant for an ideal MCC
 

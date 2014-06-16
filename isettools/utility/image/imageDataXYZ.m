@@ -21,7 +21,7 @@ function dataXYZ = imageDataXYZ(vci,roiLocs)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('roiLocs')
+if notDefined('roiLocs')
     % Get the rgb data.  The result field contains linear RGB format for
     % the display.
     data = imageGet(vci,'result');
@@ -36,4 +36,4 @@ else
     dataXYZ = imageRGB2XYZ(vci,data);
 end
 
-return;
+end

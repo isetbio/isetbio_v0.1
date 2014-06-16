@@ -56,4 +56,4 @@ nCols = sensorGet(ISA,'cols');
 % Don't ask me why.
 ratio = rot90(reshape(ratio,urRow,urCol),1);
 vignetting = upperQuad2FullMatrix(ratio,nRows,nCols);
-return;
+end

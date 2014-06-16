@@ -14,8 +14,10 @@ function oi = scenePad(oi,padSize,sDist)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('sDist'), sDist = sceneGet(vcGetObject('scene'),'distance'); end
-disp('Use oiPad');
+warning('Deprecated. Use oiPad instead');
+if notDefined('sDist')
+    sDist = sceneGet(vcGetObject('scene'),'distance');
+end
 oi = oiPad(oi,padSize,sDist);
 
 return;

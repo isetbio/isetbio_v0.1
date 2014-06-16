@@ -18,7 +18,7 @@ function figH = hcimage(hc,varargin)
 %
 % (c) Imageval
 
-if ieNotDefined('hc'), error('hypercube image data required'); end
+if notDefined('hc'), error('hypercube image data required'); end
 
 if isempty(varargin), dType = 'mean gray';
 else dType = varargin{1};
@@ -55,4 +55,4 @@ switch dType
 end
 
 
-return
+end

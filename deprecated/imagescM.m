@@ -13,9 +13,11 @@ function barHndl = imagescM(img,mp,barDir,noScale)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('mp'), mp = gray(256); end
-if ieNotDefined('barDir'), barDir = 'none'; end
-if ieNotDefined('noScale'), noScale = 0; end
+warning('Deprecated. Use imagesc / image instead');
+
+if notDefined('mp'), mp = gray(256); end
+if notDefined('barDir'), barDir = 'none'; end
+if notDefined('noScale'), noScale = 0; end
 barHndl = [];
 
 if isempty(img), return; end
@@ -33,4 +35,4 @@ end
 
 axis image; axis off
 
-return;
+end

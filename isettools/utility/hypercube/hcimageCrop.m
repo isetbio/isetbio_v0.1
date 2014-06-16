@@ -13,10 +13,10 @@ function [hc, rect] = hcimageCrop(img,rect,cPlane)
 %
 % (c) Imageval
 
-if ieNotDefined('img'), error('hyper cube image required'); end
-if ieNotDefined('cPlane'), cPlane = 1; end
+if notDefined('img'), error('hyper cube image required'); end
+if notDefined('cPlane'), cPlane = 1; end
 
-if ieNotDefined('rect')
+if notDefined('rect')
     % We use a square root to avoid problems with bright, saturating
     % pixels.
     tmp = sqrt(double(img(:,:,cPlane))); 
@@ -43,4 +43,5 @@ for ii=1:w
     hc(:,:,ii) = imcrop(img(:,:,ii),rect); 
 end
 close(h);
-return
+
+end

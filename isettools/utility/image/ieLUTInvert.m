@@ -21,8 +21,8 @@ function lut = ieLUTInvert(inLUT,resolution)
 %
 % (c) Imageval Consulting, LLC 2013
 
-if ieNotDefined('inLUT'), error('input lut required'); end
-if ieNotDefined('resolution'), resolution = 0.5; end
+if notDefined('inLUT'), error('input lut required'); end
+if notDefined('resolution'), resolution = 0.5; end
 
 x = 1:size(inLUT,1);
 y = inLUT(:,1);

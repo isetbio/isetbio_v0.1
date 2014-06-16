@@ -1,4 +1,4 @@
-function y = prctile(x,p)
+function y = iePrctile(x, p)
 %Measures the percentiles of the sample in X.
 %
 %   Y = prctile(X,P) 
@@ -12,6 +12,11 @@ function y = prctile(x,p)
 %
 % Modified from the Matlab distribution.
 
+if checkToolbox('Statistics Toolbox')
+    % Matlab toolbox version is present.  Use it.
+    y = prctile(x, p);
+    return
+end
 
 [prows, pcols] = size(p);
 if prows ~= 1 && pcols ~= 1

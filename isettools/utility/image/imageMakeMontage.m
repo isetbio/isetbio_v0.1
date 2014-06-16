@@ -12,19 +12,22 @@ function  [img,coords] = imageMakeMontage(hc, sliceList, nCols, backVal)
 % [img,coords] = imageMakeMontage(hc);
 %  vcNewGraphWin; imagesc(img); colormap(gray); axis equal; axis off;
 %
+% See also:
+%   imageMontage
+%
 % (c) Imageval, 2012
 
 %%
-if ieNotDefined('hc'), error('hypercube data required.'); end
+if notDefined('hc'), error('hypercube data required.'); end
 
 [r,c,w] = size(hc);
-if ieNotDefined('sliceList'), sliceList = 1:w; end
-if ieNotDefined('nCols'), nCols = []; end
-if ieNotDefined('backVal'), backVal = 0; end
+if notDefined('sliceList'), sliceList = 1:w; end
+if notDefined('nCols'), nCols = []; end
+if notDefined('backVal'), backVal = 0; end
 
 % If the hc is too large, refuse to play.
 if(any(size(hc)>10000))
-    error('At least one dimension of input image is >10,000- refusing to continue...');
+    error('hc size too large - refusing to continue...');
 end
 
 %% Make a best guess about the number of columns
@@ -47,117 +50,4 @@ for ii = 1:nSlices
     coords(ii,:) = [x+1,y+1];
 end
 
-
-return
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+end

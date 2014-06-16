@@ -28,10 +28,10 @@ function voltImages = sensorComputeSamples(sensorNF,nSamp,noiseFlag,showBar)
 % Copyright ImagEval Consultants, LLC, 2011.
 
 %% Define parameters
-if ieNotDefined('sensorNF'), errordlg('Noise free image sensor array required.'); end
-if ieNotDefined('nSamp'),  nSamp = 10; end
-if ieNotDefined('noiseFlag'), noiseFlag = 2; end  % Photon and electrical
-if ieNotDefined('showBar'), showBar = ieSessionGet('waitbar'); end  % Wait bar on by default
+if notDefined('sensorNF'), error('Noise free sensor array required.'); end
+if notDefined('nSamp'),  nSamp = 10; end
+if notDefined('noiseFlag'), noiseFlag = 2; end  % Photon and electrical
+if notDefined('showBar'), showBar = ieSessionGet('waitbar'); end
 
 %%  Get noise free values
 sz = sensorGet(sensorNF,'size');
@@ -64,6 +64,4 @@ else
 end
 if showBar, close(h); end
 
-return;
-
-
+end

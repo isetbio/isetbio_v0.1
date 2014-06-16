@@ -37,7 +37,8 @@ function RGB = ieLUTDigital(DAC, gTable)
 %
 % (c) Imageval Consulting, LLC 2013
 
-if (nargin==1), gTable = 2.2; end
+if notDefined('DAC'), error('DAC value required'); end
+if notDefined('gTable'), gTable = 2.2; end
 
 if (numel(gTable) == 1)
     % Single number.  Raise to a power.
@@ -46,11 +47,11 @@ if (numel(gTable) == 1)
 end
 
 if max(DAC(:)) > size(gTable,1)
-    error('Max DAC value (%d) exceeds the row dimension (%d) of the gTable',...
+    error('Max DAC value (%d) exceeds the row dimension (%d) of gTable',...
         max(DAC(:)),size(gTable,1));
 end
 if max(gTable(:)) > 1 || min(gTable(:)) < 0
-    error('gTable entries should be between 0 and 1.');
+    error('gTable entries should be between 0 and 1');
 end
 
 % Convert through the table
@@ -63,4 +64,3 @@ for ii=1:size(DAC,3)
 end
 
 end
-

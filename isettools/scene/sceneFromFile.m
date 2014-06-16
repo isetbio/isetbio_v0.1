@@ -137,8 +137,8 @@ end
 if exist('d', 'var'), n = [n ' - ' displayGet(d, 'name')]; end
 scene = sceneSet(scene,'name',n);     
 
-if ieNotDefined('meanLuminance')                         % Do nothing
+if notDefined('meanLuminance')
 else  scene = sceneAdjustLuminance(scene,meanLuminance); % Adjust mean
 end
 
-return;
+end

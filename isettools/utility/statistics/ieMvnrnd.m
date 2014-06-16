@@ -30,31 +30,24 @@ function s = ieMvnrnd(mu,Sigma,K)
 %   vcNewGraphWin; plot(s(:,1),s(:,2),'.'); 
 %   axis equal; set(gca,'xlim',[-5 5],'ylim',[-5 5])
 %
-%
-% Author: http://homepages.inf.ed.ac.uk/imurray2/code/matlab_octave_missing/mvnrnd.m
-% Iain Murray 2003 -- I got sick of this simple thing not being in Octave and
-%                     locking up a stats-toolbox license in Matlab for no good
-%                     reason.
 % Original comments
 % Draw n random d-dimensional vectors from a multivariate Gaussian
 % distribution with mean mu (n x d) and covariance matrix Sigma (d x d).  K
 % specifies how many samples for each condition.
-% 
 %
-% Reformatted and restructured for Imageval in 2012
+% HJ/BW ISETBIO TEAM, 2014
 
 
 %% Argument
-if ieNotDefined('mu'), mu = 0; end
-if ieNotDefined('Sigma'), Sigma = 1; end
+if notDefined('mu'), mu = 0; end
+if notDefined('Sigma'), Sigma = 1; end
 
 % If mu is column vector and Sigma not a scalar then assume user didn't
-% read help but let them off and flip mu. Don't be more liberal than this
-% or it will encourage errors (eg what should you do if mu is square?).
-if ((size(mu,2)==1) && (~isequal(size(Sigma),[1,1]))), mu=mu'; end
+% read help but let them off and flip mu.
+if size(mu,2)==1 && ~isscalar(Sigma), mu=mu'; end
 
 % May 2004 take a third arg, cases. Makes it more compatible with Matlab's.
-if nargin==3, mu=repmat(mu,K,1); end
+if nargin==3, mu = repmat(mu,K,1); end
 [n,d]=size(mu);
 
 if any(size(Sigma)~= [d,d])
@@ -62,8 +55,7 @@ if any(size(Sigma)~= [d,d])
 end
 
 % Check for stats toolbox
-v = ver;
-if any(strcmp('Statistics Toolbox ', {v.Name}))
+if checkToolbox('Statistics Toolbox')
     % Matlab toolbox version is present.  Use it.
     s = mvnrnd(mu, Sigma);
     return
@@ -73,7 +65,9 @@ try
 	U=chol(Sigma);
 catch
 	[E,Lambda]=eig(Sigma);
-	if (min(diag(Lambda))<0),error('Sigma must be positive semi-definite.'),end
+	if (min(diag(Lambda))<0)
+        error('Sigma must be positive semi-definite.')
+    end
 	U = sqrt(Lambda)*E';
 end
 

@@ -20,9 +20,9 @@ function [scene,rect] = sceneCrop(scene,rect)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('scene'), error('You must define a scene.'); end
+if notDefined('scene'), error('You must define a scene.'); end
 
-if ieNotDefined('rect'), 
+if notDefined('rect'), 
     [roiLocs,rect] = vcROISelect(scene); 
 else
     cmin = rect(1); cmax = rect(1)+rect(3);
@@ -46,9 +46,4 @@ scene = sceneSet(scene,'photons',photons);
 scene = sceneSet(scene,'luminance',luminance);
 scene = sceneSet(scene,'meanLuminance',meanL);
 
-return;
-
-
-
-
-
+end

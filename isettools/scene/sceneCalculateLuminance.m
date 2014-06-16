@@ -19,7 +19,6 @@ showBar = ieSessionGet('wait bar');
 
 nCols    = sceneGet(scene, 'cols');
 nRows    = sceneGet(scene, 'rows');
-nWaves   = sceneGet(scene, 'nwave');
 wave     = sceneGet(scene, 'wave');
 binWidth = sceneGet(scene, 'binwidth');
 
@@ -36,7 +35,7 @@ try
     % If the image is small enough, we calculate luminance using a single
     % matrix multiplication.  We don't set a particular criterion size
     % because that may differ depending on memory in that user's computer.
-    energy = sceneGet(scene,'energy');
+    energy = sceneGet(scene, 'energy');
     if isempty(energy)
         if showBar, waitbar(0.3,h); end
         photons = sceneGet(scene,'photons');

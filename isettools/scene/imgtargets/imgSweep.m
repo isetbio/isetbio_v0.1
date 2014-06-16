@@ -18,19 +18,19 @@ function img  = imgSweep(imSize,maxFreq)
 % the function should be img = imgSweep(imSize,[xFreq],[yContrast]), where
 % length(xFreq) = length(yContrast) = imSize.
 
-if ~exist('imSize','var'), imSize = 128; end
-if ~exist('maxFreq','var'), maxFreq = imSize/16; end
+if notDefined('imSize'), imSize = 128; end
+if notDefined('maxFreq'), maxFreq = imSize/16; end
 
 % X positions in the image.
-x = [1:imSize]/imSize;
+x = (1:imSize)/imSize;
 
 % The change in frequency is slow at first, and then reaches a maximum
 % frequency of one quarter the image size.
 freq = (x.^2)*maxFreq;
 xImage = sin(2*pi*(freq.*x));
-yContrast = [imSize:-1:1]/imSize;
+yContrast = (imSize:-1:1)/imSize;
 
 img = yContrast'*xImage + 0.5;
-img =  ieScale(img,1,256);
+img =  ieScale(img, 0, 255);
 
-return;
+end

@@ -1,7 +1,7 @@
-function [specRad, XYZ] = blackbody( wave, temps, unitType , eqWave)
+function [specRad, XYZ] = blackbody(wave, temps, unitType, eqWave)
 %Generate the spectral power distribution of a blackbody radiator
 %
-%  [spec XYZ] = blackbody( wave, colortemperature, [unitType = 'energy'], [eqWave = 550] )
+%  [spec XYZ] = blackbody(wave, colortemperature, [unitType = 'energy'], [eqWave = 550])
 %
 % The formula for blackbody radiators is computed for an array of color
 % temperatures.  The returned values are in W/(m2 nm sr) by default.  If
@@ -73,7 +73,8 @@ waveM = wave * 1e-9;
 % instead.
 
 % [W/m^3]
-specEmit = c1 ./ ( repmat(waveM.^5, [1 length(temps)]) .* (exp(c2./(waveM*temps))-1) );	   
+specEmit = c1 ./ ( repmat(waveM.^5, [1 length(temps)]) ...
+            .* (exp(c2./(waveM*temps))-1) );	   
 
 % [W/(m^2 nm sr)]
 specRad  = specEmit * 1e-9 / pi;	                                      

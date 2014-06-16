@@ -1,4 +1,4 @@
-function [img,parms] = imageHarmonic(parms)
+function [img, parms] = imageHarmonic(parms)
 %Create a windowed spatial harmonic image 
 %
 %   [img,parms]  = imgHarmonic(parms)
@@ -44,17 +44,18 @@ function [img,parms] = imageHarmonic(parms)
 
 if ~exist('parms','var'), parms = []; end
 
-if isfield(parms,'ang'), ang = parms.ang; else ang = 0; parms.ang = ang; end
-if isfield(parms,'contrast'), contrast = parms.contrast; else contrast = 1; parms.contrast = contrast; end
-if isfield(parms,'freq'), freq = parms.freq; else freq = 1; parms.freq = freq; end
-if isfield(parms,'ph'), ph = parms.ph; else ph = pi/2; parms.ph = ph; end
-if isfield(parms,'row'), row = parms.row; else row = 64; parms.row = row; end
-if isfield(parms,'col'), col = parms.col; else col = 64; parms.col = col; end
+try ang = parms.ang; catch, ang = 0; parms.ang = ang; end
+try contrast = parms.contrast; 
+catch, contrast = 1; parms.contrast = contrast; end
+try freq = parms.freq; catch, freq = 1; parms.freq = freq; end
+try ph = parms.ph; catch, ph = pi/2; parms.ph = ph; end
+try row = parms.row; catch, row = 64; parms.row = row; end
+try col = parms.col; catch, col = 64; parms.col = col; end
 
 % The Gabor Flag is a non-zero value that specifies the standard deviation
 % of the Gaussian as a fraction of the image size.  For example, if the
 % image size is 128 and GaborFlag = 0.5, the standard deviation is 64.
-if checkfields(parms,'GaborFlag')
+if isfield(parms,'GaborFlag')
     GaborFlag = parms.GaborFlag; 
 else
     GaborFlag = 0; 

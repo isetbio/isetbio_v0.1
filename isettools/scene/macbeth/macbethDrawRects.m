@@ -15,8 +15,8 @@ function obj = macbethDrawRects(obj,onoff)
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
-if ieNotDefined('obj'), error('Structure required'); end
-if ieNotDefined('onoff'), onoff = 'on'; end  % Default is on
+if notDefined('obj'), error('Structure required'); end
+if notDefined('onoff'), onoff = 'on'; end  % Default is on
 
 switch onoff
     case 'on'
@@ -76,4 +76,4 @@ switch onoff
         error('Unknown on/off %s\n',onoff);
 end
 
-return;
+end

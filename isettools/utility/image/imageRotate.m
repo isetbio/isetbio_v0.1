@@ -20,7 +20,7 @@ function imT = imageRotate(im,rotType)
 % Copyright ImagEval Consultants, LLC, 2009
 
 if ndims(im)~=3, error('Input must be rgb image (row x col x w)'); end
-if ieNotDefined('rotType'), rotType = 'ccw'; end
+if notDefined('rotType'), rotType = 'ccw'; end
 
 if isnumeric(rotType)
     tmp = imrotate(im(:,:,1),rotType);
@@ -44,4 +44,4 @@ else
     end
 end
 
-return;
+end

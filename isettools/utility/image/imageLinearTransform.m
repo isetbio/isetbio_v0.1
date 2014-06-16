@@ -1,5 +1,5 @@
-function imT = imageLinearTransform(im,T)
-% Apply a linear transformation to the color channels of an RGB format image 
+function imT = imageLinearTransform(im, T)
+% Apply a linear transformation to the color channels of an RGB image 
 %
 %  imT = imageLinearTransform(im,T)
 %
@@ -33,16 +33,14 @@ function imT = imageLinearTransform(im,T)
 % Save out the image size information
 [r,c,w] = size(im);
 
-if size(T,1) ~= w
-    error('image/T data sizes are incorrect. If im is RGB, size(T,1) must be 3.');
-end
+if size(T,1) ~= w, error('image/T data sizes mismatch'); end
 
 % We reshape the image data into a r*c x w matrix
 %
 im = RGB2XWFormat(im);
 
 % Then we multiply and reformat. 
-imT = im*T;
+imT = im * T;
 imT = XW2RGBFormat(imT,r,c);
 
-return
+end

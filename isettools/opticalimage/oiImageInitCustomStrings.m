@@ -1,4 +1,4 @@
-function handles = oiImageInitCustomStrings(handles);
+function handles = oiImageInitCustomStrings(handles)
 % Initialize the strings in the OI window custom popup menu
 %
 %    handles = oiInitCustomStrings(handles);
@@ -14,7 +14,7 @@ function handles = oiImageInitCustomStrings(handles);
 
 defaultOICompute = get(handles.popCustom,'String');
 customOI =  ieSessionGet('oicomputelist');
-list = cellMerge(defaultOICompute,customOI);
+list = [defaultOICompute, customOI];
 set(handles.popCustom,'String',list);
 
-return;
+end

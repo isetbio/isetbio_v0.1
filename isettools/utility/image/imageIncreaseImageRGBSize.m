@@ -13,20 +13,14 @@ function t = imageIncreaseImageRGBSize(im,s)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-% We used to check to make sure that there are 3dimensions.  But this made
-% problems for monochromatic images, so I took it out.
-%
-% if ndims(im)~=3,  error('Input must be rgb image (row x col x w)'); end
+assert(ndims(im) == 3 || ismatrix(im), 'Unexpected im dimension');
+if isscalar(s), s = round([s, s]); end
 
-if ndims(im) == 3, w = size(im,3);
-elseif             ndims(im) == 2, w = 1;
-else               error('Unexpected input matrix dimension');
+[r,c,~] = size(im);
+
+t = zeros(r*s(1), c*s(2), size(im, 3));
+for ii=1:size(im,3)
+    t(:,:,ii) = kron(im(:,:,ii),ones(s(1),s(2))); 
 end
-if length(s) == 1, s = round([s,s]); end
 
-r = size(im,1); c = size(im,2);
-
-t = zeros(r*s(1),c*s(2),w);
-for ii=1:size(im,3), t(:,:,ii) = kron(im(:,:,ii),ones(s(1),s(2))); end
-
-return;
+end

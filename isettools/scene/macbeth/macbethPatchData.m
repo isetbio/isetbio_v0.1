@@ -11,11 +11,11 @@ function mRGB = macbethPatchData(obj,mLocs,delta,fullData,dataType)
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
-if ieNotDefined('obj'),   error('vcimage or sensor required'); end
-if ieNotDefined('mLocs'), error('Mid locations required'); end
-if ieNotDefined('delta'), error('Patch spacing required'); end
-if ieNotDefined('fullData'),fullData = 0; end         % Mean, not all the points
-if ieNotDefined('delta'),   dataType = 'result'; end  % Default for vcimage
+if notDefined('obj'),   error('vcimage or sensor required'); end
+if notDefined('mLocs'), error('Mid locations required'); end
+if notDefined('delta'), error('Patch spacing required'); end
+if notDefined('fullData'),fullData = 0; end         % Mean, not all the points
+if notDefined('delta'),   dataType = 'result'; end  % Default for vcimage
 
 if fullData  % Every value in the patch
     mRGB = cell(1,24);
@@ -38,4 +38,4 @@ else  % Mean values from each patch
     end
 end
 
-return
+end

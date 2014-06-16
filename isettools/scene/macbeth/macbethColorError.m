@@ -32,11 +32,11 @@ function [macbethLAB, macbethXYZ, dE, vci] = macbethColorError(vci,illName,corne
 % Programming notes:  Could add display gamut to chromaticity plot
 
 %% Check variables
-if ieNotDefined('vci'),     vci = vcGetObject('vcimage'); end
-if ieNotDefined('illName'), illName = 'd65'; end
+if notDefined('vci'),     vci = vcGetObject('vcimage'); end
+if notDefined('illName'), illName = 'd65'; end
 
 % cornerPoints has the coordinates of the corners of the MCC. 
-if ieNotDefined('cornerPoints')
+if notDefined('cornerPoints')
     cornerPoints = imageGet(vci,'mcc corner points');
 end
 
@@ -124,4 +124,4 @@ uData.deltaE     = dE;
 
 set(gcf,'userdata',uData);
 
-return;
+end

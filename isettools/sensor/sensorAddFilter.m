@@ -13,8 +13,8 @@ function isa = sensorAddFilter(isa,fname)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('isa'), [val,isa] = vcGetSelectedObject('ISA'); end
-if ieNotDefined('fname'), fname = []; end
+if notDefined('isa'), [~,isa] = vcGetSelectedObject('ISA'); end
+if notDefined('fname'), fname = []; end
 
 wave = sensorGet(isa,'wave');
 filterNames = sensorGet(isa,'filterNames');
@@ -43,5 +43,4 @@ filterSpectra = sensorGet(isa,'filterspectra');
 filterSpectra(:,(nFilters+1)) = data;
 isa = sensorSet(isa,'filterspectra',filterSpectra);
 
-return;
-
+end

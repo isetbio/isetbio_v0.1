@@ -20,7 +20,7 @@ function [mLocs,delta,pSize] = macbethRectangles(cornerPoints)
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
-if ieNotDefined('cornerPoints'), error('Point corners required'); end
+if notDefined('cornerPoints'), error('Point corners required'); end
 
 % cornerpoints are (x,y) (col,row) format.
 cornerPoints = fliplr(cornerPoints);
@@ -94,9 +94,5 @@ end
 % divide by 4, rather than 3, we will get 1/2 the patch size.
 delta = round(min(deltaX,deltaY)/3);
 pSize = 2*delta + 1;
-
-% Debug:
-% Put up the mean locations in the sensor image
-% plot(mLocs(2,:),mLocs(1,:),'wo')
   
-return;
+end

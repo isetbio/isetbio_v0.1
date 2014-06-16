@@ -18,10 +18,9 @@ function rgb = sceneShowImage(scene,displayFlag,gam)
 % one axis in the scene and oi window. But if we ever go to more, this
 % routine should  say which axis should be used for rendering.
 
-if isempty(scene), cla; return;  end
-
-if ieNotDefined('gam'), gam = 1; end
-if ieNotDefined('displayFlag'), displayFlag = 1; end
+if notDefined('scene'), cla; return;  end
+if notDefined('gam'), gam = 1; end
+if notDefined('displayFlag'), displayFlag = 1; end
 
 % Force to lower case and no spaces
 wList = sceneGet(scene,'wavelength');
@@ -41,5 +40,4 @@ end
 rgb = imageSPD(img,wList,gam,row,col,displayFlag);
 axis image; axis off
 
-return;
-
+end

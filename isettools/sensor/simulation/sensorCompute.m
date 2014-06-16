@@ -67,9 +67,9 @@ function outSensor = sensorCompute(sensor,oi,showBar)
 % Copyright ImagEval Consultants, LLC, 2011
 
 %% Define and initialize parameters
-if ~exist('sensor','var') || isempty(sensor), sensor = vcGetSelectedObject('sensor'); end
-if ~exist('oi','var') || isempty(oi),         oi = vcGetSelectedObject('oi');         end
-if ~exist('showBar','var') || isempty(showBar), showBar = ieSessionGet('waitbar'); end
+if notDefined('sensor'),  sensor = vcGetSelectedObject('sensor'); end
+if notDefined('oi'),      oi = vcGetSelectedObject('oi');         end
+if notDefined('showBar'), showBar = ieSessionGet('waitbar');      end
 
 wBar = [];
 
@@ -89,13 +89,13 @@ for ss=1:length(masterSensor)   % Number of sensors
     pattern = sensorGet(sensor,'pattern');
     if numel(integrationTime) == 1 && ...
             ( (integrationTime == 0) || sensorGet(sensor,'auto exposure') )
-        % The autoexposure will need to work for the cases of 1 value for the
-        % whole array and it will need to work for the case in which the
-        % exposure times have the same shape as the pattern.  If neither holds
-        % then we have to use the vector of numbers that are sent in.
-        % We could decide that if autoexposure is on and there is a vector of
-        % values we replace them with a single value.
-        if showBar, wBar = waitbar(0,wBar,'Sensor image: Auto Exposure'); end
+        % The autoexposure will need to work for the cases of 1 value for
+        % the whole array and it will need to work for the case in which
+        % the exposure times have the same shape as the pattern.  If
+        % neither holds then we have to use the vector of numbers that are
+        % sent in. We could decide that if autoexposure is on and there is
+        % a vector of values we replace them with a single value.
+        if showBar, wBar = waitbar(0,wBar,'Sensor: Auto Exposure'); end
         sensor.integrationTime  = autoExposure(oi,sensor);
         
     elseif isvector(integrationTime)
@@ -109,7 +109,7 @@ for ss=1:length(masterSensor)   % Number of sensors
     end
     
     %% Calculate current
-    % This factor converts pixel current to volts for this integration time.
+    % This factor converts pixel current to volts for this integration time
     % The conversion units are
     %
     %   sec * (V/e) * (e/charge) = sec * V / charge = V / current.
@@ -117,12 +117,13 @@ for ss=1:length(masterSensor)   % Number of sensors
     % Given the basic rule V = IR, k is effectively a measure of resistance
     % that converts current into volts given the exposure duration.
     %
-    % We handle the case in which the integration time is a vector or matrix,
-    % by creating a matching conversion from current to volts.
+    % We handle the case in which the integration time is a vector or
+    % matrix, by creating a matching conversion from current to volts.
     q = vcConstants('q');     %Charge/electron
     pixel = sensorGet(sensor,'pixel');
     
-    cur2volt = sensorGet(sensor,'integrationTime')*pixelGet(pixel,'conversionGain') / q;
+    cur2volt = sensorGet(sensor,'integrationTime') * ...
+                            pixelGet(pixel,'conversionGain') / q;
     cur2volt = cur2volt(:);
     
     % Calculate the signal current assuming cur2volt = 1;
@@ -154,26 +155,29 @@ for ss=1:length(masterSensor)   % Number of sensors
     % we might use some day, say in ISET-3.0
     if showBar, waitbar(0.4,wBar,'Sensor image: Optical Efficiency'); end
     sensor    = sensorVignetting(sensor);
-    etendue   = sensorGet(sensor,'sensorEtendue');  % vcNewGraphWin; imagesc(etendue)
-    voltImage = voltImage .* repmat(etendue,[1 1 sensorGet(sensor,'nExposures')]);
+    etendue   = sensorGet(sensor,'sensorEtendue');  
+    % vcNewGraphWin; imagesc(etendue)
+    
+    voltImage = bsxfun(@times, voltImage, etendue);
     % vcNewGraphWin; imagesc(voltImage); colormap(gray)
     
-    % This can be a single matrix or it can a volume of data.  We should
-    % consider whether we want to place the volume elsewhere and always have
-    % voltImage be a matrix is displayed into the sensor window.
-    sensor = sensorSet(sensor,'volts',voltImage);
+    % This can be a single matrix or it can a volume of data. We should
+    % consider whether we want to place the volume elsewhere and always
+    % have voltImage be a matrix is displayed into the sensor window
+    voltImage(voltImage < 0) = 0;
+    sensor = sensorSet(sensor, 'volts', voltImage);
     
     % Something went wrong.  Return data empty,  including the noise images.
     if isempty(voltImage),
-        % Something went wrong.  Clean up the mess and return control to the main
-        % processes.
+        % Something went wrong. Clean up the mess and return control to the
+        % main processes.
         delete(wBar); return;
     end
     
     %% We have the mean image computed.  We add noise, clip and quantize
     
     % If there is some request for noise (noiseFlag not 0) run the noise.
-    if sensorGet(sensor,'noiseFlag')
+    if sensorGet(sensor, 'noiseFlag')
         % If you have the mean and all you want is noise, you can just run
         % this.
         sensor = sensorComputeNoise(sensor,wBar);
@@ -211,4 +215,4 @@ for ss=1:length(masterSensor)   % Number of sensors
 end
 
 
-return;
+end

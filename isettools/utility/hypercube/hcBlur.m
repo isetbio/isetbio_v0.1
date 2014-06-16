@@ -7,8 +7,8 @@ function [hc, blur] = hcBlur(hc,sd)
 %
 % (c) Imageval 2012
 
-if ieNotDefined('hc'), error('Hypercube data required.'); end
-if ieNotDefined('sd'), sd = 3; end
+if notDefined('hc'), error('Hypercube data required.'); end
+if notDefined('sd'), sd = 3; end
 
 blur = fspecial('gaussian',[sd sd]);
 nWave = size(hc,3);
@@ -21,4 +21,4 @@ for ii=1:nWave
 end
 close(h);
 
-return
+end

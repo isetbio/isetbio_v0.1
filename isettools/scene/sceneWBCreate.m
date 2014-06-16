@@ -23,10 +23,10 @@ function sceneWBCreate(sceneAll,workDir)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('sceneAll'), errordlg('You must define the scene.'); return; end
+if notDefined('sceneAll'), error('You must define the scene'); end
 
 name = sceneGet(sceneAll,'name');
-if ieNotDefined('workDir'), workDir = fullfile(pwd,name);  end
+if notDefined('workDir'), workDir = fullfile(pwd,name);  end
 if ~exist(workDir,'dir'), 
     w = warndlg('Creating work directory.'); 
     [p, n] = fileparts(workDir);
@@ -38,8 +38,6 @@ chdir(workDir);
 
 nWave    = sceneGet(sceneAll,'nwave');
 wave     = sceneGet(sceneAll,'wave');
-% binWidth = sceneGet(sceneAll,'binWidth');
-name     = sceneGet(sceneAll,'name');
 
 scene = sceneClearData(sceneAll);
 for ii=1:nWave
@@ -52,5 +50,4 @@ end
 
 chdir(curDir);
 
-return;
-
+end

@@ -35,14 +35,14 @@ while ~feof(fid)
     line_num = line_num + 1;
     
     % It's simple if no brackets are used.
-    if isempty(findstr(curr_line,'{'))
+    if isempty(strfind(curr_line,'{'))
         match = regexp(curr_line,'(?<var>.+)\s*=\s*(?<val>.+)\>','names');
         
         if ~isempty(match)
             field = strrep(strtrim(match.var),' ','_');
             val = strtrim(match.val);
             
-            numval = str2num(match.val);
+            numval = str2double(match.val);
             if ~isempty(numval)
                 val = numval;
             end
@@ -65,7 +65,7 @@ while ~feof(fid)
             vals = {match.vals};
         end
         
-        while isempty(findstr(curr_line,'}'))
+        while isempty(strfind(curr_line,'}'))
             curr_line = fgetl(fid);
             line_num = line_num + 1;
             
@@ -83,7 +83,7 @@ while ~feof(fid)
             num_vals = cell(size(vals));
             all_nums = 1;
             for j=1:length(vals)
-                num_vals{j} = str2num(vals{j});
+                num_vals{j} = str2double(vals{j});
                 
                 if isempty(num_vals{j})
                     num_vals{j} = vals{j};
@@ -145,4 +145,6 @@ if any(strcmpi(fields,'byte_order'))
         otherwise
             warning('Unknown byte order!');
     end
+end
+
 end

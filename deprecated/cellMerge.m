@@ -12,11 +12,12 @@ function merged = cellMerge(varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
+warning('Deprecated. Use [cell1 cell2] instead.');
 if isempty(varargin), merged = []; return; end
 
 n = length(varargin);
 for ii=1:n
-    if ~isempty(varargin{ii}) & ~iscell(varargin{ii}), 
+    if ~isempty(varargin{ii}) && ~iscell(varargin{ii}), 
         error('All arguments must be cell arrays'); 
     end
     eachLength(ii) = length(varargin{ii});
@@ -35,9 +36,4 @@ for ii=1:n
     end
 end
 
-return;
-
-a = {'a','b'};
-b = {'c'};
-cellMerge(a,b);
-cellMerge(a,b,c)
+end

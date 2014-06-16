@@ -14,7 +14,7 @@ rgbFile = fullfile(isetRootPath,'data','sensor','colorfilters','rgb');
 
 % Merge the data sets
 data = [rgbData, 0.35*cmyData];
-filterNames = cellMerge(rgbFilterNames,cmyFilterNames);
+filterNames = [rgbFilterNames,cmyFilterNames];
 
 % The structure for the color filter contains (minimally)
 %  inData.wavelength;  % Vector of W wavelength samples

@@ -39,8 +39,8 @@ function val = iePoisson(lambda,nSamp)
 %
 % Copyright ImagEval, LLC, 2010
 
-if ieNotDefined('lambda'), error('rate parameter lambda required'); end
-if ieNotDefined('nSamp'), nSamp = 1; end
+if notDefined('lambda'), error('rate parameter lambda required'); end
+if notDefined('nSamp'), nSamp = 1; end
 
 % Check if we have MEX function
 if (exist('iePoissrnd','file')==3)
@@ -49,8 +49,7 @@ if (exist('iePoissrnd','file')==3)
 end
 
 % Check for stats toolbox
-v = ver;
-if any(strcmp('Statistics Toolbox', {v.Name}))
+if checkToolbox('Statistics Toolbox')
     % Matlab toolbox version is present.  Use it.
     val = poissrnd(lambda, nSamp);
     return
@@ -82,10 +81,10 @@ else
     [r,c] = size(lambda);
     val = -1*ones(size(lambda));
     
-    % There is a challenge with the routine because we have to search through a
-    % number of iterations, and the number depends on the largest value.  This
-    % is why the routine is probably too slow for practical use and large
-    % numbers.
+    % There is a challenge with the routine because we have to search
+    % through a number of iterations, and the number depends on the largest
+    % value.  This is why the routine is probably too slow for practical
+    % use and large numbers.
     mx = max(lambda(:))*7;
     
     L   = exp(-lambda);
@@ -96,4 +95,4 @@ else
     val = reshape(val,r,c);
 end
 
-return
+end

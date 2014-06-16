@@ -15,26 +15,32 @@ else
     txt = addText(txt,str);
     
     u = round(log10(sceneGet(scene,'height','m')));
-    if (u >= 0 ),         str = sprintf('Hgt,Wdth\t(%3.2f, %3.2f) m\n',sceneGet(scene,'height', 'm'), sceneGet(scene,'width', 'm'));
-    elseif (u >= -3),    str = sprintf('Hgt,Wdth\t(%3.2f, %3.2f) mm\n',sceneGet(scene,'height','mm'),sceneGet(scene,'width','mm'));
-    else                 str = sprintf('Hgt,Wdth\t(%3.2f, %3.2f) um\n',sceneGet(scene,'height','um'),sceneGet(scene,'width','um'));
+    if (u >= 0 ), units = 'm';
+    elseif (u >= -3), units = 'mm'; 
+    else units = 'um';
     end
+    str = sprintf('Hgt,Wdth\t(%3.2f, %3.2f) %s\n', ...
+                   sceneGet(scene,'height', units), ...
+                   sceneGet(scene,'width', units), units);
     txt = addText(txt,str);
 
-    u = round(log10(sceneGet(scene,'sampleSize','m')));
-    if (u >= 0 ),     str = sprintf('Sample:\t%3.2f  m \n',sceneGet(scene,'sampleSize', 'm'));
-    elseif (u >= -3), str = sprintf('Sample:\t%3.2f mm \n',sceneGet(scene,'sampleSize','mm'));
-    else             str = sprintf('Sample:\t%3.2f um \n',sceneGet(scene,'sampleSize','um'));
+    u = round(log10(sceneGet(scene,'sampleSize', 'm')));
+    if (u >= 0 ), units = 'm'; % 
+    elseif (u >= -3), units = 'mm';
+    else units = 'um';
     end
-    txt = addText(txt,str);
+    str = sprintf('Sample:\t%3.2f %s \n', ...
+                   sceneGet(scene,'sampleSize', units), units);
+    txt = addText(txt, str);
 
     str = sprintf('Deg/samp: %2.2f\n',sceneGet(scene,'fov')/c);
     txt = addText(txt,str);
     
     wave = sceneGet(scene,'wave');
     spacing = sceneGet(scene,'binwidth');
-    str = sprintf('Wave:\t%.0f:%.0f:%.0f nm\n',min(wave(:)),spacing,max(wave(:)));
-    txt = addText(txt,str);
+    str = sprintf('Wave:\t%.0f:%.0f:%.0f nm\n', ...
+                   min(wave(:)), spacing, max(wave(:)));
+    txt = addText(txt, str);
     
     luminance = sceneGet(scene,'luminance');
     mx = max(luminance(:));
@@ -42,8 +48,7 @@ else
     if mn == 0, 
         str = sprintf('DR: Inf\n  (max %.0f, min %.2f cd/m2)\n',mx,mn);
     else 
-        dr = mx/mn; 
-%         str = sprintf('DR:  %.2f dB (max %.0f, min %.2f cd/m2)\n',20*log10(dr),mx,mn);
+        dr = mx/mn;
         str = sprintf('DR: %.2f dB (max %.0f cd/m2)\n',20*log10(dr),mx);
     end
     
@@ -51,4 +56,4 @@ else
     
 end
 
-return;
+end

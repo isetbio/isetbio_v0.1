@@ -611,8 +611,21 @@ scene = sceneSet(scene,'magnification',1.0);
 
 % The default patch size is 16x16.
 spectrum = sceneGet(scene,'spectrum');
-macbethChartObject = macbethChartCreate(patchSize,(1:24),spectrum);
-scene = sceneCreateMacbeth(macbethChartObject,lightSource,scene);
+surface = macbethChartCreate(patchSize,(1:24),spectrum);
+
+% scene = sceneCreateMacbeth(macbethChartObject,lightSource,scene);
+iPhotons = illuminantGet(lightSource,'photons');
+[surface,r,c] = RGB2XWFormat(surface.data);
+sPhotons = surface*diag(iPhotons);
+sPhotons = XW2RGBFormat(sPhotons,r,c);
+
+% We compute the product of the surface reflectance and illuminant photons
+% here
+% scene = sceneSet(scene,'cphotons',surface.data .* photons);
+scene = sceneSet(scene,'photons',sPhotons);
+
+% Store the light source
+scene = sceneSet(scene,'illuminant',lightSource);
 
 end
 
@@ -720,7 +733,7 @@ scene     = sceneSet(scene,'photons',img);
 end
 
 %--------------------------------------------------
-function [scene,p] = sceneHarmonic(scene,parms, wave)
+function [scene,p] = sceneHarmonic(scene,params, wave)
 %% Create a scene of a (windowed) harmonic function.
 %
 % Harmonic parameters are: parms.freq, parms.row, parms.col, parms.ang
@@ -746,14 +759,12 @@ nWave = sceneGet(scene,'nwave');
 % other cases, they are simply attached to the global parameters in
 % vcSESSION.  We can get them by a getappdata call in here, but not if we
 % close the window as part of imageSetHarmonic
-if notDefined('parms')
-    global parms; %#ok<REDEF>
-    h   = imageSetHarmonic; waitfor(h);
-    img = imageHarmonic(parms);
-    p   = parms;
-    clear parms;
+if notDefined('params')
+    [h, params] = imageSetHarmonic; waitfor(h);
+    img = imageHarmonic(params);
+    p   = params;
 else
-    [img,p] = imageHarmonic(parms);
+    [img,p] = imageHarmonic(params);
 end
 
 % To reduce rounding error problems for large dynamic range, we set the
@@ -1023,8 +1034,10 @@ switch type
         photons = ones(r,c,nWave);
         for ii=1:nWave
             photons(:,:,ii)     = backReflectance*photons(:,:,ii)*illP(ii);
-            photons(topRows,topCols,ii)  = (lineReflectance/backReflectance)*photons(topRows,topCols,ii);
-            photons(botRows,botCols,ii)  = (lineReflectance/backReflectance)*photons(botRows,botCols,ii);
+            photons(topRows,topCols,ii)  = lineReflectance / ...
+                backReflectance*photons(topRows,topCols,ii);
+            photons(botRows,botCols,ii)  = lineReflectance / ...
+                backReflectance*photons(botRows,botCols,ii);
         end
         
         scene = sceneSet(scene,'photons',photons);

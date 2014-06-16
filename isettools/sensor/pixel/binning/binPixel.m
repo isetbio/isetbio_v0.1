@@ -30,8 +30,8 @@ function sensor = binPixel(sensor,bMethod)
 % See also: binPixelPost, binSensorCompute, binSensorComputeImage
 %
 
-if ieNotDefined('sensor'), error('sensor required'); end
-if ieNotDefined('bMethod'), bMethod = 'kodak2008'; end
+if notDefined('sensor'), error('sensor required'); end
+if notDefined('bMethod'), bMethod = 'kodak2008'; end
 
 % We define each binning function as a small matrix multiply that applies
 % to the blocks of the voltage image.  In some cases the complete summing
@@ -80,4 +80,4 @@ switch lower(bMethod)
         error('Unknown binning method %s\n',bMethod);
 end
 
-return;
+end

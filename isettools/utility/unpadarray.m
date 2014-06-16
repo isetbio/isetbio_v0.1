@@ -5,8 +5,8 @@ function outArray = unpadarray(inArray,unpadSize)
 % 
 %
 
-if ieNotDefined('inArray'), error('Input array required'); end
-if ieNotDefined('unpadSize'), error('unpad size required'); end
+if notDefined('inArray'), error('Input array required'); end
+if notDefined('unpadSize'), error('unpad size required'); end
 
 if length(unpadSize) < 2, unpadSize(2) = 0; end
 

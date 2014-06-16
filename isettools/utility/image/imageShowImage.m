@@ -27,10 +27,10 @@ function imageShowImage(vci,gam,trueSizeFlag,figNum)
 % I am also unsured why the sRGB doesn't look better.  It looks good in the
 % other windows. (BW).
 
-if ieNotDefined('vci'), cla; return;  end
-if ieNotDefined('gam'),  gam = 1; end
-if ieNotDefined('trueSizeFlag'), trueSizeFlag = 0; end
-if ieNotDefined('figNum'),  figNum = ieSessionGet('vcimageFigure'); end
+if notDefined('vci'), cla; return;  end
+if notDefined('gam'),  gam = 1; end
+if notDefined('trueSizeFlag'), trueSizeFlag = 0; end
+if notDefined('figNum'),  figNum = ieSessionGet('vcimageFigure'); end
 
 % Bring up the figure
 figure(figNum);
@@ -50,7 +50,7 @@ end
 % We then convert the XYZ to sRGB values.  We show those in the window.
 img = imageGet(vci,'srgb');
 
-if ndims(img) == 2,       vciType = 'monochrome';
+if ismatrix(img),       vciType = 'monochrome';
 elseif ndims(img) == 3, vciType = 'rgb';
 else                    vciType = 'multisensor';
 end
@@ -85,4 +85,4 @@ end
 axis image; axis off
 if trueSizeFlag, truesize; end
 
-return;
+end

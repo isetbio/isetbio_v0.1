@@ -25,11 +25,10 @@ function h = sceneDepthOverlay(scene,n)
 % set(h,'AlphaData',1 - g)
 
 error('Use plotScene, not sceneDepthOverlay');
-return
 
 %
-% if ieNotDefined('scene'), scene = vcGetObject('scene'); end
-% if ieNotDefined('n'), n = 5; end
+% if notDefined('scene'), scene = vcGetObject('scene'); end
+% if notDefined('n'), n = 5; end
 % 
 % d = sceneGet(scene,'depth map');
 % d = ieScale(d,0,1);

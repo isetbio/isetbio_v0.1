@@ -35,12 +35,14 @@ function [SNR, volts, SNRshot, SNRread] = pixelSNR(sensor,volts)
 %   legend('Shot noise SNR','Read noise SNR','Total SNR');
 %   grid on
 %
-% Note:  (1) The argument to this routine is a sensor array with an attached pixel.
-% Note:  (2) If the read SD is 0, we treat the readSNR as infinite.
+% Note: 
+%   1) The argument to this routine is a sensor array with an attached
+%      pixel.
+%   2) If the read SD is 0, we treat the readSNR as infinite.
 %
 % Copyright ImagEval Consultants, LLC, 2005
 
-if ieNotDefined('sensor'), [val,sensor] = vcGetSelectedObject('ISA'); end
+if notDefined('sensor'), [~, sensor] = vcGetSelectedObject('ISA'); end
 
 pixel = sensorGet(sensor,'pixel');
 if ieNotDefined('volts'), 
@@ -82,4 +84,4 @@ if nargout > 3
     end
 end
 
-return
+end

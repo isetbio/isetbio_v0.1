@@ -75,10 +75,10 @@ function [mRGB, mLocs, pSize, cornerPoints, mccRectHandles] = ...
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('obj'), obj = vcGetObject('vcimage'); end
-if ieNotDefined('showSelection'), showSelection = 1; mccRectHandles = []; end
-if ieNotDefined('fullData'), fullData = 0; end
-if ieNotDefined('cornerPoints'), queryUser = true; else queryUser = false;end
+if notDefined('obj'), obj = vcGetObject('vcimage'); end
+if notDefined('showSelection'), showSelection = 1; mccRectHandles = []; end
+if notDefined('fullData'), fullData = 0; end
+if notDefined('cornerPoints'), queryUser = true; else queryUser = false;end
 
 % obj is either a vcimage or a sensor image
 switch lower(obj.type)
@@ -167,5 +167,4 @@ if showSelection, macbethDrawRects(obj); end
 
 ieInWindowMessage('',handles);
 
-return;
-
+end

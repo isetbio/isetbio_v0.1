@@ -13,7 +13,7 @@ wFile = fullfile(isetRootPath,'data','sensor','W');
 
 % Merge the data sets
 data = [rgbData, 0.25*wData];
-filterNames = cellMerge(rgbFilterNames,wFilterNames);
+filterNames = [rgbFilterNames,wFilterNames];
 
 % Fastest way to save the color filter is to dummy up a sensor, add the
 % filters and filternames, and have ieSaveColorFilter pull everything out
