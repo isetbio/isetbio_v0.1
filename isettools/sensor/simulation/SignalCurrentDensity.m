@@ -6,11 +6,10 @@ function scdImage = SignalCurrentDensity(OI,ISA)
 %  This image has a spatial sampling density equal to the spatial sampling
 %  of the scene and describes the current per meter.
 %
-%  We perform the calculation two ways, depending on image size. If the
-%  image is less than 512x512, we calculate using a quick matrix
-%  multiplication.  To restrict memory use, if the optical image exceeds
-%  512x512, we loop through the wavebands.  Slower, but it means the memory
-%  used stays below 64MB
+%  We perform the calculation two ways, depending on image size. First, we
+%  try to calculate using a quick matrix multiplication. If failed, we try
+%  to compute the signal current by looping over all wavebands. It's
+%  slower, anyway.
 %
 % Computational steps:
 %
@@ -27,15 +26,11 @@ function scdImage = SignalCurrentDensity(OI,ISA)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-% Critical size used to decide which computational method is applied.  The
-% computational issue is memory size versus speed (see below).
-critSize = 512*512;  
-
 q = vcConstants('q');       % Charge per electron
 
 % Hack.  But if we use sceneGet, we get all the data back.
-if ~checkfields(OI,'data','photons')   
-    warndlg('Optical image irradiance in photons is required.'); 
+if ~checkfields(OI, 'data', 'photons')   
+    warning('Optical image irradiance in photons is required.'); 
     signalCurrentDensityImage = []; %#ok<NASGU>
     return; 
 end
@@ -83,7 +78,7 @@ sQE = spectralQE*oiWaveBinwidth;
 % of detail.
 %
 % At present the etendue calculation is incorporated as a single scale
-% factor at each pixel and incorporated in the sensorComputeImage routine. 
+% factor at each pixel and incorporated in the sensorCompute routine. 
 
 % sQE is a wavelength x nSensor matrix, and it includes a conversion
 % factor that will maps the electrons per square meter into amps per
@@ -94,18 +89,18 @@ sQE = spectralQE*oiWaveBinwidth;
 % position for all the color filters.
 % Output units: [A/m^2]
 
-if nRows*nCols < critSize
+try
     % This is probably much faster.  But if we are trying to limit the
     % memory size, we should use the other part of the loop that calculates
     % one waveband at a time.
     irradiance = oiGet(OI,'photons');       % quanta/m2/nm/sec
     irradiance = RGB2XWFormat(irradiance);
     
-    scdImage =  irradiance * sQE;           % SUM_bin (quanta/m2/nm/sec * (nm/bin)) = (quanta/m2/sec)
+    scdImage =  irradiance * sQE; % (quanta/m2/sec)
     scdImage = XW2RGBFormat(scdImage,nRows,nCols);
     % At this point, if we multiply by the photodetector area and the
     % integration time, that gives us the number of electrons at a pixel.
-else
+catch
     % For large images, don't take all of the data out at once.  Do it a
     % waveband at a time.
     scdImage = zeros(nRows,nCols,nFilters);
@@ -123,4 +118,4 @@ end
 % It has units of quanta/m2/sec/bin * charge/quanta = charge/m2/sec/bin
 scdImage = scdImage * q;  
 
-return;
+end

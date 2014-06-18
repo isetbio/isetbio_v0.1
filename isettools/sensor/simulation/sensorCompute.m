@@ -104,7 +104,8 @@ for ss=1:length(masterSensor)   % Number of sensors
     elseif isequal( size(integrationTime),size(pattern) )
         % Find best exposure for each color filter separately
         if sensorGet(sensor,'autoexposure')
-            sensor = sensorSet(sensor,'exp time',autoExposure(oi,sensor,[],'cfa'));
+            sensor = sensorSet(sensor, 'exp time', ...
+                            autoExposure(oi,sensor,[],'cfa'));
         end
     end
     
@@ -143,7 +144,7 @@ for ss=1:length(masterSensor)   % Number of sensors
         voltImage = repmat(unitSigCurrent,[1 1 length(cur2volt)]);
         % Multiply each dimension by its own scale factor
         for ii=1:length(cur2volt)
-            voltImage (:,:,ii) = cur2volt(ii)*voltImage (:,:,ii);
+            voltImage (:,:,ii) = cur2volt(ii) * voltImage (:,:,ii);
         end
     end
     
@@ -194,12 +195,12 @@ for ss=1:length(masterSensor)   % Number of sensors
         if showBar, waitbar(0.6,wBar,'Sensor image: CDS'); end
         cdsVolts = sensorComputeImage(oi,sensor);    %THIS WILL BREAK!!!!
         sensor = sensorSet(sensor,'integration time',integrationTime);
-        sensor = sensorSet(sensor,'volts',ieClip(sensor.data.volts - cdsVolts,0,[]));
+        sensor = sensorSet(sensor,'volts', ieClip(sensor.data.volts - cdsVolts,0,[]));
     end
     
     if isempty(sensorGet(sensor,'volts')),
-        % Something went wrong.  Clean up the mess and return control to the main
-        % processes.
+        % Something went wrong.  Clean up the mess and return control to
+        % the main processes.
         delete(wBar); return;
     end
     
@@ -213,6 +214,5 @@ for ss=1:length(masterSensor)   % Number of sensors
     outSensor(ss) = sensor;
     
 end
-
 
 end

@@ -17,7 +17,7 @@ function darkCurrentImage = noiseDarkCurrent(ISA)
 %   the mean signal and the dark signal together.  The shot noise is
 %   computed from this total.  We don't compute signal noise and and dark
 %   signal noise separately.
-evalin('caller','mfilename')
+evalin('caller', 'mfilename')
 error('Obsolete');
 return;
 isaSize = sensorGet(ISA,'size');

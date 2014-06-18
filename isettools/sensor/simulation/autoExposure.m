@@ -25,8 +25,8 @@ function  [integrationTime,maxSignalVoltage,smallOI] = autoExposure(OI,sensor,le
 % Good opportunities for matrix-metering with weighted matrices, and
 % perhaps other ideas.
 
-if ieNotDefined('level'), level = 0.95; end
-if ieNotDefined('aeMethod'), aeMethod = 'default'; end
+if notDefined('level'), level = 0.95; end
+if notDefined('aeMethod'), aeMethod = 'default'; end
 
 switch lower(aeMethod)
     case 'default'

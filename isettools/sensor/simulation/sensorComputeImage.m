@@ -55,9 +55,9 @@ function [voltImage, dsnu, prnu] = sensorComputeImage(oi,sensor,wBar)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 %% Define parameters
-if ~exist('sensor','var') || isempty(sensor), errordlg('sensor required.'); end
-if ~exist('oi','var') || isempty(oi), errordlg('Optical image required.'); end
-if ~exist('wBar','var') || isempty(wBar), showBar = 0; else showBar = 1; end
+if notDefined('sensor'), error('sensor required.'); end
+if notDefined('oi'), error('Optical image required.'); end
+if notDefined('wBar'), showBar = 0; else showBar = wBar; end
 
 q = vcConstants('q');                       %Charge/electron
 pixel = sensorGet(sensor,'pixel');
@@ -73,7 +73,8 @@ pixel = sensorGet(sensor,'pixel');
 %
 % We handle the case in which the integration time is a vector or matrix,
 % by creating a matching conversion from current to volts.
-cur2volt = sensorGet(sensor,'integrationTime')*pixelGet(pixel,'conversionGain') / q;
+cur2volt = sensorGet(sensor,'integrationTime') * ...
+                pixelGet(pixel,'conversionGain') / q;
 cur2volt = cur2volt(:);
 
 % Calculate the signal current assuming cur2volt = 1;

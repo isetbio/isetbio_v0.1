@@ -138,7 +138,7 @@ switch sensorName
         % sensorType = 'human'  % 'rgb','monochrome'
         % cPattern = 'bayer'    % any sensorCreate option
         % sensorCreate('ideal',[],'human','bayer');
-        error('sensorCreate(''ideal'') is deprecated. Set noise flag to 0');
+        error('sensorCreate(''ideal'') is deprecated. Set noiseflag to 0');
 
     case {'custom'}      % Often used for multiple channel
         % sensorCreate('custom',pixel,filterPattern,filterFile,wave);
@@ -246,9 +246,11 @@ end
 % CFA exposure mode.
 if sensorCheckHuman(sensor)
     sensor = sensorSet(sensor, 'exp time', 0.05); % 50 ms
+    sensor = sensorSet(sensor, 'noise flag', 1); % photons noise only
 else
     sensor = sensorSet(sensor,'integrationTime',0);
     sensor = sensorSet(sensor,'autoexposure',1);
+    sensor = sensorSet(sensor,'noise flag',2); % all noise
 end
 
 sensor = sensorSet(sensor,'CDS',0);
@@ -258,9 +260,6 @@ sensor = sensorSet(sensor,'irfilter',ones(sensorGet(sensor,'nwave'),1));
 
 % Place holder for Macbeth color checker positions
 sensor = sensorSet(sensor,'mccRectHandles',[]);
-
-% Compute with all noise turned on by default
-sensor = sensorSet(sensor,'noise flag',2);
 
 return;
 

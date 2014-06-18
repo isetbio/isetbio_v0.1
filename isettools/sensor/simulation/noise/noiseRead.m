@@ -10,7 +10,7 @@ function [noisyImage,theNoise] = noiseRead(sensor)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('sensor'), errordlg('You must specify the image sensor array'); end
+if notDefined('sensor'), error('You must specify sensor array'); end
 volts   = sensorGet(sensor,'volts');
 
 % Read Noise is Gaussian with zero mean and a sd of readNoise (Volts)
@@ -24,4 +24,4 @@ theNoise = sigmaRead * randn(size(volts));
 noisyImage = theNoise + volts;
 % figure; imagesc(noisyImage); colormap(gray(256))
 
-return;
+end

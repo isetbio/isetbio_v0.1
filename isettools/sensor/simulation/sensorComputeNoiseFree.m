@@ -1,4 +1,4 @@
-function sensor = sensorComputeNoiseFree(sensor,oi)
+function sensor = sensorComputeNoiseFree(sensor, oi)
 %Compute the mean sensor voltage data from the optical image
 %
 %  sensor = sensorComputeNoiseFree(sensor,oi)
@@ -43,8 +43,8 @@ function sensor = sensorComputeNoiseFree(sensor,oi)
 
 
 %% Define and initialize parameters
-if ieNotDefined('sensor'), sensor = vcGet('ISA'); end
-if ieNotDefined('oi'),     oi = vcGetObject('oi'); end
+if notDefined('sensor'), sensor = vcGet('ISA'); end
+if notDefined('oi'),     oi = vcGetObject('oi'); end
 
 % This turns off photon noise and electrical noise.
 sensor = sensorSet(sensor,'noise flag',0);
@@ -55,10 +55,10 @@ q      = sensorGet(sensor,'quantization method');
 sensor = sensorSet(sensor,'quantization method','analog');
 
 % Analog gain set to unity
-ag = sensorGet(sensor,'analog gain');
-ao = sensorGet(sensor,'analog offset');
-sensor = sensorSet(sensor,'analog gain',1);
-sensor = sensorSet(sensor,'analog offset',0);
+ag = sensorGet(sensor, 'analog gain');
+ao = sensorGet(sensor, 'analog offset');
+sensor = sensorSet(sensor, 'analog gain',1);
+sensor = sensorSet(sensor, 'analog offset',0);
 
 % Make sure exposure duration is set, no auto-exposure
 if sensorGet(sensor,'autoexposure')
@@ -74,7 +74,7 @@ pixel  = pixelSet(pixel,'voltage swing',1e6);
 sensor = sensorSet(sensor,'pixel',pixel);
 
 % Compute
-sensor = sensorCompute(sensor,oi);
+sensor = sensorCompute(sensor, oi);
 
 % Restore the parameters so that the ordinary sensorCompute can be run on
 % the returned sensor.  The noise free voltage images are in the 'volts'
@@ -87,5 +87,4 @@ sensor = sensorSet(sensor,'quantization method',q);
 sensor = sensorSet(sensor,'analog gain',ag);
 sensor = sensorSet(sensor,'analog offset',ao);
 
-return
-
+end

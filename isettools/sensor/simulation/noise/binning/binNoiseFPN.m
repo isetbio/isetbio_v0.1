@@ -29,7 +29,7 @@ function [noisyImage,offsetFPNImage,gainFPNImage] = binNoiseFPN(ISA)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('ISA'), ISA = vcGetObject('ISA'); end
+if notDefined('ISA'), ISA = vcGetObject('ISA'); end
 
 % In the binning calculations, the digital values here are not really
 % digital values.  They are on their way to being processed to digital
@@ -87,4 +87,4 @@ else
     % std(offsetFPNImage(:))
 end
 
-return;
+end

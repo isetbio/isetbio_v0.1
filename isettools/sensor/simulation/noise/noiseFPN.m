@@ -37,7 +37,7 @@ function [noisyImage,dsnuImage,prnuImage] = noiseFPN(sensor)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ~exist('sensor','var') || isempty(sensor), sensor = vcGetObject('sensor'); end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
 
 isaSize         = sensorGet(sensor,'size');
 gainSD          = sensorGet(sensor,'prnuLevel');   % This is a percentage
@@ -75,15 +75,14 @@ else
     % below to be 0.2 (20 percent around a mean of 1).
     prnuImage = randn(isaSize)*(gainSD/100) + 1;
 
-    nExposures = sensorGet(sensor,'nExposures');
+    % nExposures = sensorGet(sensor,'nExposures');
     % This is the formula:
     % slopeImage = voltageImage/integrationTime;
     % noisyImage = (slopeImage .* prnuImage) * integrationTime + dsnuImage;
     % But it is equivalent to the simpler (fewer multiplies) formula:
     voltageImage = sensorGet(sensor,'volts');
     noisyImage   = voltageImage .* prnuImage  + dsnuImage;
-    % noisyImage   = voltageImage .* repmat(prnuImage,[1,1,nExposures])  + repmat(dsnuImage,[1,1,nExposures]);
     % std(dsnuImage(:))
 end
 
-return;
+end

@@ -39,9 +39,9 @@ function [rgbFormat, cfaVals] = plane2rgb(img,sensor,emptyVal)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('img'), error('img required - img is the vci input field'); end
-if ieNotDefined('sensor'),   sensor = vcGetObject('sensor'); end
-if ieNotDefined('emptyVal'), emptyVal = NaN; end
+if notDefined('img'), error('img (vci input) required'); end
+if notDefined('sensor'),   sensor = vcGetObject('sensor'); end
+if notDefined('emptyVal'), emptyVal = NaN; end
 
 % nFilters    = sensorGet(sensor,'nfilters');
 % filterNames = sensorGet(sensor,'filterNames');
@@ -112,4 +112,4 @@ end
 % filters we have in the image sensor plane.
 if nargout > 1, cfaVals = unique(cfaN(:)); end
 
-return;
+end

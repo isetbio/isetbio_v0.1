@@ -29,4 +29,4 @@ end
 
 noisyImage = dv * diag(colPRNU)  + repmat(colDSNU,nRow,1);
 
-return;
+end

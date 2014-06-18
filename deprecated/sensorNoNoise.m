@@ -1,4 +1,4 @@
-function sensorNN = sensorNoNoise(sensor);
+function sensorNN = sensorNoNoise(sensor)
 %Set sensor noise to zero (apart from photon noise)
 %
 %    sensorNN = sensorNoNoise(sensor);
@@ -9,7 +9,8 @@ function sensorNN = sensorNoNoise(sensor);
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
+warning('Deprecated. Use sensorSet(sensor, ''noiseflag'') instead');
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
 
 sensorNN   = sensor;
 pixelNN    = sensorGet(sensorNN,'pixel');
@@ -21,4 +22,4 @@ pixelNN     = pixelSet(pixelNN,'readNoiseVolts',0);
 pixelNN     = pixelSet(pixelNN,'darkVoltage',0);
 sensorNN    = sensorSet(sensorNN,'pixel',pixelNN);
 
-return;
+end

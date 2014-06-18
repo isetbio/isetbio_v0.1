@@ -36,7 +36,7 @@ function [flatSCDI, newRows, newCols] = regridOI2ISA(scdi,oi,sensor,spacing)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('spacing'), spacing = 0.2; end
+if notDefined('spacing'), spacing = 0.2; end
 
 % These are the positions of the optical image in microns on the image
 % plane. It is important that we start from 0 as we do below.  Or they
@@ -54,9 +54,10 @@ sampleWidth  = oiGet(oi,'wres');
 r = sensorGet(sensor,'rows'); c = sensorGet(sensor,'cols');
 rSamples = (0:spacing:(r-spacing)) + (spacing/2);
 cSamples = (0:spacing:(c-spacing)) + (spacing/2);
-sampleHeight = sensorGet(sensor,'hres'); sampleWidth = sensorGet(sensor,'wres');
+sampleHeight = sensorGet(sensor,'hres');
+sampleWidth  = sensorGet(sensor,'wres');
 [newRows,newCols] = sample2space(rSamples,cSamples,sampleHeight,sampleWidth);
-[X,Y] = meshgrid(newCols,newRows); %#ok<NASGU>
+[X, ~] = meshgrid(newCols,newRows);
 
 %
 flatSCDI = zeros(size(X,1),size(X,2));

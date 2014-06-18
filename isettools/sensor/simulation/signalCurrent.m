@@ -6,7 +6,7 @@ function signalCurrentImage = signalCurrent(OI,ISA,wBar)
 %  The signal current is computed from the optical image (OI) and the image
 %  sensor array properties (ISA). The units returned are charge/pixel/sec. 
 %
-%  This is a key routine called by sensorComputeImage and sensorCompute.
+%  This is a key routine called by sensorCompute.
 %  The routine can compute the current in either the default spatial
 %  resolution mode (1 spatial sample per pixel) or in a high-resolution
 %  made in which the pixel is modeled as a grid of sub-pixels and we
@@ -33,7 +33,7 @@ function signalCurrentImage = signalCurrent(OI,ISA,wBar)
 % could apply pixel optics at that stage rather than being limited as we
 % are.  See related notes in signalCurrentDensity.
 
-if ieNotDefined('wBar'), showBar = 0; else showBar = 1; end 
+if notDefined('wBar'), showBar = 0; else showBar = 1; end 
 
 % signalCurrentDensityImage samples the current/meter with a sample size of
 % [nRows x nCols x nColors] that matches the optical image.
@@ -58,11 +58,4 @@ else
     signalCurrentImage = spatialIntegration(signalCurrentDensityImage,OI,ISA,gridSpacing); % [A]
 end
 
-% figure
-% tmp = signalCurrentImage(1:2:end,1:2:end); subplot(2,2,1), hist(tmp(:))
-% tmp = signalCurrentImage(1:2:end,2:2:end); subplot(2,2,2), hist(tmp(:))
-% tmp = signalCurrentImage(2:2:end,1:2:end); subplot(2,2,3), hist(tmp(:))
-% tmp = signalCurrentImage(2:2:end,2:2:end); subplot(2,2,4), hist(tmp(:))
-
-return;
-
+end

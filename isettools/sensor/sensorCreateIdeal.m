@@ -49,7 +49,7 @@ function sensor = sensorCreateIdeal(idealType,sensorExample)
 
 
 %% Read arguments
-if ieNotDefined('idealType'), idealType = 'monochrome'; end
+if notDefined('idealType'), idealType = 'monochrome'; end
 
 idealType = ieParamFormat(idealType);
 
@@ -61,7 +61,7 @@ switch lower(idealType)
         % We also set the exposure time to be equal to either the first, or
         % the default (if auto exposure is set).
         
-        if ieNotDefined('sensorExample'), error('Example needed'); end 
+        if notDefined('sensorExample'), error('Example needed'); end 
         
         % Determine key parameters for the example
         N = sensorGet(sensorExample,'nfilters');
@@ -102,7 +102,7 @@ switch lower(idealType)
         end
         
     case 'matchxyz'
-        if ieNotDefined('sensorExample'), error('Example needed'); end 
+        if notDefined('sensorExample'), error('Example needed'); end 
         sensor = sensorCreateIdeal('match',sensorExample);
         
         % Replace current filters with XYZQuanta filters.
@@ -151,7 +151,7 @@ switch lower(idealType)
         
         % CIE XYZ quanta fundamentals.
         pixel = sensorGet(sensor(1),'pixel');
-               if ieNotDefined('pixelSizeInMeters')
+        if notDefined('pixelSizeInMeters')
             disp('2.8 micron sensor created');
             pixelSizeInMeters = 2.8e-6;
         end

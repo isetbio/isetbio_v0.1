@@ -22,8 +22,8 @@ function sensor = sensorComputeNoise(sensor,wBar)
 % Copyright ImagEval Consultants, LLC, 2011.
 
 %% Define parameters
-if ~exist('sensor','var') || isempty(sensor), error('Image sensor array required.'); end
-if ~exist('wBar','var') || isempty(wBar), showWaitBar = 0; else showWaitBar = 1; end
+if notDefined('sensor'), error('Image sensor array required.'); end
+if notDefined('wBar'), showWaitBar = 0; else showWaitBar = wBar; end
 
 
 %% Sensor electrical and photon noise

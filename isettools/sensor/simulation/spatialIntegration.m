@@ -57,7 +57,7 @@ function signalCurrentImage = spatialIntegration(scdi,OI,ISA,gridSpacing)
 % normally do not.  Instead, we use a default of 1.
 %
 % This is the spacing within a pixel on the sensor array.
-if ieNotDefined('gridSpacing'), gridSpacing = 1;
+if notDefined('gridSpacing'), gridSpacing = 1;
 else gridSpacing = 1/round(1/gridSpacing);
 end
 nGridSamples = 1/gridSpacing;
@@ -105,7 +105,7 @@ else
     signalCurrentImage = blurSample(signalCurrentImageLarge,filt);
 end
 
-return;
+end
 
 %----------------------------------------------
 function sampledData = blurSample(data,filt)
@@ -133,4 +133,4 @@ cSamples = s(2):fSize(2):c;
 
 sampledData = bdata(rSamples,cSamples);
 
-return;
+end

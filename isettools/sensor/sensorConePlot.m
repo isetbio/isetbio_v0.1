@@ -30,9 +30,9 @@ function [support, spread, delta] = sensorConePlot(sensor,support,spread,delta)
 %
 % Copyright ImagEval, 2010
 
-if ieNotDefined('support'), support = []; end
-if ieNotDefined('spread'), spread = []; end
-if ieNotDefined('delta'), delta = []; end
+if notDefined('support'), support = []; end
+if notDefined('spread'), spread = []; end
+if notDefined('delta'), delta = []; end
 
 % Read cone mosaic parameters and call cone plotting routine to make it
 % look reasonably nice.
@@ -47,4 +47,4 @@ else
     [support, spread, delta] = conePlot(xy, coneType, support, spread, delta);
 end
 
-return;
+end

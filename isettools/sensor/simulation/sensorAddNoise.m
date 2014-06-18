@@ -39,47 +39,42 @@ noiseFlag = sensorGet(sensor,'noise Flag');
 
 % Random noise generator seed issues must be handled here.  This is tough
 % to make sure we can absolutely replicate the noise to test code accuracy.
-if sensorGet(sensor,'reuse noise')
+if sensorGet(sensor, 'reuse noise')
     % Get the state stored in the sensor
     noiseSeed = sensorGet(sensor,'noise seed');
     if isempty(noiseSeed)
-        warning('sensorAddNoise:NoPreviousNoise','No previous noise. Initiating new seed');
-        try noiseSeed = rng;
-        catch err
-            noiseSeed = randn('seed');
-        end
-        sensorSet(sensor,'noise seed',noiseSeed);
+        noiseSeed = rng;
+        sensorSet(sensor, 'noise seed', noiseSeed);
     else
         % Initialize with current seed.
-        try  rng(noiseSeed);
-        catch err
-            randn('seed',noiseSeed); 
-        end
+        rng(noiseSeed);
     end
     
     % We should really get rid of the stored dsnu/prnu images. Although
     % we might decide we want it transiently so we can plot it or check it.
     % So it is still in the structure, but not used in any computational
     % path.
-    sensor = sensorSet(sensor,'dsnu image',[]);
-    sensor = sensorSet(sensor,'prnu image',[]);
+    sensor = sensorSet(sensor, 'dsnu image', []);
+    sensor = sensorSet(sensor, 'prnu image', []);
 else
-    % Not reusing.  But remember the initial noise state for this calculation
-    try noiseSeed = rng;
-    catch err
-        noiseSeed = randn('seed');
-    end
-    sensor = sensorSet(sensor,'noise seed',noiseSeed);
+    % Not reusing.  But remember the initial noise state for this
+    % calculation
+    noiseSeed = rng;
+    sensor = sensorSet(sensor, 'noise seed', noiseSeed);
 end
 
 %% Perform the noise addition steps here
-
-nExposures = sensorGet(sensor,'nExposures');
+nExposures = sensorGet(sensor, 'nExposures');
 eTimes = sensorGet(sensor,'exposure times');
 volts = sensorGet(sensor,'volts');
 
-for ii=1:nExposures
-    
+% Check if nExposures and the data are consistant
+if nExposures ~= size(volts, 3)
+    disp('For multisamples in human sensor, use coneAbsorptions instead');
+    error('nExposures and data mismatch');
+end
+
+for ii=1:nExposures 
     vImage = volts(:,:,ii);
     
     % Add the dark current At this point the noise dark current is the same
@@ -90,7 +85,7 @@ for ii=1:nExposures
     % have no way to assess this for most cases, so we treat the PRNU for
     % noise and signal as the same until forced to do it otherwise.
     if noiseFlag > 1
-        vImage = vImage + pixelGet(pixel,'dark Voltage')*eTimes(ii);
+        vImage = vImage + pixelGet(pixel,'dark Voltage') * eTimes(ii);
         sensor = sensorSet(sensor,'volts',vImage);
     end
     
@@ -104,7 +99,8 @@ for ii=1:nExposures
     
     % Add read noise  (equivalent to noiseRead.m)
     if noiseFlag > 1
-        vImage = vImage + (pixelGet(pixel,'read noise volts') * randn(size(vImage)));
+        readVolts = pixelGet(pixel,'read noise volts');
+        vImage = vImage + readVolts * randn(size(vImage));
         sensor = sensorSet(sensor,'volts',vImage);
         
         % Fixed pattern noise (equivalent to noiseFPN.m)
@@ -121,4 +117,4 @@ end
 
 sensor = sensorSet(sensor,'volts',volts);
 
-return
+end

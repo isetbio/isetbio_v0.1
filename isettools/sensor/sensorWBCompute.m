@@ -23,14 +23,14 @@ function sensor = sensorWBCompute(sensor,workDir,displayFlag)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('sensor'), error('You must specify the sensor'); end
-if ieNotDefined('workDir'), error('You must specify the directory with OI files.'); end
-if ieNotDefined('displayFlag'), displayFlag = 0; end
+if notDefined('sensor'), error('You must specify the sensor'); end
+if notDefined('workDir'), error('You must specify OI files directory'); end
+if notDefined('displayFlag'), displayFlag = 0; end
 
 % Figure for updating
 displayFig = 99;
 
-sensorL = sensorNoNoise(sensor);
+sensorL = sensorSet(sensor, 'noise flag', 0);
 t = dir([workDir,filesep,'oi*.mat']);
 nWave = length(t);
 chdir(workDir);
@@ -43,7 +43,7 @@ for ii=1:(nWave-1)
     % sensorCompute adjusts the spectral properties of the sensor to match
     % the optical image.  So, in this routine, we create a tmpSensor that
     % is discarded.  
-    tmpSensor = sensorCompute(sensorL,opticalimage,0);
+    tmpSensor = sensorCompute(sensorL, opticalimage, 0);
     volts = volts + sensorGet(tmpSensor,'volts');
     if displayFlag, 
         figure(displayFig); 

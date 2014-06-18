@@ -12,9 +12,9 @@ function ISA = sensorVignetting(ISA,pvFlag,nAngles)
 %
 % Copyright ImagEval Consultants, LLC, 2006.
 
-if ieNotDefined('ISA'),    ISA = vcGetObject('ISA'); end
-if ieNotDefined('pvFlag'), pvFlag = sensorGet(ISA,'pixelVignetting'); end
-if ieNotDefined('nAngles'),nAngles=5; end
+if notDefined('ISA'),    ISA = vcGetObject('ISA'); end
+if notDefined('pvFlag'), pvFlag = sensorGet(ISA,'pixelVignetting'); end
+if notDefined('nAngles'),nAngles=5; end
 
 if isempty(pvFlag), pvFlag = 0; end
 
@@ -32,4 +32,4 @@ switch pvFlag
         error('Unknown pvFlag %s\n',pvFlag);
 end
 
-return;
+end

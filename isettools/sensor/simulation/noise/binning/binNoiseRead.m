@@ -9,7 +9,7 @@ function [noisyImage,theNoise] = binNoiseRead(ISA)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('ISA'), errordlg('You must specify the image sensor array'); end
+if notDefined('ISA'), error('You must specify the image sensor array'); end
 dv   = sensorGet(ISA,'digitalValues');
 
 % Read Noise is Gaussian with zero mean and a sd of readNoise (Volts)
@@ -21,4 +21,4 @@ theNoise = sigmaRead * randn(size(dv));
 % Add image to the voltage image
 noisyImage = theNoise + dv;
 
-return;
+end
