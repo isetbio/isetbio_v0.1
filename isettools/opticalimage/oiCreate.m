@@ -52,18 +52,18 @@ if notDefined('addObject'), addObject = 0; end
 % Default is to use the diffraction limited calculation
 oi.type = 'opticalimage';
 oi.name = vcNewObjectName('opticalimage');
-oi = oiSet(oi,'bit depth',32);  % Single precision.
+oi = oiSet(oi, 'bit depth', 32);  % Single precision.
 
 oiType = ieParamFormat(oiType);
 switch oiType 
     case {'standard(1/4-inch)','default'}
         oi = oiSet(oi,'optics',optics);
         
-        % Set up the default glass diffuser with a 2 micron blur circle, but
-        % skipped
-        oi = oiSet(oi,'diffuserMethod','skip');
-        oi = oiSet(oi,'diffuserBlur',2*10^-6);
-        oi = oiSet(oi,'consistency',1);
+        % Set up the default glass diffuser with a 2 micron blur circle,
+        % but skipped
+        oi = oiSet(oi, 'diffuserMethod','skip');
+        oi = oiSet(oi, 'diffuserBlur', 2*10^-6);
+        oi = oiSet(oi, 'consistency', 1);
         
     case {'uniformd65'}
         % Uniform, D65 optical image.  No cos4th falloff, huge field of
@@ -91,10 +91,10 @@ switch oiType
         % Marimont and Wandell optics
         % oi = oiCreate('human');
         oi = oiCreate('default');
-        oi = oiSet(oi,'diffuserMethod','skip');
-        oi = oiSet(oi,'consistency',1);
-        oi = oiSet(oi,'optics',opticsCreate('human'));
-        oi = oiSet(oi,'name','human-MW');
+        oi = oiSet(oi, 'diffuserMethod','skip');
+        oi = oiSet(oi, 'consistency',1);
+        oi = oiSet(oi, 'optics',opticsCreate('human'));
+        oi = oiSet(oi, 'name','human-MW');
         
     case {'wvfhuman'}
         % A human lens specified using the WVF toolbox method
@@ -117,7 +117,6 @@ switch oiType
         
         oi = wvf2oi(wvfP,'human');
         oi = oiSet(oi,'name',sprintf('Human WVF %.1f mm',pupilMM));
-        return;
         
     case {'mouse'}
         % Similar to the human optics, but with different parameters.

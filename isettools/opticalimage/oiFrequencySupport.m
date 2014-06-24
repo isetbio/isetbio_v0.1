@@ -22,7 +22,7 @@ function fSupport = oiFrequencySupport(oi,units)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('units'), units = 'cyclesPerDegree'; end
+if notDefined('units'), units = 'cyclesPerDegree'; end
 
 % We also begin by calculating the frequencies in cycles per degree of
 % visual angle.
@@ -62,4 +62,4 @@ end
 fSupport.fx = unitFrequencyList(nCols)*maxFrequency(1);
 fSupport.fy = unitFrequencyList(nRows)*maxFrequency(2);
 
-return;
+end

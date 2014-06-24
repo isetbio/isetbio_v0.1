@@ -1,7 +1,8 @@
-function [OTF2D, fSupport,inCutoffFreq] = dlMTF(oi,fSupport,wavelength,units)
-%Gateway routine that assembles parameters to compute diffraction limited OTF.
+function [OTF2D, fSupport,inCutoffFreq] = dlMTF(oi,fSupport,wave,units)
+% Gateway routine that assembles parameters to compute diffraction limited
+% OTF
 % 
-% [OTF2D, fSupport,inCutoffFreq] = dlMTF(oi,[fSupport],[wavelength = :],[units='cyclesPerDegree'])
+% [OTF2D, fSupport,inCutoffFreq] = dlMTF(oi,[fSupport],[wave],[units])
 %
 % Compute the diffraction limited 2D OTF (OTF2D) at each wavelength for the
 % optics within the optical image. 
@@ -40,8 +41,8 @@ function [OTF2D, fSupport,inCutoffFreq] = dlMTF(oi,fSupport,wavelength,units)
 %  fSupport = oiGet(oi,'fSupport',unit);
 %  OTF2D = dlMTF(optics,fSupport,wavelength,unit);
 %
-%  figure(1); mesh(fSupport(1,:,1),fSupport(:,1,2),fftshift(OTF2D)); colorbar 
-%  xlabel('cyc/mm'); ylabel('cyc/mm');
+%  figure(1); mesh(fSupport(1,:,1),fSupport(:,1,2),fftshift(OTF2D));
+%  colorbar; xlabel('cyc/mm'); ylabel('cyc/mm');
 %
 % But, if you want units in cycles/deg, you must sent in the optical image.
 %
@@ -50,7 +51,7 @@ function [OTF2D, fSupport,inCutoffFreq] = dlMTF(oi,fSupport,wavelength,units)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('oi'), error('Optics or optical image required.'); end
+if notDefined('oi'), error('Optics or optical image required.'); end
 
 % The user can send in the OI or OPTICS.  We only need OPTICS.
 if strcmpi(opticsGet(oi,'type'),'opticalimage')
@@ -63,23 +64,23 @@ else
     clear oi
 end
 
-if ieNotDefined('wavelength'), wavelength = oiGet(oi,'wavelength'); end
-if ieNotDefined('units'),      units = 'cyclesPerDegree'; end
-if ieNotDefined('fSupport'),   fSupport = oiGet(oi,'fSupport',units); end
+if notDefined('wave'),  wave = oiGet(oi,'wavelength'); end
+if notDefined('units'), units = 'cyclesPerDegree'; end
+if notDefined('fSupport'), fSupport = oiGet(oi, 'fSupport', units); end
 
-apertureDiameter = opticsGet(optics,'aperturediameter');
-fpDistance = opticsGet(optics,'focalPlaneDistance');  % This is optics -> focal plane distance
+apertureDiameter = opticsGet(optics, 'aperturediameter');
+fpDistance = opticsGet(optics, 'focalPlaneDistance');
 
 fx = fSupport(:,:,1);
 fy = fSupport(:,:,2);
 
-%  Distance of each frequency pair from the origin (rho,theta) representation.
+%  Distance of each frequency pair from the origin (rho,theta)
 %  (dc = [0,0]).  The frequency support is in cycles/deg. 
 rho = sqrt(fx.^2 + fy.^2);
 
 % Wavelength is stored in nanometers.  This converts it to meters, the same
 % units as the apertureDimaeter. 
-wavelength = wavelength*1e-9;
+wave = wave *  1e-9;
 
 % This formula assumes that a lens that is free of spherical aberration and
 % coma.  When the source is far away, fpDistance is the focal length and
@@ -90,13 +91,14 @@ wavelength = wavelength*1e-9;
 % http://spie.org/x34304.xml  - Cutoff frequency
 % http://spie.org/x34468.xml  - Airy disk
 %
-inCutoffFreq = (apertureDiameter / fpDistance) ./ wavelength;  
+inCutoffFreq = (apertureDiameter / fpDistance) ./ wave;  
 
 switch lower(units)
     case {'cyclesperdegree','cycperdeg'}
         % cycle/meter * meter/deg -> cycles/deg
         % Used for human calculations?
-        inCutoffFreq = inCutoffFreq *  oiGet(oi,'distancePerDegree','meters');
+        inCutoffFreq = inCutoffFreq * ...
+                    oiGet(oi, 'distancePerDegree', 'meters');
         
     case {'meters','m','millimeters','mm','microns','um'}
         inCutoffFreq = inCutoffFreq/ieUnitScaleFactor(units);
@@ -108,5 +110,4 @@ end
 % Now, both rho and the cutoff frequency are in cycles/degree.
 OTF2D = dlCore(rho,inCutoffFreq);
 
-
-return;
+end

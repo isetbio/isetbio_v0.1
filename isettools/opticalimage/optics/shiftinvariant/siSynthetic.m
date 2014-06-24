@@ -50,8 +50,8 @@ function optics = siSynthetic(psfType,oi,varargin)
 
 
 %% Parameter initializiation
-if ieNotDefined('psfType'), psfType = 'gaussian'; end
-if ieNotDefined('oi'), oi = vcGetObject('oi'); end
+if notDefined('psfType'), psfType = 'gaussian'; end
+if notDefined('oi'), oi = vcGetObject('oi'); end
 inFile = [];
 outFile = [];
 
@@ -165,6 +165,4 @@ if isempty(outFile), return;
 else                 vcSaveObject(optics,outFile);
 end
 
-return;
-
-%% End
+end

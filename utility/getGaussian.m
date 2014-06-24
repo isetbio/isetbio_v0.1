@@ -43,9 +43,9 @@ gaussianDistribution = gaussFunc(M, rfCov); % See inline function above
 % We wasted a lot of time computing the off-diagonal entries of(M inv(S) M)
 gaussianDistribution = diag(gaussianDistribution);
 
-% reshape and making sure the volume is 1 
+% reshape and making sure the volume is 1
 gaussianDistribution = reshape(gaussianDistribution,size(rfSupport.X,2),size(rfSupport.Y,1));
 gaussianDistribution = gaussianDistribution/sum(gaussianDistribution(:));
 % vcNewGraphWin; mesh(rfSupport.X,rfSupport.Y,gaussianDistribution)
 
-return
+end

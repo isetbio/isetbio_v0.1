@@ -57,30 +57,11 @@ if isscalar(wavelength)
     % figure(1); mesh(X,Y,OTF2D); 
     % figure(1); mesh(X,Y,abs(OTF2D))
     
-    % See s_FFTinMatlab to understand the logic of the operations here.
-    %
-    % We interpolate the stored OTF2D onto the support grid for the
-    % optical image. 
-    % The OTF2D representation is on a frequency representation where DC is
-    % in (1,1), so we would want the fSupport to run from 1:N.  
-    % The fSupport that comes here, however, has the OTF2D from -N:N.  
-    % To make things match up, we apply an fftshift to the OTF2D data prior to
-    % interpolating.
-    %    foo    = interp2(X, Y, fftshift(OTF2D), fx, fy, '*linear');
-    %    figure(1); mesh(fx,fy,foo);
-    %    OTF2D = fftshift(foo);
-    %    figure(1); mesh(fx,fy,OTF2D); OTF2D(1,1)
-    %    max(OTF2D(:))
-    %
-    % We have an error in the interpolation in some cases.
-    % The interpolated OTF2D does not have a unit DC term because there is
-    % a shift in position.  This happens rarely, but it happened in the
-    % case of the filtered font.  We are tracking this down.  Odd and even
-    % scene size is an issue.
-    % Changed to ifftshift from fftshift on June 19,2011, as per AL
+    % Do interpolation, use fftshift to take care of DC positions
     OTF2D = ifftshift(interp2(X, Y, fftshift(OTF2D), fx, fy, '*linear',0));
 
 else
+    % Do it wavelength by wavelength
     OTF2D = zeros(nY,nX,nWave);
     for ii=1:length(wavelength)
         tmp = opticsGet(optics,'otfData',wavelength(ii));

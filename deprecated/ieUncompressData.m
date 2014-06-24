@@ -16,7 +16,8 @@ function ucData = ieUncompressData(cData,mn,mx,bitDepth)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-% if ieNotDefined('bitDepth'),error('bitDepth required'); end
+% if notDefined('bitDepth'),error('bitDepth required'); end
+error('Deprecated. In modern age, we have enough memeory for floats');
 mxCompress = (2^bitDepth) - 1;
 
 if mn > mx,      error('Min/Max error.');
@@ -49,4 +50,4 @@ catch
     warning('ISET:ieUncompress','Photons: Single precision'); 
 end
 
-return;
+end

@@ -1,5 +1,5 @@
 function irradiance = oiCalculateIrradiance(scene,optics)
-%Calculate optical image irradiance 
+%Calculate optical image irradiance
 %
 %  irradiance = oiCalculateIrradiance(scene,optics)
 %
@@ -11,7 +11,7 @@ function irradiance = oiCalculateIrradiance(scene,optics)
 %
 %  where m is the magnification and fN is the f-number of the lens.
 %  Frequently, in online references one sees the simpler formula:
-% 
+%
 %     irradiance = pi /(4*fN^2*(1+abs(m))^2)*radiance;
 %
 % (e.g., Gerald C. Holst, CCD Arrayas, Cameras and Displays, 2nd Edition,
@@ -21,7 +21,7 @@ function irradiance = oiCalculateIrradiance(scene,optics)
 %  sees only the paraxial rays.  The formula used here is more general and
 %  includes the non-paraxial rays.
 %
-%  On the web one even finds simpler formulae, such as 
+%  On the web one even finds simpler formulae, such as
 %
 %     irradiance = pi/(4*FN^2) * radiance
 %
@@ -31,7 +31,7 @@ function irradiance = oiCalculateIrradiance(scene,optics)
 %   http://www.coe.montana.edu/ee/jshaw/teaching/RSS_S04/Radiometry_geometry_RSS.pdf
 %
 %  Reference:
-%    The formula is derived in Peter Catrysse's dissertation (pp. 150-151).  
+%    The formula is derived in Peter Catrysse's dissertation (pp. 150-151).
 %    See also http://eeclass.stanford.edu/ee392b/, course handouts
 %    William L. Wolfe, Introduction to Radiometry, SPIE Press, 1998.
 %
@@ -40,24 +40,25 @@ function irradiance = oiCalculateIrradiance(scene,optics)
 % TODO:  What should the fnumber be when we are in SKIP mode for the model?
 
 % Scene data are in radiance units
-radiance = sceneGet(scene,'photons');
+radiance = sceneGet(scene, 'photons');
 
 % oi = vcGetObject('oi');
-switch(lower(opticsGet(optics,'model')))
+model = opticsGet(optics, 'model');
+model = ieParamFormat(model);
+switch model
     case 'raytrace'
-        % I am not sure we identify the ray trace case properly.
-        % If we are in the ray trace case, we get the object distance from the ray
+        % I am not sure we identify the ray trace case properly. If we are
+        % in the ray trace case, we get the object distance from the ray
         % trace structure.
-        sDist = opticsGet(optics,'rtobjectdistance');
-        fN    = opticsGet(optics,'rtEffectivefNumber');
-        m     = opticsGet(optics,'rtmagnification');
+        fN    = opticsGet(optics, 'rtEffectivefNumber');
+        m     = opticsGet(optics, 'rtmagnification');
     case {'skip'}
-        m  = opticsGet(optics,'magnification');  % Always 1
-        fN = opticsGet(optics,'fNumber');        % What should this be?
-    case {'diffractionlimited','shiftinvariant'}
-        sDist = sceneGet(scene,'distance');
-        fN    = opticsGet(optics,'fNumber');     % What should this be?
-        m     = opticsGet(optics,'magnification',sDist);
+        m  = opticsGet(optics, 'magnification');  % Always 1
+        fN = opticsGet(optics, 'fNumber');        % What should this be?
+    case {'diffractionlimited', 'shiftinvariant'}
+        sDist = sceneGet(scene, 'distance');
+        fN    = opticsGet(optics, 'fNumber');     % What should this be?
+        m     = opticsGet(optics, 'magnification', sDist);
     otherwise
         error('Unknown optics model');
 end
@@ -66,19 +67,15 @@ end
 % Perhaps we should be getting the transmittance out of ZEMAX/CODEV
 transmittance = opticsGet(optics,'transmittance');
 
-% If transmittance is all 1s, we can skip this step.
-if sum(transmittance) ~= length(transmittance)
-    if length(transmittance) ~= sceneGet(scene,'nWave')
-        error('Bad transmittance'); 
-    end
+% If transmittance is all 1s, we can skip this step
+if any(transmittance(:) ~= 1)
     % Do this in a loop to avoid large memory demand
-    for ii=1:length(transmittance)
-        radiance(:,:,ii) = radiance(:,:,ii)*transmittance(ii);
-    end
+    transmittance = reshape(transmittance, [1 1 length(transmittance)]);
+    radiance = bsxfun(@times, radiance, transmittance);
 end
 
 % Apply the formula that converts scene radiance to optical image
 % irradiance
 irradiance = pi /(1 + 4*fN^2*(1+abs(m))^2)*radiance;
 
-return;
+end

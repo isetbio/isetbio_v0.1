@@ -13,9 +13,9 @@ function oi = opticsRayTrace(scene,oi)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('scene'), scene = vcGetObject('scene'); end
-if ieNotDefined('oi'),    oi = vcGetObject('oi');       end
-if isempty(which('rtRootPath')), error('Ray Trace routines not found on the path.'); end
+if notDefined('scene'), scene = vcGetObject('scene'); end
+if notDefined('oi'),    oi = vcGetObject('oi');       end
+if isempty(which('rtRootPath')), error('Ray Trace routines not found'); end
 
 % Clear out the in window message
 handles = ieSessionGet('opticalimagehandle');
@@ -129,4 +129,4 @@ end
 oi = oiSet(oi,'illuminance',illuminance);
 oi = oiSet(oi,'meanilluminance',meanIlluminance);
 
-return;
+end

@@ -31,4 +31,4 @@ switch lower(obj.type)
         error('Unknown object type.');
 end
 
-return;
+end

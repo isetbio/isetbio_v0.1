@@ -40,11 +40,11 @@ switch lower(opticsModel)
         %
         % It is important that the units specified for this calculation and
         % the units specified for the custom OTF be the same
-        otf = customOTF(oi,fSupport,wave,unit);
+        otf = customOTF(oi, fSupport, wave, unit);
 
     case {'skip','skipotf'}
         % Doesn't really happen.
-        warndlg('No OTF method selected.');
+        warning('No OTF method selected.');
     
     otherwise
         error('Unknown optics model: %s',opticsModel);

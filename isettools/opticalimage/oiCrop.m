@@ -21,7 +21,7 @@ function [oi,rect] = oiCrop(oi,rect)
 if notDefined('oi'), error('You must define an optical image.'); end
 
 if notDefined('rect'), 
-    [roiLocs,rect] = vcROISelect(oi); 
+    [roiLocs, rect] = vcROISelect(oi); 
 else
     cmin = rect(1); cmax = rect(1)+rect(3);
     rmin = rect(2); rmax = rect(2)+rect(4);
@@ -29,29 +29,24 @@ else
     roiLocs = [r(:),c(:)];
 end
 
-wAngular = oiGet(oi,'wangular');
-sz = oiGet(oi,'size');
+wAngular = oiGet(oi, 'wangular');
+sz = oiGet(oi, 'size');
 % wave = oiGet(oi,'nwave');
 
 % The number of selected columns and rows
 c = rect(3)+1; r = rect(4)+1;
 
 % These are in XW format.
-photons = vcGetROIData(oi,roiLocs,'photons');
-photons = XW2RGBFormat(photons,r,c);
+photons = vcGetROIData(oi, roiLocs, 'photons');
+photons = XW2RGBFormat(photons, r, c);
 
 oi = oiClearData(oi);
-oi = oiSet(oi,'cphotons',photons);
-newSz = oiGet(oi,'size');
-oi = oiSet(oi,'wangular',(newSz(2)/sz(2))*wAngular);
+oi = oiSet(oi, 'photons', photons);
+newSz = oiGet(oi, 'size');
+oi = oiSet(oi, 'wangular', (newSz(2)/sz(2))*wAngular);
 
 [illuminance, meanIll] = oiCalculateIlluminance(oi); 
 oi = oiSet(oi,'illuminance',illuminance);
 oi = oiSet(oi,'meanIlluminance',meanIll);
 
 end
-
-
-
-
-

@@ -23,14 +23,16 @@ function oiW = oiExtractWaveband(oi,waveList,illuminanceFlag)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('oi'), scene = vcGetObject('oi'); end
-if ieNotDefined('waveList'), error('Wave list must be defined'); end
-if ieNotDefined('illuminanceFlag'), illuminanceFlag = 0; end
+if notDefined('oi'), oi = vcGetObject('oi'); end
+if notDefined('waveList'), error('Wave list must be defined'); end
+if notDefined('illuminanceFlag'), illuminanceFlag = 0; end
 
 oiW = oi;
-oiW = oiSet(oiW,'cphotons',sceneGet(oi,'photons',waveList));
-oiW = oiSet(oiW,'wave',waveList);
+oiW = oiSet(oiW, 'cphotons', oiGet(oi,'photons',waveList));
+oiW = oiSet(oiW, 'wave', waveList);
 
-if illuminanceFlag, oiW = oiSet(oiW,'illuminance',oiCalculateIlluminance(oiW)); end
+if illuminanceFlag
+    oiW = oiSet(oiW,'illuminance',oiCalculateIlluminance(oiW));
+end
 
-return;
+end

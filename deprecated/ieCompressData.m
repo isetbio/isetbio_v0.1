@@ -24,8 +24,9 @@ function [cData,mn,mx] = ieCompressData(data,bitDepth,mn,mx)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-%% To save time, not much checking of input arguments.
-
+%% To save time, not much checking of input arguments
+disp('In modern age, we have enough memeory to get rid of compression');
+error('Deprecated');
 if ~exist('mn','var'), mn = min(data(:)); end
 if ~exist('mx','var'), mx = max(data(:)); end
 
@@ -76,4 +77,3 @@ switch bitDepth
 end
 
 end
-

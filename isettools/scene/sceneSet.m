@@ -137,39 +137,34 @@ switch parm
     case {'photons','cphotons','compressedphotons'}
         % sceneSet(scene,'photons',val,[which wave])
         % val is typically a 3D (row,col,wave) matrix.
-        bitDepth = sceneGet(scene,'bitDepth');
-        if isempty(bitDepth), error('Compression parameters not set up.'); end
-        if isempty(varargin)
-            % Insert the whole photon data set
-            % scene = sceneSet(scene,'cphotons',data);
-            [scene.data.photons,mn,mx] = ieCompressData(val,bitDepth);
-            scene = sceneSet(scene,'datamin',mn);
-            scene = sceneSet(scene,'datamax',mx);
-            % scene = sceneSet(scene,'bitDepth',bitDepth);
-        elseif length(varargin) == 1
-            % Insert data from one wavelength plane.
-            % scene = sceneSet(scene,'cphotons',data,wavelength);
-
-            % When we put in the data at a single wavelength, we must use
-            % the fixed datamax and datamin.
-            mx = sceneGet(scene,'datamax');
-            mn = sceneGet(scene,'datamin');
-
-            idx = ieFindWaveIndex(sceneGet(scene,'wave'),varargin{1});
-            % If we are changing just one wavelength, we might be violating
-            % the mn,mx range.  Warn the user.  After this error, they
-            % should set the photons using all wavelengths, which will
-            % reset the mn and mx.
-            if min(val(:)) < mn 
-                error('Min data out of range.  Insert full set.')
-            elseif max(val(:)) > mx  
-                error('Max data out of range.  Insert full set.')
-            end
-            scene.data.photons(:,:,idx) = ieCompressData(val,bitDepth,mn,mx);
+        bitDepth = sceneGet(scene, 'bitDepth');
+        if isempty(bitDepth), error('Compression parameters required'); end
+        if ~isempty(varargin)
+            idx = ieFindWaveIndex(sceneGet(scene, 'wave'), varargin{1});
+            idx = logical(idx);
+        end
+        
+        switch bitDepth
+            case 64 % Double
+                if isempty(varargin)
+                    scene.data.photons = val;
+                else
+                    scene.data.photons(:,:,idx) = val;
+                end
+            case 32 % Single
+                if isempty(varargin)
+                    scene.data.photons = single(val);
+                else
+                    scene.data.photons(:,:,idx) = single(val);
+                end
+            case 16 % unit16
+                error('16 bit data is not supported anymore');
+            otherwise
+                error('Unknown data bit depth');
         end
 
         % Clear out derivative luminance/illuminance computations
-        scene = sceneSet(scene,'luminance',[]);
+        scene = sceneSet(scene, 'luminance', []);
 
     case 'energy'
         % scene = sceneSet(scene,'energy',energy,wave);
@@ -311,4 +306,4 @@ switch parm
         disp(['Unknown sceneSet parameter: ',parm]);
 end
 
-return;
+end

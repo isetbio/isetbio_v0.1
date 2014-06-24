@@ -88,15 +88,14 @@ function [D, imgDist] = opticsDepthDefocus(objDist,optics,imgPlaneDist)
 % The blurring caused by this difference in best image plane depends on the
 % pupil aperture as well as the focal length.  For small pupil apertures,
 % there is less of a penalty in defocus (e.g., a pinhole).  The
-% significance of the pupil aperture is captured in other (see, e.g.
-% humanCore and opticsReducedSFandW20).
+% significance of the pupil aperture is captured in other
 %
 
-if ieNotDefined('objDist'), error('No distance specified'); end
-if ieNotDefined('optics'), optics = vcGetObject('optics'); end
+if notDefined('objDist'), error('No distance specified'); end
+if notDefined('optics'), optics = vcGetObject('optics'); end
 fLength = opticsGet(optics,'focal length','m');
 
-if ieNotDefined('imgPlaneDist'), imgPlaneDist = fLength; end
+if notDefined('imgPlaneDist'), imgPlaneDist = fLength; end
 if imgPlaneDist < fLength, error('Virtual image: img plane closer than fLength - not computed'); end
 
 % Compute the image distance for various object distances
@@ -108,10 +107,6 @@ if imgPlaneDist < fLength, error('Virtual image: img plane closer than fLength -
 %    imgDist = (1/fLength - 1./objDist).^-1;
 % and
 imgDist = (fLength*objDist) ./ (objDist - fLength);
-% figure(1); plot(objDist,imgDist)
-% xlabel('Distance to object (m)'); ylabel('Distance to image plane (m)')
-% line([objDist(1) objDist(end)],[fLength fLength],'Color','k','linestyle','--')
-%  figure(1)
 
 % Compute the defocus - this is the dioptric power of a lens that would
 % shift the image from its current distance (imgDist) to the desired image
@@ -122,6 +117,4 @@ D = (1./imgDist) - (1/imgPlaneDist);
 %  xlabel('Distance to object (m)'); ylabel('Dioptric error (1/m)')
 %  figure(1)
 
-return
-
-
+end

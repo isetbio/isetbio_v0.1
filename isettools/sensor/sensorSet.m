@@ -18,7 +18,7 @@ function sensor = sensorSet(sensor,param,val,varargin)
 %
 % Examples:
 %    sensor = sensorSet(sensor,'PIXEL',pixel);
-%    sensor = sensorSet(sensor,'autoExposure',1);   ('on' and 'off' work, too)
+%    sensor = sensorSet(sensor,'autoExposure',1); ('on' and 'off')
 %    sensor = sensorSet(sensor,'sensorComputeMethod',baseName);
 %    sensor = sensorSet(sensor,'quantizationMethod','10 bit');
 %    sensor = sensorSet(sensor,'analogGain',5);
@@ -538,7 +538,7 @@ switch lower(param)
     case {'adaptationoffset'}
         sensor.human.adaptOffset = val;
         
-    case {'movementpositions','sensorpositions'}
+    case {'movementpositions', 'sensorpositions', 'positions'}
         % Nx2 vector of (x,y) positions in number of pixels
         sensor.movement.pos = val;
     case {'framesperposition','exposuretimesperposition','etimeperpos'}

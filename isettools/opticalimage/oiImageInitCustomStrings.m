@@ -8,7 +8,7 @@ function handles = oiImageInitCustomStrings(handles)
 %    .fig file.  Then, the strings are modified using data contained in the
 %    global variable, vcSESSION.CUSTOM.  
 %
-%    The popup menu strings can also  maniuplated using the Add Custom line.
+%    The popup menu strings can also  maniuplated using the Add Custom line
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 

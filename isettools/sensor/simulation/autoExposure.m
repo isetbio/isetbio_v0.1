@@ -83,7 +83,7 @@ integrationTime = (level * voltageSwing )/ maxSignalVoltage;
 return;
 
 %---------------------------
-function [integrationTime,maxSignalVoltage,smallOI] = aeLuminance(OI,sensor,level)
+function [integrationTime,maxSignalVoltage,smallOI] = aeLuminance(oi,sensor,level)
 % This method extracts the brightest part of the image and sets the
 % integration time so that the brightest part is at a fraction of
 % saturation.
@@ -98,7 +98,7 @@ pixel = sensorGet(sensor,'pixel');
 voltageSwing   = pixelGet(pixel,'voltageSwing');        % [V]
 
 % Find the brightest part of the scene
-smallOI = oiExtractBright(OI);
+smallOI = oiExtractBright(oi);
 
 % The number of sensors must match the CFA format of the color sensor
 % arrays.  So we choose a size that is an 8x multiple of the cfa pattern.
@@ -108,7 +108,7 @@ smallISA = sensorSet(sensor,'size',8*sensorGet(sensor,'cfaSize'));
 smallISA = sensorClearData(smallISA);
 smallISA = sensorSet(smallISA,'integrationTime',1);     % Exposure is 1 sec
 
-sensorFOV = sensorGet(smallISA,'fov',[],OI);
+sensorFOV = sensorGet(smallISA,'fov',[],oi);
 % Now, treat the small OI as a large, uniform field that covers the sensor
 smallOI = oiSet(smallOI,'wangular',2*sensorFOV);
 

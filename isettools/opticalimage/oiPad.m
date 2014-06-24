@@ -18,15 +18,15 @@ function oi = oiPad(oi,padSize,sDist,direction)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('sDist'), 
+if notDefined('sDist'), 
     scene = vcGetObject('scene');
     if isempty(scene)
-        warndlg('oiPad: No scene, assuming 1 m sDist');
+        warning('oiPad: No scene, assuming 1 m sDist');
         sDist = 1;
     else  sDist = sceneGet(scene,'distance'); 
     end
 end
-if ieNotDefined('direction'), direction = 'both'; end
+if notDefined('direction'), direction = 'both'; end
 
 % We make sure padSize matches the dimensionality of photons.
 % Probably not necessary.  But ...
@@ -71,18 +71,20 @@ end
 
 % The width per horizontal sample at the sensor surface is the ratio of the
 % width to the number of columns.  The new number of columns is the sum of
-% the current number and the horizontal pad size, which is in pad(2).
-newWidth = oiGet(oi,'width')*((oiGet(oi,'cols') + padSize(2)*2)/oiGet(oi,'cols'));
+% the current number and the horizontal pad size, which is in pad(2)
+if strcmp(direction, 'both'), padCols = padSize(2)*2;
+else padCols = padSize(2); end
+newWidth = oiGet(oi,'width')* (1 + padCols/oiGet(oi, 'cols'));
 
 % Find the distance from the image to the lens
-imageDistance = opticsGet(oiGet(oi,'optics'),'imageDistance',sDist);
+imageDistance = oiGet(oi, 'optics imageDistance', sDist);
 
 % Now we compute the new horizontal field of view using the formula that
 % says the opposite over adjacent is the tangent of the angle.  We return
 % the value in degrees
-oi = oiSet(oi,'horizontalfieldofview',ieRad2deg(2*atan((0.5*newWidth)/imageDistance)));
+oi = oiSet(oi, 'h fov', 2*atand(newWidth/2/imageDistance));
 
 % Now we adjust the columns by placing in the new photons
-oi = oiSet(oi,'cphotons',photons);
+oi = oiSet(oi, 'photons', photons);
 
-return;
+end

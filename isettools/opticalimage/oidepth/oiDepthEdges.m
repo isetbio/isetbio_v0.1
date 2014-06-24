@@ -33,14 +33,14 @@ defocus(defocus >= 0) = -0.01;
 
 % Calculate depths assuming image plane at focal length.
 depthEdges      = opticsDefocusDepth(defocus,optics,fLength);
-[v,idx] = min(abs(inFocusDepth - depthEdges));
+[~,idx] = min(abs(inFocusDepth - depthEdges));
 
 % If the user wants a particular image depth in focus, tell them where the
 % image plane should be.
 oDist           = depthEdges(idx);
-[tmp imageDist] = opticsDepthDefocus(oDist,optics,fLength);
+[~, imageDist] = opticsDepthDefocus(oDist,optics,fLength);
 
 % This is the defocus for each depth when the image plane is at imageDist.
 oDefocus  = opticsDepthDefocus(depthEdges,optics,imageDist);
 
-return
+end

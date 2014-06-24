@@ -53,8 +53,11 @@ else
     % 0.2.  We could do this in the user-interface some day.  I am not sure
     % that it has much benefit, but it does take a lot more time and
     % memory.
-    gridSpacing = 1/sensorGet(ISA,'nSamplesPerPixel');
-    if showBar, waitbar(0.5,wBar,sprintf('Sensor image: Spatial (grid: %.2f)',gridSpacing)); end
+    gridSpacing = 1/sensorGet(ISA, 'nSamplesPerPixel');
+    if showBar
+        waitbar(0.5, wBar, ...
+            sprintf('Sensor image: Spatial (grid: %.2f)',gridSpacing));
+    end
     signalCurrentImage = spatialIntegration(signalCurrentDensityImage,OI,ISA,gridSpacing); % [A]
 end
 

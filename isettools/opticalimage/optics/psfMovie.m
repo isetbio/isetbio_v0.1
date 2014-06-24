@@ -28,9 +28,9 @@ function psfMovie(optics,figNum,delay)
 %
 % Copyright ImagEval, LLC, 2005
 
-if ieNotDefined('optics'), optics = vcGetObject('optics'); end
-if ieNotDefined('figNum'), figNum = vcSelectFigure('GRAPHWIN'); end
-if ieNotDefined('delay'), delay = 0.2; end
+if notDefined('optics'), optics = vcGetObject('optics'); end
+if notDefined('figNum'), figNum = vcSelectFigure('GRAPHWIN'); end
+if notDefined('delay'), delay = 0.2; end
 
 figure(figNum)
 set(figNum,'name','PSF Movie');
@@ -83,5 +83,4 @@ switch lower(opticsModel)
         error('Unknown model %s\n',opticsModel);
 end
 
-
-return;
+end

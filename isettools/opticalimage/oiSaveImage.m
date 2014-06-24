@@ -14,7 +14,7 @@ function fName = oiSaveImage(oi,fName,gam)
 if ~exist('oi','var') || isempty(oi), oi = vcGetObject('oi'); end
 
 % Get RGB file name (tif)
-if ieNotDefined('fName')
+if notDefined('fName')
     fName = vcSelectDataFile('session','w','tif','Image file (tif)');
 end
 
@@ -28,4 +28,4 @@ end
 
 imwrite(RGB,fName,'tif');
 
-return;
+end

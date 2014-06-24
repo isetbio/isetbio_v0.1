@@ -1,4 +1,4 @@
-function oDist = opticsDefocusDepth(defocus,optics,imgPlaneDist)
+function oDist = opticsDefocusDepth(defocus, optics, imgPlaneDist)
 % Compute depth in object space to achieve a particular defocus (diopters).
 %
 %  oDist = opticsDefocusDepth(defocus,optics,imgPlaneDist)
@@ -28,9 +28,11 @@ function oDist = opticsDefocusDepth(defocus,optics,imgPlaneDist)
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
-if ieNotDefined('defocus'), error('Defocus in diopters required'); end
-if ieNotDefined('optics'), error('Optics required'); end
-if ieNotDefined('imgPlaneDIst'), imgPlaneDist = opticsGet(optics,'focal length','m'); end
+if notDefined('defocus'), error('Defocus in diopters required'); end
+if notDefined('optics'), error('Optics required'); end
+if notDefined('imgPlaneDIst')
+    imgPlaneDist = opticsGet(optics,'focal length','m');
+end
 
 % Focal length needed for depth
 fLength = opticsGet(optics,'focal length','m');

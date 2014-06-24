@@ -54,7 +54,7 @@ function val = illuminantGet(il,param,varargin)
 % (c) Imageval Consulting, LLC, 2012
 
 %% Parameter checking
-if ~exist('il','var') || isempty(il), error('illuminant structure required'); end
+if ~exist('il','var') || isempty(il), error('illuminant required'); end
 if ~exist('param','var') || isempty(param), error('param required'); end
 
 val = [];
@@ -69,24 +69,20 @@ switch param
         val = il.type;
     
     case {'datamin'}
-        if checkfields(il, 'data', 'min')
-            val = il.data.min;
+        if checkfields(il, 'data', 'photons')
+            val = min(il.data.photons(:));
         end
     case {'datamax'}
-        if checkfields(il, 'data', 'max')
-            val = il.data.max;
+        if checkfields(il, 'data', 'photons')
+            val = max(il.data.photons(:));
         end
     case 'photons'
         % illuminantGet(il,'photons')
         % Would be nice to have:  illuminantGet(il,'photons',wave);
         
         % We handle the spectral and spatial spectral the same way.
-        if ~checkfields(il,'data','photons'), val = []; return; end
-        if isa(il.data.photons,'uint32')
-            bitDepth = 32;
-            mn  = illuminantGet(il,'datamin');
-            mx  = illuminantGet(il,'datamax');
-            val = ieUncompressData(il.data.photons,mn,mx,bitDepth);
+        if checkfields(il,'data','photons')
+            val = il.data.photons;
         end
         if isvector(val), val = val(:); end
 

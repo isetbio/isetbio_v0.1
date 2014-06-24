@@ -170,8 +170,12 @@ function val = opticsGet(optics,parm,varargin)
 %
 val = [];
 
-if ~exist('optics','var') || isempty(optics),  error('No optics specified.'); end
-if ~exist('parm','var')   || isempty(parm),    error('No parameter specified.'); end
+if ~exist('optics','var') || isempty(optics), 
+    error('No optics specified.'); 
+end
+if ~exist('parm','var')   || isempty(parm), 
+    error('No parameter specified.');
+end
 
 % We return different parameters depending on whether the user has a
 % shift-invariant lens model (e.g., diffraction-limited) or a general ray
@@ -185,7 +189,6 @@ end
 
 parm = ieParamFormat(parm);
 switch parm
-
     case 'name'
         val = optics.name;
     case 'type'
@@ -972,4 +975,5 @@ switch parm
         error('Unknown optics parameter.');
 
 end
-return;
+
+end

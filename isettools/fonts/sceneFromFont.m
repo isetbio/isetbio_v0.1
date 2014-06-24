@@ -29,7 +29,7 @@ wave = displayGet(display,'wave');
 energy = dRGB*spd';
 energy = XW2RGBFormat(energy,r,c);
 p = Energy2Quanta(wave,energy);
-scene = sceneSet(scene,'cphotons',p);   % Compressed photons
+scene = sceneSet(scene, 'cphotons', p);   % Compressed photons
 
 % vcAddObject(scene); sceneWindow;
 

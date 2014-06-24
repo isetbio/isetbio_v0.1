@@ -8,16 +8,13 @@ function oi = opticsCos4th(oi)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-% Setting up local variables
-% wavelength = oiGet(oi,'wavelength');
-% nWaves = oiGet(oi,'nWaves');
-% sz = oiGet(oi,'size');
-% photons = zeros(sz(1),sz(2),nWaves);
+optics = oiGet(oi, 'optics');
 
-optics = oiGet(oi,'optics');
-
-method = opticsGet(optics,'cos4thfunction');
-if isempty(method), method = 'cos4th'; end
+method = opticsGet(optics, 'cos4thfunction');
+if isempty(method)
+    method = 'cos4th';
+    oi = oiSet(oi, 'optics cos4thfunction', optics);
+end
 
 % Calculating the cos4th scaling factors
 % We might check whether it exists already and only do this if
@@ -29,14 +26,8 @@ oi = oiSet(oi, 'optics', optics);
 % Applying cos4th scaling.
 sFactor = opticsGet(optics,'cos4thData');  % figure(3); mesh(sFactor)
 photons = bsxfun(@times, oiGet(oi, 'photons'), sFactor);
-% for ii=1:nWaves
-%     % Get one waveband of the irradiance image and calculate.
-%     irradianceImage = oiGet(oi,'photons',wavelength(ii));
-%     photons(:,:,ii) = irradianceImage .* sFactor;
-% end
 
 % Compress the calculated image and put it back in the structure.
-oi = oiSet(oi,'cphotons',photons); 
+oi = oiSet(oi, 'photons',photons); 
 
-return;
-
+end

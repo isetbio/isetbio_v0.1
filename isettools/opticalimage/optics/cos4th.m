@@ -1,4 +1,4 @@
-function optics = cos4th(optics,opticalImage)
+function optics = cos4th(optics, oi)
 %Calculate cos4th offaxis fall off data
 %
 %   optics = cos4th(optics,opticalImage)
@@ -28,12 +28,12 @@ function optics = cos4th(optics,opticalImage)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 % Setting up local variables
-sSupport = oiGet(opticalImage,'spatialsupport');
+sSupport = oiGet(oi, 'spatialsupport');
 x = sSupport(:,:,2); 
 y = sSupport(:,:,1);
 
-imageDistance = opticsGet(optics,'imagedistance');
-imageDiagonal = oiGet(opticalImage,'diagonal');
+imageDistance = opticsGet(optics, 'imagedistance');
+imageDiagonal = oiGet(oi, 'diagonal');
 
 fNumber = opticsGet(optics,'fNumber');
 sFactor = sqrt(imageDistance.^2 + (x.^2 + y.^2));
@@ -58,11 +58,12 @@ else
     tan_theta = sin_theta ./ cos_theta;
     
     spatialFall = ( pi / 2) * (1 - (1 - tan_theta.^2 + tan_phi.^2) ...
-        ./ sqrt(tan_phi.^4 + 2*tan_phi.^2*(1-tan_theta.^2)+1./cos_theta.^4));
+        ./ sqrt(tan_phi.^4 + 2*tan_phi.^2*(1-tan_theta.^2) + ...
+        1./cos_theta.^4));
     spatialFall = spatialFall./(pi*sin_theta.^2);
 end
 
 % figure; mesh(spatialFall)
-optics = opticsSet(optics,'cos4thdata',spatialFall);
+optics = opticsSet(optics, 'cos4thdata', spatialFall);
 
 end

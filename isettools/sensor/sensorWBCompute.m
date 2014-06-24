@@ -68,4 +68,4 @@ end
 sensorName = ['wb-',oiGet(opticalimage,'name')];
 sensor = sensorSet(sensor,'name',sensorName);
 
-return;
+end

@@ -45,9 +45,9 @@ if notDefined('spacing'), spacing = 0.2; end
 r = oiGet(oi,'rows'); c = oiGet(oi,'cols');
 rSamples = (0:(r-1));
 cSamples = (0:(c-1));
-sampleHeight = oiGet(oi,'hres'); 
-sampleWidth  = oiGet(oi,'wres');
-[theseRows,theseCols] = sample2space(rSamples,cSamples,sampleHeight,sampleWidth);
+sampleHeight = oiGet(oi, 'hres'); 
+sampleWidth  = oiGet(oi, 'wres');
+[theseRows,theseCols] = sample2space(rSamples, cSamples, sampleHeight, sampleWidth);
 
 % These are sampled positions on the image sensor array. If spacing < 1, they
 % are spaced more finely than the pixel samples. 
@@ -56,7 +56,7 @@ rSamples = (0:spacing:(r-spacing)) + (spacing/2);
 cSamples = (0:spacing:(c-spacing)) + (spacing/2);
 sampleHeight = sensorGet(sensor,'hres');
 sampleWidth  = sensorGet(sensor,'wres');
-[newRows,newCols] = sample2space(rSamples,cSamples,sampleHeight,sampleWidth);
+[newRows,newCols] = sample2space(rSamples, cSamples, sampleHeight, sampleWidth);
 [X, ~] = meshgrid(newCols,newRows);
 
 %

@@ -42,28 +42,28 @@ function [oi,sd,blurFilter] = oiDiffuser(oi,sd)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('oi'), oi = vcGetObject('oi'); end
-if ieNotDefined('sd')
+if notDefined('oi'), oi = vcGetObject('oi'); end
+if notDefined('sd')
     sensor = vcGetObject('sensor');
     if ~isempty(sensor)
         pixel = sensorGet(sensor, 'pixel');
-        % User is specifying the half height value.  So the standard deviation
-        % is related to the half height value this way. 
+        % User is specifying the half height value. So the standard
+        % deviation is related to the half height value this way.
         sd = pixelGet(pixel,'width','microns')*(1.4427/2);   
     else
-        errordlg('No sensor.  User must define sd.');
+        error('No sensor.  User must define sd.');
     end
 end
 
 % The sd is specified in microns.  We create a blur filter, however, with
 % respect to the OI sampling grid.  This step converts from microns to a
 % sigma specified with respect to the sampling grid. 
-wSpatialRes = oiGet(oi,'widthSpatialResolution','microns');
+wSpatialRes = oiGet(oi, 'widthSpatialResolution', 'microns');
 sigma = sd/wSpatialRes;
 
 if sigma < 0.5
     handles = ieSessionGet('opticalimagehandle');
-    str= 'Optical image spatial sampling is low compared to the image sensor';
+    str= 'Optical image spatial sampling is low compared to image sensor';
     ieInWindowMessage(str,handles,4);
 end
 
@@ -94,7 +94,6 @@ else
 end
 
 photons    = oiGet(oi,'photons');
-% tmp = photons(:,:,2);
 
 % Blur, treating the region outside the image as 0.  I think we can keep
 % the image the same because the region outside is already 0 at this point
@@ -103,18 +102,17 @@ photons    = oiGet(oi,'photons');
 nWave = oiGet(oi,'nwave');
 for ii=1:nWave
     tmp = squeeze(photons(:,:,ii));
-    photons(:,:,ii) = imfilter(tmp,blurFilter,0,'same','conv');
-    % figure; subplot(1,2,1), imagesc(tmp); subplot(1,2,2), imagesc(photons(:,:,ii));
+    photons(:,:,ii) = imfilter(tmp, blurFilter, 0, 'same', 'conv');
+    % figure; subplot(1,2,1), imagesc(tmp); 
+    % subplot(1,2,2), imagesc(photons(:,:,ii));
 end
 % The loop above is way faster.  Not sure why.  I used to do this.
 % tic, tmp = imfilter(photons,blurFilter,0,'same','conv'); toc
 
-oi = oiSet(oi,'cphotons',photons);
+oi = oiSet(oi, 'photons', photons);
 
 % Must compute illuminance 
 illuminance = oiCalculateIlluminance(oi);
-oi = oiSet(oi,'illuminance',illuminance);
+oi = oiSet(oi, 'illuminance', illuminance);
 
-return;
-
-
+end

@@ -19,11 +19,11 @@ bitDepth = oiGet(oi,'bit depth');
 oi = oiSet(oi,'data',[]);
 oi = oiSet(oi,'bit depth',bitDepth);
 
-oi = oiSet(oi,'wangular',[]);
-oi = oiSet(oi,'depth map',[]);
+oi = oiSet(oi, 'wangular', []);
+oi = oiSet(oi, 'depth map', []);
 
 optics = opticsClearData(oiGet(oi,'optics'));
 
-oi = oiSet(oi,'optics',optics);
+oi = oiSet(oi, 'optics', optics);
 
-return;
+end

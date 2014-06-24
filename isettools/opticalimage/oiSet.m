@@ -90,8 +90,6 @@ function oi = oiSet(oi,parm,val,varargin)
 % Private variables used by ISET but not normally set by the user
 %
 %   Used for management of compressed photons
-%      {'data min'}
-%      {'data max'}
 %      {'bit depth'}
 %
 %   Used to cache optical image illuminance
@@ -172,72 +170,63 @@ switch parm
     case {'data','datastructure'}
         oi.data = val;
 
-    case {'cphotons','compressedphotons','photons'}
-        if ~(isa(val,'double') || isa(val,'single')),
+    case {'cphotons', 'compressedphotons', 'photons'}
+        if ~(isa(val, 'double') || isa(val, 'single')),
             error('Photons must be type double or single.');
         end
         
-        bitDepth = oiGet(oi,'bitDepth');
-        if isempty(bitDepth), error('Compression parameters not set up.'); end
-
-        if isempty(varargin)
-            % Insert the whole photon data set
-            % oi = oiSet(oi,'cphotons',data);
-            
-            % [oi.data.photons,mn,mx] = ieCompressData(val,bitDepth);
-            % oi = oiSet(oi,'datamin',mn);
-            % oi = oiSet(oi,'datamax',mx);
-            oi.data.photons = val;
-        elseif length(varargin) == 1
-            % Insert a wavelength plane.
-            % oi = oiSet(oi,'cphotons',data,wavelength);
-
-            % When we put in a single waveband, it is possible (and
-            % happens) that the min or max of these new data are below or
-            % above the previously stored datamin/datamax values.  This can
-            % create a problem and warning, of course.  We probably only do
-            % this inside of oiCompute, and the place where we have had a
-            % problem is with the oiApplyOTF code.  So, think about this.
-
-            % When we put in the data at a single wavelength, we must use
-            % the fixed datamax and datamin.
-            % If we are changing just one wavelength, we might be violating
-            % the mn,mx range.  Warn the user.  After this error, they
-            % should set the photons using all wavelengths, which will
-            % reset the mn and mx.
-            mx = oiGet(oi,'datamax');
-            mn = oiGet(oi,'datamin');
-            if min(val(:)) < mn 
-                error('Min data out of range.  Insert full set.')
-            elseif max(val(:)) > mx  
-                error('Max data out of range.  Insert full set.')
-            end
-            idx = ieFindWaveIndex(oiGet(oi,'wave'),varargin{1});
-            % There have been cases with min(val) < mn.  Shouldn't happen,
-            % right?
-            oi.data.photons(:,:,idx) = ieCompressData(val,bitDepth,mn,mx);
+        bitDepth = oiGet(oi, 'bitDepth');
+        if isempty(bitDepth), error('Compression parameters not set'); end
+        if ~isempty(varargin)
+            % varargin{1} - selected waveband
+            idx = ieFindWaveIndex(oiGet(oi, 'wave'),varargin{1});
+            idx = logical(idx);
+        end
+        
+        switch bitDepth
+            case 64 % Double
+                if isempty(varargin)
+                    oi.data.photons = val;
+                else
+                    oi.data.photons(:,:,idx) = val;
+                end
+            case 32 % Single
+                if isempty(varargin)
+                    oi.data.photons = single(val);
+                else
+                    oi.data.photons(:,:,idx) = single(val);
+                end
+            case 16 % unit16
+                error('16 bit data is not supported anymore');
+            otherwise
+                error('Unknown data bit depth');
         end
 
         % Clear out derivative luminance/illuminance computations
-        oi = oiSet(oi,'illuminance',[]);
-        oi = oiSet(oi,'meanilluminance',[]);
+        oi = oiSet(oi,'illuminance', []);
+        oi = oiSet(oi,'meanilluminance', []);
 
     case {'datamin','dmin'}
-        % Only used by compressed photons.  Not by user.
-        oi.data.dmin = val;
+        % Only used by compressed photons. Not by user
+        error('datamin and datamax are not used anymore');
+        % oi.data.dmin = val;
     case {'datamax','dmax'}
-        % Only used by compressed photons.  Not by user.
-        oi.data.dmax = val;
+        % Only used by compressed photons. Not by user
+        error('datamin and datamax are not used anymore');
+        % oi.data.dmax = val;
     case 'bitdepth'
-        % Only used by compressed photons.  Not by user.
-        oi.data.bitDepth = val;
-        % oi = oiClearData(oi);
+        % Only used by compressed photons
+        if checkfields(oi, 'data', 'bitDepth')
+            error('BitDepth should not be changed');
+        else
+            oi.data.bitDepth = val;
+        end
 
-    case {'illuminance','illum'}
+    case {'illuminance', 'illum'}
         % The value is stored for efficiency.
         oi.data.illuminance = val;
 
-    case {'meanillum','meanilluminance'}
+    case {'meanillum', 'meanilluminance'}
         oi.data.meanIll = val;
 
     case {'spectrum','wavespectrum','wavelengthspectrumstructure'}
@@ -300,4 +289,4 @@ switch parm
         error('Unknown oiSet parameter: %s',parm);
 end
 
-return;
+end

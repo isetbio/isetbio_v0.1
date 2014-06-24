@@ -20,9 +20,9 @@ sr = oiGet(oi,'spatialResolution',units);
 nRows = oiGet(oi,'rows');
 nCols = oiGet(oi,'cols');
 
-if isempty(nRows) || isempty(nCols), errordlg('No optical image data.'); return; end
+if isempty(nRows) || isempty(nCols), error('No optical image data.'); end
 
-sSupport.y = linspace(-nRows*sr(1)/2 + sr(1)/2, nRows*sr(1)/2 - sr(1)/2,nRows);
-sSupport.x = linspace(-nCols*sr(2)/2 + sr(2)/2,nCols*sr(2)/2 - sr(2)/2,nCols);
+sSupport.y = linspace(-nRows*sr(1)/2+sr(1)/2, nRows*sr(1)/2-sr(1)/2,nRows);
+sSupport.x = linspace(-nCols*sr(2)/2+sr(2)/2, nCols*sr(2)/2-sr(2)/2,nCols);
           
-return;
+end

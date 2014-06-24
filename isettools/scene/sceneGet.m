@@ -133,9 +133,13 @@ switch parm
          
     % Geometry
     case {'rows','row','nrows','nrow'}
-        if checkfields(scene,'data','photons'), val = size(scene.data.photons,1); end 
+        if checkfields(scene,'data','photons')
+            val = size(scene.data.photons,1);
+        end 
     case {'cols','col','ncols','ncol'}
-        if checkfields(scene,'data','photons'), val = size(scene.data.photons,2); end
+        if checkfields(scene,'data','photons')
+            val = size(scene.data.photons,2);
+        end
     case 'size'
         val = [sceneGet(scene,'rows'),sceneGet(scene,'cols')];
 
@@ -165,7 +169,7 @@ switch parm
         % square
         h = sceneGet(scene,'height');      % Height in meters
         d = sceneGet(scene,'distance');    % Distance in meters
-        val = ieRad2deg(2*atan((0.5*h)/d));  % Vertical field of view
+        val = 2*atand((0.5*h)/d);  % Vertical field of view
         
     case {'dangular','diagonalangular','diagonalfieldofview'}
         % For large field of views, we do the tangent computation.  When
@@ -177,7 +181,7 @@ switch parm
         %  tan(r) = opp/adj, where adj is viewing distance (vd)
         %  opp1 = vd*tan(r1), opp2 = vd*tan(r2)
         %  d = sqrt((opp1^2) + (opp1^2))
-        %  diagonalFOV = ieRad2deg(atan2(d,vd))       
+        %  diagonalFOV = rad2deg(atan2(d,vd))       
         vd = sceneGet(scene,'distance');
         rW = sceneGet(scene,'wAngular');
         rH = sceneGet(scene,'hAngular');
@@ -235,14 +239,6 @@ switch parm
            end
        end
        
-       % Check if the data are compressed.  If so, uncompress.
-       if isa(val,'uint16') || isa(val,'uint32')
-           bitDepth = sceneGet(scene,'bitDepth');
-           mn = sceneGet(scene,'datamin');
-           mx = sceneGet(scene,'datamax');
-           val = ieUncompressData(val,mn,mx,bitDepth);
-       end
-       
        case {'roiphotons','roiphotonsspd'}
            % sceneGet(scene,'photons roi',rectOrlocs);
            % Read photon spd from a region of interest. Data are returned as
@@ -256,15 +252,7 @@ switch parm
            else roiLocs = varargin{1};
            end
            val = vcGetROIData(scene,roiLocs,'photons');
-          
-           % Check if the data are compressed.  If so, uncompress.
-       if isa(val,'uint16')
-           bitDepth = sceneGet(scene,'bitDepth');
-           mn = sceneGet(scene,'datamin');
-           mx = sceneGet(scene,'datamax');
-           val = ieUncompressData(val,mn,mx,bitDepth);
-       end
-       
+
     case {'reflectance'}
         % Divide the scene photons by the illuminant photons to derive
         % scene reflectance.
@@ -493,10 +481,10 @@ switch parm
         
     case {'hangularresolution','heightangularresolution'}
         % Angular degree per pixel -- 
-        val = 2*ieRad2deg(atan((sceneGet(scene,'hspatialResolution')/sceneGet(scene,'distance'))/2));
+        val = 2*atand((sceneGet(scene,'hspatialResolution')/sceneGet(scene,'distance'))/2);
     case {'wangularresolution','widthangularresolution'}
         % Angular degree per pixel -- 
-        val = 2*ieRad2deg(atan((sceneGet(scene,'wspatialResolution')/sceneGet(scene,'distance'))/2));
+        val = 2*atand((sceneGet(scene,'wspatialResolution')/sceneGet(scene,'distance'))/2);
     case {'angularresolution'}
         % Height and width
         val = [sceneGet(scene,'hangularresolution'), sceneGet(scene,'wangularresolution')];

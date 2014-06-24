@@ -36,19 +36,7 @@ switch param
         il.type = val;
     case 'photons'
         % il = illuminantSet(il,'photons',data);
-        % Compress the data because we may have an illuminant that is
-        % spectral spatial.  Don't do the whole wavelength at a time bit as
-        % in sceneSet because, well, it is just too soon.  But maybe some
-        % day.  Don't worry if the illuminant is a vector or a 3D matrix.
-        % These are treated the same here.
-        bitDepth = 32;
-        [il.data.photons,mn,mx] = ieCompressData(val,bitDepth);
-        il = illuminantSet(il,'datamin',mn);
-        il = illuminantSet(il,'datamax',mx);
-    case {'datamin'}
-        il.data.min = val;
-    case {'datamax'}
-        il.data.max = val;
+        il.data.photons = single(val);
     case 'energy'
         % User sent in energy.  We convert to photons and set.
         % We need to handle the spatial spectral case properly.

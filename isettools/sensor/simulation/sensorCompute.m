@@ -85,7 +85,7 @@ for ss=1:length(masterSensor)   % Number of sensors
     if showBar, wBar = waitbar(0,sprintf('Sensor %d image:  ',ss)); end
     
     % Determine the exposure model
-    integrationTime = sensorGet(sensor,'integration Time');
+    integrationTime = sensorGet(sensor, 'integration Time');
     pattern = sensorGet(sensor,'pattern');
     if numel(integrationTime) == 1 && ...
             ( (integrationTime == 0) || sensorGet(sensor,'auto exposure') )

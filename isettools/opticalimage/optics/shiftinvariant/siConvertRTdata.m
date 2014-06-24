@@ -27,8 +27,8 @@ function [optics, inName, outName] = siConvertRTdata(inName,fieldHeight,outName)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('inName'),    inName = vcSelectDataFile; end
-if ieNotDefined('fieldHeight')
+if notDefined('inName'),    inName = vcSelectDataFile; end
+if notDefined('fieldHeight')
     fieldHeight = ieReadNumber('Enter field height (mm)',0,'%.02f'); 
     fieldHeight = fieldHeight/1000;  % fieldHeight must be in meters
 end
@@ -77,4 +77,4 @@ optics = opticsSet(optics,'otfwave',rtWave);
 if ieNotDefined('outName'), outName = vcSelectDataFile('stayput','w'); end
 vcSaveObject(optics,outName);
 
-return;
+end

@@ -1,4 +1,4 @@
-function OImax = oiExtractBright(OI)
+function OImax = oiExtractBright(oi)
 %Extract brightest pixel from an optical image and return it as an OI
 %
 %   OImax = oiExtractBright([OI])
@@ -13,26 +13,26 @@ function OImax = oiExtractBright(OI)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('OI'), OI = vcGetObject('OI'); end
+if notDefined('OI'), oi = vcGetObject('OI'); end
 
 % Find the brightest part of the scene
-sz = oiGet(OI,'size');
-illuminance = oiGet(OI,'illuminance');
+sz = oiGet(oi,'size');
+illuminance = oiGet(oi, 'illuminance');
 
 % If illuminance has not been computed, compute it here
-[v,ind] = max(illuminance(:));
+[~, ind] = max(illuminance(:));
 [rect(2),rect(1)] = ind2sub(sz,ind);
 rect(3) = 1; rect(4) = 1;
 
-% Now, we crop the data to form a small opticalimage  containing only the
+% Now, we crop the data to form a small opticalimage containing only the
 % highest illuminance.  
-OImax = oiCrop(OI,rect);
+OImax = oiCrop(oi,rect);
 
 % We adjust the optics
 optics = oiGet(OImax,'optics');
-optics = opticsSet(optics,'otfmethod','skip');
-optics = opticsSet(optics,'offaxismethod','skip');
+optics = opticsSet(optics, 'otfmethod', 'skip');
+optics = opticsSet(optics, 'offaxismethod', 'skip');
 
 OImax = oiSet(OImax,'optics',optics);
 
-return;
+end

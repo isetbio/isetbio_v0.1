@@ -48,7 +48,7 @@ end
 currentFOV  = sensorGet(sensor,'fov horizontal',scene,oi);
 
 % FOV formula
-% val = ieRad2deg(2*atan(0.5*width/distance));
+% val = 2*atand(0.5*width/distance);
 % desired width is
 % distance     = opticsGet(oiGet(oi,'optics'),'focallength');
 % desiredWidth = 2*distance*tand(deg/2);

@@ -234,7 +234,7 @@ switch parm
         % displayGet(d,'dots per deg')
         mpd = displayGet(d,'meters per dot');                      
         dist = displayGet(d,'Viewing Distance');  % Meters
-        degPerPixel = ieRad2deg(tan( mpd / dist));
+        degPerPixel = tand(mpd / dist);
         val = round(1/degPerPixel);
         
     case {'viewingdistance', 'distance'}

@@ -12,7 +12,7 @@ function oi = oiMakeEvenRowCol(oi,sDist)
 % This is not a terrible hack because there is oi padding in any event.
 %
 
-if ieNotDefined('sDist')
+if notDefined('sDist')
     scene = vcGetObject('scene');
     sDist = sceneGet(scene,'distance'); 
 end
@@ -21,8 +21,7 @@ sz = oiGet(oi,'size');
 
 if isodd(sz(1)), padSize(1) = 1; end
 if isodd(sz(2)), padSize(2) = 1; end
-padSize(3) = 0;
 
-oi = oiPad(oi,padSize,sDist,'post');
+oi = oiPad(oi, [padSize 0], sDist, 'post');
 
-return;
+end

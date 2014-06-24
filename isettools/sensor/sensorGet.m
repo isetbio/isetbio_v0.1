@@ -339,7 +339,7 @@ switch param
             sourceFL = opticsGet(optics,'focalLength'); % Meters.
         else sourceFL = varargin{1};
         end
-        val = ieRad2deg(sensorGet(sensor,'cra',sourceFL));
+        val = rad2deg(sensorGet(sensor,'cra',sourceFL));
     case {'etendue','sensoretendue'}
         % The size of etendue etnrie matches the row/col size of the sensor
         % array. The etendue is computed using the chief ray angle at each
@@ -880,14 +880,14 @@ switch param
                 'focal plane distance',sDist);
         end
         width = sensorGet(sensor,'arraywidth');
-        val = ieRad2deg(2*atan(0.5*width/distance));
+        val = 2*atand(0.5*width/distance);
     case {'fovvertical','vfov','fovv'}
         % This is  the vertical field of view
         oi = vcGetObject('OI');
         if isempty(oi), oi = oiCreate; end
         distance = opticsGet(oiGet(oi,'optics'),'imageDistance');
         height = sensorGet(sensor,'arrayheight');
-        val = ieRad2deg(2*atan(0.5*height/distance));
+        val = 2*atand(0.5*height/distance);
     case {'hdegperpixel','degpersample','degreesperpixel'}
         % degPerPixel = sensorGet(sensor,'h deg per pixel',oi);
         % Horizontal field of view divided by number of pixels
@@ -1078,7 +1078,7 @@ switch param
             val(isnan(val)) = 0;
         end
 
-    case {'movementpositions','sensorpositions'}
+    case {'movementpositions', 'sensorpositions', 'positions'}
         % Nx2 vector of (x,y) positions in deg
         if checkfields(sensor,'movement','pos'), val = sensor.movement.pos;
         else val = [0,0]; 

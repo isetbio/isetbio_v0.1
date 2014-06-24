@@ -20,8 +20,8 @@ function rgb = oiShowImage(oi,displayFlag,gam)
 
 if isempty(oi), cla; return;  end
 
-if ieNotDefined('gam'), gam = 1; end
-if ieNotDefined('displayFlag'), displayFlag = 1; end
+if notDefined('gam'), gam = 1; end
+if notDefined('displayFlag'), displayFlag = 1; end
 
 % Force to lower case and no spaces
 wList = oiGet(oi,'wavelength');
@@ -40,5 +40,4 @@ end
 rgb = imageSPD(img,wList,gam,sz(1),sz(2),displayFlag);
 axis image; axis off
 
-return;
-
+end

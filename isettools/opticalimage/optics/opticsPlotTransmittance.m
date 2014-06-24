@@ -14,7 +14,7 @@ function opticsPlotTransmittance(oi);
 % Copyright ImagEval Consultants, LLC, 2003.
 
 figNum =  vcSelectFigure('GRAPHWIN');
-figNum =  plotSetUpWindow(figNum);
+plotSetUpWindow(figNum);
 
 wave = oiGet(oi,'wave');
 optics = oiGet(oi,'optics');
@@ -29,4 +29,4 @@ xlabel('Wavelength (nm)'); ylabel('Transmittance');
 title('Optical transmittance');
 grid on
 
-return;
+end

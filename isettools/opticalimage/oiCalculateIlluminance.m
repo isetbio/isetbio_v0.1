@@ -76,10 +76,10 @@ catch
 end
 
 % Compute the mean if requested.
-if nargout >= 2, meanIlluminance = mean(illuminance(:)); end
+if nargout > 1, meanIlluminance = mean(illuminance(:)); end
 
 % Compute the complementary (infrared mainly) illuminance if requested
-if nargout >= 3
+if nargout > 2
 
     % shiftedV = V;
     % oldPeak = find(V==max(V)); % The luminosity function's peak

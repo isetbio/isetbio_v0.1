@@ -24,9 +24,9 @@ function optics = opticsBuild2Dotf(optics,otf,sampleSF)
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
-if ieNotDefined('optics'), error('optics required'); end
-if ieNotDefined('otf'),    error('otf data rquired'); end
-if ieNotDefined('sampleSF'),  error('spatial frequency range required.'); end
+if notDefined('optics'), error('optics required'); end
+if notDefined('otf'),    error('otf data rquired'); end
+if notDefined('sampleSF'), error('spatial frequency range required.'); end
 
 % Frequency representation in optics structure
 % Units are cyc/mm
@@ -110,4 +110,4 @@ optics = opticsSet(optics,'otfData',OTF2D);
 optics = opticsSet(optics,'otf fx',fSupport);
 optics = opticsSet(optics,'otf fy',fSupport);
 
-return
+end

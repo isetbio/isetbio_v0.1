@@ -1,4 +1,4 @@
-function sensor = coneAbsorptions(sensor, oi, showBar)
+function sensor = coneAbsorptions(sensor, oi, varargin)
 % Compute the cone absorptions accounting for eye movements
 %
 %   sensor = coneAbsorptions(sensor, oi, [showBar]);
@@ -36,15 +36,10 @@ function sensor = coneAbsorptions(sensor, oi, showBar)
 %% check inputs
 if notDefined('sensor'),  error('Need sensor'); end
 if notDefined('oi'),      error('Need optical image'); end
-if notDefined('showBar'), showBar = ieSessionGet('wait bar'); end
 
 % Get and verify eye movement parameters
-x = sensorGet(sensor,'positions x');
-y = sensorGet(sensor,'positions y');
-framesPerPosition =  sensorGet(sensor,'frames per position');
-if ~isequal(length(x), length(y), length(framesPerPosition))
-    error('framesPerPosition, x, y positions are not of same lengths');
-end
+xpos = sensorGet(sensor,'positions x');
+ypos = sensorGet(sensor,'positions y');
 
 % We could sort the positions to make the computation more efficient.  The
 % movie, however, won't match the real eye movements.  Below is the code
@@ -63,19 +58,19 @@ end
 % rows and columns by 2 because we will add rows or colums to only one side
 % of the sensor (e.g, top or right), which will shift the center of the
 % sensor by 1/2 the number of rows or columns added.
-fov = sensorGet(sensor, 'fov', [], oi);
-sz  = sensorGet(sensor, 'size');
+% fov = sensorGet(sensor, 'fov', [], oi);
+% sz  = sensorGet(sensor, 'size');
 
-xpos = round(2* x * sz(2) / fov);
-ypos = round(2* y * sz(1) / fov);
+% xpos = round(2* x * sz(2) / fov);
+% ypos = round(2* y * sz(1) / fov);
 
 % With the noise flag set to 0, we compute only the mean.  No photon noise
 % or sensor noise.
-sensor = sensorSet(sensor,'noise flag',0);
+% sensor = sensorSet(sensor,'noise flag',0);
 
 % loop across positions, suppress waitbar in sensorCompute
 % wbarState = ieSessionGet('wait bar'); ieSessionSet('wait bar','off');
-nPositions = length(framesPerPosition);
+nPos = length(xpos);
 
 % OLD CODE STARTS HERE
 % volts = [];
@@ -137,9 +132,9 @@ for ii = 2 : 4 % L, M, S
 end
 
 sz = sensorGet(sensor, 'size');
-volts = zeros([sz nPositions]);
+volts = zeros([sz nPos]);
 
-for p = 1:nPositions
+for p = 1:nPos
     % cropping
     tmp = LMS(1+rows(1)+ypos(p):end-rows(2)+ypos(p), ...
         1+cols(1)-xpos(p):end-cols(2)-xpos(p),:);

@@ -10,7 +10,7 @@ function oi = opticsPlotOffAxis(oi,val)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('val'), val = []; end
+if notDefined('val'), val = []; end
 
 optics = oiGet(oi,'optics');
 data = opticsGet(optics,'cos4th');
@@ -44,4 +44,4 @@ title('Off-axis intensity falloff');
 grid on;  udata.x = data;
 set(figNum,'Userdata',udata);
 
-return;
+end

@@ -9,7 +9,7 @@ function oi = opticsOTF(oi,scene)
 % ray trace approach.
 %
 % The  spatial (frequency) support of the OTF is computed from the OI
-% information. 
+% information.
 %
 % The OTF data are not stored or returned.  The OTF can be quite large.  It
 % represents every spatial frequency in every waveband.  So we  compute the
@@ -34,22 +34,52 @@ function oi = opticsOTF(oi,scene)
 
 if notDefined('oi'), error('Optical image required.'); end
 if notDefined('scene'), scene = vcGetObject('scene'); end
-% if ieNotDefined('otfSaveFlag'),  otfSaveFlag = 0; end
 
-optics      = oiGet(oi,'optics');
-opticsModel = opticsGet(optics,'model');
+opticsModel = oiGet(oi, 'optics model');
 
 switch lower(opticsModel)
     case {'skip','skipotf'}
-        irradianceImage = oiGet(oi,'photons');
-        oi = oiSet(oi,'cphotons',irradianceImage);
-
+        return;
+        
     case {'dlmtf','diffractionlimited'}
         oi = oiApplyOTF(oi,scene);
-           
-    case {'shiftinvariant','custom','humanotf'}
-        oi = oiApplyOTF(oi,scene,'mm');
         
+    case {'shiftinvariant','custom','humanotf'}
+        try
+        imSize   = oiGet(oi,'size');
+        sDist = sceneGet(scene,'distance');
+        oi = oiPad(oi, [round(imSize/8) 0], sDist);
+        
+        optics = oiGet(oi, 'optics');
+        fSupport = oiGet(oi,'frequencysupport', 'mm');
+        gFx = gpuArray(fSupport(:,:,1)); gFy = gpuArray(fSupport(:,:,2));
+        otfSupport = opticsGet(optics, 'otfSupport');  
+        [X, Y]     = meshgrid(otfSupport{1}, otfSupport{2});
+        
+        wave = oiGet(oi, 'wave');
+        p    = oiGet(oi, 'photons');
+        
+        % c    = 683 * oiGet(oi, 'binWidth') * vcConstants('h') * vcConstants('c') * 1e9;
+        % illuminance = gpuArray.zeros(oiGet(oi, 'size'));
+        % fName = fullfile(isetRootPath,'data','human','luminosity.mat');
+        % V = ieReadSpectra(fName,wave);
+        
+        for ii = 1 : length(wave)
+            img = gpuArray(p(:,:,ii));
+            OTF2D = opticsGet(optics, 'otfData', wave(ii));
+            otf = ifftshift(interp2(X, Y, fftshift(OTF2D), gFx, gFy, 'linear',0));
+            imgFFT = fft2(fftshift(img));
+            filteredIMG = abs(ifftshift(ifft2(otf .* imgFFT)));
+            p(:,:,ii) = gather(filteredIMG);
+            
+            % illuminance = illuminance + filteredIMG*V(ii)*c/wave(ii);
+        end
+        oi = oiSet(oi, 'photons', p);
+        % oi = oiSet(oi, 'illuminance', gather(illuminance));
+        catch
+            disp('GPU Computing Failed. Try using old code');
+            oi = oiApplyOTF(oi,scene,'mm');
+        end
     otherwise
         error('Unknown OTF method');
 end
@@ -98,8 +128,8 @@ otfM = oiCalculateOTF(oi, wave, unit);
 for ii=1:length(wave)
     % img = oiGet(oi,'photons',wave(ii));
     img = p(:, :, ii);
-    % figure(1); imagesc(img); colormap(gray); 
-
+    % figure(1); imagesc(img); colormap(gray);
+    
     % For diffraction limited we calculate the OTF.  For other optics
     % models we look up the stored OTF.  Remember, DC is in the (1,1)
     % position.
@@ -108,14 +138,14 @@ for ii=1:length(wave)
     
     % Put the image center in (1,1) and take the transform.
     imgFFT = fft2(fftshift(img));
-    % figure(1); imagesc(abs(imgFFT));  
+    % figure(1); imagesc(abs(imgFFT));
     % figure(2); imagesc(abs(otf));
     % colormap(gray)
     
-    % Multiply the transformed otf and the image.  
-    % Then invert and put the image center in  the center of the matrix 
+    % Multiply the transformed otf and the image.
+    % Then invert and put the image center in  the center of the matrix
     filteredIMG = abs(ifftshift(ifft2(otf .* imgFFT)));
-       
+    
     % Sometimes we had  annoying complex values left after this filtering.
     % We got rid of it by an abs() operator.  It should never be there.
     % But we think it arises because of rounding error.  We haven't seen

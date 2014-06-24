@@ -3,7 +3,7 @@ function r = deg2rad(d)
 %
 %  r = deg2rad(d)
 %
-% See also: ieRad2deg.  
+% See also: rad2deg.  
 %    Perhaps this routine should also adopt the varargin structure in that
 %    function.
 %

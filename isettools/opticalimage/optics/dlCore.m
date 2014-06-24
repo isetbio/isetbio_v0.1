@@ -1,4 +1,4 @@
-function OTF2D = dlCore(rho,inCutFreq)
+function OTF2D = dlCore(rho, inCutFreq)
 % Compute 2D diffraction limited optical transfer function
 %
 %    OTF2D = dlCore(rho,inCutFreq)
@@ -6,8 +6,8 @@ function OTF2D = dlCore(rho,inCutFreq)
 % This routine calculates the 2D optical transfer function (OTF) of a
 % diffraction limited optical system.
 %
-% The 2D OTF depends only a few parameters.  These are the radial distance
-% (rho) of each spatial frequency  from the origin, and the input cutoff
+% The 2D OTF depends only a few parameters. These are the radial distance
+% (rho) of each spatial frequency from the origin, and the input cutoff
 % frequency (inCutFreq) at which wavelength. The inCutFreq, in turn, only
 % depends on the f# of the diffraction limited system. 
 %
@@ -28,8 +28,8 @@ function OTF2D = dlCore(rho,inCutFreq)
 % quoted as
 %
 %  H(rho,lambda)  
-%         =(2/pi)*(acos(rho/(2*rho0)) - (rho/2*rho0)*sqrt(1-(rho/(2*rho0)^2)))
-%         =(2/pi)*(acos(rho/inCutF)   - (rho/inCutF)*sqrt(1- (rho/inCutF))^2))
+%     =(2/pi)*(acos(rho/(2*rho0)) - (rho/2*rho0)*sqrt(1-(rho/(2*rho0)^2)))
+%     =(2/pi)*(acos(rho/inCutF)   - (rho/inCutF)*sqrt(1- (rho/inCutF))^2))
 %      or  0                 if rho >= 2*rho0, which is rho/inCutFreq >= 1
 %
 % This can be simplified because 2*rho0 is the spatial cutoff frequency
@@ -48,9 +48,9 @@ function OTF2D = dlCore(rho,inCutFreq)
 % 
 %
 % Sources:
-%  http://ao.osa.org/ViewMedia.cfm?id=38173&seq=0
-%  Muralidhara Subbarao, APPLIED OPTICS / Vol. 29, No. 4 / 1 February 1990
-%  Optical transfer function of a diffraction-limited system for polychromatic illumination
+%  http://ao.osa.org/ViewMedia.cfm?id=38173&seq=0 Muralidhara Subbarao,
+%  APPLIED OPTICS / Vol. 29, No. 4 / 1 February 1990 Optical transfer
+%  function of a diffraction-limited system for polychromatic illumination
 %  Also, http://www.microscopyu.com/articles/optics/mtfintro.html
 %
 % See also: dlMTF
@@ -58,22 +58,23 @@ function OTF2D = dlCore(rho,inCutFreq)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 % Number of spatial frequency and wavelength samples
-[r,c] = size(rho); nWaves = length(inCutFreq);
+[r, c] = size(rho);
+nWaves = length(inCutFreq);
 
 % Pre-allocate the OTF2D.
-OTF2D = zeros(r,c,nWaves);
+OTF2D = zeros(r, c, nWaves);
 
-% The OTF formula used here places DC in the center of the matrix.  We want
-% DC to be in the (1,1) position, so we apply an fftshift at the last step.
-for ii=1:nWaves
-    normalizedFreq = rho/inCutFreq(ii);
-    otf = (2/pi)*(acos(normalizedFreq) - (normalizedFreq .* sqrt(1 - normalizedFreq.^2)));
-    exclude = (normalizedFreq >= 1);
-    otf(exclude) = 0;
-    OTF2D(:,:,ii) = ifftshift(otf); % previously OTF2D(:,:,ii) = fftshift(otf); not correct.
+% The OTF formula used here places DC in the center of the matrix. We want
+% DC to be in the (1,1) position, so we apply an fftshift at the last step
+% This part can be boosted by gpu computing
+for ii = 1 : nWaves
+    nFreq = rho / inCutFreq(ii);
+    nFreq(nFreq > 1) = 1;
+    otf = (2/pi)*(acos(nFreq) - nFreq .* sqrt(1 - nFreq.^2));
+    OTF2D(:,:,ii) = ifftshift(otf);
 end
 
 % If there is only one wavelength, return the data as a single image. 
 if nWaves == 1, OTF2D = squeeze(OTF2D); end
 
-return;
+end

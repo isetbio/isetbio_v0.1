@@ -22,8 +22,8 @@ function [noisyPhotons,theNoise] = oiPhotonNoise(oi)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if isstruct(oi) && strcmp(oiGet(oi,'type'),'opticalimage')
-    photons = oiGet(oi,'photons');
+if isstruct(oi) && strcmp(oiGet(oi,'type'), 'opticalimage')
+    photons = oiGet(oi, 'photons');
 else
     photons = oi;
 end
@@ -40,8 +40,8 @@ theNoise = sqrt(photons) .* randn(size(photons));
 % We add the mean electron and noise electrons together.
 noisyPhotons = round(photons + theNoise);
 % When the signal is very large, say 10^14, the noise is only 10^7.  This
-% is very small and you see basically nothing. But if the signal is small, you have a chance of seeing something in
-% these plots.
+% is very small and you see basically nothing. But if the signal is small,
+% you have a chance of seeing something in these plots.
 
 % Now, we find the small mean values and create a Poisson sample. This is
 % too slow in general because the Poisson algorithm is slow for big
@@ -65,4 +65,3 @@ if ~isempty(v)
 end
 
 end
-

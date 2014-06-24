@@ -1,4 +1,4 @@
-function middleM = getMiddleMatrix(m,sz)
+function middleM = getMiddleMatrix(m, sz)
 %Extract values near middle of a matrix.
 %
 %   middleM = getMiddleMatrix(m,sz)
@@ -22,14 +22,10 @@ center = round(size(m)/2);
 rMin = max(1,center(1)-sz); rMax = min(size(m,1), center(1)+sz);
 cMin = max(1,center(2)-sz); cMax = min(size(m,2), center(2)+sz);
 
-r = (rMin:rMax);
-c = (cMin:cMax);
-w = size(m,3);
-middleM = zeros(length(r),length(c),w);
-
-for ii=1:w
-    middleM(:,:,ii) = m(r,c,ii);
-end
+r = rMin : rMax;
+c = cMin : cMax;
+% w = size(m,3);
+middleM = m(r, c, :);
 
 end
 

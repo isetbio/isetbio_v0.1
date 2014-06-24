@@ -34,8 +34,9 @@ cmd2 = ['isempty(',rootVarString ') == 1'];
 
 % create cmd3 if this is a structure
 if ~isempty(fieldString)
-    field = sprintf('''%s''',fieldString(2:end));
-    cmd3 = ['~isfield(', rootVarString,',',field,') == 1'];
+    fieldString = fieldString(2:end);
+    fieldString = strrep(fieldString, '.', ''',''');
+    cmd3 = ['~checkfields(', rootVarString, ',''', fieldString ''')'];
 end
 cmd = [cmd1, ' || ',cmd2];
 

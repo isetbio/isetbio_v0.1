@@ -50,7 +50,7 @@ switch lower(offaxismethod)
     case 'cos4th'
         oi = opticsCos4th(oi);
     otherwise
-        fprintf('\n-----\nUnknown offaxis method: %s.\nUsing cos4th.',optics.offaxis);
+        fprintf('Unknown offaxis method: %s\nUsing cos4th',optics.offaxis);
         oi = opticsCos4th(oi);
 end
 
@@ -81,5 +81,4 @@ oi = oiSet(oi,'illuminance',oiCalculateIlluminance(oi));
 
 if showWbar, delete(wBar); end
 
-return;
-
+end

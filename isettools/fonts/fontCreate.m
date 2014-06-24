@@ -3,7 +3,7 @@ function font = fontCreate(letter,family,sz,dpi)
 %
 % Inputs
 %   letter: (Default 'g')
-%   sz:     Font size (default = 18)
+%   sz:     Font size (default = 14)
 %   family: Font family (default 'Georgia')
 %   dpi:    Dot per inch (default 96)
 %

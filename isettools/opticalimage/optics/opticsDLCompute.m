@@ -1,4 +1,4 @@
-function oi = opticsDLCompute(scene,oi)
+function oi = opticsDLCompute(scene, oi)
 %Diffraction limited optical image computation
 %
 %   oi = opticsDLCompute(scene,oi)
@@ -18,8 +18,8 @@ function oi = opticsDLCompute(scene,oi)
 
 % TODO:  We should insert a geometric distortion function in this code,
 % rather than using it only in the ray trace methods. 
-if ieNotDefined('scene'), scene = vcGetObject('scene'); end
-if ieNotDefined('oi'),    oi = vcGetObject('oi');       end
+if notDefined('scene'), scene = vcGetObject('scene'); end
+if notDefined('oi'),    oi = vcGetObject('oi');       end
 showWaitBar = ieSessionGet('waitbar');
 
 optics = oiGet(oi,'optics');
@@ -59,7 +59,9 @@ oi   = oiSet(oi,'cphotons',oiCalculateIrradiance(scene,optics));
 %
 % DISTORTION?  See Peter and remember Patrick conversation
 %
-if showWaitBar, waitbar(0.3,wBar,[wStr,' Calculating off-axis falloff']); end
+if showWaitBar
+    waitbar(0.3,wBar,[wStr,' Calculating off-axis falloff']);
+end
 
 % Now apply the offaxis fall-off.
 % We either apply a standard cos4th calculation, or we use the more
@@ -71,7 +73,7 @@ switch lower(offaxismethod)
     case 'cos4th'
         oi = opticsCos4th(oi);
     otherwise
-        fprintf('\n-----\nUnknown offaxis method: %s.\nUsing cos4th instead.',optics.offaxis);
+        fprintf('Unknown offaxis method: %s. Using cos4th',optics.offaxis);
         oi = opticsCos4th(oi);
 end
 
@@ -105,4 +107,4 @@ oi = oiSet(oi,'illuminance',oiCalculateIlluminance(oi));
 
 if showWaitBar, close(wBar); end
 
-return;
+end

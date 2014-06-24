@@ -62,7 +62,7 @@ if strcmp(oi.type,'scene') && strcmp(scene.type,'opticalimage')
     % disp('oiCompute: flipping arguments')
     tmp = scene; scene = oi; oi = tmp; clear tmp
 end
-if ieNotDefined('opticsModel'), 
+if notDefined('opticsModel'), 
     optics = oiGet(oi,'optics'); 
     opticsModel = opticsGet(optics,'model'); 
 end

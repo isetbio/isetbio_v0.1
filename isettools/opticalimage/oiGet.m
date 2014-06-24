@@ -117,9 +117,10 @@ function val = oiGet(oi,parm,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-
+if ~exist('parm','var') || isempty(parm)
+    error('Param must be defined.');
+end
 val = [];
-if ~exist('parm','var') || isempty(parm), error('Param must be defined.'); end
 
 % See if this is really an optics call
 [oType,parm] = ieParameterOtype(parm);
@@ -138,8 +139,7 @@ end
 
 % It appears to be an oi, so onward.
 parm = ieParamFormat(parm);
-switch parm
-    
+switch parm   
     case 'type'
         val = oi.type;
     case 'name'
@@ -148,8 +148,7 @@ switch parm
         val = oi.filename;
     case 'consistency'
         val = oi.consistency;
-        
-       
+              
     case {'rows','row','nrows','nrow'}
         if checkfields(oi,'data','photons'), val = size(oi.data.photons,1);
         else
@@ -176,7 +175,7 @@ switch parm
             end
         end
     case 'size'
-        val = [oiGet(oi,'rows'),oiGet(oi,'cols')];
+        val = [oiGet(oi,'rows'), oiGet(oi,'cols')];
     case {'samplespacing'}
         % Sample spacing, both height and width
         % oiGet(oi,'sample spacing','mm')
@@ -246,10 +245,10 @@ switch parm
         end
         
     case {'hangular','heightangular','vfov','verticalfieldofview'}
-        % We only store the width FOV.  We insist that the pixels are square       
+        % We only store the width FOV. We insist that the pixels are square       
         h = oiGet(oi,'height');              % Height in meters
         d = oiGet(oi,'distance');            % Distance to lens
-        val = ieRad2deg(2*atan((0.5*h)/d));    % Vertical field of view
+        val = 2*atand((0.5*h)/d);    % Vertical field of view
 
         
     case {'dangular','diagonalangular','diagonalfieldofview'}
@@ -314,7 +313,7 @@ switch parm
     case 'data'
        if checkfields(oi,'data'), val = oi.data; end;
        
-   case {'photons','cphotons'}
+   case {'photons', 'cphotons'}
        % Read photon data.  
        % Data are returned as doubles (uncompressed).
        if checkfields(oi,'data','photons')
@@ -328,13 +327,6 @@ switch parm
            end
        end
        
-       % Check if the data are compressed.  If so, uncompress to double.
-       if isa(val,'uint16') || isa(val,'uint32')
-           bitDepth = oiGet(oi,'bitDepth');
-           mn = oiGet(oi,'datamin');
-           mx = oiGet(oi,'datamax');
-           val = ieUncompressData(val,mn,mx,bitDepth);
-       end
     case {'photonsnoise','photonswithnoise'}
         % pn = oiGet(oi,'photons noise');
         % The current photons are the mean.
@@ -348,36 +340,46 @@ switch parm
         wave = oiGet(oi,'wave');
         val = Quanta2Energy(wave(:),val);
     case {'datamax','dmax'}
-        if checkfields(oi,'data','dmax'), val = oi.data.dmax; end
+        % return data max, not for compression anymore
+        if checkfields(oi, 'data', 'photons')
+            val = max(oi.data.photons(:));
+        end
     case {'datamin','dmin'}
-        if checkfields(oi,'data','dmin'), val = oi.data.dmin; end
+        % return data min, not for compression anymore
+        if checkfields(oi, 'data', 'photons')
+            val = min(oi.data.photons(:));
+        end
     case {'bitdepth','compressbitdepth'}
         if checkfields(oi,'data','bitDepth'), val = oi.data.bitDepth; end
-
     case 'energy'
-        % Possibly, we should compute the energy from the photons and only
-        % store photons.  Otherwise, there could be an inconsistency.
-        if checkfields(oi,'data','energy'), val = oi.data.energy; else val = []; end
+        % Compute energy from photons
+        if checkfields(oi, 'data', 'photons')
+            wave = oiGet(oi, 'wave');
+            val = Quanta2Energy(wave, oi.data.photons);
+        end
         
     case {'meanilluminance','meanillum'}
-        % I sure how we clear these fields.
-        if ~checkfields(oi,'data','illuminance') || isempty(oi.data.illuminance)
-            [oi.data.illuminance,oi.data.meanIll] = oiCalculateIlluminance(oi);  
-        elseif ~checkfields(oi,'data','meanIll') || isempty(oi.data.meanIll), 
+        % Get / compute mean illuminance
+        if notDefined('oi.data.illuminance')
+            [oi.data.illuminance, oi.data.meanIll] = ...
+                                    oiCalculateIlluminance(oi);  
+        elseif notDefined('oi.data.meanIll')
             oi.data.meanIll = mean(oi.data.illuminance(:)); 
         end
         val = oi.data.meanIll;
         
     case {'illuminance','illum'}
-        if ~checkfields(oi,'data','illuminance') || isempty(oi.data.illuminance)
-            val = oiCalculateIlluminance(oi);
-        else            val = oi.data.illuminance;
+        if notDefined('oi.data.illuminance')
+            % calculate and store
+            [val, oi.data.meanIll] = oiCalculateIlluminance(oi);
+            oi.data.illuminance = val;
+        else
+            val = oi.data.illuminance;
         end
         
-                
     case {'xyz','dataxyz'}
         % oiGet(oi,'xyz');
-        % RGB array of oi XYZ values.  These are returned as an RGB format
+        % RGB array of oi XYZ values. These are returned as an RGB format
         % at the spatial sampling grid of the optical image.
         photons = oiGet(oi,'photons');
         wave    = oiGet(oi,'wave');
@@ -386,13 +388,13 @@ switch parm
         %         val = XW2RGBFormat(val,sz(1),sz(2));
          
     case {'spectrum','wavespectrum'}
-        if checkfields(oi,'spectrum'), val = oi.spectrum; end
+        if isfield(oi,'spectrum'), val = oi.spectrum; end
     case 'binwidth'     
         wave = oiGet(oi,'wave');
         if length(wave) > 1, val = wave(2) - wave(1);
         else val = 1;
         end
-    case {'wave','wavelength'}
+    case {'wave', 'wavelength'}
         % oiGet(oi,'wave')
         % There is a problem that the oi spectrum might differ from the
         % optics spectrum.  There should only be one, and it should
@@ -400,7 +402,7 @@ switch parm
         % wonderful day, I returning the optics spectrum if there is no oi
         % spectrum.
         % Always a column vector, even if people stick it in the wrong way.
-        if checkfields(oi,'spectrum'), 
+        if isfield(oi,'spectrum'), 
             val = oi.spectrum.wave(:); 
         elseif checkfields(oi,'optics','spectrum'), 
             val = oi.optics.spectrum.wave(:);
@@ -415,12 +417,14 @@ switch parm
         % Height in meters is default
         % oiGet(oi,'height','microns')
         val = oiGet(oi,'sampleSize')*oiGet(oi,'rows');       
-        if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1});
+        end
     case {'width'}
         % Width in meters is default - We need to handle 'skip' case 
         d = oiGet(oi,'focalPlaneDistance');  % Distance from lens to image
         fov = oiGet(oi,'wangular');          % FOV (horizontal, width)
-        % ieRad2deg(2*atan((0.5*width)/imageDistance)) = fov
+        % rad2deg(2*atan((0.5*width)/imageDistance)) = fov
         val = 2*d*tand(fov/2);
         if ~isempty(varargin)
             val = val*ieUnitScaleFactor(varargin{1});
@@ -573,10 +577,12 @@ switch parm
         % 
     case {'hangularresolution','heightangularresolution'}
         % Angular degree per pixel -- in degrees
-        val = 2*ieRad2deg(atan((oiGet(oi,'hspatialResolution')/oiGet(oi,'distance'))/2));
+        val = 2 * atand((oiGet(oi,'hspatialResolution') / ...
+                                oiGet(oi,'distance'))/2);
     case {'wangularresolution','widthangularresolution'}
         % Angle (degree) per pixel -- width 
-        val = 2*ieRad2deg(atan((oiGet(oi,'wspatialResolution')/oiGet(oi,'distance'))/2));
+        val = 2 * atand((oiGet(oi,'wspatialResolution') / ...
+                                oiGet(oi,'distance'))/2);
     case {'angularresolution','degperpixel','degpersample','degreepersample','degreeperpixel'}
         % Height and width
         val = [oiGet(oi,'hangularresolution'), oiGet(oi,'wangularresolution')];
@@ -676,4 +682,4 @@ switch parm
         
  end
 
-return;
+end

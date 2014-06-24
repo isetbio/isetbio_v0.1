@@ -45,20 +45,22 @@ function [SNR, volts, SNRshot, SNRread, SNRdsnu, SNRprnu] = sensorSNR(ISA,volts)
 %
 % Copyright ImagEval Consultants, LLC, 2005
 
-if ieNotDefined('ISA'), [val,ISA] = vcGetSelectedObject('ISA'); end
+if notDefined('ISA'), [~, ISA] = vcGetSelectedObject('ISA'); end
 pixel = sensorGet(ISA,'pixel');
 
-if ~exist('volts','var'), volts = logspace(-4,0)*pixelGet(pixel,'voltageswing'); end % Volts
+if notDefined('volts')
+    volts = logspace(-4,0)*pixelGet(pixel,'voltageswing');
+end
 
-convGain = pixelGet(pixel,'conversionGain');        % V/e-
-readSD = pixelGet(pixel,'readnoiseElectrons');      % e-
+convGain = pixelGet(pixel, 'conversionGain');        % V/e-
+readSD = pixelGet(pixel, 'readnoiseElectrons');      % e-
 
 % Gain std as a percentage change in the voltage slope. 
 % gainImage = 1 + randn()*(sigmaGainFPN/100)
 gainSD = sensorGet(ISA,'gainSD');
 gainSD = gainSD/100;
 
-offsetSD = sensorGet(ISA,'offsetSD');    % V
+offsetSD = sensorGet(ISA, 'offsetSD');    % V
 
 % We compute the standard deviations in electrons for shot noise, PRNU and
 % DSNU
@@ -123,4 +125,4 @@ if nargout > 5
     end
 end
 
-return
+end

@@ -20,10 +20,10 @@ function s = sensorStats(roi,statType,unitType)
 if ~exist('statType','var'), statType = 'basic'; end
 if ~exist('unitType','var'), unitType = 'volts'; end
 
-[val,isa] = vcGetSelectedObject('ISA');
+[~, isa] = vcGetSelectedObject('ISA');
 nSensors = sensorGet(isa,'nsensors');
 
-if ~exist('roi','var') | isempty(roi)
+if ~exist('roi','var') || isempty(roi)
     isaHdl = ieSessionGet('isahandle');
     ieInWindowMessage('Select image region.',isaHdl,[]);
 

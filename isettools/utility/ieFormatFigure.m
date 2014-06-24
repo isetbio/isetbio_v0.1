@@ -35,11 +35,11 @@ function ieFormatFigure( fig, fontname, fontsize, figsize, border )
 
 % Load default paramemters.
 
-if ieNotDefined('fig'),      fig = 0;  end          % Root
-if ieNotDefined('fontname'), fontname = 'Helvetica'; end
-if ieNotDefined('fontsize'), fontsize = [18 14];     end
-if ieNotDefined('figsize'),  figsize  = [6.5 6.5];   end
-if ieNotDefined('border'),   border = [1 0.5];       end
+if notDefined('fig'),      fig = 0;  end          % Root
+if notDefined('fontname'), fontname = 'Helvetica'; end
+if notDefined('fontsize'), fontsize = [18 14];     end
+if notDefined('figsize'),  figsize  = [6.5 6.5];   end
+if notDefined('border'),   border = [1 0.5];       end
 
 % Check the fontsize.
 

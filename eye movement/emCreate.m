@@ -70,7 +70,7 @@ if notDefined('params'), params = []; end
 % set general fields
 p.name     = 'em structure';
 p.type     = 'eye movement';
-p.emFlag   = zeros(3,1); % emType - no eye movement
+p.emFlag   = ones(3,1); % emType - no eye movement
 p.sampTime = 0.001; % sample time interval - 1 ms
 
 % set fields for tremor

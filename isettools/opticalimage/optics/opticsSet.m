@@ -271,5 +271,4 @@ switch parm
         error('Unknown parameter')
 end
 
-return;
-
+end

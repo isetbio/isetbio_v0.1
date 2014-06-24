@@ -27,12 +27,12 @@ if notDefined('perfect'), perfect = 1; end
 
 if perfect
     % Find only perfect matches
-    idx = logical(ismember(wave,waveVal));
-else  
+    idx = logical(ismember(wave, waveVal));
+else
     idx = false(1,length(wave));   % Assume not a member
     % For each waveVal, find the index in wave that is closest.
     for ii=1:length(waveVal)
-        [~, entry] = min( abs(wave - waveVal(ii)) );
+        [~, entry] = min(abs(wave - waveVal(ii)) );
         idx(entry) = 1;
     end
     % Check how we whether the same idx matched two waveVal entries
