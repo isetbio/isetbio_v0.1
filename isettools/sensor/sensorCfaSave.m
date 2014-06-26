@@ -11,7 +11,7 @@ function sensorCfaSave(ISA,fullName)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('fullName'), fullName = vcSelectDataFile(['sensor',filesep,'cfa'],'w'); end
+if notDefined('fullName'), fullName = vcSelectDataFile(['sensor',filesep,'cfa'],'w'); end
 if isempty(fullName), return; end
 
 % These are the data fields that contain cfa information
@@ -28,6 +28,6 @@ color.filterNames = filterNames;
 
 
 % Save them all
-save(fullName,'cfa','color','spectrum');
+save fullName cfa color spectrum;
 
-return;
+end

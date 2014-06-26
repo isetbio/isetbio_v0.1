@@ -26,8 +26,8 @@ function h = oiDepthOverlay(oi,n)
 
 error('Obsolete.  Use plotOI with depth map contour');
 
-% if ieNotDefined('oi'), oi = vcGetObject('oi'); end
-% if ieNotDefined('n'), n = 5; end
+% if notDefined('oi'), oi = vcGetObject('oi'); end
+% if notDefined('n'), n = 5; end
 % 
 % d = oiGet(oi,'depth map');
 % d = ieScale(d,0,1);

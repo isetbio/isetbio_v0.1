@@ -47,8 +47,6 @@ function pixel = pixelSet(pixel,param,val,varargin)
 
 if ~exist('pixel','var') || isempty(pixel), error('Must define pixel.'); end
 if ~exist('param','var') || isempty(param), error('Must define parameter.'); end
-
-% Empty is allowed, so we don't use ieNotDefined.
 if ~exist('val','var'),   error('Value required.');end
 
 param = ieParamFormat(param);

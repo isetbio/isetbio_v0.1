@@ -120,9 +120,9 @@ function sensor = sensorSet(sensor,param,val,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ~exist('param','var') || isempty(param), error('Parameter field required.'); end
-
-% Empty is an allowed value.  So we don't use ieNotDefined.
+if ~exist('param','var') || isempty(param)
+    error('Parameter field required.');
+end
 if ~exist('val','var'),   error('Value field required.'); end
 
 % Handling pixel sets via sensorSet call.

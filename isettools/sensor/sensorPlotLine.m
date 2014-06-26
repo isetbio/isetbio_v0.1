@@ -46,11 +46,11 @@ function [figNum, uData] = sensorPlotLine(sensor, ori, dataType, sORt, xy)
 %  plotScene, but not yet for plotSensor or plotImage
 
 %%
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
-if ieNotDefined('ori'), ori = 'h'; end
-if ieNotDefined('dataType'), dataType =  'electrons'; end
-if ieNotDefined('sORt'), sORt = 'space'; end
-if ieNotDefined('xy'), xy = vcLineSelect(sensor); end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('ori'), ori = 'h'; end
+if notDefined('dataType'), dataType =  'electrons'; end
+if notDefined('sORt'), sORt = 'space'; end
+if notDefined('xy'), xy = vcLineSelect(sensor); end
 
 sSupport = sensorGet(sensor,'spatialSupport','microns');
 

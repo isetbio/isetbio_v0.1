@@ -17,8 +17,8 @@ function sensorPlotColor(sa,type)
 % TODO:  This should be moved into plotSensor as a case statement.  After
 % we write plotSensor, sigh.
 
-if ieNotDefined('sa'), sa=vcGetObject('isa'); end
-if ieNotDefined('type'), type = 'rg'; end
+if notDefined('sa'), sa=vcGetObject('isa'); end
+if notDefined('type'), type = 'rg'; end
 labels = {'Red sensor','Green sensor','Blue sensor'};
 
 % Demosiac the (R,B) values. 
@@ -29,7 +29,7 @@ spectralQE = sensorGet(sa,'spectralQE');
 demosaicedImage = Demosaic(vcimageCreate,sa); 
 
 figNum =  vcSelectFigure('GRAPHWIN');
-figNum =  plotSetUpWindow(figNum);
+plotSetUpWindow(figNum);
 
 switch lower(type)
     case 'rg'

@@ -130,7 +130,7 @@ switch lower(idealType)
         sensor = sensorSet(sensor,'name','Monochrome');
         
         pixel  = sensorGet(sensor,'pixel');
-        if ieNotDefined('pixelSizeInMeters')
+        if notDefined('pixelSizeInMeters')
             disp('2.8 micron sensor created');
             pixelSizeInMeters = 2.8e-6;
         end

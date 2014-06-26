@@ -59,4 +59,4 @@ if nargout == 2
     sOBJECT = vcGetObject(objType,val);
 end
 
-return
+end

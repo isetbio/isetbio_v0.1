@@ -17,7 +17,7 @@ function [uData, figHdl] = plotPixelSNR(sensor)
 %
 % (c) Imageval Consulting, LLC, 2012
 
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
 % SNRread can come back as Inf if there is no read noise.
 [SNR, volts, SNRshot, SNRread] = pixelSNR(sensor);
 

@@ -35,6 +35,7 @@ function [cones,macularCorrection,wave] = humanCones(fileName,wave,macularDensit
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
+error('Deprecated. Use coneCreate instead');
 if notDefined('fileName')
     fileName = 'stockmanAbs'; 
     includedDensity = 0.35;
@@ -44,8 +45,8 @@ if notDefined('wave'), wave = (370:730)'; end
 % Do not adjust for macular if it is not sent in.  If it is sent in, but
 % the includedDensity is not, we assume the cones are set to include a 0.35
 % macular pigment density.
-if ieNotDefined('macularDensity'), macularDensity = []; end
-if ieNotDefined('includedDensity'), includedDensity = 0.35; end
+if notDefined('macularDensity'), macularDensity = []; end
+if notDefined('includedDensity'), includedDensity = 0.35; end
 
 cones = ieReadSpectra(fileName,wave);
 
@@ -63,4 +64,3 @@ else
 end
 
 end
-

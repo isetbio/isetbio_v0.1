@@ -26,12 +26,12 @@ function pixel = pixelCreate(pixelType,wave,pixelSizeM)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('pixelType'), pixelType = 'default'; end
-if ieNotDefined('wave')
-    wave = (400:10:700); 
+if notDefined('pixelType'), pixelType = 'default'; end
+if notDefined('wave')
+    wave = 400:10:700; 
     wave = wave(:); 
 end
-if ieNotDefined('pixelSizeM'), pixelSizeM = 2.8e-6; end
+if notDefined('pixelSizeM'), pixelSizeM = 2.8e-6; end
 
 pixelType = ieParamFormat(pixelType);
 switch lower(pixelType)

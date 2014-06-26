@@ -64,8 +64,8 @@ function [uData, pData, fNum] = wvfPlot(wvfP,pType,varargin)
 %
 % (c) Wavefront Toolbox Team 2012 (bw)
 
-if ieNotDefined('wvfP'), error('Wavefront structure required.'); end
-if ieNotDefined('pType'), pType = '1dpsf'; end
+if notDefined('wvfP'), error('Wavefront structure required.'); end
+if notDefined('pType'), pType = '1dpsf'; end
 
 uData = [];
 pType = ieParamFormat(pType);

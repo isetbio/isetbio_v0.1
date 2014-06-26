@@ -9,7 +9,7 @@ function dMap = oiPadDepthMap(scene,invert)
 % ....
 
 % Check variables
-if ieNotDefined('invert'), invert = 0; end
+if notDefined('invert'), invert = 0; end
 
 if ~invert
     dMap    = sceneGet(scene,'depth map');
@@ -28,8 +28,8 @@ else
     vData = (cDepth > 0); vData = double(vData);
     gData = logical(hData(:)*vData(:)');
     figure; imagesc(gData)
-    oMap = dMap(gData);
-%    figure; imagesc(oMap)
+    % oMap = dMap(gData);
+    % figure; imagesc(oMap)
 end
 
 end

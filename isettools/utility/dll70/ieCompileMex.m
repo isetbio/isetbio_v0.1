@@ -26,7 +26,7 @@ function ieCompileMex(fList)
 %
 % Copyright, ImagEval 2006
 
-if ieNotDefined('fList')
+if notDefined('fList')
     % All known files 
     fList = {'md5','ieGetMACAddress'};
 end
@@ -109,4 +109,4 @@ for ii=1:length(fList)
     end
 end
 
-return;
+end

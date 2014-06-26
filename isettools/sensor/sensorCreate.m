@@ -72,13 +72,13 @@ function [sensor, params] = sensorCreate(sensorName,pixel,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2005
 
-if ieNotDefined('sensorName'), sensorName = 'default'; end
+if notDefined('sensorName'), sensorName = 'default'; end
 
 sensor.name = [];
 sensor.type = 'sensor';
 
 % Make sure a pixel is defined.
-if ieNotDefined('pixel')
+if notDefined('pixel')
     pixel  = pixelCreate('default');
     sensor = sensorSet(sensor,'pixel',pixel);
     sensor = sensorSet(sensor,'size',sensorFormats('qqcif'));

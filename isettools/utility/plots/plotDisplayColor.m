@@ -35,8 +35,8 @@ function plotDisplayColor(ip,dataType)
 %
 
 %% Variables
-if ieNotDefined('vci');      ip = vcGetObject('vcimage'); end
-if ieNotDefined('dataType'), dataType = 'rgb'; end
+if notDefined('vci');      ip = vcGetObject('vcimage'); end
+if notDefined('dataType'), dataType = 'rgb'; end
 
 %% Select the RGB data from the ROI
 handles = ieSessionGet('vcimagehandle');

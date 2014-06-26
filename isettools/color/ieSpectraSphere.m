@@ -47,7 +47,7 @@ elseif ischar(sBasis)
     % with columns as basis functions
     sBasis = ieReadSpectra(sBasis,wave);
 end
-if ieNotDefined('sFactor'), sFactor = 0.05; end
+if notDefined('sFactor'), sFactor = 0.05; end
 
 cieXYZ = ieReadSpectra('xyz',wave');
 

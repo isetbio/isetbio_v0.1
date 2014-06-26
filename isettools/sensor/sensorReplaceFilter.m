@@ -11,10 +11,10 @@ function isa = sensorReplaceFilter(isa,whichFilter,newFilterFile)
 %
 % Copyright Imageval, LLC 2002
 
-if ieNotDefined('isa'), [val,isa] = vcGetSelectedObject('ISA'); end
-if ieNotDefined('newFilterFile'), newFilterFile = []; end
+if notDefined('isa'), [~, isa] = vcGetSelectedObject('ISA'); end
+if notDefined('newFilterFile'), newFilterFile = []; end
 
-if ieNotDefined('whichFilter'), 
+if notDefined('whichFilter'), 
     filterNames = sensorGet(isa,'filterNames');
     replaceName = ieReadString('Enter filter name to replace:',filterNames{1}); 
     if isempty(replaceName), return; end;

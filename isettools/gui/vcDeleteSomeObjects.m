@@ -25,10 +25,10 @@ function nRemaining = vcDeleteSomeObjects(objType,deleteList)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('objType'), error('Object type required'); end
+if notDefined('objType'), error('Object type required'); end
 objType = vcEquivalentObjtype(objType);  % Translate to proper name
 
-if ieNotDefined('deleteList')
+if notDefined('deleteList')
     % Get the list from the user using a listdlg
     obj = vcGetObjects(objType);
     nObj = length(obj);

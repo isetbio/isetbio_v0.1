@@ -65,7 +65,7 @@ for ii=1:size(uVec,1)
 end
 
 % Plot on return, or not
-if ieNotDefined('h'), return;  % No figure handle
+if notDefined('h'), return;  % No figure handle
 else
     figure(h); clf
     switch dimensionality

@@ -143,7 +143,7 @@ switch lower(matrixtype)
             0.3645   -0.0379    1.8040]';
 
     case {'xyz2opp','opp2xyz'}
-        if ieNotDefined('spacetype'), spacetype = 10; end
+        if notDefined('spacetype'), spacetype = 10; end
         if (spacetype == 2)
             result = [278.7336  721.8031 -106.5520; ...
                 -448.7736  289.8056   77.1569; ...

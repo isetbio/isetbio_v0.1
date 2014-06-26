@@ -44,10 +44,9 @@ function [DR, maxVoltage, minVoltage] = sensorDR(sensor,integrationTime)
 %
 % Copyright ImagEval Consultants, LLC, 2005
 
-q = vcConstants('q');
-
-if ieNotDefined('sensor'), [val,sensor] = vcGetSelectedObject('sensor'); end
-if ieNotDefined('integrationTime'), integrationTime = sensorGet(sensor,'integrationTime'); end
+% q = vcConstants('q');
+if notDefined('sensor'), [~,sensor] = vcGetSelectedObject('sensor'); end
+if notDefined('integrationTime'), integrationTime = sensorGet(sensor,'integrationTime'); end
 
 if integrationTime == 0
     DR = [];
@@ -98,5 +97,4 @@ if minVoltage == 0, DR = Inf;
 else DR = 20 * log10(maxVoltage ./ minVoltage);
 end
 
-return;
-
+end

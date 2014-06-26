@@ -70,7 +70,7 @@ end
 % values. 
 if displayFlag >= 1
     if ~isscalar(gam), RGB = RGB.^gam; end
-    if notDefined('xcoords') || ieNotDefined('ycoords')
+    if notDefined('xcoords') || notDefined('ycoords')
         imagescRGB(RGB); axis image; 
     else
         RGB = RGB/max(RGB(:));

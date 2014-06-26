@@ -14,7 +14,7 @@ function oi = oiInterpolateW(oi,newWave)
 % Programming ... usually we interpolate in the scene, not the oi.
 disp('Warning.  oiInterpolateW not debugged yet.')
 
-if ieNotDefined('oi'), [val,oi] = vcGetSelectedObject('oi'); end
+if notDefined('oi'), [val,oi] = vcGetSelectedObject('oi'); end
 handles = ieSessionGet('opticalimagehandle');
 
 % Note the current oi properties
@@ -24,7 +24,7 @@ nWave = oiGet(oi,'nwave');
 curWave = oiGet(oi,'wave');
 meanIll = oiGet(oi,'meanilluminance');
 
-if ieNotDefined('newWave')
+if notDefined('newWave')
     prompt={'Start (nm)','Stop (nm)','Spacing (nm)'};
     def={num2str(curWave(1)),num2str(curWave(end)),num2str(oiGet(oi,'binwidth'))};
     dlgTitle='Wavelength resampling';
@@ -69,5 +69,4 @@ oi = oiSet(oi,'compressedphotons',newPhotons);
 oi = oiSet(oi,'illuminance',oiCalculateIlluminance(oi));
 oi = oiAdjustIlluminance(oi,meanL);
 
-return;
-
+end

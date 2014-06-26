@@ -25,7 +25,7 @@ function [snr,luxsec,SNRshot,SNRread,antiluxsec] = pixelSNRluxsec(sensor)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('sensor'), sensor = vcGetObject('ISA'); end
+if notDefined('sensor'), sensor = vcGetObject('ISA'); end
 if isempty(sensor)
     errordlg('No image sensor array sent in or defined.'); 
     return; 
@@ -36,7 +36,7 @@ end
 
 % Compute the relationship between volts and lux-sec for a uniform light
 % source.
-[voltsPerLuxSec,ls,meanVolts,voltsPerAntiLuxSec] = ...
+[voltsPerLuxSec,~,~,voltsPerAntiLuxSec] = ...
     pixelVperLuxSec(sensor);
 
 % The anti-luxseconds is a strange little construct from MP that measures
@@ -92,5 +92,4 @@ if nargout == 0
     set(gcf,'userdata',udata);
 end
 
-return;
-
+end

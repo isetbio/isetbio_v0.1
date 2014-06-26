@@ -13,12 +13,11 @@ function oi = oiCombineDepths(oiD)
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
-if ieNotDefined('oiD'), error('OI cell array for depths required'); end
+if notDefined('oiD'), error('OI cell array for depths required'); end
 
 % Basic parameters
 nDepths = length(oiD);
 nWave = oiGet(oiD{1},'nWave');
-wave  = oiGet(oiD{1},'wave');
 
 % The oiD are ordered from nearest to farthest depth plane.
 
@@ -107,4 +106,4 @@ oi = oiSet(oiD{1},'cphotons',photons);
 oi = oiSet(oi,'depth map',dMap);
 % vcAddAndSelectObject(oi); oiWindow
 
-return
+end

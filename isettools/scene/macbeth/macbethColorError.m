@@ -42,7 +42,7 @@ end
 
 
 % Either custom or sRGB calculation styles
-if ieNotDefined('method'), method = 'sRGB'; end
+if notDefined('method'), method = 'sRGB'; end
 
 whiteIndex = 4;
 gSeries = 4:4:24;

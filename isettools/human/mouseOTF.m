@@ -71,7 +71,7 @@ else
 end
 
 % Wavelength in nanometers
-if ieNotDefined('wave'), wave = (400:700)'; end
+if notDefined('wave'), wave = (400:700)'; end
 nWave = length(wave);
 
 % We use a frequency support that covers 2 cyc/deg.
@@ -80,7 +80,7 @@ nWave = length(wave);
 % cutoff frequency at less than 1 cyc/deg.)
 maxFrequency = 3; % cyc/deg
 %maxFrequency = 20; % cyc/deg
-if ieNotDefined('frequencysupport'), 
+if notDefined('frequencysupport'), 
   %  fList = unitFrequencyList(maxFrequency);
     fList = -1:.05:1;
     fList = fList*maxFrequency;

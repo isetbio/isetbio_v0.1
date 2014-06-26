@@ -29,7 +29,7 @@ if notDefined('sensor'), sensor = vcGetObject('sensor'); end
 if notDefined('showSelection'), showSelection = true; end
 fullData = true;
 % Get the raw sensor data
-if ieNotDefined('cornerPoints')
+if notDefined('cornerPoints')
     [fullRGB, ~, ~, cornerPoints] = macbethSelect(sensor,showSelection,fullData);
 else
     [fullRGB, ~, ~, cornerPoints] = macbethSelect(sensor,showSelection,fullData,cornerPoints);

@@ -21,8 +21,8 @@ function isa = pixelCenterFillPD(isa,fillfactor)
 %  Also, changes in the size of the pixel within the GUI preserve the
 %  fillfactor.  
 
-if ieNotDefined('isa'), [val,isa] = vcGetSelectedObject('ISA'); end
-if ieNotDefined('fillfactor'), fillfactor = 1;
+if notDefined('isa'), [~,isa] = vcGetSelectedObject('ISA'); end
+if notDefined('fillfactor'), fillfactor = 1;
 elseif (fillfactor > 1) || (fillfactor < 0), 
     error('Fill factor must be between 0 and 1.  Parameter value = %f\n',fillfactor); 
 end
@@ -36,4 +36,4 @@ pixel.pdWidth  = sqrt(fillfactor)*pixelGet(pixel,'deltax');
 pixel.pdHeight = sqrt(fillfactor)*pixelGet(pixel,'deltay');
 isa = sensorSet(isa,'pixel',pixelPositionPD(pixel,'center'));
 
-return;
+end

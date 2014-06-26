@@ -61,7 +61,7 @@ if notDefined('patchSize'), patchSize = 16;   end
 if notDefined('patchList'), patchList = 1:24; end
 
 %% Surface reflectance spectrum
-if ieNotDefined('spectrum'), 
+if notDefined('spectrum'), 
     macbethChartObject = initDefaultSpectrum(macbethChartObject,'hyperspectral');
 else
     macbethChartObject = sceneSet(macbethChartObject,'spectrum',spectrum);

@@ -80,8 +80,8 @@ function [udata, g] = plotScene(scene,pType,roiLocs,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('scene'), scene = vcGetObject('scene'); end
-if ieNotDefined('pType'), pType = 'hlineluminance'; end
+if notDefined('scene'), scene = vcGetObject('scene'); end
+if notDefined('pType'), pType = 'hlineluminance'; end
 
 % Possible return
 udata = [];
@@ -89,7 +89,7 @@ udata = [];
 % Format the parameter for the plot type
 pType = ieParamFormat(pType);
 
-if ieNotDefined('roiLocs')
+if notDefined('roiLocs')
     switch lower(pType)
         case {'radiancehline','hlineradiance',  ...
                 'radiancevline','vlineradiance' ...

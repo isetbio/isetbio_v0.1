@@ -14,7 +14,7 @@ function hdl = plotDisplayGamut(vci)
 %
 % Copyright ImagEval Consultants, LLC, 2005
 
-if ieNotDefined('vci'), vci = vcGetObject('vci'); end
+if notDefined('vci'), vci = vcGetObject('vci'); end
 
 xy = imageGet(vci,'primary xy');
 L =  imageGet(vci,'max display luminance');
@@ -31,4 +31,4 @@ title(sprintf('Gamut (%.0f cd/m^2 peak)',L));
 data.xy = xy;
 set(gca,'userdata',data);
 
-return
+end

@@ -12,8 +12,8 @@ function filterRGB = sensorFilterRGB(sensor,saturation)
 %    ieReadSmallMatrix(size(defMatrix),defMatrix,fmt,prompt,[],'msExposureData',filterRGB);
 %
 
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
-if ieNotDefined('saturation'), saturation = 1; end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('saturation'), saturation = 1; end
 
 wave = sensorGet(sensor,'wave');
 
@@ -39,4 +39,4 @@ for ii = 1:nRows
     end
 end
 
-return
+end

@@ -7,7 +7,7 @@ function hdl = plotDisplaySPD(vci)
 %
 % Copyright ImagEval Consultants, LLC, 2005
 
-if ieNotDefined('vci'), vci = vcGetObject('vci'); end
+if notDefined('vci'), vci = vcGetObject('vci'); end
 
 hdl = vcNewGraphWin;
 d = imageGet(vci,'display');

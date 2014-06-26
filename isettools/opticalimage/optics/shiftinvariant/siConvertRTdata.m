@@ -74,7 +74,7 @@ optics = opticsSet(optics,'otffx',fx);
 optics = opticsSet(optics,'otffy',fy);
 optics = opticsSet(optics,'otfwave',rtWave);
 
-if ieNotDefined('outName'), outName = vcSelectDataFile('stayput','w'); end
+if notDefined('outName'), outName = vcSelectDataFile('stayput','w'); end
 vcSaveObject(optics,outName);
 
 end

@@ -8,8 +8,8 @@ function sensor = binPixelPost(sensor,bMethod)
 % combines the digital values.
 %
 
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
-if ieNotDefined('bMethod'), error('Binning method required.'); end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('bMethod'), error('Binning method required.'); end
 
 switch lower(bMethod)
     case 'kodak2008'

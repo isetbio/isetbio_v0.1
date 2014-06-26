@@ -36,10 +36,10 @@ function img = sensorData2Image(sensor,dataType,gam,scaleMax)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('sensor'),     sensor = vcGetObject('sensor'); end
-if ieNotDefined('dataType'),   dataType = 'volts'; end
-if ieNotDefined('gam') ,       gam = 1; end
-if ieNotDefined('scaleMax'),   scaleMax = 0; end
+if notDefined('sensor'),     sensor = vcGetObject('sensor'); end
+if notDefined('dataType'),   dataType = 'volts'; end
+if notDefined('gam') ,       gam = 1; end
+if notDefined('scaleMax'),   scaleMax = 0; end
 
 img = sensorGet(sensor,dataType);
 if isempty(img), return; end
@@ -163,8 +163,7 @@ elseif nSensors == 1
     % img = ieClip(img,0,[]);
 end
 
-
-return;
+end
 
 
 %-----------------------------------------------------
@@ -201,5 +200,4 @@ s = max(T(:));
 % s = max((o*T)');
 T = T/s;
 
-return;
-
+end

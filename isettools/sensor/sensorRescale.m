@@ -19,7 +19,7 @@ function sensor = sensorRescale(sensor,rowcol,sensorHeightWidth)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('sensorHeightWidth'), error('Sensor height/width must be defined.');  end
+if notDefined('sensorHeightWidth'), error('Sensor height/width must be defined.');  end
 pixel = sensorGet(sensor,'pixel');
 
 % No gap between the pixels

@@ -12,7 +12,7 @@ function [p,l] = plotSpectrumLocus(fig)
 %
 % Copyright Imageval 2003
 
-if ieNotDefined('fig'), vcNewGraphWin; 
+if notDefined('fig'), vcNewGraphWin; 
 else figure(fig);
 end
 

@@ -18,9 +18,9 @@ function cm = ieCmap(cName,num,gam)
 % Check whether we want a gamma on the r/g/b levels
 % Could be an option
 
-if ieNotDefined('cName'), cName = 'rg'; end
-if ieNotDefined('num'),   num = 256; end
-if ieNotDefined('gam'),   gam = 1; end
+if notDefined('cName'), cName = 'rg'; end
+if notDefined('num'),   num = 256; end
+if notDefined('gam'),   gam = 1; end
 
 cName = ieParamFormat(cName);
 

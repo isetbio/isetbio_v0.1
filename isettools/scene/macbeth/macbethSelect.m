@@ -87,7 +87,7 @@ switch lower(obj.type)
         dataType = 'result';
         obj = imageSet(obj,'mccRectHandles',[]);
         vcReplaceObject(obj);
-        if ieNotDefined('cornerPoints')
+        if notDefined('cornerPoints')
             cornerPoints = imageGet(obj,'mcc corner points');
         end
         
@@ -96,7 +96,7 @@ switch lower(obj.type)
         dataType = 'dvorvolts';
         obj = sensorSet(obj,'mccRectHandles',[]);
         vcReplaceObject(obj);
-        if ieNotDefined('cornerPoints')
+        if notDefined('cornerPoints')
             cornerPoints = sensorGet(obj,'mcc corner points');
         end
         

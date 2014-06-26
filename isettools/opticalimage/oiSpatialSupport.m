@@ -14,7 +14,7 @@ function sSupport = oiSpatialSupport(oi,units)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('units'), units = 'meters'; end
+if notDefined('units'), units = 'meters'; end
 
 sr = oiGet(oi,'spatialResolution',units);
 nRows = oiGet(oi,'rows');

@@ -34,16 +34,16 @@ function [oi, oiD, D] = s3dRenderDepthDefocus(scene, oi, imgPlaneDist, depthEdge
 %
 % Copyright, Stanford, 2011
 
-if ieNotDefined('scene'), error('Scene required'); end
-if ieNotDefined('oi'),    error('oi required'); else optics =  oiGet(oi,'optics');end  
-if ieNotDefined('imgPlaneDist')
+if notDefined('scene'), error('Scene required'); end
+if notDefined('oi'),    error('oi required'); else optics =  oiGet(oi,'optics');end  
+if notDefined('imgPlaneDist')
     optics = oiGet(oi,'optics');
     imgPlaneDist = opticsGet(optics,'focal length'); 
 end
 
 % Set up the depthCenters and Edges
 dMap = sceneGet(scene,'depth map');
-if ieNotDefined('depthEdges')
+if notDefined('depthEdges')
     depthEdges = [min(dMap(:)),max(dMap(:))];
 elseif length(depthEdges) == 1
     depthEdges = [min(dMap(:)),depthEdges, max(dMap(:))];
@@ -58,7 +58,7 @@ end
 %  Defocus(varies SF,constant lambda) + chromatic(constant SF,varies lambda)
 %
 wave     = sceneGet(scene, 'wave');
-if ieNotDefined('cAberration'), cAberration = zeros(length(wave),1); end
+if notDefined('cAberration'), cAberration = zeros(length(wave),1); end
 
 % Compute the defocus (diopters, 1/m) at specified depth centers. This
 % defocus uses the imgPlaneDist, which may not be equal to the focal
@@ -131,5 +131,4 @@ end
 % Should this be in the oiCombineDepths?
 oi = oiSet(oi,'illuminance',oiCalculateIlluminance(oi));
 
-return
-
+end

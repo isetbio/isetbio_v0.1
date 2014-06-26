@@ -61,7 +61,7 @@ function sensor = sensorCreateConeMosaic(sensor,params)
 %
 % (c) Copyright, 2010, ImagEval
 
-if ieNotDefined('sensor'), sensor = sensorCreate('human'); end
+if notDefined('sensor'), sensor = sensorCreate('human'); end
 if ~isfield(params, 'sz'), sz = [72,88];else sz = params.sz; end
 
 if isfield(params,'rgbDensities')
@@ -85,7 +85,7 @@ end
 
 % Aperture in meters.
 % Central human cones are 1.5 um in the fovea, 3um in the periphery
-if ieNotDefined('coneAperture'), coneAperture = [1.5 1.5]*1e-6; end
+if notDefined('coneAperture'), coneAperture = [1.5 1.5]*1e-6; end
 
 switch ieParamFormat(species)
     case 'human'

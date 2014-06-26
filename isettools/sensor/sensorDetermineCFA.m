@@ -79,9 +79,9 @@ function [CFAletters,CFAnumbers,mp] = sensorDetermineCFA(sensor)
 % filterNames to serve both as names and as filterColorHints also, and
 % this makes things more confusing than they should be. 
 %
-% Copyright ImagEval Con[cfa,cfaN] = sensorDetermineCFA(sensor);sultants, LLC, 2005.
+% Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('sensor'),
+if notDefined('sensor'),
     sensor = vcGetObject('sensor');
     if isempty(sensor), error('no sensor defined'); end
 end
@@ -121,15 +121,15 @@ CFAletters = repmat(patternColors,rFactor,cFactor);
 
 % Return the map
 if nargout > 2
-    [knownColorLetters knownMap] = sensorColorOrder('string');
+    [knownColorLetters, knownMap] = sensorColorOrder('string');
     nLetters = length(filterColorLetters);
     mp = zeros(nLetters,3);
     % Get this map from the known map
     for ii=1:nLetters
-        idx = find(filterColorLetters(ii) == knownColorLetters);
+        idx = filterColorLetters(ii) == knownColorLetters;
         mp(ii,:) = knownMap(idx,:);
     end
 end
 
-return;
+end
 

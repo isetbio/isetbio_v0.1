@@ -67,7 +67,7 @@ if isfield(inData,'type') && strcmp(sensorGet(inData,'type'),'ISA')
     data        = sensorGet(isa,'colorfilters');
     filterNames = sensorGet(isa,'filterNames');
     comment     = ieReadString('Sensor comment field');
-    if ieNotDefined('Units'), units = 'photons'; end
+    if notDefined('Units'), units = 'photons'; end
 
     save fullFileName wavelength data comment filterNames units;
 

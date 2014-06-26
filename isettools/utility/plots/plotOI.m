@@ -89,13 +89,13 @@ function [udata, g] = plotOI(oi,pType,roiLocs,varargin)
 %  that tests all the different plotting calls for this function and for
 %  plotScene.  We should create a plotSensor function that is analogous.
 
-if ieNotDefined('oi'), oi = vcGetObject('OI'); end
-if ieNotDefined('pType'), pType = 'hlineilluminance'; end
+if notDefined('oi'), oi = vcGetObject('OI'); end
+if notDefined('pType'), pType = 'hlineilluminance'; end
 
 % Reformat the parameter - no spaces, all lower case
 pType = ieParamFormat(pType);
 
-if ieNotDefined('roiLocs')
+if notDefined('roiLocs')
     % oiWindow;
     switch pType
         case {  'irradiancevline','vline','vlineirradiance', ...
@@ -589,7 +589,7 @@ function udata = plotOIIrradiance(oi,dataType,roiLocs)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('dataType'), dataType = 'photons'; end
+if notDefined('dataType'), dataType = 'photons'; end
 
 wave = oiGet(oi,'wave');
 irradiance = vcGetROIData(oi,roiLocs,dataType);
@@ -650,8 +650,8 @@ function uData = plotOTF(oi,pType,varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('oi'),    oi = vcGetObject('oi'); end
-if ieNotDefined('pType'), pType = 'otf550'; end
+if notDefined('oi'),    oi = vcGetObject('oi'); end
+if notDefined('pType'), pType = 'otf550'; end
 
 wavelength = oiGet(oi,'wavelength');
 optics     = oiGet(oi,'optics');
@@ -963,9 +963,9 @@ function uData = plotIlluminanceMesh(oi,yScale)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('oi'), error('OI required.'); end
-if ieNotDefined('yScale'),  yScale = 'log'; end
-if ieNotDefined('roiFlag'), roiFlag = 0; end
+if notDefined('oi'), error('OI required.'); end
+if notDefined('yScale'),  yScale = 'log'; end
+if notDefined('roiFlag'), roiFlag = 0; end
 
 illum = oiGet(oi,'illuminance');
 
@@ -1070,7 +1070,7 @@ function sz = selectPlotSupport(data,prct)
 %
 %    What if data are a vector?  Can we adjust this routine to make it work?
 
-if ieNotDefined('prct'), prct = 0.01; end
+if notDefined('prct'), prct = 0.01; end
 
 r = size(data,1); mx = max(data(:));
 centerRow = round(r/2);

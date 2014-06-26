@@ -1,4 +1,4 @@
-function val = iePoisson(lambda,nSamp)
+function val = iePoisson(lambda, nSamp)
 % Create a matrix of Poisson samples using rate parameters in lambda
 %
 %   val = iePoisson(lambda,nSamp)
@@ -50,8 +50,12 @@ end
 
 % Check for stats toolbox
 if checkToolbox('Statistics Toolbox')
-    % Matlab toolbox version is present.  Use it.
-    val = poissrnd(lambda, nSamp);
+    % Matlab toolbox version is present. Use it.
+    if isscalar(lambda)
+        val = poissrnd(lambda, nSamp);
+    else
+        val = poissrnd(lambda);
+    end
     return
 end
 

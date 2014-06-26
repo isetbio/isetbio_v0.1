@@ -11,8 +11,8 @@ function plotMetrics(handles,plotType)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('handles'); handles = metricsWindow; end
-if ieNotDefined('plotType')
+if notDefined('handles'); handles = metricsWindow; end
+if notDefined('plotType')
     contents = get(handles.popMetric,'String');
     plotType = contents{get(handles.popMetric,'Value')};
 end
@@ -48,4 +48,4 @@ txt = sprintf('Mean   %.02f\nMedian %.02f\nSD     %.02f\nMin    %.02f\nMax   %.0
 plotTextString(txt,'ur');
 grid on
 
-return;
+end

@@ -43,17 +43,17 @@ function [L,pointLoc] = sensorCCM(sensor,ccmMethod,pointLoc,showSelection)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 %% Arguments
-if ieNotDefined('sensor'),         sensor = vcGetObject('sensor'); end
-if ieNotDefined('ccmMethod'),      ccmMethod = 'macbeth'; end
-if ieNotDefined('pointLoc'),       pointLoc = []; end
-if ieNotDefined('showSelection'),  showSelection = true; end
-if ieNotDefined('showEvaluation'), showEvaluation = true; end
+if notDefined('sensor'),         sensor = vcGetObject('sensor'); end
+if notDefined('ccmMethod'),      ccmMethod = 'macbeth'; end
+if notDefined('pointLoc'),       pointLoc = []; end
+if notDefined('showSelection'),  showSelection = true; end
+if notDefined('showEvaluation'), showEvaluation = true; end
 
 ccmMethod = ieParamFormat(ccmMethod);
 switch lower(ccmMethod)
     case 'macbeth'
         % rgb are the 24x3 values in the sensor at the macbeth positions.
-        [rgb,sdRGB,pointLoc] = macbethSensorValues(sensor,showSelection,pointLoc);
+        [rgb,~,pointLoc] = macbethSensorValues(sensor,showSelection,pointLoc);
         idealRGB             = macbethIdealColor('d65','lrgb');
         
         % We want: idealRGB = rgb*L
@@ -69,4 +69,4 @@ switch lower(ccmMethod)
         error('Unknown method for determining color conversion matrix.')
 end
 
-return;
+end

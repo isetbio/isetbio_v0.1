@@ -28,9 +28,9 @@ function ISA = sensorReadFilter(filterType,ISA,fname)
 %   ISA = sensorClearData(ISA);
 %   vcReplaceObject(ISA,val);
 
-if ieNotDefined('ISA'), [val,ISA] = vcGetSelectedObject('ISA'); end
-if ieNotDefined('filterType'), filterType = 'cfa'; end
-if ieNotDefined('fname'), fname = []; end
+if notDefined('ISA'), [~, ISA] = vcGetSelectedObject('ISA'); end
+if notDefined('filterType'), filterType = 'cfa'; end
+if notDefined('fname'), fname = []; end
 
 wave = sensorGet(ISA,'wave');
 

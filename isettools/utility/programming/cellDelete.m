@@ -12,8 +12,8 @@ function dCell = cellDelete(c,dList)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('c'), error('Cell required.'); end
-if ieNotDefined('dList'), error('Delete list required.'); end
+if notDefined('c'), error('Cell required.'); end
+if notDefined('dList'), error('Delete list required.'); end
 
 if max(dList) > length(c) || min(dList < 1), error('Bad dList'); end
 

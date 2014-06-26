@@ -30,8 +30,8 @@ function oi = wvf2oi(wvfP, oType, showBar)
 % Copyright Wavefront Toolbox Team 2012
 
 %%
-if ieNotDefined('oType'),   oType = 'human'; end
-if ieNotDefined('showBar'), showBar = ieSessionGet('wait bar'); end
+if notDefined('oType'),   oType = 'human'; end
+if notDefined('showBar'), showBar = ieSessionGet('wait bar'); end
 
 % Create the shift-invariant PSF data structure
 psfData = wvf2PSF(wvfP, showBar);

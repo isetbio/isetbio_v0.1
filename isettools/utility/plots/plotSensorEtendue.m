@@ -11,7 +11,7 @@ function [uData,g] = plotSensorEtendue(sensor)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
 
 % Make a figure showing the etendue across the array.  The units of the
 % support are unclear to me at this moment.

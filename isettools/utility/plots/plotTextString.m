@@ -23,9 +23,9 @@ function t = plotTextString(str,position,delta,fontSize)
 % length, too.  At the very least, we could count the number of letters to
 % set the value of delta.
 
-if ieNotDefined('position'), position = 'ur'; end
-if ieNotDefined('delta'), delta = [0.2,0.2]; end
-if ieNotDefined('fontSize'), fontSize = 12; end
+if notDefined('position'), position = 'ur'; end
+if notDefined('delta'), delta = [0.2,0.2]; end
+if notDefined('fontSize'), fontSize = 12; end
 
 xlim = get(gca,'xlim');
 ylim = get(gca,'ylim');

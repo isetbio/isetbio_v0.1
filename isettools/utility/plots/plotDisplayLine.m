@@ -15,8 +15,8 @@ function figNum = plotDisplayLine(vci,ori)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('vci'),    vci = vcGetObject('VCIMAGE'); end
-if ieNotDefined('ori'),    ori = 'h'; end
+if notDefined('vci'),    vci = vcGetObject('VCIMAGE'); end
+if notDefined('ori'),    ori = 'h'; end
 
 % vciHandles = ieSessionGet('processorimagehandle');
 % Find the line in the sensor window.
@@ -48,7 +48,7 @@ if isempty(data), error('Results not computed in display window.'); end
 
 figNum = plotColorDisplayLines(xy,data,ori);
 
-return;
+end
 
 %-----------------------------
 function figNum = plotColorDisplayLines(xy,data,ori)
@@ -89,4 +89,4 @@ set(gcf,'userdata',uData);
 set(gcf,'NumberTitle','off');
 set(gcf,'Name',titleString);
 
-return;
+end

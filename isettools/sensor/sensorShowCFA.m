@@ -13,8 +13,8 @@ function [hdl, filterRGB] = sensorShowCFA(sensor,fullArray)
 %
 % Copyright ImagEval Consultants, LLC, 2010
 
-if ieNotDefined('sensor'),    sensor = vcGetObject('sensor'); end
-if ieNotDefined('fullArray'), fullArray = 0; end
+if notDefined('sensor'),    sensor = vcGetObject('sensor'); end
+if notDefined('fullArray'), fullArray = 0; end
 
 % Get sensor information
 pattern       = sensorGet(sensor,'pattern');

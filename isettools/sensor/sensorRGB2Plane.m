@@ -33,8 +33,8 @@ function [sensorPlane, sensor] = sensorRGB2Plane(rgbData,  cfaPattern)
 %
 % (c) Imageval 2012
 
-if ieNotDefined('rgbData'), error('rgb data required'); end
-if ieNotDefined('cfaPattern'), error('cfaPattern required'); end
+if notDefined('rgbData'), error('rgb data required'); end
+if notDefined('cfaPattern'), error('cfaPattern required'); end
 
 [r,c,nBands] = size(rgbData);
 if max(cfaPattern) > nBands, error('bad cfa pattern'); end
@@ -75,4 +75,4 @@ for ii=1:nBands
 end
 % imagesc(sensorPlane)
 
-return
+end

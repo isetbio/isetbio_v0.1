@@ -19,7 +19,7 @@ function thirtyDBLevel = sensorMPE30(sensor)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
 
 [snr,luxsec] = sensorSNRluxsec(sensor);
 thirtyDBLevel = interp1(snr,luxsec,30);

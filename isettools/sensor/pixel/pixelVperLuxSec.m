@@ -30,8 +30,8 @@ function [voltsPerLuxSec,luxsec,meanVolts,voltsPerAntiLuxSec,antiluxsec]...
 %TODO
 % Should we make the spectral character of the light an option?
 
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
-if ieNotDefined('lightType'), lightType = 'ee'; end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('lightType'), lightType = 'ee'; end
 
 % The 0 flag at the end means don't add the OI to the list.  It will just
 % be a local image.  The default OI is created with cos4th and diff turned
@@ -54,7 +54,7 @@ end
 % Compute the mean lux
 %[illuminance,lux] = oiCalculateIlluminance(OI); 
 
-[illuminance,lux,antilux] = oiCalculateIlluminance(OI); 
+[~,lux,antilux] = oiCalculateIlluminance(OI); 
 
 % Find and store the auto-exposure time for this image.
 level = 1;      % Level re: pixel voltage swing (1 means all the way)
@@ -81,5 +81,4 @@ voltsPerLuxSec = meanVolts / luxsec;
 % Used for some IR calculations.  Mostly ignored.
 voltsPerAntiLuxSec = meanVolts / antiluxsec;
 
-
-return
+end

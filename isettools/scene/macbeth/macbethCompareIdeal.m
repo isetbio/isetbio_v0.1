@@ -25,7 +25,7 @@ function [embRGB,mRGB,pSize] = macbethCompareIdeal(mRGB,pSize,illType)
 vci = vcGetObject('vci');
 
 % If the mRGB or pSize not defined, we need to do some processing.
-if notDefined('mRGB') || ieNotDefined('pSize')
+if notDefined('mRGB') || notDefined('pSize')
     % Now, we get the RGB values for the image data displayed in the
     % image processing window.  We treat this as lRGB (not sRGB) data.
     [mRGB, ~, pSize]= macbethSelect(vci);

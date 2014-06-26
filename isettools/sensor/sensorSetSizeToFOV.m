@@ -28,10 +28,10 @@ function [sensor,actualFOV] = sensorSetSizeToFOV(sensor,newFOV,scene,oi)
 
 % PROGRAMMING:  Handle etendue.  Not addressed yet, sigh.
 
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
-if ieNotDefined('newFOV'), error('Must specify desired horizontal field of view (degrees)'); end
-if ieNotDefined('scene'), scene = [];  end
-if ieNotDefined('oi'), oi = [];  end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('newFOV'), error('horizontal field of view required'); end
+if notDefined('scene'), scene = [];  end
+if notDefined('oi'), oi = [];  end
 
 % Get the size.  If it is 0, set to a small size.
 sz = sensorGet(sensor,'size');

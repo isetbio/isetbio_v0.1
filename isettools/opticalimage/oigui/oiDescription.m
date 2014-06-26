@@ -9,8 +9,6 @@ function txt = oiDescription(oi)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-% if ieNotDefined('handles'), handles = ieSessionGet('oihandles'); end
-
 txt = sprintf('\nOptical image\n');
 
 if isempty(oi), txt = 'No image'; return;

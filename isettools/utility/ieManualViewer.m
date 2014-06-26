@@ -19,7 +19,7 @@ function ieManualViewer(mType)
 % present, the user has to download the material on his/her own.
 
 % Defaults
-if ieNotDefined('mType')
+if notDefined('mType')
     web('http://imageval.com/documentation/','-browser');
     return;
 else   

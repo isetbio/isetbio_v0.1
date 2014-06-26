@@ -8,7 +8,7 @@ function plotMLOffsets(ISA)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('ISA'), ISA = vcGetObject('ISA'); end
+if notDefined('ISA'), ISA = vcGetObject('ISA'); end
 
 ml = sensorGet(ISA,'ml');
 optimalOffsets = mlensGet(ml,'microoptimaloffsets');

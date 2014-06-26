@@ -55,8 +55,8 @@ function wvf = wvfComputePupilFunction(wvf, showBar)
 % (c) Wavefront Toolbox Team 2011, 2012
 
 %% Parameter checking
-if ieNotDefined('wvf'), error('wvf required'); end
-if ieNotDefined('showBar'), showBar = ieSessionGet('wait bar'); end
+if notDefined('wvf'), error('wvf required'); end
+if notDefined('showBar'), showBar = ieSessionGet('wait bar'); end
 
 % Only do this if we need to. It might already be computed
 if (~isfield(wvf,'pupilfunc') || ~isfield(wvf,'PUPILFUNCTION_STALE') || wvf.PUPILFUNCTION_STALE)

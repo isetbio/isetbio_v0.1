@@ -23,7 +23,7 @@ function [coneIsolating, monitor2cones] = humanConeIsolating(dsp)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('dsp'), dsp = displayCreate;  end
+if notDefined('dsp'), dsp = displayCreate;  end
 
 wave = displayGet(dsp,'wave');
 cones = ieReadSpectra('stockman',wave);  % Energy

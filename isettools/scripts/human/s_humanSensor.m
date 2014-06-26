@@ -28,7 +28,7 @@ hFov = 1;   % Horizontal field of view (deg)
 scene = sceneSet(scene,'fov',hFov);
 % vcAddAndSelectObject(scene); sceneWindow;
 
-if ieNotDefined('oi'), oi = oiCreate('human'); end
+if notDefined('oi'), oi = oiCreate('human'); end
 oi = oiCompute(scene,oi);
 % vcAddAndSelectObject(oi); oiWindow;
 

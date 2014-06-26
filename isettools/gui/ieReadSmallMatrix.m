@@ -46,7 +46,7 @@ nCols = mSize(2);
 gMat.fig      = figure;
 gMat.mSize    = mSize;
 
-if ieNotDefined('position')
+if notDefined('position')
     % figPosition = get(gMat.fig,'Position');
     figWidth  = nCols*40 + 100; % pixels
     figHeight = nRows*30 + 100; % pixels

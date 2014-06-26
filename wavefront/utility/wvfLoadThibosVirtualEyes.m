@@ -51,7 +51,7 @@ function [sample_mean, sample_cov] = wvfLoadThibosVirtualEyes(pupilDiameterMM)
 %
 % Copyright Wavefront Toolbox Team, 2012
 
-if ieNotDefined('pupilDiameterMM'), pupilDiameterMM = 6; end
+if notDefined('pupilDiameterMM'), pupilDiameterMM = 6; end
 
 %%
 sample_mean = [];

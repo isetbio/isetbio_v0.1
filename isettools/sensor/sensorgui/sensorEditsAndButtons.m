@@ -8,7 +8,7 @@ function sensorEditsAndButtons(handles,sensor)
 % in. Called regularly by sensorImageWindow.
 %
 % Copyright ImagEval Consultants, LLC, 2003.
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
 figure(vcSelectFigure('sensor'));
 ieInWindowMessage('',ieSessionGet('sensorwindowhandles'));
   

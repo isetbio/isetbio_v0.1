@@ -12,12 +12,12 @@ function [fig,f,jx,jy] = iePlotJitter(x,y,f,fig,pSymbol)
 %
 %  
 
-if ieNotDefined('f'), 
+if notDefined('f'), 
     mx = max((max(x(:)) - min(x(:))),max(y(:))-min(y(:)));
     f = mx/200;
 end
-if ieNotDefined('fig'),     fig = vcNewGraphWin; end
-if ieNotDefined('pSymbol'), pSymbol = '.k'; end
+if notDefined('fig'),     fig = vcNewGraphWin; end
+if notDefined('pSymbol'), pSymbol = '.k'; end
 
 % Make the randomly perturned points    
 N = length(x);

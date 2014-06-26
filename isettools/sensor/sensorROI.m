@@ -18,8 +18,8 @@ function roiLocs = sensorROI(sensor,roiType);
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('roiType'), roiType = 'center'; end
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('roiType'), roiType = 'center'; end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
 
 switch lower(roiType)
     case 'center';
@@ -40,4 +40,4 @@ rmin = round(sz(1)/4); rmax = rect(2)+rect(4);
 [c,r] = meshgrid(cmin:cmax,rmin:rmax);
 roiLocs = [r(:),c(:)];
 
-return;
+end

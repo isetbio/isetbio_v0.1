@@ -50,8 +50,8 @@ function [photons, illuminant, basis, comment, mcCOEF] = vcReadImage(fullname,im
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('imageType'), imageType = 'rgb'; end
-if ieNotDefined('fullname'), [fullname,imageType] = vcSelectImage(imageType); end
+if notDefined('imageType'), imageType = 'rgb'; end
+if notDefined('fullname'), [fullname,imageType] = vcSelectImage(imageType); end
 if isempty(fullname), photons = []; return; end
 
 % These are loaded for a file, when they are returned.

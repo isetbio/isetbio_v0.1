@@ -45,15 +45,15 @@ function [res,wave,comment,partialName] = vcReadSpectra(fname,wave,extrapVal)
 % Copyright ImagEval Consultants, LLC, 2005.
 
 warning('Deprecated. Use ieReadSpectra');
-if ieNotDefined('extrapVal')
+if notDefined('extrapVal')
     [res,wave,comment,partialName] = ieReadSpectra(fname,wave);    
 else
     [res,wave,comment,partialName] = ieReadSpectra(fname,wave,extrapVal);
 end
 
-return
+end
 
-% if ieNotDefined('fname'), fname = ''; end
+% if notDefined('fname'), fname = ''; end
 % 
 % % Create a partialpath for this file name.  For this to work, we need to
 % % keep all of the spectral data in a single directory, I am afraid.
@@ -92,8 +92,8 @@ return
 % 
 % % If wave was not sent in, return the native resolution in the file.  No
 % % interpolation will occur.
-% if ieNotDefined('wave'),  wave = wavelength; end
-% if ieNotDefined('extrapVal'),  extrapVal = 0;  end
+% if notDefined('wave'),  wave = wavelength; end
+% if notDefined('extrapVal'),  extrapVal = 0;  end
 % 
 % res = interp1(wavelength(:), data, wave(:),'linear',extrapVal);
 %     

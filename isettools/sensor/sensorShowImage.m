@@ -26,8 +26,8 @@ function sensorShowImage(sensor,gam,scaleMax)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('gam'),      gam = 1; end
-if ieNotDefined('scaleMax'), scaleMax = 0; end
+if notDefined('gam'),      gam = 1; end
+if notDefined('scaleMax'), scaleMax = 0; end
 
 if isempty(sensor), cla;  return; end
 

@@ -21,7 +21,7 @@ function [uData,figHdl] = plotSensorSNR(sensor)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
 
 [snr,volts,snrShot,snrRead,snrDSNU,snrPRNU] = sensorSNR(sensor); 
 uData.volts = volts;

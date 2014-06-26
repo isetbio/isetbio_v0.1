@@ -15,9 +15,9 @@ function [x,y,z] = ieShape(type,nSamp,varargin)
 %  axis equal; grid on
 %
 
-if ieNotDefined('type'), type = 'circle'; end
-if ieNotDefined('nSamp'), nSamp = 200; end
-x = zeros(nSamp,1); y = x; z = x;
+if notDefined('type'), type = 'circle'; end
+if notDefined('nSamp'), nSamp = 200; end
+x = zeros(nSamp,1); z = x;
 
 switch lower(type)
     case {'circle','circ'}
@@ -28,4 +28,4 @@ switch lower(type)
         error('Unknown type:P %s',type);
 end
 
-return;
+end

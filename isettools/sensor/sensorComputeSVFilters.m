@@ -12,16 +12,16 @@ function [combinedVoltImage, vImages, irFilters] = sensorComputeSVFilters(sensor
 % Copyright Imageval, 2010
 
 %% Set up the arguments
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
-if ieNotDefined('oi'), oi = vcGetObject('oi'); end
-if ieNotDefined('filterFile')
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('oi'), oi = vcGetObject('oi'); end
+if notDefined('filterFile')
     filterFile = vcSelectDataFile('stayput','r','mat','Select filter file');
     if isempty(filterFile), disp('User canceled'); return; end
 end
 
 %% Read the IR filters
 wave = sensorGet(sensor,'wave');
-[irFilters,irFilterNames,irFilterAllData] = ieReadColorFilter(wave,filterFile);
+[irFilters,~,irFilterAllData] = ieReadColorFilter(wave,filterFile);
 
 % Create a map showing the field height (degrees) for each pixel in the
 % sensor. This measures the angle from the center (on-axis) pixel.
@@ -73,4 +73,4 @@ for ii=2:nFilters
    
 end
 
-return;
+end

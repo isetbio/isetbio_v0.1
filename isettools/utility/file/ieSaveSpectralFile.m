@@ -44,7 +44,7 @@ elseif ismatrix(data)
     end
 end
 
-if ieNotDefined('fullpathname')
+if notDefined('fullpathname')
     fullpathname = vcSelectDataFile([isetRootPath,filesep,'data'],...
                                     'w','mat');
     if isempty(fullpathname), disp('User canceled'); return; end

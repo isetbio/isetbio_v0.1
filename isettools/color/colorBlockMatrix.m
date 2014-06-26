@@ -135,7 +135,7 @@ end
 
 % Premultiply by the whiteSPD, if it was sent in.  In this case, an SPD
 % whose photons are given by whiteSPD will be mapped to (1,1,1).
-if   ieNotDefined('whiteSPD')
+if   notDefined('whiteSPD')
 else bMatrix = diag(1./whiteSPD(:))*bMatrix;
 end
 % vcNewGraphWin; plot(bMatrix)

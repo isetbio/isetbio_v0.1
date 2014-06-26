@@ -28,7 +28,7 @@ function [snr,luxsec] = sensorSNRluxsec(ISA)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('ISA'), ISA = vcGetObject('ISA'); end
+if notDefined('ISA'), ISA = vcGetObject('ISA'); end
 
 % Compute the snr as a function of volts.
 [snr,volts] = sensorSNR(ISA); 

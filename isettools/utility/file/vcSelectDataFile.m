@@ -91,11 +91,11 @@ chdir(fullPath);
 fileFilter = ['*.',ext];
 switch lower(rw)
     case 'r'
-        if ieNotDefined('windowTitle'), windowTitle = 'ISET: Read Data'; 
+        if notDefined('windowTitle'), windowTitle = 'ISET: Read Data'; 
         end
         [fname, pname] = uigetfile(fileFilter, windowTitle);
     case 'w'
-        if ieNotDefined('windowTitle'), windowTitle = 'ISET: Write Data'; 
+        if notDefined('windowTitle'), windowTitle = 'ISET: Write Data'; 
         end
         [fname, pname] = uiputfile(fileFilter, windowTitle);
     otherwise

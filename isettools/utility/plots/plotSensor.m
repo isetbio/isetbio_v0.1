@@ -81,14 +81,14 @@ function [uData, g] = plotSensor(sensor, pType, roiLocs, varargin)
 % (c) Imageval Consulting, LLC, 2012
 
 %% Input arguments
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
-if ieNotDefined('pType'),  pType = 'volts hline'; end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('pType'),  pType = 'volts hline'; end
 
 uData = [];
 pType = ieParamFormat(pType);
 
 % For cases that need roiLocs, when none is passed in
-if ieNotDefined('roiLocs')
+if notDefined('roiLocs')
     switch lower(pType)
         case {'voltshline','electronshline',...
                 'voltsvline', 'electronsvline', ...
@@ -235,11 +235,11 @@ function [uData, figNum] = plotSensorLine(sensor, ori, dataType, sORt, xy)
 %   {'transform','fourier','fourierdomain','fft'}
 %%
 
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
-if ieNotDefined('ori'), ori = 'h'; end
-if ieNotDefined('dataType'), dataType =  'electrons'; end
-if ieNotDefined('sORt'), sORt = 'space'; end
-if ieNotDefined('xy'), xy = vcLineSelect(sensor); end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('ori'), ori = 'h'; end
+if notDefined('dataType'), dataType =  'electrons'; end
+if notDefined('sORt'), sORt = 'space'; end
+if notDefined('xy'), xy = vcLineSelect(sensor); end
 
 sSupport = sensorGet(sensor,'spatialSupport','microns');
 switch ori
@@ -517,8 +517,8 @@ end
 % % TODO:  This should be moved into plotSensor as a case statement.  After
 % % we write plotSensor, sigh.
 % 
-% if ieNotDefined('sa'), sa=vcGetObject('isa'); end
-% if ieNotDefined('type'), type = 'rg'; end
+% if notDefined('sa'), sa=vcGetObject('isa'); end
+% if notDefined('type'), type = 'rg'; end
 % labels = {'Red sensor','Green sensor','Blue sensor'};
 % 
 % % Demosiac the (R,B) values.
@@ -598,8 +598,8 @@ function [udata, figNum] = plotSpectra(sensor,dataType)
 %
 % (c) Imageval Consulting, LLC, 2003
 
-if ieNotDefined('sensor'), error('Sensor required.'); end
-if ieNotDefined('dataType'), dataType = 'pdspectralQE';          end
+if notDefined('sensor'), error('Sensor required.'); end
+if notDefined('dataType'), dataType = 'pdspectralQE';          end
 
 dataType = ieParamFormat(dataType);
 switch lower(dataType)
@@ -687,8 +687,8 @@ function [uData, figNum] = imageNoise(noiseType,sensor)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('noiseType'), noiseType = 'shotnoise'; end
-if ieNotDefined('sensor'),  sensor = vcGetObject('sensor'); end
+if notDefined('noiseType'), noiseType = 'shotnoise'; end
+if notDefined('sensor'),  sensor = vcGetObject('sensor'); end
 
 pixel = sensorGet(sensor,'pixel');
 voltageswing = pixelGet(pixel,'voltageswing');

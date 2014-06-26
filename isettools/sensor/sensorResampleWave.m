@@ -12,10 +12,10 @@ function isa = sensorResampleWave(isa,newWaveSamples)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('isa'), [val,isa] = vcGetSelectedObject('isa'); end
+if notDefined('isa'), [~,isa] = vcGetSelectedObject('isa'); end
 
 curWave = sensorGet(isa,'wave');
-if ieNotDefined('newWaveSamples') 
+if notDefined('newWaveSamples') 
     prompt={'Start (nm)','Stop (nm)','Spacing (nm)'};
     def={num2str(curWave(1)),num2str(curWave(end)),num2str(sceneGet(isa,'binwidth'))};
     dlgTitle='Wavelength resampling';

@@ -54,7 +54,7 @@ if (length(border) == 2), border = [border(1) border(1) border(2) border(2)]; en
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Get the figure axes.
 
-if (~ieNotDefined('fig') ~= 1 | fig == 0),    fig = gcf;    end
+if (~notDefined('fig') ~= 1 || fig == 0),    fig = gcf;    end
 axs = get( fig, 'CurrentAxes' );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -14,9 +14,9 @@ function isa = sensorDeleteFilter(isa,whichFilter)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('isa'), [val,isa] = vcGetSelectedObject('ISA'); end
+if notDefined('isa'), [~,isa] = vcGetSelectedObject('ISA'); end
 
-if ieNotDefined('whichFilter') 
+if notDefined('whichFilter') 
     filterNames = sensorGet(isa,'filterNames');
     deleteName = ieReadString('Enter filter name to replace:',filterNames{1}); 
     if isempty(deleteName), return; end;

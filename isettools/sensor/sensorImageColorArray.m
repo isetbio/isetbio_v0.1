@@ -16,7 +16,7 @@ function [cfaN,cfaMap] = sensorImageColorArray(cfa)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('cfa'), error('cfa (letter array) required.'); end
+if notDefined('cfa'), error('cfa (letter array) required.'); end
 
 % These will be the numbers that indicate which filter is present at each
 % position in the color filter array.

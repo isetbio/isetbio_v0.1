@@ -18,10 +18,10 @@ function [uData,figNum] = plotSensorHist(sensor,unitType,roiLocs)
 % (c) Imageval Consulting, LLC, 2012
 
 %% Parameters
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
-if ieNotDefined('unitType'), unitType = 'electrons'; end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('unitType'), unitType = 'electrons'; end
 
-if ieNotDefined('roiLocs')
+if notDefined('roiLocs')
     % Select the data from the current sensor window
     handles = ieSessionGet('sensor image handle');
     ieInWindowMessage('Select image region of interest.',handles,[]);

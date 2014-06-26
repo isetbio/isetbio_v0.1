@@ -23,12 +23,12 @@ function hPat = cfaDesignUI(nRows,nCols,nColors,wavelength)
 %     be useful to ave an ok button for each color filter (?)
 
 
-if (ieNotDefined('nRows') || ieNotDefined('nCols') || ieNotDefined('nColors'))
+if (notDefined('nRows') || notDefined('nCols') || notDefined('nColors'))
     init_fig = cfaDesignInit;
     uiwait(init_fig);
     return;
 end
-if ieNotDefined('wavelength'), wavelength = (380:1068); end
+if notDefined('wavelength'), wavelength = (380:1068); end
 
 
 % See if a previous session exists; if so, close it

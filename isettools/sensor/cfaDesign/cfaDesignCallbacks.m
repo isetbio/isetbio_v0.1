@@ -666,8 +666,8 @@ function cName = cfaAssignFilterName(cFilter,wavelength)
 %     cFilter=tmp.data; qeMean=500; wavelength=380:1068;
 %     cName = cfaAssignFilterName(cFilter,qeMean,wavelength)
 
-if ieNotDefined('cFilter'), error('Color filter is required'), end
-if ieNotDefined('wavelength'), error('Wavelength is required'), end
+if notDefined('cFilter'), error('Color filter is required'), end
+if notDefined('wavelength'), error('Wavelength is required'), end
 
 % permissibleNames = sensorColorOrder('string');
 % 'rgbcymwuxzo'
@@ -737,8 +737,8 @@ function tran=plotCFAspectrum(wavelength,tran)
 % wavelength - range over which transmittance is defined
 % tran - transmittance curve
 
-if ieNotDefined('wavelength'),wavelength=380:1068; end
-if ieNotDefined('tran'), tran=ones(size(wavelength)); end
+if notDefined('wavelength'),wavelength=380:1068; end
+if notDefined('tran'), tran=ones(size(wavelength)); end
 
 plot(wavelength,tran,'Color','k','Parent',gca);
 axis tight, hold on;
@@ -779,8 +779,8 @@ function RGB = cfaFindFilterRGB(cFilter,wavelength)
 %     tmp=load(fullfile(isetRootPath,'data','sensor','R'))
 %     cFilter=tmp.data; wavelength=380:1068;
 %     cName = cfaFindFilterRGB(cFilter,qeMean,wavelength)
-if ieNotDefined('cFilter'), error('Color filter is required'), end
-if ieNotDefined('wavelength'), error('Wavelength is required'), end
+if notDefined('cFilter'), error('Color filter is required'), end
+if notDefined('wavelength'), error('Wavelength is required'), end
 
 if size(cFilter,1)~=length(wavelength), cFilter=cFilter'; end
 

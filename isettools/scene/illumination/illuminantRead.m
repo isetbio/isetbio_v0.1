@@ -45,7 +45,7 @@ function spectralRadiance = illuminantRead(illP,lightName)
 % Copyright ImagEval Consultants, LLC, 2005.
 
 if notDefined('illP')
-    if ieNotDefined('lightName')
+    if notDefined('lightName')
         name = 'd65';
         warndlg('No illuminant name.  Assuming D65');
     else name =  lightName;

@@ -23,14 +23,14 @@ function [oiD,D] = oiDepthCompute(oi,scene,imageDist,depthEdges,cAberration,disp
 %
 % Copyright ImagEval Consultants, LLC, 2011.
 
-if ieNotDefined('oi'),        error('oi required'); end
-if ieNotDefined('scene'),     error('scene required'); end
-if ieNotDefined('imageDist')
+if notDefined('oi'),        error('oi required'); end
+if notDefined('scene'),     error('scene required'); end
+if notDefined('imageDist')
     imageDist = opticsGet(oiGet(oi,'optics'),'focal length','m');
 end
-if ieNotDefined('depthEdges'),  error('depthEdges required'); end
-if ieNotDefined('cAberration'), cAberration = []; end
-if ieNotDefined('displayFlag'), displayFlag = 1; end
+if notDefined('depthEdges'),  error('depthEdges required'); end
+if notDefined('cAberration'), cAberration = []; end
+if notDefined('displayFlag'), displayFlag = 1; end
 
 % Set the scene map to a single depth.  We  sweep through the depthEdges
 % for the whole scene.
@@ -44,11 +44,11 @@ oiD = cell(1,length(depthEdges));
 % Loop and create the OI structures
 for ii=1:length(depthEdges)
     scene = sceneSet(scene,'depth map',dMap*depthEdges(ii));
-    [oiD{ii},tmp,D] = s3dRenderDepthDefocus(scene,oi,imageDist,[],cAberration);
+    [oiD{ii},~,D] = s3dRenderDepthDefocus(scene,oi,imageDist,[],cAberration);
     oiD{ii} = oiSet(oiD{ii},'name',sprintf('Defocus %.2f',D));
     if displayFlag
         vcAddAndSelectObject(oiD{ii});  oiWindow
     end
 end
 
-return
+end

@@ -37,7 +37,7 @@ if notDefined('algType'), error('Algorithm type must be defined'); end
 pauseTime = 2;  % sec
 
 % If the handles are not passed in, we can get them this way.
-if ieNotDefined('handles')
+if notDefined('handles')
     if ~checkfields(obj,'type')
         error('Object type is not defined.'); 
     else
@@ -218,5 +218,6 @@ switch lower(algType)
         
     otherwise
         error('Unknown algorithm type');
-    end
-return;
+end
+    
+end

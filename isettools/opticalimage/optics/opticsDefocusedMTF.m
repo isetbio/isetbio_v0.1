@@ -46,8 +46,8 @@ function OTF = opticsDefocusedMTF(s,alpha)
 %   
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('s'), error('Reduced spatial frequency required'); end
-if ieNotDefined('alpha'), error('Alpha required'); end
+if notDefined('s'), error('Reduced spatial frequency required'); end
+if notDefined('alpha'), error('Alpha required'); end
 
 % Normalized spatial frequency from reduced SF
 % We always have a problem
@@ -79,5 +79,4 @@ OTF(ii) = ...
 % Normalize? Assuming the first entry is basically DC?
 OTF = OTF/OTF(1);
 
-
-return
+end

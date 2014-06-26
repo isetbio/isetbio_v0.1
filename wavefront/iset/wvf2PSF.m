@@ -44,8 +44,8 @@ function [siData, wvfP] = wvf2PSF(wvfP, showBar)
 % Copyright Imageval 2012
 
 %% Parameters
-if ieNotDefined('wvfP'), error('wvf parameters required.'); end
-if ieNotDefined('showBar'), showBar = true; end
+if notDefined('wvfP'), error('wvf parameters required.'); end
+if notDefined('showBar'), showBar = true; end
 wave = wvfGet(wvfP,'calc wave');
 nWave = wvfGet(wvfP,'calc nwave');
 

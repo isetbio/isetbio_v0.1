@@ -11,8 +11,8 @@ function scene = sceneInterpolate(scene,sFactor)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('sFactor'), error('sFactor must be defined'); end
-if ieNotDefined('scene'), scene = vcGetObject('scene'); end
+if notDefined('sFactor'), error('sFactor must be defined'); end
+if notDefined('scene'), scene = vcGetObject('scene'); end
 
 r = sceneGet(scene,'rows');
 c = sceneGet(scene,'cols');

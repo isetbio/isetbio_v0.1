@@ -1,4 +1,4 @@
-function fullpathName = sensorSaveImage(isa,fullName,dataType,gam,scaleMax)
+function fullName = sensorSaveImage(isa,fullName,dataType,gam,scaleMax)
 %
 %  fullpathName = sensorSaveImage(isa,fullName,dataType,gam,scaleMax);
 %
@@ -13,16 +13,16 @@ function fullpathName = sensorSaveImage(isa,fullName,dataType,gam,scaleMax)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-if ieNotDefined('isa'), [val,isa] = vcGetSelectedObject('isa'); end
-if ieNotDefined('dataType'), dataType = 'volts'; end
-if ieNotDefined('gam'), gam = 1; end
-if ieNotDefined('scaleMax'), scaleMax = 1; end
+if notDefined('isa'), [~, isa] = vcGetSelectedObject('isa'); end
+if notDefined('dataType'), dataType = 'volts'; end
+if notDefined('gam'), gam = 1; end
+if notDefined('scaleMax'), scaleMax = 1; end
 
-if ieNotDefined('fullName')
+if notDefined('fullName')
     fullName = vcSelectDataFile('session','w');
     if isempty(fullName), return;
     else
-        [pathstr,name,ext] = fileparts(fullName);
+        [pathstr,name,~] = fileparts(fullName);
     end
     ext = '.tif';
     fullName = fullfile(pathstr,[name ext]);
@@ -38,4 +38,4 @@ img = sensorData2Image(isa,dataType,gam,scaleMax);
 img = img/max(img(:));
 imwrite(img,fullName,'tif');
 
-return;
+end

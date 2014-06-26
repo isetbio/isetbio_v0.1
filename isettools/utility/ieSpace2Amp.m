@@ -16,9 +16,9 @@ function [freq,fData] = ieSpace2Amp(pos,data,scaleData)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('pos'),  errordlg('You must define positions'); end
-if ieNotDefined('data'), errordlg('You must define a vector of data'); end
-if ieNotDefined('scaleData'), scaleData = 0; end
+if notDefined('pos'),  errordlg('You must define positions'); end
+if notDefined('data'), errordlg('You must define a vector of data'); end
+if notDefined('scaleData'), scaleData = 0; end
 
 nSamp = length(data);
 fData = abs(fft(data));
@@ -43,4 +43,4 @@ nFreq = round((nSamp - 1)/2);
 fData = fData(1:nFreq);
 freq = freq(1:nFreq);
 
-return;
+end

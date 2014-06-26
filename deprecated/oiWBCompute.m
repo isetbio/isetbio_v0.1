@@ -8,14 +8,14 @@ function oiWBCompute(workDir,oi)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if ieNotDefined('workDir')
+if notDefined('workDir')
     % This is the name of the directory we write the waveband files
     tmp = vcSelectDataFile('stayput','r','*','Choose scene file.');
     if isempty(tmp), return; end
     [workDir, ~] = fileparts(tmp); 
 end
 
-if ieNotDefined('oi'), oi = vcGetObject('oi'); end
+if notDefined('oi'), oi = vcGetObject('oi'); end
 if isempty(oi), oi = oiCreate; end
 
 curDir = pwd;

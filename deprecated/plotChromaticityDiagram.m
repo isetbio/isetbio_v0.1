@@ -31,11 +31,11 @@ return
 
 %%
 
-if ieNotDefined('imageLocation')
+if notDefined('imageLocation')
     imageLocation = fileparts(mfilename('fullpath'));
 end
 
-if ieNotDefined('background')
+if notDefined('background')
     background = 'white';
 elseif ~strcmp(background,'black') && ~strcmp(background,'white')
     disp('I am going to draw the diagram on a white background');

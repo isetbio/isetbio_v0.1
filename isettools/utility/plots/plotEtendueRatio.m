@@ -14,10 +14,10 @@ function plotEtendueRatio(ISA,optimal,bare,zLabel)
 % Copyright ImagEval Consultants, LLC, 2003.
 
 % I wonder if we need to adjust the ISA pixel width to match the microlens?
-if ieNotDefined('ISA'), ISA = vcGetObject('ISA'); end
-if ieNotDefined('optimal'), error('Etendue for optimal placement required.'); end
-if ieNotDefined('optimal'), error('Etendue for no microlens required.'); end
-if ieNotDefined('zLabel'), zLabel = 'Etendue improvement (%)'; end
+if notDefined('ISA'), ISA = vcGetObject('ISA'); end
+if notDefined('optimal'), error('Etendue for optimal placement required.'); end
+if notDefined('optimal'), error('Etendue for no microlens required.'); end
+if notDefined('zLabel'), zLabel = 'Etendue improvement (%)'; end
 
 % Make a figure showing the etendue across the array.  The units of the
 % support are unclear to me at this moment.
@@ -37,4 +37,4 @@ uData.Ratio = r;
 
 set(figNum,'userdata',uData);
 
-return;
+end

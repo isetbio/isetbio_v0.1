@@ -1171,7 +1171,7 @@ function cfaName = sensorCFAName(sensor)
 %   cfaNames = sensorCFAName
 %
 
-if ieNotDefined('sensor')
+if notDefined('sensor')
     cfaName = sensorCFANameList;
     return;
 end

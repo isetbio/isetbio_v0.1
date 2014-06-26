@@ -18,7 +18,7 @@ function figNum = plotSetUpWindow(figNum)
 %   and help keep track of them.
 %   
 
-if ieNotDefined('figNum')
+if notDefined('figNum')
     figNum = vcSelectFigure('GRAPHWIN'); 
     set(figNum,'Units','Normalized','Position',[0.5769, 0.0308,0.4200, 0.4200]);
     set(figNum,'Name','ISET GraphWin','NumberTitle','off');

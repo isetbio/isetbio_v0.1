@@ -15,7 +15,7 @@ function nRemaining = vcDeleteObject(objType,val)
 % Copyright ImagEval Consultants, LLC, 2005.
 
 % Get the selected object data structure and its position (val) in the list
-if ieNotDefined('objType'), error('Object type required'); end
+if notDefined('objType'), error('Object type required'); end
 objType = vcEquivalentObjtype(objType);
 
 % Set val to as the selected object

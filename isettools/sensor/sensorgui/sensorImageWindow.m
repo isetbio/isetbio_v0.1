@@ -1775,7 +1775,7 @@ function sensor = sensorAdjustBracketTimes(handles,sensor)
 %
 % If it is called from the exp time box, then we get the sensor passed in.
 % Otherwise we use the default sensor.
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
 
 % Managing the GUI should probably be done inside of the refresh command,
 % not here.
@@ -1815,7 +1815,7 @@ function sensor = sensorAdjustCFATimes(handles,sensor)
 % sensor into the CFA exposure mode.
 %
 
-if ieNotDefined('sensor'), sensor = vcGetObject('sensor'); end
+if notDefined('sensor'), sensor = vcGetObject('sensor'); end
 
 mSize = size(sensorGet(sensor,'pattern'));
 eTimes = sensorGet(sensor,'expTimes');

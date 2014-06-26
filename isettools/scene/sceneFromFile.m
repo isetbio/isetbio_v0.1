@@ -73,7 +73,7 @@ imType = ieParamFormat(imType);
 
 switch lower(imType)
     case {'monochrome','rgb'}  % 'unispectral'
-        if ieNotDefined('dispCal')
+        if notDefined('dispCal')
             warning('Default display lcdExample is used to create scene');
             dispCal = fullfile(isetRootPath,'data','displays','lcdExample.mat');
         end
@@ -103,7 +103,7 @@ switch lower(imType)
     case {'multispectral','hyperspectral'}
         
         if ~ischar(I), error('File name required for multispectral'); end
-        if ieNotDefined('wList'), wList = []; end
+        if notDefined('wList'), wList = []; end
 
         scene = sceneCreate('multispectral');
         
