@@ -143,21 +143,7 @@ for p = 1:nPos
 end
 
 % Add photon noise
-% We don't use sensorAddNoise or sensorComputeSamples because in here,
-% our noise-free sensor contains more than one volts images. For
-% simplicity, we just add some photon noise to the noise-free cone
-% absorption data.
-% noiseShot might be a good function to use, but we need to get rid of
-% the bunky for-loop there
-%     cg      = pixelGet(sensorGet(sensor,'pixel'), 'conversion gain');
-%     photons = round(volts / cg);
-%
-%     volts   = (photons + sqrt(photons).*randn(size(photons))) * cg;
-%     indx    = find(photons < 15);
-%     volts(indx) = iePoisson(photons(indx)) * cg;
-%     sensor  = sensorSet(sensor, 'volts', volts);
 sensor = sensorSet(sensor, 'volts', volts);
 sensor = sensorSet(sensor, 'volts', noiseShot(sensor));
 
-%% End
 end

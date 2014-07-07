@@ -518,7 +518,7 @@ switch lower(param)
         params.sz = sensorGet(sensor, 'size');
         params.density = sensorGet(sensor, 'human cone densities');
         params.rSeed = sensorGet(sensor, 'human rseed');
-        params.density = val;
+        params.humanConeDensities = val;
         
         sensor = sensorCreateConeMosaic(sensor, params);
         
