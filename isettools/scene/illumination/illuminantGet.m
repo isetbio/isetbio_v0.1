@@ -84,6 +84,11 @@ switch param
         if checkfields(il,'data','photons')
             val = il.data.photons;
         end
+        if isa(val, 'uint32')
+            val = ieUncompressData(val, il.data.min, il.data.max, 32);
+        elseif isa(val, 'uint16')
+            val = ieUncompressData(val, il.data.min, il.data.max, 16);
+        end
         if isvector(val), val = val(:); end
 
     case 'energy'
