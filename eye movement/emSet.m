@@ -1,5 +1,5 @@
 function em = emSet(em, params, val)
-%% function emGet(em, params, val)
+%% function emSet(em, params, val)
 %    Get properties from cones
 %
 %  Inputs:
@@ -37,8 +37,8 @@ function em = emSet(em, params, val)
 %  Example:
 %    em = emCreate;
 %    fs = emGet(em, 'frequency');
-%    params.f = 0.017; params.w = 1.5e-6;
-%    amp = emGet(em, 'tremor amplitude', 'cones', params);
+%    
+%    amp = emGet(em, 'tremor amplitude');
 %
 %  See also:
 %    emSet, emCreate
@@ -62,7 +62,7 @@ switch params
         em.emFlag = val(:);
     case {'sampletime'}
         em.sampTime = val;
-
+        
     % Eye movement substructures - tremor, drift, micro-saccade
     case {'tremor'}
         assert(isstruct(val), 'val should be a structure');

@@ -66,14 +66,16 @@ switch params
         % emFlag = emGet(em, 'em flag');
         if isfield(em, 'emFlag'), val = em.emFlag; end
     case {'sampletime'}
-        % sampTime = emGet(em, 'sample time');
+        % sampTime = emGet(em, 'sample time',unit);
+        % 
         if isfield(em, 'sampTime'), val = em.sampTime; end
         if ~isempty(varargin)
             val = val * ieUnitScaleFactor(varargin{1});
         end
     case {'frequency', 'samplefrequency'}
         % fs = emGet(em, 'frequency');
-        if isfield(em, 'sampleTime'), val = 1/em.sampleTime; end
+        % Frequency in HZ
+        val = 1/emGet(em,'sample time');
 
     % Eye movement substructures - tremor, drift, micro-saccade
     case {'tremor'}

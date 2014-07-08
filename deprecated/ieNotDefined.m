@@ -25,7 +25,7 @@ function notDefined = ieNotDefined( varString )
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-warning('Use notDefined instead');
+% warning('Use notDefined instead');
 if (~ischar(varString)), error('Varible name must be a string'); end
 
 notDefined = 0;  % Assume the variable is defined
