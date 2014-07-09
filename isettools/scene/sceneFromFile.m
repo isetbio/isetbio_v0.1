@@ -87,7 +87,7 @@ switch lower(imType)
             d = dispCal; 
         end
         
-        wave  = displayGet(d,'wave');
+        wave = displayGet(d,'wave');
         scene = sceneSet(scene,'wave',wave);
 
         % Set the illuminant SPD to the white point of the display. This
@@ -99,7 +99,9 @@ switch lower(imType)
         % Replace default with white point
         il    = illuminantSet(il,'energy',sum(d.spd,2)); 
         scene = sceneSet(scene,'illuminant',il);
-
+        if ~notDefined('wList')
+            scene = sceneSet(scene, 'wave', wList);
+        end
     case {'multispectral','hyperspectral'}
         
         if ~ischar(I), error('File name required for multispectral'); end
