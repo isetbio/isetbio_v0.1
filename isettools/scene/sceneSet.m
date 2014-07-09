@@ -16,53 +16,57 @@ function scene = sceneSet(scene,parm,val,varargin)
 %  that can be set, and sometimes the derived quantities require some
 %  knowledge of the optics as well.
 %
-%  Examples:
-%    scene = sceneSet(scene,'name','myScene');      % Set the scene name
-%    scene = sceneSet(scene,'fov',3);               % Set scene field of view to 3 deg
-%    oi = sceneSet(oi,'optics',optics);
-%    oi = sceneSet(oi,'oicomputemethod','myOIcompute');
+% Parameters are freely formatted with spaces and capitals, which are
+% removed in this routine. 
 %
-% Scene description
+%  Examples:
+%    scene = sceneSet(scene,'name','myScene');   % Set the scene name
+%    scene = sceneSet(scene,'name','myScene');   % Set the scene name
+%    scene = sceneSet(scene,'h fov',3);          % Set scene horizontal field of view to 3 deg
+% 
+%
+% Scene parameters - 
+%
+%  Basic
 %      {'name'}          - An informative name describing the scene
 %      {'type'}          - The string 'scene'
 %      {'distance'}      - Object distance from the optics (meters)
 %      {'wangular'}      - Width (horizontal) field of view
 %      {'magnification'} - Always 1 for scenes.
 %
-% Scene radiance
+% Scene radiance parameters
 %      {data}   - structure containing the data
-%        {'cphotons','compressedphotons'}
-%         row x col x nwave array representing the radiance photons.
-%           Data are compressed to 16 bits over a range determined by the
-%           min and max levels of the data. Normally, we use this field to
-%           save space.
-%        {'photons','uncompressedphotons'}
-%         row x col x nwave array representing the radiance photons
+%        {'photons' }
+%         row x col x nWave array representing the scene radiance in
+%         photons.  Typically these values are only stored with single
+%         precision to save space.
+%         If you set bit depth to 64, they will be stored as double
+%               s = sceneSet(s,'bit depth',64);
+%
 %        {'peak photon radiance'} - Used for monochromatic scenes mainly; not a
 %            variable, but a function
 %
-%         N.B. After writing to the 'photons' or 'cphotons' field, you
-%         should probably adjust the luminance and mean luminance fields
-%         are set to empty. To fill them properly, you can call 
+%         N.B. After writing to the 'photons' field we clear the luminance
+%         data.  To fill the luminance slot use:
+%
 %            [lum, meanL] = sceneCalculateLuminance(scene);
 %            scene = sceneSet(scene,'luminance',lum);
-%            note that you cannot set meanL using sceneSet
-%               use sceneAdjustLuminance
-%  Depth
 %
-%      {'depthMap'} - Stored in meters.  Used with RenderToolbox
+%         N.B. To adjust the scene mean luminance, use sceneAdjustLuminance
+% Depth
+%      {'depth map'} - Stored in meters.  Used with RenderToolbox
 %      synthetic scenes.  (See scene3D pdcproject directory).
 %
 % Scene color information
 %      {'spectrum'}   - structure that contains wavelength information
 %        {'wavelength'} - Wavelength sample values (nm)
 %
-% Some multispectral scenes have information about the illuminant
+% Illuminant
 %     {'illuminant'}  - Scene illumination structure
-%      {'illuminant Energy'}  - Illuminant spd in energy is stored W/sr/nm/sec
-%      {'illuminant Photons'} - Photons are converted to energy and stored 
-%      {'illuminant Comment'} - Comment
-%      {'illuminant Name'}    - Identifier for illuminant.
+%      {'illuminant energy'}  - Illuminant spd in energy is stored W/sr/nm/sec
+%      {'illuminant photons'} - Photons are converted to energy and stored 
+%      {'illuminant comment'} - Comment
+%      {'illuminant name'}    - Identifier for illuminant.
 %         See sceneIlluminantScale() for setting the illuminant level in
 %         certain cases of unknown reflectance and illuminant conditions.
 %         Though, this is being deprecated.
@@ -70,20 +74,16 @@ function scene = sceneSet(scene,parm,val,varargin)
 % Private variables used by ISET but not set by the user
 %
 %    Used for management of compressed photons
-%      {'datamin'}
-%      {'datamax'}
 %      {'bitdepth'}
 %      {'knownReflectance'} - For scenes when a reflectance is known
 %                             (reflectance,i,j,w)
 %
-%    Used to store the scene luminance rather than recompute (i.e., cache)
+%    Used to cache the scene luminance rather than recompute
 %      {'luminance'}
 %      {'meanluminance'}
 %
 %    Auxiliary
 %      {'consistency'} - Display consistent with window data
-%
-% (The list of scene parameters includes aliases for the same parameter.)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
@@ -135,8 +135,9 @@ switch parm
         scene.data = val;
         
     case {'photons','cphotons','compressedphotons'}
-        % sceneSet(scene,'photons',val,[which wave])
+        % sceneSet(scene,'photons',val,[wavelength])
         % val is typically a 3D (row,col,wave) matrix.
+      
         bitDepth = sceneGet(scene, 'bitDepth');
         if isempty(bitDepth), error('Compression parameters required'); end
         if ~isempty(varargin)
@@ -205,14 +206,21 @@ switch parm
         % Depth map is always in meters
         scene.depthMap = val;
         
+        % As of July 2014 or so, these are no longer used
     case {'datamin','dmin'}
         % These are photons (radiance)
         scene.data.dmin = val;
     case {'datamax','dmax'}
         % These are photon (radiance)
         scene.data.dmax = val;
+        %%%%%%%%%%%%%%
+        
     case 'bitdepth'
-        scene.data.bitDepth = val;
+        % Bit depth controls whether the data are stored as single (32) or
+        % double (64)
+        if val ~= 32 && val ~=64, error('Bad bit depth %i\n',val);
+        else                      scene.data.bitDepth = val;
+        end
         % scene = sceneClearData(scene);
         
         % Not sure this is used much or at all any more.  It is in
