@@ -7,7 +7,7 @@ function [scene,I] = sceneFromFile(I, imType, meanLuminance,dispCal,wList, doSub
 %             in RGB data itself, rather than the file name.
 % imageType:  'multispectral' or 'rgb' or 'monochrome'
 %             When 'rgb', the imageData might be RGB format.
-% 
+%
 % The data in the image file are converted into spectral format and placed
 % in an ISET scene data structure. The allowable imageTypes are monochrome,
 % rgb, multispectral and hyperspectral. If you do not specify, and we
@@ -25,7 +25,7 @@ function [scene,I] = sceneFromFile(I, imType, meanLuminance,dispCal,wList, doSub
 %
 %
 % Examples:
-%   scene = sceneFromFile; 
+%   scene = sceneFromFile;
 %   [scene,fname] = sceneFromFile;
 %
 %   fullFileName = vcSelectImage;
@@ -83,30 +83,27 @@ switch lower(imType)
         % Match the display wavelength and the scene wavelength
         scene = sceneCreate('rgb');
         if ischar(dispCal), d = displayCreate(dispCal);
-        elseif isstruct(dispCal) && isequal(dispCal.type,'display'), 
-            d = dispCal; 
+        elseif isstruct(dispCal) && isequal(dispCal.type,'display'),
+            d = dispCal;
         end
         
         wave = displayGet(d,'wave');
         scene = sceneSet(scene,'wave',wave);
-
+        
         % Set the illuminant SPD to the white point of the display. This
         % also forces the peak reflectance to 1, so we could delete
         % illuminant scaling below.
         
         % Initialize
-        il    = illuminantCreate('d65',wave); 
+        il    = illuminantCreate('d65',wave);
         % Replace default with white point
-        il    = illuminantSet(il,'energy',sum(d.spd,2)); 
+        il    = illuminantSet(il,'energy',sum(d.spd,2));
         scene = sceneSet(scene,'illuminant',il);
-        if ~notDefined('wList')
-            scene = sceneSet(scene, 'wave', wList);
-        end
     case {'multispectral','hyperspectral'}
         
         if ~ischar(I), error('File name required for multispectral'); end
         if notDefined('wList'), wList = []; end
-
+        
         scene = sceneCreate('multispectral');
         
         % The illuminant structure has photon representation and a
@@ -119,9 +116,9 @@ switch lower(imType)
         % wavelength sampling.  We don't call sceneSet because that both
         % sets the wavelength and interpolates the data.
         % scene.spectrum.wave = basis.wave(:);
-        scene = sceneSet(scene,'wave',basis.wave);        
+        scene = sceneSet(scene,'wave',basis.wave);
         
-        % Set the illuminant structure 
+        % Set the illuminant structure
         
     otherwise
         error('Unknown image type')
@@ -137,10 +134,14 @@ if ischar(I), [~, n, ~] = fileparts(I);
 else n = 'rgb image';
 end
 if exist('d', 'var'), n = [n ' - ' displayGet(d, 'name')]; end
-scene = sceneSet(scene,'name',n);     
+scene = sceneSet(scene,'name',n);
 
 if notDefined('meanLuminance')
 else  scene = sceneAdjustLuminance(scene,meanLuminance); % Adjust mean
+end
+
+if ~notDefined('wList')
+    scene = sceneSet(scene, 'wave', wList);
 end
 
 end
