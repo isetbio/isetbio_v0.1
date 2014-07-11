@@ -308,9 +308,11 @@ switch parm
         [p,ii] = max(p);
         val = [p,wave(ii)];
     case {'datamax','dmax','peakphoton'}
-        if checkfields(scene,'data','dmax'), val = scene.data.dmax; end
+        if checkfields(scene,'data','dmax'), val = scene.data.dmax; 
+        else p = sceneGet(scene, 'photons'); val = max(p(:)); end
     case {'datamin','dmin','minphoton'}
-        if checkfields(scene,'data','dmin'), val = scene.data.dmin; end
+        if checkfields(scene,'data','dmin'), val = scene.data.dmin;
+        else p = sceneGet(scene, 'photons'); val = min(p(:)); end
     case {'knownreflectance'}
         % We store the peak reflectance to set the illuminant level
         % properly and to plot reflectances.
