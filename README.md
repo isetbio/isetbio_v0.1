@@ -10,7 +10,7 @@ For a general introduction to human vision, please see:
 
   http://foundationsofvision.stanford.edu/
 
-For examples of ISET/VSET code and tutorials on human vision, please see:
+For examples of ISETBIO code and tutorials on human vision, please see:
 
   https://www.stanford.edu/group/vista/cgi-bin/FOV/computational-examples/
 
@@ -22,9 +22,8 @@ The toolbox is written around several data structures.  Each is implemented usin
 
 The scene data structure describes the scene radiance (photons).  It is set up to permit depth encoding, though nearly all of the current examples are based on a radiance field originating from a single plane.
 
-The optical image transforms the irradiance distribution at the sensor, after the radiance has passed through the topics.  There are several computational models that implement the transformation: diffraction limited, shift invariant, and ray trace (shift variant). You can choose the one you want to use depending on the level of information you have about the optics.  There is an implementation of the optics of the human eye, based on work from Marimont and Wandell.  
+The optical image transforms the irradiance distribution at the sensor, after the radiance has passed through the topics.  There are several computational models that implement the transformation: diffraction limited, shift invariant, and ray trace (shift variant). You can choose the one you want to use depending on the level of information you have about the optics.  There is an implementation of the optics of the human eye, based on work from Marimont and Wandell; there is also an optics model from wavefront sensing data.  We are working on an optics model based on ray-tracing and light fields.
 
-This toolbox is coordinated with the Wavefront Toolbox (also in github) uses data from adaptive optics to simulate the defocus based on measurements of many different human eyes.
+The sensor transforms the irradiance into a spatial array of cone absorptions. The sensor pixels and spectral quantum efficiency can be set to model the human cones at various eccentricities and with various types of inert pigments (macular pigment, lens density, optical density).  The sensor simulates the photon absorptions in the cone (and rod) mosaics.  Utilities are also included to permit the specification of eye movement parameters (draft, tremor, saccades).
 
-The sensor transforms the irradiance into a spatial array of cone absorptions. The sensor pixels and spectral quantum efficiency can be set to model the human cones at various eccentricities and with various types of inert pigments (macular pigment, lens density, optical density).  The sensor simulates the photon absorptions in the cone (and rod) mosaics.
-
+Further data structures, such as better biophysical models of the cones, responses from the retinal ganglion cells and V1 cells, are in our development path.
