@@ -30,8 +30,14 @@ function [photons, illuminant, basis, comment, mcCOEF] = vcReadImage(fullname,im
 %     If there is no display calibration file, we arrange the values so
 %     that the display code returns the same RGB values as in the original
 %     file.
+%     In 'rgb' case, varargin{2} is used as doSub flag. If true, the input
+%     image will be converted to subpixel rendered image. The conversion is
+%     done by replacing each pixel with the subpixel structure of the
+%     display. See displayCompute for details of this conversion. By
+%     default, doSub is set to False. Note that, for large image, turning
+%     on doSub could be extremely slow.
 %
-%  'multispectral','hyperspectral': In this case the data are stored as
+%   'multispectral','hyperspectral': In this case the data are stored as
 %     coefficients and basis functions. We build the spectral
 %     representation here. These, along with a comment and measurement of
 %     the scene illuminant (usually measured using a PhotoResearch PR-650
