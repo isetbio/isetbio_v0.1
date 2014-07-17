@@ -77,6 +77,8 @@ function absorptions = coneAdaptation(typeAdapt,volts,sensor,species)
 
 %% Why are there 4 adaptation terms?
 %  When one is black, it shouldn't become adapated
+warning('Use coneAdapt.  This routine (coneAdaptation) is now out of date.')
+warning('RGC code still uses this and should be updated')
 
 if notDefined('typeAdapt'), typeAdapt = 2; end
 if notDefined('volts'), error('volts are required'); end
