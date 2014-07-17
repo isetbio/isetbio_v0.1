@@ -171,8 +171,8 @@ switch parm
         oi.data = val;
 
     case {'cphotons', 'compressedphotons', 'photons'}
-        if ~(isa(val, 'double') || isa(val, 'single')),
-            error('Photons must be type double or single.');
+        if ~(isa(val, 'double') || isa(val, 'single') || isa(val, 'gpuArray')),
+            error('Photons must be type double / single / gpuArray');
         end
         
         bitDepth = oiGet(oi, 'bitDepth');

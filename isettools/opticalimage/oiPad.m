@@ -36,7 +36,7 @@ if ismatrix(padSize), padSize(3) = 0; end
 photons = oiGet(oi,'photons');
 % To prevent ieCompressData error, we set the surrounding region as the
 % mean of the data
-padval = mean(photons(:));
+padval = gather(mean(photons(:)));
 
 try
     photons = padarray(photons,padSize,padval,direction);
