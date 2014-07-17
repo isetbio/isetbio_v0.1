@@ -6,6 +6,10 @@ function oi = opticsCos4th(oi)
 % This routine is used for shift-invariant optics, when full ray trace
 % information is unavailable.
 %
+% Example:
+%   scene = sceneCreate; oi = oiCreate; 
+%   tic, oi = oiCompute(oi,scene); toc
+%
 % Copyright ImagEval Consultants, LLC, 2003.
 
 optics = oiGet(oi, 'optics');
