@@ -31,6 +31,9 @@ global vcSESSION;
 objType = obj.type;
 val = vcNewObjectValue(objType);
 
+% gather to avoid distributed component (e.g. gpuArray)
+obj = gatherStruct(obj);
+
 %% Assign object to the vcSESSION global.
 
 % Should be ieSessionSet, not this.
