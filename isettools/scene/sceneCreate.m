@@ -506,7 +506,7 @@ if ~notDefined('scene.data.photons')
         v = sceneGet(scene, 'peakRadianceAndWave');
         idxWave = find(wave == v(2));
         p = sceneGet(scene, 'photons', v(2));
-        [tmp, ij] = max2(p); %#ok<ASGLU>
+        [~, ij] = max2(p);
         v = [0.9 ij(1) ij(2) idxWave];
         scene = sceneSet(scene,'knownReflectance',v);
     end
@@ -517,6 +517,11 @@ if ~notDefined('scene.data.photons')
     % This routine also adjusts the illumination level to be consistent
     % with the reflectance and scene photons.
     scene = sceneAdjustLuminance(scene,100);
+    
+    if ieSessionGet('gpu compute')
+        p = sceneGet(scene, 'photons');
+        scene = sceneSet(scene, 'photons', gpuArray(p));
+    end
 end
 
 end
