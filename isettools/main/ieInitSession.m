@@ -49,5 +49,12 @@ if ~checkfields(iePref,'waitbar')
 else vcSESSION.GUI.waitbar = iePref.waitbar;
 end
 
-return;
+% Check gpu computing
+try
+    gpuArray(0);
+    vcSESSION.GPUCOMPUTE = true;
+catch 
+    vcSESSION.GPUCOMPUTE = false;
+end
 
+end

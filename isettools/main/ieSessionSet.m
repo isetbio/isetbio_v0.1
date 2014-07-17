@@ -113,7 +113,7 @@ switch param
     case {'help','inithelp'}
         % Default for help is true, if the initHelp has not been set.
         if checkfields(vcSESSION,'initHelp'), vcSESSION.initHelp = val;
-        else vcSESSION.initHelp = 1; val = 1;
+        else vcSESSION.initHelp = 1;
         end
         
         % Matlab setpref values
@@ -145,6 +145,8 @@ switch param
         %         % It is also possible to choose 'ee' (equal energy), or 'd65'.  If
         %         % the value is unrecognized, the default is used.
         %         setpref('ISET','whitePoint',val);
+    case {'gpu', 'gpucompute', 'gpucomputing'}
+        vcSESSION.GPUCOMPUTE = val;
         
         
         % Set window information at startup

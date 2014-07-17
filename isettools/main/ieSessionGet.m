@@ -149,8 +149,14 @@ switch param
             vcSESSION.GUI.waitbar = val;
         end
         
-        
-        
+    case {'gpu', 'gpucompute', 'gpucomputing'}
+        if isfield(vcSESSION, 'GPUCOMPUTE')
+            val = vcSESSION.GPUCOMPUTE;
+        else % do a simple test here
+            val = true;
+            try gpuArray(0); catch, val = false; end
+            vcSESSION.GPUCOMPUTE = val;
+        end
     case {'graphwinstructure'}
         val = vcSESSION.GRAPHWIN;
     case {'graphwinfigure'}
