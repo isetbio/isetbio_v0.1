@@ -231,11 +231,11 @@ switch parm
        if checkfields(scene,'data','photons')
            if isempty(varargin)
                % allPhotons = sceneGet(scene,'photons')
-               val = scene.data.photons;
+               val = double(scene.data.photons);
            else
                % waveBandPhotons = sceneGet(scene,'photons',500)
                idx = ieFindWaveIndex(sceneGet(scene,'wave'),varargin{1});
-               val = scene.data.photons(:,:,idx);
+               val = double(scene.data.photons(:,:,idx));
            end
        end
        

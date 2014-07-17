@@ -319,11 +319,11 @@ switch parm
        if checkfields(oi,'data','photons')
            if isempty(varargin)
                % allPhotons = oiGet(oi,'photons')
-               val = oi.data.photons;
+               val = double(oi.data.photons);
            else
                % waveBandPhotons = oiGet(oi,'photons',500)
                idx = ieFindWaveIndex(oiGet(oi,'wave'),varargin{1});
-               val = oi.data.photons(:,:,idx); 
+               val = double(oi.data.photons(:,:,idx)); 
            end
        end
        
