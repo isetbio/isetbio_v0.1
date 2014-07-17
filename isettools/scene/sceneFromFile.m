@@ -98,9 +98,8 @@ switch lower(imType)
         il    = illuminantCreate('d65',wave);
         % Replace default with white point
         il    = illuminantSet(il,'energy',sum(d.spd,2));
-        scene = sceneSet(scene,'illuminant',il);
+        scene = sceneSet(scene, 'illuminant', il);
     case {'multispectral','hyperspectral'}
-        
         if ~ischar(I), error('File name required for multispectral'); end
         if notDefined('wList'), wList = []; end
         
@@ -125,9 +124,9 @@ switch lower(imType)
 end
 
 %% Put all the parameters in place and return
-scene = sceneSet(scene,'filename',I);
-scene = sceneSet(scene,'photons',photons);
-scene = sceneSet(scene,'illuminant',il);
+scene = sceneSet(scene, 'filename', I);
+scene = sceneSet(scene, 'photons', photons);
+scene = sceneSet(scene, 'illuminant', il);
 
 % The file name or just announce that we received rgb data
 if ischar(I), [~, n, ~] = fileparts(I);
@@ -136,8 +135,8 @@ end
 if exist('d', 'var'), n = [n ' - ' displayGet(d, 'name')]; end
 scene = sceneSet(scene,'name',n);
 
-if notDefined('meanLuminance')
-else  scene = sceneAdjustLuminance(scene,meanLuminance); % Adjust mean
+if ~notDefined('meanLuminance')
+    scene = sceneAdjustLuminance(scene,meanLuminance); % Adjust mean
 end
 
 if ~notDefined('wList')
