@@ -30,7 +30,7 @@
 %% Parameters
 
 % Set to 1 and 0 to illustrate the effect of photon noise
-simulateNoise = boolean(1);    % Simulate with (1) or without (0) noise
+simulateNoise = true;    % Simulate with (1) or without (0) noise
 
 % scene parameters
 meanL = 100; % Mean luminance

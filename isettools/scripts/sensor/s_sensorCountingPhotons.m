@@ -11,7 +11,7 @@ s_initISET
 %%
 sFile = fullfile(isetRootPath,'data','images','rgb','hats.jpg');
 scene = sceneFromFile(sFile,'rgb');
-scene = sceneAdjustIlluminant(scene,'d65.mat');
+scene = sceneAdjustIlluminant(scene,'D65.mat');
 vcAddAndSelectObject(scene);
 sceneWindow;
 
