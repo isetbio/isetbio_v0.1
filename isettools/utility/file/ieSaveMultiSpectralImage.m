@@ -41,9 +41,9 @@ end
 % Other times, we use a principal component method and have an image mean
 %
 if notDefined('imgMean'), 
-    save fullName mcCOEF basis comment illuminant;
+    save(fullName, 'mcCOEF', 'basis', 'comment', 'illuminant');
 else
-    save fullName mcCOEF basis imgMean comment illuminant;
+    save(fullName, 'mcCOEF', 'basis', 'imgMean', 'comment', 'illuminant');
 end
 
 end
