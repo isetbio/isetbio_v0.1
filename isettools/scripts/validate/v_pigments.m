@@ -20,12 +20,12 @@ dList = 0:.1:.5;
 vcNewGraphWin;
 for ii=1:length(dList)
     m = macularSet(m,'density',dList(ii));
-    sa = macularGet(m,'absorptance');
+    sa = macularGet(m,'absorbtance');
     plot(wave,sa);
     hold on;
 end
 xlabel('Wavelength')
-ylabel('Spectral absorptance')
+ylabel('Spectral absorbtance')
 title('Macular pigment photon absorptions')
 legend(num2str(dList'));
 
@@ -34,7 +34,7 @@ legend(num2str(dList'));
 vcNewGraphWin;
 for ii=1:length(dList)
     m = macularSet(m,'density',dList(ii));
-    sa = macularGet(m,'spectral absorbance');
+    sa = macularGet(m,'spectraldensity');
     plot(wave,sa);
     hold on;
 end
