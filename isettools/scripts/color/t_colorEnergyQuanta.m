@@ -38,7 +38,7 @@ xlabel('Wavelength (nm)');ylabel('Energy (watts/sr/nm/m2)')
 
 % This is a standard Daylight 6500 light source.  We read it and set its
 % luminance to 100 cd/m2.
-d65Energy = ieReadSpectra('d65',wave);
+d65Energy = ieReadSpectra('D65',wave);
 d65XYZ = ieXYZFromEnergy(d65Energy(:)',wave);
 d65Energy = d65Energy*100/d65XYZ(2);
 
@@ -82,7 +82,7 @@ subplot(1,2,2), plot(wave,XYZPhotons); grid on; title('XYZ Photons')
 
 % We read a standard light (Daylight 6500 K) and scale it to have a
 % luminance of 100 cd/m2.
-d65Energy = ieReadSpectra('d65',wave);
+d65Energy = ieReadSpectra('D65',wave);
 d65XYZ    = ieXYZFromEnergy(d65Energy(:)',wave);
 d65Energy = d65Energy*100/d65XYZ(2);
 
