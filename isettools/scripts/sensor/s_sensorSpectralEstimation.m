@@ -66,7 +66,7 @@ for ii=1:nLights
     
     % Compute the optical image
     oi     = oiCompute(scene,oi);
-    % vcAddAndSelectObject(oi); oiWindow;
+    vcAddAndSelectObject(oi); % oiWindow;
     
     % Compute the sensor response.
     sensor    = sensorCompute(sensor,oi,0);
