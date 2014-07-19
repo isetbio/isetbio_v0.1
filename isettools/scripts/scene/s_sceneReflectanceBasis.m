@@ -15,10 +15,10 @@
 
 % 1.	Read in the hyperspectral scene data
 % fullFileName = fullfile('C:\Users\joyce\Documents\Matlab\SVN\iset-4.0\data\scenes\JoyceCloseUp.mat');
-fullFileName = fullfile('C:\Users\joyce\Documents\Matlab\SVN\iset-4.0\data\scenes\eye.mat');
+fullFileName = 'eye.mat'; % fullfile('C:\Users\joyce\Documents\Matlab\SVN\iset-4.0\data\scenes\eye.mat');
 load(fullFileName);
-% vcAddAndSelectObject(scene); sceneWindow;
-% plotScene(scene,'illuminantPhotons')
+vcAddAndSelectObject(scene); sceneWindow;
+plotScene(scene,'illuminantPhotons')
 
 %% 2.	Convert the scene data to reflectance
 
@@ -32,7 +32,7 @@ row = sceneGet(scene,'rows');
 col = sceneGet(scene,'cols');
 e = Quanta2Energy(wave,double(scene.data.photons));
 xyz = ieXYZFromEnergy(e,wave);
-xyz = XW2RGBFormat(xyz,row,col);
+%xyz = XW2RGBFormat(xyz,row,col);
 
 %% 6.	Convert xyz to rgb
 % We find the max Y and normalize xyz when we call the function.  This is
