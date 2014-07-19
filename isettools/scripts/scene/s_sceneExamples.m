@@ -64,10 +64,10 @@ vcAddAndSelectObject(scene); sceneWindow;
 
 %% Macbeth
 patchSizePixels = 16;
-spectrum.wave = [380:5:720];
+spectrum.wave = 380:5:720;
 scene = sceneCreate('macbeth tungsten',patchSizePixels,spectrum);
 scene.data;
-scene = sceneCreate('macbeth tungsten',patchSizePixels,spectrum,'bitdepth',16);
+scene = sceneCreate('macbeth tungsten',patchSizePixels,spectrum,'bitdepth',32);
 scene.data;
 vcAddAndSelectObject(scene); sceneWindow;
 
