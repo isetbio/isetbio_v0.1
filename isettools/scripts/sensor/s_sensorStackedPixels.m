@@ -153,9 +153,8 @@ sensor2 = sensorSet(sensor2,'volts',sensorMosaic);
 vcAddAndSelectObject(sensor2); sensorImageWindow;
 
 %% To render the data in the image processor window
-
-vci = vcimageCreate;
-vci = vcimageCompute(vci,sensor2);
-vcAddAndSelectObject(vci); vcimageWindow;
+% vci = vcimageCreate;
+% vci = vcimageCompute(vci,sensor2);
+% vcAddAndSelectObject(vci); vcimageWindow;
 
 %% End

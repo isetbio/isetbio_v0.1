@@ -65,13 +65,13 @@ sensor   = sensorSet(sensor,'ExposurePlane',3);
 vcAddAndSelectObject(sensor); sensorImageWindow;
 
 %% Convert the images to the display window
-vci = vcimageCreate;
+% vci = vcimageCreate;
 
 % Experimental methods for combining bracketed exposures
-vci = imageSet(vci,'Combination Method','longest'); % Longest, unsaturated
-vci = vcimageCompute(vci,sensor);
+% vci = imageSet(vci,'Combination Method','longest'); % Longest, unsaturated
+% vci = vcimageCompute(vci,sensor);
 
-vcAddAndSelectObject(vci); vcimageWindow;
+% vcAddAndSelectObject(vci); vcimageWindow;
 
 %% END
 
