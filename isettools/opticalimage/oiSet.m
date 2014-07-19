@@ -216,11 +216,7 @@ switch parm
         % oi.data.dmax = val;
     case 'bitdepth'
         % Only used by compressed photons
-        if checkfields(oi, 'data', 'bitDepth')
-            error('BitDepth should not be changed');
-        else
-            oi.data.bitDepth = val;
-        end
+        oi.data.bitDepth = val;
 
     case {'illuminance', 'illum'}
         % The value is stored for efficiency.
