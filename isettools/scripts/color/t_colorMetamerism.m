@@ -40,7 +40,7 @@ vcNewGraphWin; plot(wave,displaySPD)
 title('Display primaries')
 
 % Now read the Stockman cone wavelength sensitivities
-S = ieReadSpectra('Stockman',wave);
+S = ieReadSpectra('stockman',wave);
 dW = wave(2)-wave(1);   % Delta Wavelength
 
 % Solve for the weights on the primaries that will produce the same
