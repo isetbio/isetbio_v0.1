@@ -159,8 +159,8 @@ load cMatch/hit489Gam
 
 % Here is the function we use to convert the linear values in rgb
 % to the frame buffer (DAC) values.
-
-DAC = rgb2dac(rgbSpectrum, invHit489Gam);
+DAC = ieLUTLinear(rgbSpectrum, invHit489Gam);
+% DAC = rgb2dac(rgbSpectrum, invHit489Gam);
 
 % To display the image, we will sample every other wavelength value
 
