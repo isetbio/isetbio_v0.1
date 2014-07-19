@@ -53,7 +53,7 @@ optics = opticsSet(optics,'focal length',3e-3);   % units are meters
 
 %% Compute optical image
 oi = oiCompute(scene,oi);
-
+vcAddAndSelectObject(oi); %oiWindow;
 %% Simulated sensor
 
 % Create a monochrome sensor.  We will reuse this structure to compute each
