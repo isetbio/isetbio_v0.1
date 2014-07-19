@@ -7,6 +7,7 @@ s_initISET
 scene = sceneCreate; 
 scene = sceneSet(scene,'fov',4);
 oi = oiCreate; oi = oiCompute(oi,scene);
+vcAddAndSelectObject(oi);
 
 sensor = sensorCreate; 
 sensor = sensorSet(sensor,'qmethod', '10 bit');  % Linear, 10 bits
