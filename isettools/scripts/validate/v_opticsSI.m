@@ -66,6 +66,6 @@ oi       = oiCompute(scene,oi);
 vcReplaceAndSelectObject(oi);
 oiWindow;
 delete('customFile.mat');
-delete('deleteMe.mat');
+%delete('deleteMe.mat');
 
 %% End
