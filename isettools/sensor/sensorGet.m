@@ -186,7 +186,7 @@ function val = sensorGet(sensor,param,varargin)
 %                when the name contains the string 'human' in it
 %    {'human lens'}                  - underlying lens structure
 %    {'human lens transmittance'}    - lens transmittance
-%    {'human lens absorption'}       - lens absorbtance
+%    {'human lens absorption'}       - lens absorptance
 %    {'human macular'}               - macular pigment structure
 %    {'human macular densities'}     - macular density
 %    {'human macular transmittance'} - macular transmittance
@@ -986,7 +986,7 @@ switch param
         % Lens transmittance
         lens = sensorGet(sensor, 'human lens');
         val = lensGet(lens, ' transmittance');
-    case {'humanlensabsorption','lensabsorption','lensabsorbtance'}
+    case {'humanlensabsorption','lensabsorption','lensabsorptance'}
         lens = sensorGet(sensor, 'human lens');
         val = lensGet(lens, 'absorption');
         

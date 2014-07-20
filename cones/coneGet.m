@@ -23,7 +23,7 @@ function val = coneGet(cone, param, varargin)
 %    {'SPOD'}                        - S pigment density
 %    {'peak efficiency'}             - quantal efficiency
 %    {'absorbance'}                  - cone absorbance
-%    {'absorptance'}                 - cone absorbtance without any
+%    {'absorptance'}                 - cone absorptance without any
 %                                      pre-receprocal transimitance
 %    {'quantal fundamentals'}        - quantal fundamentals of the cones
 %

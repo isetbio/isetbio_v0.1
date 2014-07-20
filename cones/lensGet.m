@@ -17,12 +17,12 @@ function val = lensGet(lens,param,varargin)
 %   absorptance (absorption)
 %
 %   Absorbance spectra are normalized to a peak value of 1.
-%   Absorbtance spectra are the proportion of quanta actually absorbed.
-%   Equation: absorbtanceSpectra = 1 - 10.^(-OD * absorbanceSpectra)
+%   Absorptance spectra are the proportion of quanta actually absorbed.
+%   Equation: absorptanceSpectra = 1 - 10.^(-OD * absorbanceSpectra)
 %
 % Examples:
 %  lens = lensCreate; w = lensGet(lens,'wave');
-%  vcNewGraphWin; plot(w,lensGet(lens,'absorbtance'))
+%  vcNewGraphWin; plot(w,lensGet(lens,'absorptance'))
 %  hold on; plot(w,lensGet(lens,'transmittance'))
 %
 % Copyright ImagEval Consultants, LLC, 2005.
@@ -72,7 +72,7 @@ switch param
             val = 10.^(-lensGet(lens,'spectral density', varargin{1}));
         end
         
-    case {'absorbtance','absorption'}
+    case {'absorptance','absorption'}
         % Proportion of quanta absorbed
         if isempty(varargin)
             val = 1 - 10.^(-lensGet(lens,'spectral density'));

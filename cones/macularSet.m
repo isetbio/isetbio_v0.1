@@ -68,7 +68,4 @@ switch param
         error('Unknown parameter %s\n',param);
 end
 
-
-return
-
-
+end

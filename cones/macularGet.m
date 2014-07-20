@@ -39,7 +39,7 @@ switch param
         val = m.wave;
     
     %   Absorbance spectra are normalized to a peak value of 1.
-    %   Absorbtance spectra are the proportion of quanta actually absorbed.
+    %   Absorptance spectra are the proportion of quanta actually absorbed.
     %   Equation: absorptanceSpectra = 1 - 10.^(-OD * absorbanceSpectra)
     case {'absorbance', 'unitdensity'}
         % This is defined by Sharp, 1999.  To load use
@@ -77,7 +77,7 @@ switch param
             val = 10.^(-macularGet(m, 'spectral density', varargin{1}));
         end
         
-    case {'absorbtance','absorption'}
+    case {'absorptance','absorption'}
         % Proportion of quanta absorbed
         if isempty(varargin)
             val = 1 - macularGet(m, 'transmittance');

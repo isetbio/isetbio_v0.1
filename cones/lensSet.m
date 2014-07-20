@@ -14,15 +14,15 @@ function lens = lensSet(lens,param,val,varargin)
 %   density       - single value
 %
 %   Absorbance spectra are normalized to a peak value of 1.
-%   Absorbtance spectra are the proportion of quanta actually absorbed.
-%   Equation: absorbtanceSpectra = 1 - 10.^(-OD * absorbanceSpectra)
+%   Absorptance spectra are the proportion of quanta actually absorbed.
+%   Equation: absorptanceSpectra = 1 - 10.^(-OD * absorbanceSpectra)
 %
 % Examples:
 %  lens = lensCreate; w = lensGet(lens,'wave');
-%  vcNewGraphWin; plot(w,lensGet(lens,'absorbtance'))
+%  vcNewGraphWin; plot(w,lensGet(lens,'absorptance'))
 %  hold on; plot(w,lensGet(lens,'transmittance'))
 %  lens = lensSet(lens,'density',0.5);
-%  vcNewGraphWin; plot(w,lensGet(lens,'absorbtance'))
+%  vcNewGraphWin; plot(w,lensGet(lens,'absorptance'))
 %  hold on; plot(w,lensGet(lens,'transmittance'))
 %
 % Copyright ImagEval Consultants, LLC, 2005.
@@ -82,6 +82,4 @@ switch param
         error('Unknown parameter %s\n',param);
 end
 
-return
-
-
+end

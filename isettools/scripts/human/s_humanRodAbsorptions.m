@@ -24,7 +24,7 @@ RodinnerSegmentDiameter = 2.22; % 15 deg ecc. Curio 1993
 meanluminance = 2060; % cd/m2
 pupilsize = 2; % mm 
 
-rodPeakAbsorbtance = 0.66; % from Rodieck
+rodPeakAbsorptance = 0.66; % from Rodieck
 
 %%
 scene = sceneCreate('uniform ee');
@@ -57,7 +57,7 @@ oi = oiSet(oi,'optics',optics);
 % Note that it requires a path to colorTime in vistaproj
 rodabsorbance = ieReadSpectra('rodabsorbance.mat',wave);
 rods = cm_variableLMSI_PODandLambda(rodabsorbance, rodpod, [], LensTransmittance(wave));
-rods = rods * rodPeakAbsorbtance;
+rods = rods * rodPeakAbsorptance;
 
 % or
 % rods = ieReadSpectra('scotopicLuminosity.mat',wave);
