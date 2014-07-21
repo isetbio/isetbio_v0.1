@@ -231,7 +231,7 @@ switch sceneName
             if length(varargin)>1, nBars  = varargin{2}; end
             if length(varargin)>2, deltaE = varargin{3}; end
         end
-        scene = sceneLstarSteps(scene,bWidth,nBars,deltaE);
+        scene = sceneLstarSteps(scene, bWidth, nBars, deltaE);
         
         % Monochrome,RGB and multispectral add only a little.  Mostly created in sceneFromFile
     case {'monochrome','unispectral'}
@@ -369,15 +369,16 @@ switch sceneName
         scene = sceneBar(scene,sz,width);
     case {'vernier'}
         % sceneCreate('vernier',size,width,offset)
-        sz = 65; width = 3; offset = 3;
-        if length(varargin) >=1, sz     = varargin{1};   end
-        if length(varargin) >=2, width  = varargin{2};   end
-        if length(varargin) ==3, offset = varargin{3};   end
+        if ~isempty(varargin), type = varargin{1};
+        else type = 'object'; end
+        if length(varargin) > 1, params = varargin{2};
+        else params = [];
+        end
+        scene = sceneVernier(scene, type, params);
         
-        scene = sceneVernier(scene,sz,width,offset);
     case {'whitenoise','noise'}
         % sceneCreate('noise',[128 128])
-        sz = 128; contrast = 20;
+        sz = [128 128]; contrast = 20;
         if length(varargin) >= 1, sz = varargin{1}; end
         if length(varargin) >= 2, contrast = varargin{2}; end
         
@@ -971,10 +972,11 @@ function scene = sceneVernier(scene, type, params)
 % check inputs
 if notDefined('scene'), error('scene requried'); end
 if notDefined('type'),  type = 'object'; end
+if notDefined('params'), params = []; end
 
 % init parameters from params
 if isfield(params, 'sceneSz'), sz = params.sceneSz; else sz = 64; end
-if isfield(params, 'barWidth'), width = params.barWidth; else width = 0; end
+if isfield(params, 'barWidth'), width = params.barWidth; else width = 1; end
 if isfield(params, 'offset'), offset = params.offset; else offset = 1; end
 if isfield(params, 'lineSpace'), lineSpace = params.lineSpace;
 else lineSpace = inf; end
@@ -1034,7 +1036,7 @@ switch type
         
         photons = ones(r,c,nWave);
         for ii=1:nWave
-            photons(:,:,ii)     = backReflectance*photons(:,:,ii)*illP(ii);
+            photons(:,:,ii) = backReflectance*photons(:,:,ii)*illP(ii);
             photons(topRows,topCols,ii)  = lineReflectance / ...
                 backReflectance*photons(topRows,topCols,ii);
             photons(botRows,botCols,ii)  = lineReflectance / ...
@@ -1374,24 +1376,26 @@ LAB(:,1) = L(:);
 
 % Transform them to Y values
 C = makecform('lab2xyz');
-XYZ = applyCform(LAB,C);
+XYZ = applycform(LAB,C);
 Y = XYZ(:,2); Y = Y/max(Y(:));
 % vcNewGraphWin; plot(Y)
 
 % Create equal photons illuminant
-il = illuminantCreate('equal photons',sceneGet(scene,'nwave'),100);
+nWave = sceneGet(scene, 'n wave');
+il = illuminantCreate('equal photons', sceneGet(scene, 'wave'), 100);
 scene = sceneSet(scene,'illuminant',il);
 
 % Now, make the photon image
-photons = ones(128,barWidth*nBars,nWave);
+photons = ones(128, barWidth*nBars, nWave);
+illPhotons = illuminantGet(il, 'photons');
 for ii=1:nBars
     start = barWidth*(ii-1) + 1; stop = barWidth*ii;
     for jj=1:nWave
-        photons(:,start:stop,jj) = Y(ii)*illPhotons(jj);
+        photons(:,start:stop,jj) = Y(ii) * illPhotons(jj);
     end
 end
 
 % The level is scaled on return to a mean of 100 cd/m2.
-scene = sceneSet(scene,'photons',photons);
+scene = sceneSet(scene, 'photons', photons);
 
 end
