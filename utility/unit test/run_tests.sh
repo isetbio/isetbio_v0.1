@@ -1,5 +1,8 @@
+# Setup alias
+matlab="/Applications/MATLAB_R2014a.app/bin/matlab"
+
 # Run unit test in matlab
-/Applications/MATLAB_R2014a.app/bin/matlab -nodesktop -nosplash -nodisplay -r "unitTest"
+"$matlab" -nodesktop -nosplash -nodisplay -r "unitTest"
 if [ "$?" == "0" ];
 then
     echo Unit test passed!
