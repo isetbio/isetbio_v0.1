@@ -158,7 +158,8 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %   image-based scenes created by sceneFromFile.  See the comments there
 %   for more information.
 %
-% See also:  sceneFromFile
+% See also:
+%    sceneFromFile, sceneFromFont
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
