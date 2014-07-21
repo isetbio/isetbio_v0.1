@@ -89,6 +89,7 @@ switch param
         elseif isa(val, 'uint16')
             val = ieUncompressData(val, il.data.min, il.data.max, 16);
         end
+        if isa(val, 'single'), val = double(val); end
         if isvector(val), val = val(:); end
 
     case 'energy'

@@ -1,4 +1,4 @@
-function il = illuminantCreate(ilName,wave, varargin)
+function il = illuminantCreate(ilName, wave, varargin)
 % Create an illuminant (light source) structure.  
 %
 %  il = illuminantCreate(ilName,temperature,luminance,spectrum)
