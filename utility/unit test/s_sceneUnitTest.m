@@ -29,7 +29,7 @@ sceneCreate('reflectance chart');
 sceneCreate('lstar');
 
 % Rings and Rays
-radF = 24; imSize = 256;
+radF = 24; imSize = 128;
 sceneCreate('mackay', radF, imSize);
 sceneCreate('rings rays');
 
@@ -50,23 +50,23 @@ period = 16; spacing = 8; spectralType = 'ep';
 sceneCreate('checkerboard',period,spacing,spectralType);
 
 % Single line
-imageSize = 128; 
+imageSize = 64; 
 sceneCreate('lined65', imageSize);
 
 % Slanted Bar
-imageSize = 128; edgeSlope = 1.3;
+imageSize = 64; edgeSlope = 1.3;
 sceneCreate('slantedBar', imageSize, edgeSlope);
 
 % Grid Lines
-imageSize = 128; pixelsBetweenLines = 16;
+imageSize = 64; pixelsBetweenLines = 16;
 sceneCreate('grid lines',imageSize,pixelsBetweenLines);
 
 % Point Array
-imageSize = 256; pixelsBetweenPoints = 32;
+imageSize = 64; pixelsBetweenPoints = 8;
 sceneCreate('point array', imageSize, pixelsBetweenPoints);
 
 % Uniform Field
-sz = 128; wavelength = 380:10:720;
+sz = 64; wavelength = 380:10:720;
 sceneCreate('uniformEESpecify', sz, wavelength);
 
 % vernier
