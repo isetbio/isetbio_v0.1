@@ -10,7 +10,7 @@ try
     % This file should be in isetbio_root_path/utility/unit test
     cd ../../
     addpath(genpath(isetbioRootPath));
-    s_sceneUnitTest;
+    s_sceneUnitTest; % scene test
     exit(0);
 catch err
     setenv('error_message', err.message);
