@@ -39,47 +39,11 @@ opticsModel = oiGet(oi, 'optics model');
 
 switch lower(opticsModel)
     case {'skip','skipotf'}
-        return;
-        
-    case {'dlmtf','diffractionlimited'}
-        oi = oiApplyOTF(oi,scene);
-        
-    case {'shiftinvariant','custom','humanotf'}
-        try
-        imSize   = oiGet(oi,'size');
-        sDist = sceneGet(scene,'distance');
-        oi = oiPad(oi, [round(imSize/8) 0], sDist);
-        
-        optics = oiGet(oi, 'optics');
-        fSupport = oiGet(oi,'frequencysupport', 'mm');
-        gFx = gpuArray(fSupport(:,:,1)); gFy = gpuArray(fSupport(:,:,2));
-        otfSupport = opticsGet(optics, 'otfSupport');  
-        [X, Y]     = meshgrid(otfSupport{1}, otfSupport{2});
-        
-        wave = oiGet(oi, 'wave');
-        p    = oiGet(oi, 'photons');
-        
-        % c    = 683 * oiGet(oi, 'binWidth') * vcConstants('h') * vcConstants('c') * 1e9;
-        % illuminance = gpuArray.zeros(oiGet(oi, 'size'));
-        % fName = fullfile(isetRootPath,'data','human','luminosity.mat');
-        % V = ieReadSpectra(fName,wave);
-        
-        for ii = 1 : length(wave)
-            img = gpuArray(p(:,:,ii));
-            OTF2D = opticsGet(optics, 'otfData', wave(ii));
-            otf = ifftshift(interp2(X, Y, fftshift(OTF2D), gFx, gFy, 'linear',0));
-            imgFFT = fft2(fftshift(img));
-            filteredIMG = abs(ifftshift(ifft2(otf .* imgFFT)));
-            p(:,:,ii) = gather(filteredIMG);
-            
-            % illuminance = illuminance + filteredIMG*V(ii)*c/wave(ii);
-        end
-        oi = oiSet(oi, 'photons', p);
-        % oi = oiSet(oi, 'illuminance', gather(illuminance));
-        catch
-            disp('GPU Computing Failed. Try using old code');
-            oi = oiApplyOTF(oi,scene,'mm');
-        end
+        return    
+    case {'dlmtf', 'diffractionlimited'}
+        oi = oiApplyOTF(oi, scene);    
+    case {'shiftinvariant', 'custom', 'humanotf'}
+        oi = oiApplyOTF(oi, scene, 'mm');
     otherwise
         error('Unknown OTF method');
 end
@@ -104,15 +68,15 @@ function oi = oiApplyOTF(oi,scene,unit)
 
 if notDefined('unit'), unit = 'cyclesPerDegree'; end
 
-wave = oiGet(oi,'wave');
+wave = oiGet(oi, 'wave');
 
 % Pad the optical image to allow for light spread.  Also, make sure the row
 % and col values are even.
-imSize   = oiGet(oi,'size');
+imSize   = oiGet(oi, 'size');
 padSize  = round(imSize/8);
 padSize(3) = 0;
-sDist = sceneGet(scene,'distance');
-oi = oiPad(oi,padSize,sDist);
+sDist = sceneGet(scene, 'distance');
+oi = oiPad(oi, padSize, sDist);
 
 % See s_FFTinMatlab to understand the logic of the operations here.
 % We used to do this one wavelength at a time.  But this could cause
@@ -155,7 +119,6 @@ for ii=1:length(wave)
     % What about dmin and dmax on the 'cphotons' set.  Is that OK?
     % oi = oiSet(oi,'photons',filteredIMG,wave(ii));
     p(:,:,ii) = filteredIMG;
-    
 end
 
 % Put all the photons in at once.

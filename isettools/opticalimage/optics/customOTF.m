@@ -46,27 +46,38 @@ optics     = oiGet(oi,'optics');
 % and we have to clarify.
 % BW, 2010 May
 otfSupport = opticsGet(optics,'otfSupport');  
-[X,Y]      = meshgrid(otfSupport{1},otfSupport{2});
+[X, Y]     = meshgrid(otfSupport{1},otfSupport{2});
 
+% set interpolation method
+if ieSessionGet('gpu compute')
+    method = 'linear';
+    fx = gpuArray(fx); fy = gpuArray(fy);
+else
+    method = '*linear';
+end
 
 % Find the OTF at each wavelength. We may be interpolating from the custom
 % data.
 if isscalar(wavelength)
     % Should we be interpolating here?
-    OTF2D = opticsGet(optics,'otfData',wavelength);
+    OTF2D = opticsGet(optics, 'otfData', wavelength);
     % figure(1); mesh(X,Y,OTF2D); 
     % figure(1); mesh(X,Y,abs(OTF2D))
     
     % Do interpolation, use fftshift to take care of DC positions
-    OTF2D = ifftshift(interp2(X, Y, fftshift(OTF2D), fx, fy, '*linear',0));
+    OTF2D = ifftshift(interp2(X, Y, fftshift(OTF2D), fx, fy, method,0));
 
 else
     % Do it wavelength by wavelength
-    OTF2D = zeros(nY,nX,nWave);
+    if ieSessionGet('gpu compute')
+        OTF2D = zeros(nY, nX, nWave, 'gpuArray');
+    else
+        OTF2D = zeros(nY,nX,nWave);
+    end
     for ii=1:length(wavelength)
-        tmp = opticsGet(optics,'otfData',wavelength(ii));
+        tmp = opticsGet(optics, 'otfData', wavelength(ii));
         OTF2D(:,:,ii) = ...
-            fftshift(interp2(X, Y, fftshift(tmp), fx, fy, '*linear',0));
+            fftshift(interp2(X, Y, fftshift(tmp), fx, fy, method,0));
     end
 end
 

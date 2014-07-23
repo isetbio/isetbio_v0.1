@@ -20,14 +20,14 @@ function [otf,fSupport] = oiCalculateOTF(oi,wave,unit)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
-if notDefined('wave'), wave = sceneGet(oi, 'wave'); end
+if notDefined('wave'), wave = oiGet(oi, 'wave'); end
 if notDefined('unit'), unit = 'cyclesPerDegree'; end
 
 optics = oiGet(oi,'optics');
 opticsModel = opticsGet(optics,'model');
 
 % Retrieve the frequency support in the proper units.
-fSupport = oiGet(oi,'frequencysupport',unit);
+fSupport = oiGet(oi, 'frequencysupport',unit);
 
 switch lower(opticsModel)
     case {'dlmtf','diffractionlimited'}

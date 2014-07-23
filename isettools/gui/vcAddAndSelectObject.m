@@ -33,7 +33,10 @@ global vcSESSION;
 % vcAddAndSelectObject(scene) instead of
 % vcAddAndSelectObject('scene',scene), which was the original 
 %
-if checkfields(objType,'type'), obj = objType; objType = objType.type;  end
+if checkfields(objType,'type'), obj = objType; objType = objType.type; end
+
+% gather to avoid distributed component (e.g. gpuArray)
+obj = gatherStruct(obj);
 
 % Makes objType proper type and forces upper case.
 objType = vcEquivalentObjtype(objType);

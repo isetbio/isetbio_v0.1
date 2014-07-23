@@ -103,13 +103,17 @@ if ~isempty(photons)
         newPhotons = XW2RGBFormat(newPhotons,row,col);
     else
         % Big data set condition, so we loop down the rows
-        newPhotons = zeros(r,c,length(waveSpectrum.wave));
+        if ieSessionGet('gpu compute')
+            newPhotons = zeros(r,c,length(waveSpectrum.wave), 'gpuArray');
+        else
+            newPhotons = zeros(r,c,length(waveSpectrum.wave));
+        end
         for rr=1:r
             % Get a row
             pRow = squeeze(photons(rr,:,:))';
             % Interpolate all the columns in that row and put it in place
             newPhotons(rr,:,:) = interp1(curWave(:),pRow,...
-                waveSpectrum.wave(:),'linear')';
+                waveSpectrum.wave(:), 'linear')';
         end
     end
     

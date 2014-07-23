@@ -105,11 +105,12 @@ switch param
         end
         
     % Matlab setpref/getpref 
-    case {'detlafontsize','fontsize','fontincrement','increasefontsize','fontdelta','deltafont'}
-        % This value determines whether we change the font size in every window
-        % by this increment, calling ieFontChangeSize when the window is
-        % opened.
-        % if checkfields(vcSESSION,'FONTSIZE'), val = vcSESSION.FONTSIZE;  end
+    case {'detlafontsize', 'fontsize', 'fontincrement', ...
+            'increasefontsize', 'fontdelta', 'deltafont'}
+        % This value determines whether we change the font size in every
+        % window by this increment, calling ieFontChangeSize when the
+        % window is opened. if checkfields(vcSESSION,'FONTSIZE'), val =
+        % vcSESSION.FONTSIZE;  end
         isetPref = getpref('ISET');
         if ~isempty(isetPref)
             if checkfields(isetPref,'fontDelta'), val = isetPref.fontDelta; 
@@ -118,17 +119,18 @@ switch param
             val = 0; 
         end
         if isempty(val), val = 0; end
-        %     case {'whitepoint'}
-        %         % The white point default is equal photon maps to (1,1,1)
-        %         % You can set to equal energy ('ee') or Daylight 6500 (d65).
-        %         isetPref = getpref('ISET');
-        %         if ~isempty(isetPref)
-        %             if checkfields(isetPref,'whitePoint'), val = isetPref.whitePoint;
-        %             else val = 'ep';
-        %             end
-        %         else
-        %             val = 'ep';  % Equal photon
-        %         end
+%     case {'whitepoint'}
+%         % The white point default is equal photon maps to (1,1,1)
+%         % You can set to equal energy ('ee') or Daylight 6500 (d65).
+%         isetPref = getpref('ISET');
+%         if ~isempty(isetPref)
+%             if checkfields(isetPref,'whitePoint')
+%                 val = isetPref.whitePoint;
+%             else val = 'ep';
+%             end
+%         else
+%             val = 'ep';  % Equal photon
+%         end
         
     case {'waitbar'}
         % Used to decide whether we show the waitbars.
@@ -147,8 +149,14 @@ switch param
             vcSESSION.GUI.waitbar = val;
         end
         
-        
-        
+    case {'gpu', 'gpucompute', 'gpucomputing'}
+        if isfield(vcSESSION, 'GPUCOMPUTE')
+            val = vcSESSION.GPUCOMPUTE;
+        else % do a simple test here
+            val = true;
+            try gpuArray(0); catch, val = false; end
+            vcSESSION.GPUCOMPUTE = val;
+        end
     case {'graphwinstructure'}
         val = vcSESSION.GRAPHWIN;
     case {'graphwinfigure'}
@@ -176,7 +184,7 @@ switch param
     case {'ipguidata','vciguidata','vciwindowhandle','vcimagehandle','vcimagehandles','processorwindowhandles','processorhandles','processorhandle','processorimagehandle'}
         v = ieSessionGet('vcimagefigure');
         if ~isempty(v), val = guihandles(v); end
-    case {'metricguidata','metricshandle','metricshandles','metricswindowhandles','metricswindowhandles','metricswindowhandle'}
+    case {'metricguidata','metricshandle','metricshandles','metricswindowhandles','metricswindowhandle'}
         v = ieSessionGet('vcimagefigure');
         if ~isempty(v), val = guihandles(v); end
         
@@ -204,7 +212,7 @@ switch param
             val = vcSESSION.GUI.vcImageWindow.hObject;
         end
         
-    case {'metricsfigure','metricswindow','metricswindow','metricsfigures'}
+    case {'metricsfigure','metricswindow','metricsfigures'}
         if checkfields(vcSESSION,'GUI','metricsWindow')
             val = vcSESSION.GUI.metricsWindow.hObject;
         end
