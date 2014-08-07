@@ -30,7 +30,7 @@ if isstruct(obj)
     for ii = 1:length(fNames)
         obj.(fNames{ii}) = gatherStruct(obj.(fNames{ii}));
     end
-else
+elseif isa(obj, 'gpuArray')
     obj = gather(obj);
 end
 
