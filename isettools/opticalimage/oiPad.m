@@ -38,6 +38,8 @@ photons = oiGet(oi,'photons');
 % mean of the data
 if isa(photons, 'gpuArray')
     padval = gather(mean(photons(:)));
+else
+    padval = mean(photons(:));
 end
 
 try
