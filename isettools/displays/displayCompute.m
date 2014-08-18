@@ -52,13 +52,19 @@ if isempty(psfs), error('psf not defined for display'); end
 if ~exist('s', 'var'), s = size(psfs, 1); end
 psfs = imresize(psfs, [s s]);
 
+% crop psfs to be greater than 0
+psfs(psfs < 0) = 0;
+
 % If a single matrix, assume it is gray scale
 if ismatrix(I), I = repmat(I, [1 1 nPrimary]); end
 
 % Expand the image so there are s samples within each of the pixels,
 % allowing a representation of the psf.
 [M,N,~] = size(I);
-outImage = imresize(I, s, 'cubic');
+outImage = imresize(I, s, 'nearest');
+
+% crop outImage
+outImage(outImage < 0) = 0;
 
 % 
 outImage = outImage .* repmat(psfs, [M N 1]);

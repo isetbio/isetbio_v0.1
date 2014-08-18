@@ -99,6 +99,13 @@ switch lower(imType)
         % Replace default with white point
         il    = illuminantSet(il,'energy',sum(d.spd,2));
         scene = sceneSet(scene, 'illuminant', il);
+        
+        % Set viewing distance
+        scene = sceneSet(scene, 'distance', displayGet(d, 'distance'));
+        
+        % Set field of view
+        imgFov = size(I, 2)*displayGet(d, 'deg per dot');
+        scene  = sceneSet(scene, 'h fov', imgFov);
     case {'multispectral','hyperspectral'}
         if ~ischar(I), error('File name required for multispectral'); end
         if notDefined('wList'), wList = []; end

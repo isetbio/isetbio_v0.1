@@ -237,6 +237,13 @@ switch parm
         degPerPixel = atand(mpd / dist);
         val = round(1/degPerPixel);
         
+    case {'degperpixel', 'degperdot'}
+        % degrees per pixel
+        % displayGet(d, 'deg per dot')
+        mpd = displayGet(d,'meters per dot');                      
+        dist = displayGet(d,'Viewing Distance');  % Meters
+        val = atand(mpd / dist);
+        
     case {'viewingdistance', 'distance'}
         % Viewing distance in meters
         if checkfields(d,'dist'), val = d.dist;
