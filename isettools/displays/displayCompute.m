@@ -58,7 +58,7 @@ if ismatrix(I), I = repmat(I, [1 1 nPrimary]); end
 % Expand the image so there are s samples within each of the pixels,
 % allowing a representation of the psf.
 [M,N,~] = size(I);
-outImage = imresize(I, s, 'nearest');
+outImage = imresize(I, s, 'cubic');
 
 % 
 outImage = outImage .* repmat(psfs, [M N 1]);

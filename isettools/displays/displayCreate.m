@@ -87,7 +87,7 @@ if length(varargin) >= 1
     d = displaySet(d,'spd',newSpd);
 end
 
-return
+end
 
 % Create a default display structure
 function d = displayDefault(d)
@@ -99,8 +99,8 @@ spd = pinv(colorBlockMatrix(length(wave)));
 d = displaySet(d,'wave',wave);
 d = displaySet(d,'spd',spd);
 
-% Linear gamma function - do we need an inverse?  Should default be sRGB?
-N = displayGet(d,'nLevels'); 
+% Linear gamma function
+N = 256; % 8 bit display
 g = repmat((0:(N-1))'/N,1,3);
 d = displaySet(d,'gamma',g);  % From digital value to linear intensity
 
@@ -108,10 +108,4 @@ d = displaySet(d,'gamma',g);  % From digital value to linear intensity
 d.dpi = 96;    % Typical display density?  This might be a little low
 d.dist = 0.5;  % Typical viewing distance, 19 inches
 
-return
-
-
-
-
-
-
+end
