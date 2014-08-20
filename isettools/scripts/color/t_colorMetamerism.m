@@ -31,7 +31,7 @@ meanLMS = mean(RGB2XWFormat(lms));
 
 % Load a display and use the display primaries as a set of basis functions
 % for the metameric light.
-d    = displayCreate('lcdExample');
+d    = displayCreate('LCD-Apple');
 wave = sceneGet(uS,'wave');
 displaySPD = displayGet(d,'spd',wave);
 

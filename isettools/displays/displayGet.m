@@ -164,16 +164,21 @@ switch parm
         % The matrix is scaled so that L+M of white equals Y of white.
         %
         % RGB as a column vector mapped to LMS column
-        % c(:)' = r(:)' * rgb2lms
-        % Hence:  imageLinearTransform(img,rgb2lms)  should work.
+        %
+        %     c(:)' = r(:)' * rgb2lms
+        % We do this so we can use the routine:
+        %
+        %   imageLinearTransform(img,rgb2lms)
+        %
         wave = displayGet(d,'wave');
-        coneFile = fullfile(isetRootPath,'data','human','SmithPokornyCones');
+        coneFile = fullfile(isetRootPath,'data','human','Stockman');
         cones = ieReadSpectra(coneFile,wave);   % plot(wave,spCones)
-        spd = displayGet(d,'spd',wave);     % plot(wave,displaySPD)
+        spd = displayGet(d,'spd',wave);         % plot(wave,displaySPD)
         val = cones'* spd;                  
         val = val';
         
-        % Scaled so that sum L and M values sum to Y-value of white
+        % Scale the transform so that sum L and M values sum to Y-value of
+        % white 
         e = displayGet(d,'white spd',wave);
         whiteXYZ = ieXYZFromEnergy(e',wave);
         whiteLMS = ones(1,3)*val;

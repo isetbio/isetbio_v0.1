@@ -1,6 +1,15 @@
 function val = coneGet(cone, param, varargin)
-%% function coneGet(cone, params, [varargin])
-%    Get properties from cones
+% Get cone-specific properties
+%
+%    val = coneGet(cone, param, varargin)
+%
+%  The cone properties do not include inert pigments or lens transmittance.
+%  Those are accounted for as part of the sensor structure (sensorGet).
+%  The information about the lens macular and cone are stored in the slot
+%  sensor.human.
+%
+%  Thus, to determine the spectral quantum efficiency of the cones in the
+%  context of the eye, use sensorGet. 
 %
 %  Inputs:
 %    cone     - cone structure, created by coneCreate
@@ -33,7 +42,7 @@ function val = coneGet(cone, param, varargin)
 %    expTime = coneGet(cone, 'species');
 %
 %  See also:
-%    coneSet, coneCreate
+%    coneSet, coneCreate,  sensorGet(sensor,'spectral qe');
 %
 %  TODO:
 %    For most parameters, we should accept a third parameter as wavelength
