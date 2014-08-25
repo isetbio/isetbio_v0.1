@@ -205,12 +205,13 @@ switch typeAdapt
         smax = eta/phi * gdark * (1 + (cdark / kGc)^n);
         
         photons = volts / sensorGet(sensor, 'conversion gain');
+        photons = photons / sensorGet(sensor, 'exposure time');
         dt = sensorGet(sensor, 'timeInterval');
         
         % Compute background adaptation parameters
         bgR = bgVolts / sensorGet(sensor, 'conversion gain');
         bgCur = fminbnd(@(x) abs(x - k*beta*cdark*smax^h * phi^h / ...
-                    (r/sigma + eta)^h / (beta*cdark + q*x) / ...
+                    (bgR/sigma + eta)^h / (beta*cdark + q*x) / ...
                     (1 + (q*x/beta/kGc)^n)^h), 0, 1000);
         
         % Compute starting values
@@ -222,13 +223,15 @@ switch typeAdapt
         cGMP    = st * phi ./ (opsin + eta);
         
         % simulate differential equtions
+        adaptedData = zeros([size(opsin) size(volts, 3)]);
         for ii = 1 : size(volts, 3)
            opsin = opsin + dt * (photons(:,:,ii) - sigma * opsin);
            PDE   = PDE   + dt * (opsin + eta - phi * PDE);
            Ca    = Ca    + dt * (q*k * cGMP.^h./(1+Ca_slow/cdark)-beta*Ca);
            st    = smax ./ (1 + (Ca / kGc).^n);
-           cGMP  = cGMP  + dt * (st - PDE * cGMP);
+           cGMP  = cGMP  + dt * (st - PDE .* cGMP);
            Ca_slow = Ca_slow - dt * betaSlow * (Ca_slow - Ca);
+           adaptedData(:,:,ii) = - k * cGMP.^h ./ (1 + Ca_slow / cdark);
         end
         
         % Set back
@@ -237,7 +240,7 @@ switch typeAdapt
         gainMap = [];
         bgVolts = [];
         
-        adaptedData = k * cGMP.^h ./ (1 + Ca_slow / cdark); % actually cur
+         % adapt cur
         
     otherwise
         error('unknown adaptation type');
