@@ -141,7 +141,7 @@ function [scene,parms] = sceneCreate(sceneName,varargin)
 %      {'linearIntensityRamp'}  -
 %      {'uniformEqualEnergy'}   - Equal energy
 %      {'uniformEqualPhoton'}   - Equal photon density
-%      {'uniformd bb'}          - Blackbody, uniform
+%      {'uniform bb'}           - Blackbody, uniform
 %      {'whitenoise'}           - Noise pattern for testing
 %
 %    The uniform patterns are small by default (32,32).  If you would like
