@@ -60,6 +60,8 @@ end
 fprintf('\n');
 
 sensor = sensorSet(sensor, 'volts', volts);
+stimulus = stimulus / sensorGet(sensor, 'conversion gain') /...
+                sensorGet(sensor, 'exp time');
 
 %% Compute adapated current
 [~, cur] = coneAdapt(sensor, 4);
