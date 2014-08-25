@@ -36,8 +36,9 @@ volts = zeros([sensorGet(sensor, 'size') nSteps]);
 stimulus = zeros(1, nSteps);
 
 % compute cone absorptions for each ms
+fprintf('Computing cone isomerization:   ');
 for t = 1 : nSteps
-    fprintf('Computing cone isomerization: %.2f...\n', t/nSteps);
+     fprintf('\b\b\b%02d%%', round(100*t/nSteps));
     if t < nSteps / 2
         % Adjust scene according to time dependence
         % params.ph = t / 666 * pi;
@@ -56,6 +57,8 @@ for t = 1 : nSteps
     volts(:,:,t) = sensorGet(sensor, 'volts');
     stimulus(t)  = median(median(volts(:,:,t)));
 end
+fprintf('\n');
+
 sensor = sensorSet(sensor, 'volts', volts);
 
 %% Compute adapated current
