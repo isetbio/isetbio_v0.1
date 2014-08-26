@@ -40,11 +40,11 @@ function [sensor, adaptedData] = coneAdapt(sensor, typeAdapt, params)
 %           1 = a single gain map for the whole cone array
 %           2 = one gain map computed for each cone class
 %           3 = non-linear adaptation
-%           4 = cone by cone adaptation (NYI)
+%           4 = cone adaptation by physiological differential equation
 %  params     - Cone adaptation parameters, could include
 %    .bgVolts = background voltage
 %    .vSwing  = maximum volts response
-%    
+%
 %
 % Output:
 %   sensor      - ISETBio sensor with cone adaptation parameters set. The
@@ -89,7 +89,7 @@ if isfield(params, 'bgVolts')
 else
     bgVolts = median(volts(:));
 end
-    
+
 switch typeAdapt
     case 0 % no adaptation
         gainMap = 1;
@@ -151,7 +151,7 @@ switch typeAdapt
         %   Also, by this method, the adapted cone volts are still positive
         %   This is different from the previous two method
         %
-        % (HJ) May, 2014
+        % (HJ) ISETBIO TEAM, 2014
         
         % Check inputs
         if ~isscalar(bgVolts), error('bgVolts should be scalar'); end
@@ -174,6 +174,74 @@ switch typeAdapt
         % Set gain map and offset
         gainMap = adaptedData ./ volts;
         bgVolts = 0; % We don't have an actual offset
+    case 4
+        % In this case, the physiological differential equations for cones
+        % are implemented. The differential equations are:
+        %    1) d opsin(t) / dt = -sigma * opsin(t) + R*(t)
+        %    2) d PDE(t) / dt = opsin(t) - phi * PDE(t) + eta
+        %    3) d cGMP(t) / dt = S(t) - PDE(t) * cGMP(t)
+        %    4) d Ca(t) / dt = q * I(t) - beta * Ca(t)
+        %    5) d Ca_slow(t) / dt = - beta_slow * (Ca_slow(t) - Ca(t))
+        %    6) S(t) = smax / (1 + (Ca(t)/kGc)^n)
+        %    7) I(t) = k * cGMP(t)^h / (1 + Ca_slow/Ca_dark)
+        %
+        % This model gives a cone-by-cone adaptation and it requires a
+        % time-series data in sensor structure
+        
+        % Set parameter values
+        sigma = 100;  % rhodopsin activity decay rate (1/sec)
+        phi = 50;     % phosphodiesterase activity decay rate (1/sec)
+        eta = 100;	  % phosphodiesterase activation rate constant (1/sec)
+        gdark = 35;	  % concentration of cGMP in darkness
+        k = 0.02;     % constant relating cGMP to current
+        cdark = 0.5;  % dark calcium concentration
+        beta = 50;	  % rate constant for calcium removal in 1/sec
+        betaSlow = 2;
+        n = 4;  	  % cooperativity, hill coef
+        kGc = 0.35;   % hill affinity
+        h = 3;
+        
+        q    = 2 * beta * cdark / (k * gdark^h);
+        smax = eta/phi * gdark * (1 + (cdark / kGc)^n);
+        
+        photons = volts / sensorGet(sensor, 'conversion gain');
+        photons = photons / sensorGet(sensor, 'exposure time');
+        dt = sensorGet(sensor, 'timeInterval');
+        
+        % Compute background adaptation parameters
+        bgR = bgVolts / sensorGet(sensor, 'conversion gain');
+        bgCur = fminbnd(@(x) abs(x - k*beta*cdark*smax^h * phi^h / ...
+                    (bgR/sigma + eta)^h / (beta*cdark + q*x) / ...
+                    (1 + (q*x/beta/kGc)^n)^h), 0, 1000);
+        
+        % Compute starting values
+        opsin   = ones(sensorGet(sensor, 'size')) * bgR / sigma;
+        PDE     = (opsin + eta) / phi;
+        Ca      = ones(sensorGet(sensor, 'size')) * bgCur * q / beta;
+        Ca_slow = Ca;
+        st      = smax ./ (1 + (Ca / kGc).^n);
+        cGMP    = st * phi ./ (opsin + eta);
+        
+        % simulate differential equtions
+        adaptedData = zeros([size(opsin) size(volts, 3)]);
+        for ii = 1 : size(volts, 3)
+           opsin = opsin + dt * (photons(:,:,ii) - sigma * opsin);
+           PDE   = PDE   + dt * (opsin + eta - phi * PDE);
+           Ca    = Ca    + dt * (q*k * cGMP.^h./(1+Ca_slow/cdark)-beta*Ca);
+           st    = smax ./ (1 + (Ca / kGc).^n);
+           cGMP  = cGMP  + dt * (st - PDE .* cGMP);
+           Ca_slow = Ca_slow - dt * betaSlow * (Ca_slow - Ca);
+           adaptedData(:,:,ii) = - k * cGMP.^h ./ (1 + Ca_slow / cdark);
+        end
+        
+        % Set back
+        % Currently, there's no space for temporally varying adaptation
+        % data. Thus, we just return back the adapted volts
+        gainMap = [];
+        bgVolts = [];
+        
+         % adapt cur
+        
     otherwise
         error('unknown adaptation type');
 end
