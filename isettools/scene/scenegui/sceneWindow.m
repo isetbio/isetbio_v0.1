@@ -52,11 +52,6 @@ if ~sceneOpen(hObject,eventdata,handles),
 else sceneRefresh(hObject, eventdata, handles); 
 end
 
-% Initialize gamma. There are other initialization steps in sceneOpen
-% Deleted Dec. 2013.  Doesn't seem to be needed and interferes with
-% sceneSet(scene,'gamma',val)
-% sceneSet(handles.editGamma,'String',num2str(1));
-
 return
 
 % --- Outputs from this function are returned to the command line.
