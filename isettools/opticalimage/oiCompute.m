@@ -57,7 +57,7 @@ function oi = oiCompute(scene,oi,opticsModel)
 % Copyright ImagEval Consultants, LLC, 2005
 
 if notDefined('scene'), error('Scene required.'); end
-if notDefined('oi'), error('Opticalimage required.'); end
+if notDefined('oi'), error('Optical image required.'); end
 if strcmp(oi.type,'scene') && strcmp(scene.type,'opticalimage')
     % disp('oiCompute: flipping arguments')
     tmp = scene; scene = oi; oi = tmp; clear tmp
