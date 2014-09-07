@@ -1,3 +1,29 @@
+%% TODO
+%
+% Make v_ptbIsetbioIrradiance a function within this file,
+% and then have a top level function that uses the validation
+% object to call/validate it.
+%
+% Probably validation scripts should not make plots unless a flag
+% is set.  That's because plotting is slow and we want validations
+% to be quick.  So there should be some sort of DO_PLOTS flag.  The
+% plots are useful when writing the validation scripts, and will also
+% be useful if the validations ever fail.
+%
+% Default for running a validation script should be for it not to
+% ask anything.  But there needs to be some standard way to have it
+% be told to save its data out for future validation.
+%
+% When a script tests multiple things, probably it should run them
+% all and then give a full report at the end.  So we want a clean
+% convention about what the subfunction will return (a results structure?)
+% and then have the calling function at the top print out a helpful table
+% of what happened.
+%
+% We want a nice system to generate documentation of what validation scripts
+% there are, somewhat like the color book example.
+
+
 %% v_ptbIsetbioIrradiance
 %
 % Compare radiance to irradiance in PTB and Isetbio.
