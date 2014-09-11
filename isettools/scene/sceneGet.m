@@ -624,8 +624,7 @@ switch parm
         val = imageSPD(photons,wList,gam,row,col,displayFlag);
         
     otherwise
-        disp(['Unknown parameter: ',parm]);
-        
+        error('Unknown parameter: %s\n',parm);
  end
 
 return;
