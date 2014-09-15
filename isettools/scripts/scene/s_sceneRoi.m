@@ -16,18 +16,24 @@ w = sceneGet(scene,'wave');
 sz = sceneGet(scene,'size');
 roi = round( [sz(1)/2, sz(2), 10, 10]);
 p = sceneGet(scene,'roi photons',roi);
+meanP = sceneGet(scene, 'roi mean photons', roi);
 
 vcNewGraphWin;
 plot(w,p);
+hold on;
+plot(w, meanP, 'r-', 'LineWidth', 2.0);
 xlabel('Wavelength (nm)');
 ylabel('Photons/s/sr/nm/m^2');
 grid on
 
 %% Energy
 e = sceneGet(scene,'roi energy',roi);
+meanE = sceneGet(scene, 'roi mean energy', roi);
 
 vcNewGraphWin;
 plot(w,e);
+hold on;
+plot(w, meanE, 'r-', 'LineWidth', 2.0)
 xlabel('Wavelength (nm)');
 ylabel('Watts/s/sr/nm/m^2');
 grid on
@@ -35,6 +41,7 @@ grid on
 %% Reflectance as XW matrix, but derived here
 photons       = sceneGet(scene,'roi photons', roi);
 illuminantSPD = sceneGet(scene,'roi illuminant photons',roi);
+meanIlluminantSPD = sceneGet(scene,'roi mean illuminant photons',roi);
 reflectance   = photons ./ illuminantSPD;
 
 vcNewGraphWin;
@@ -76,6 +83,8 @@ grid on
 %% Mean illuminant in an ROI
 
 illuminantSPD = sceneGet(scene,'roi illuminant photons',roi);
+meanIlluminantSPD = sceneGet(scene,'roi mean illuminant photons',roi);
+
 
 vcNewGraphWin;
 plot(w,illuminantSPD);
