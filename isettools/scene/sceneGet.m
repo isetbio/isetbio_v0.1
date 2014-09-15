@@ -57,6 +57,9 @@ function val = sceneGet(scene,parm,varargin)
 %                               The region can be a rect or xy locs
 %        {'roi energy'}   - as above, but energy
 %        {'roi reflectance'} - as above, but reflectance
+%        {'roi mean energy'}        - energy spd averaged within a region of interest 
+%        {'roi mean photons'}       - photons spd averaged within in a region of interest 
+%        {'roi mean reflectance'}   - reflectance spd averaged within in a region of interest 
 %
 %  Luminance and other colorimetric properties
 %        {'meanluminance'}  - mean luminance
@@ -107,6 +110,8 @@ function val = sceneGet(scene,parm,varargin)
 %        {'illuminant wave'}    - wavelength samples - deprecated to wave
 %        {'illuminant comment'} - comment
 %        {'illuminant format'}  - 'spatial spectral' or 'spectral'
+%        {'roi illuminant photons'}        - illuminant photon spd in a region of interest 
+%        {'roi mean illuminant photons'}   - illuminant photon spd averaged within in a region of interest 
 %
 % Display
 %      {'rgb image'}  - RGB image of the scene display
