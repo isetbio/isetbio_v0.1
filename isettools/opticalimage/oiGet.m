@@ -57,17 +57,19 @@ function val = oiGet(oi,parm,varargin)
 %      {'centerpixel'}    - (row,col) of point at center of image
 %
 % Irradiance
-%      {'data'}            - Data structure
-%        {'photons'}       - Irradiance data
-%        {'photons noise'} - Irradiance data with photon noise
-%        {'data max'}     - Used for compression, not for general users
-%        {'data min''}    - Used for compression, not for general users
-%        {'bit depth''}   - Used for compression, not for general users
-%        {'energy'}       - Energy rather than photon representation
-%        {'energy noise'} - Energy with photon noise
-%        {'mean illuminance'}  - Mean illuminance
-%        {'illuminance'}      - Spatial array of optical image illuminance
-%        {'xyz'}         - (row,col,3) image of the irradiance XYZ values
+%      {'data'}                 - Data structure
+%        {'photons'}            - Irradiance data
+%        {'photons noise'}      - Irradiance data with photon noise
+%        {'data max'}           - Used for compression, not for general users
+%        {'data min''}          - Used for compression, not for general users
+%        {'bit depth''}         - Used for compression, not for general users
+%        {'energy'}             - Energy rather than photon representation
+%        {'roi energy'}         - Energy of the points in a region of interest
+%        {'roi mean energy'}    - Energy of the points averaged within in a region of interest
+%        {'energy noise'}       - Energy with photon noise
+%        {'mean illuminance'}   - Mean illuminance
+%        {'illuminance'}        - Spatial array of optical image illuminance
+%        {'xyz'}                - (row,col,3) image of the irradiance XYZ values
 %
 % Wavelength information
 %      {'spectrum'}     - Wavelength information structure
@@ -351,6 +353,7 @@ switch parm
         end
     case {'bitdepth','compressbitdepth'}
         if checkfields(oi,'data','bitDepth'), val = oi.data.bitDepth; end
+        
     case 'energy'
         % Compute energy from photons
         if checkfields(oi, 'data', 'photons')
@@ -358,6 +361,20 @@ switch parm
             val = Quanta2Energy(wave, oi.data.photons);
         end
         
+    case 'roienergy'
+       if isempty(varargin), error('ROI required')
+       else roiLocs = varargin{1};
+       end
+       val = vcGetROIData(oi,roiLocs,'energy');
+    
+        
+    case 'roimeanenergy'
+       if isempty(varargin), error('ROI required')
+       else roiLocs = varargin{1};
+       end
+       val = oiGet(oi,'roienergy', roiLocs);
+       val = mean(val,1);
+       
     case {'meanilluminance','meanillum'}
         % Get / compute mean illuminance
         if notDefined('oi.data.illuminance')
