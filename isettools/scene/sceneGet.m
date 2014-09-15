@@ -255,6 +255,15 @@ switch parm
         end
         val = vcGetROIData(scene,roiLocs,'photons');
         
+    case {'roimeanphotons'}
+        % sceneGet(scene,'roi mean photons', roi)
+        % Return the mean photon spd in a region of interest
+        if isempty(varargin), error('ROI required')
+        else roiLocs = varargin{1};
+        end
+        val = sceneGet(scene,'roi photons', roiLocs);
+        val = mean(val,1);
+        
     case {'reflectance'}
         % Divide the scene photons by the illuminant photons to derive
         % scene reflectance.  This is for the whole scene.
@@ -281,39 +290,6 @@ switch parm
             otherwise
                 val = [];
                 disp('No illuminant data');
-        end
-        
-    case {'roimeanreflectance'}
-        % sceneGet(scene,'roi mean reflectance',roi);
-        %
-        % roi can be roiLocs or a roi rect
-        %
-        % Return the mean reflectance in a region of interest
-        
-        if isempty(varargin), error('ROI required');
-        else roiLocs = varargin{1};
-        end
-        
-        sPhotons = vcGetROIData(scene,roiLocs,'photons');
-        
-        % This is a trick way (ugh) to get the illuminant photons in a ROI
-        illuminantSPD = sceneGet(scene,'illuminant photons');
-        if isempty(illuminantSPD), error('No illuminant data'); end
-        
-        illF = sceneGet(scene,'illuminant format');
-        switch illF
-            case 'spatial spectral'
-                % Use scene tools to extract the relevant portion of the
-                % illuminantSPD
-                scene = sceneSet(scene,'photons',illuminantSPD);
-                illuminantSPD = vcGetROIData(scene,roiLocs,'photons');
-                val = sPhotons ./ illuminantSPD;
-                val = mean(val,1);
-            case 'spectral'
-                val = sPhotons*diag(1./illuminantSPD);
-                val = mean(val);
-            otherwise
-                error('Unknown illuminant format %s\n',illF);
         end
         
     case {'roireflectance'}
@@ -346,6 +322,16 @@ switch parm
             otherwise
                 error('Unknown illuminant format %s\n',illF);
         end
+    
+    case {'roimeanreflectance'}
+        % sceneGet(scene,'roi mean reflectance', roi)
+        %
+        % Return the mean reflectance spd in a region of interest
+        if isempty(varargin), error('ROI required')
+        else roiLocs = varargin{1};
+        end
+        val = sceneGet(scene,'roi reflectance', roiLocs);
+        val = mean(val,1);
         
     case {'peakradiance'}
         % p = sceneGet(scene,'peakRadiance',500);
@@ -402,6 +388,7 @@ switch parm
             val = Quanta2Energy(thisWave,XW);
             val = XW2RGBFormat(val,r,c);
         end
+        
     case {'roienergy'}
         % sceneGet(scene,'energy roi',rectOrlocs);
         % Read photon spd from a region of interest. Data are returned as
@@ -415,6 +402,16 @@ switch parm
         else roiLocs = varargin{1};
         end
         val = vcGetROIData(scene,roiLocs,'energy');
+       
+    case {'roimeanenergy'}
+        % sceneGet(scene,'roi mean energy', roi)
+        % Return the mean energy spd in a region of interest
+        if isempty(varargin), error('ROI required')
+        else roiLocs = varargin{1};
+        end
+        val = sceneGet(scene,'roi energy', roiLocs);
+        val = mean(val,1);
+        
         
     case {'meanenergyspd'}
         % sceneGet(scene,'mean energy spd')
@@ -635,6 +632,7 @@ switch parm
         % The data field is has illuminant in photon units.
         il = sceneGet(scene,'illuminant');
         val = illuminantGet(il,'photons');
+        
     case {'roiilluminantphotons'}
         % sceneGet(scene,'roi illuminant photons',roi)
         % roi is either roiLocs or roi rect
@@ -647,6 +645,16 @@ switch parm
         else roi = varargin{1};
         end
         val = vcGetROIData(scene,roi,'illuminant photons');
+        
+    case {'roimeanilluminantphotons'}
+        % sceneGet(scene,'roi mean illuminant photons', roi)
+        % Return the mean illuminant photon spd in a region of interest
+        if isempty(varargin), error('ROI required')
+        else roiLocs = varargin{1};
+        end
+        val = sceneGet(scene,'roi illuminant photons', roiLocs);
+        val = mean(val,1);
+        
         
     case {'illuminantenergy'}
         % The data field is has illuminant in standard energy units.  We
