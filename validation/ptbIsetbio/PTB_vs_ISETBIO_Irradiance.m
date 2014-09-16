@@ -1,42 +1,18 @@
-function validate_PTB_ISETBIO_Irradiance()
-
-    % Initialize a @UnitTest object to handle the results
-    unitTestOBJ = UnitTest(mfilename('fullpath'));
-
-    unitTestOBJ.addProbe(...
-        'name',           'PTB vs. ISETBIO irradiance compute', ...  % probe name
-        'onErrorReactBy', 'CatchingExcemption', ...         % how to react on errors in the validation script. Options are 'CatchingExcemption' or 'RethrowingExcemption'
-        'functionHandle',  @PTB_ISETBIO_Irradiance, ...     % name of the validation script
-        'functionParams',  struct(...                       % struct with input arguments expected by the validation script
-                            'fov',            20, ...   % Big field required
-                            'roiSize',         5, ...
-                            'generatePlots',   false...
-                            ) ...
-    );
-                     
-end
-
-
-function validationData = PTB_ISETBIO_Irradiance(params)
-
-    % Unload params struct with PTB_ISETBIO_Irradiance - specific params
-    fov             = params.fov;
-    roiSize         = params.roiSize;
-    generatePlots   = params.generatePlots;
+function PTB_vs_ISETBIO_Irradiance(inputParams)
+    %% Unload input params
+    fov               = inputParams.fov;
+    roiSize           = inputParams.roiSize;
     
-    % Initiate validationData struct. 
-    % We must have at least a 'report' field.
-    validationData = struct('report', 'none');
     
-    % Initialize ISETBIO
+    %% Initialize ISETBIO
     s_initISET
-
-    % Create a radiance image in ISETBIO
+    
+    %% Create a radiance image in ISETBIO
     scene = sceneCreate('uniform ee');    % Equal energy
     scene = sceneSet(scene,'name','Equal energy uniform field');
     scene = sceneSet(scene,'fov', fov);
 
-    % Compute the irradiance in ISETBIO
+    %% Compute the irradiance in ISETBIO
     %
     % To make comparison to PTB work, we turn off
     % off axis correction as well as optical blurring
@@ -54,7 +30,7 @@ function validationData = PTB_ISETBIO_Irradiance(params)
     rect = [sz(2)/2,sz(1)/2,roiSize,roiSize];
     sceneRoiLocs = ieRoi2Locs(rect);
     
-    % Get wavelength and spectral radiance spd data (averaged within the scene ROI) 
+    %% Get wavelength and spectral radiance spd data (averaged within the scene ROI) 
     wave  = sceneGet(scene,'wave');
     radiancePhotons = sceneGet(scene,'roi mean photons', sceneRoiLocs);
     radianceEnergy  = sceneGet(scene,'roi mean energy',  sceneRoiLocs); 
@@ -65,20 +41,18 @@ function validationData = PTB_ISETBIO_Irradiance(params)
     rect       = [sz(2)/2,sz(1)/2,roiSize,roiSize];
     oiRoiLocs  = ieRoi2Locs(rect);
 
-    % Get wavelength and spectral irradiance spd data (averaged within the scene ROI)
+    %% Get wavelength and spectral irradiance spd data (averaged within the scene ROI)
     wave             = oiGet(scene,'wave');
     irradianceEnergy = oiGet(oi, 'roi mean energy', oiRoiLocs);
 
-    % Compute the irradiance in PTB
-    %
-    % Get the underlying parameters that are needed from the ISETBIO structures.
+    %% Get the underlying parameters that are needed from the ISETBIO structures.
     optics = oiGet(oi,'optics');
     pupilDiameterMm  = opticsGet(optics,'pupil diameter','mm');
     focalLengthMm    = opticsGet(optics,'focal length','mm');
-
+    
+    %% Compute the irradiance in PTB
     % The PTB calculation is encapsulated in ptb.ConeIsomerizationsFromRadiance.
     % This routine also returns cone isomerizations, which we are not validating here.
-    %
     % The macular pigment and integration time parameters affect the isomerizations,
     % but don't affect the irradiance returned by the PTB routine.
     % The integration time doesn't affect the irradiance, but we
@@ -89,7 +63,6 @@ function validationData = PTB_ISETBIO_Irradiance(params)
         ptb.ConeIsomerizationsFromRadiance(radianceEnergy(:), wave(:),...
         pupilDiameterMm, focalLengthMm, integrationTimeSec,macularPigmentOffset);
     
-
     % Compare irradiances computed by ISETBIO vs. PTB
     % accounting for the magnification difference.
     % The magnification difference results from how Peter Catrysse implemented the radiance to irradiance
@@ -98,44 +71,60 @@ function validationData = PTB_ISETBIO_Irradiance(params)
     m = opticsGet(optics,'magnification',sceneGet(scene,'distance'));
     ptbMagCorrectIrradiance = ptbIrradiance(:)/(1+abs(m))^2;
     
-    % Numerical check to decide whether we passed.
+     
+    %% Numerical check to decide whether we passed.
+    % We are checking against a 1% error.
     tolerance = 0.01;
     
     ptbMagCorrectIrradiance = ptbMagCorrectIrradiance(:);
     irradianceEnergy = irradianceEnergy(:);
     difference = ptbMagCorrectIrradiance-irradianceEnergy;
-    
-    % Generate report
+   
+    %% Generate report and set the validationFailedFlag according to the results
     if (max(abs(difference./irradianceEnergy)) > tolerance)
-        error('Difference between PTB and isetbio irradiance exceeds tolerance');
+        report = sprintf('Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance. !!!');
+        validationFailedFlag = true;
     else
-        validationData.report = sprintf('Validation PASSED. PTB and isetbio agree about irradiance to %0.0f%%',round(100*tolerance));
+        report = sprintf('Validation PASSED. PTB and isetbio agree about irradiance to %0.0f%%',round(100*tolerance));
+        validationFailedFlag = false;
     end
 
-    % Add fields to validationData if we wish to save some other
-    % computations
-    validationData.roiSize = roiSize;
-    validationData.scene   = scene;
-    validationData.oi      = oi;
-     
-    if (generatePlots)
+    
+    %% Generate plots, if so specified
+    if (inputParams.generatePlots)
         figure(500);
-        subplot(1,2,1);
+        subplot(2,1,1);
         plot(wave, ptbIrradiance, 'ro', wave, irradianceEnergy, 'ko');
         set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
         legend('PTB','ISETBIO')
         xlabel('Wave (nm)'); ylabel('Irradiance (q/s/nm/m^2)')
         title('Without magnification correction');
     
-        subplot(1,2,2);
+        subplot(2,1,2);
         plot(wave,ptbMagCorrectIrradiance,'ro',wave,irradianceEnergy,'ko');
         set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
         xlabel('Wave (nm)'); ylabel('Irradiance (q/s/nm/m^2)')
         legend('PTB','ISETBIO')
         title('Magnification corrected comparison');
+    end 
+    
+    %% Call the setter method of the parent @UnitTest object to save the validation data.
+    if isfield(inputParams, 'parentUnitTestObject')
+        parentUnitTestOBJ = inputParams.parentUnitTestObject;
+        
+        % Set the validationReport and validationFailedFlag of the parent @UnitTest object
+        parentUnitTestOBJ.validationReport = report;
+        parentUnitTestOBJ.validationFailedFlag = validationFailedFlag;
+         
+        % Return any optional validationData to the parent @UnitTest object
+        parentUnitTestOBJ.validationData.roiSize = roiSize;
+    	parentUnitTestOBJ.validationData.scene   = scene;
+    	parentUnitTestOBJ.validationData.oi      = oi;
+        
+        % Print report
+        parentUnitTestOBJ.printReport();
+    else
+        disp(report);
     end
     
-    
 end
-
-

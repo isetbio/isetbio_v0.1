@@ -3,7 +3,9 @@ classdef UnitTest < handle
     
     % Public properties
     properties
-        
+        validationFailedFlag = true;
+        validationData = [];
+        validationReport = [];
     end
     
     properties (SetAccess = private) 
@@ -12,7 +14,7 @@ classdef UnitTest < handle
         
         % a cell array of structs describing all the probes performed
         probesPerformed = {};
-        
+
     end
     
     % Public methods
@@ -30,6 +32,9 @@ classdef UnitTest < handle
         % Method to add and execute a new probe
         addProbe(obj, varargin);
          
+        % Method to print the validation report
+        printReport(obj);
+    
     end
     
     methods (Access = private)    
