@@ -63,7 +63,6 @@ function addProbe(obj, varargin)
     
     % Run the try-catch command
     eval(command);
-    command
     newProbe.result.excemptionRaised 
     
     % add the probe result
