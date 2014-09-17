@@ -1,40 +1,61 @@
-function sensor = riekeAdapt(sensor,params)
+function adaptedData = riekeAdapt(sensor,params)
+%Convert photon absorption rates at the sensor into cone photocurrent
 %
-%  sensor = riekeAdapt(sensor,params)
+%  adaptedData = riekeAdapt(sensor,params)
 %
-% Functionalizing HJ's code for the adaptation model
-% We will change the name and improve and test over the next few weeks
-%
+% The returned adapted data are in units of current (pico amps).  The size
+% of adapted data is equal to the size of the time series of input photons.
+% These are stored as a (x,y,t) array in the sensor.
+% 
 % In this case, the physiological differential equations for cones
-% are implemented. The differential equations are:
+% are implemented. The differential equations are (from Rieke's PPT)
+%
 %    1) d opsin(t) / dt = -sigma * opsin(t) + R*(t)
-%    2) d PDE(t) / dt = opsin(t) - phi * PDE(t) + eta
-%    3) d cGMP(t) / dt = S(t) - PDE(t) * cGMP(t)
-%    4) d Ca(t) / dt = q * I(t) - beta * Ca(t)
+%    2) d PDE(t) / dt   = opsin(t) - phi * PDE(t) + eta
+%    3) d cGMP(t) / dt  = S(t) - PDE(t) * cGMP(t)
+%    4) d Ca(t) / dt    = q * I(t) - beta * Ca(t)
 %    5) d Ca_slow(t) / dt = - beta_slow * (Ca_slow(t) - Ca(t))
 %    6) S(t) = smax / (1 + (Ca(t)/kGc)^n)
 %    7) I(t) = k * cGMP(t)^h / (1 + Ca_slow/Ca_dark)
 %
-% This model gives a cone-by-cone adaptation and it requires a
-% time-series data in sensor structure
+% This model gives a cone-by-cone time series for the current. To calculate
+% the response requires a time-series of photon absorptions in the sensor
+% structure.
 %
+% 
+%
+% Comments:
+%
+% This is a very nonlinear set of equations that cannot be reduced to an
+% auto-regressive (AR) formulation.  The difference between the
+% steady-state responses with this adaptation model and the simpler ones
+% (e.g., from Dunn et al.) is modest.  Though we should really check how
+% much of an effect there is by running specific calculations that include
+% noise.
+%
+% The advantage of this calculation is that it does a better job at
+% capturing the rapid temporal fluctuations (ms timescale) than simpler
+% models.  So, perhaps this should be used for cases where the rapid
+% onset/offset voltage swings matter.  It may be less useful and not worth
+% the extra computation for steady-state judgments.
+%
+% Problem ... the different equations always solve to a positive value.
+% But the measured current reports are sometimes negative (HJ).
+%
+% Example:
+%    
 % HJ ISETBIO Team, 2013
 
 %% Initialize parameters
 
-% Default parameter values
-sigma = 100;  % rhodopsin activity decay rate (1/sec)
-phi = 50;     % phosphodiesterase activity decay rate (1/sec)
-eta = 100;	  % phosphodiesterase activation rate constant (1/sec)
-gdark = 35;	  % concentration of cGMP in darkness
-k = 0.02;     % constant relating cGMP to current
-cdark = 0.5;  % dark calcium concentration
-beta = 50;	  % rate constant for calcium removal in 1/sec
-betaSlow = 2;
-n = 4;  	  % cooperativity, hill coef
-kGc = 0.35;   % hill affinity
-h = 3;
-bgVolts = 0;  % Default background voltage
+% Number of isomerizations in a single integration time.
+% We make sure these are double, not single.
+photons = double(sensorGet(sensor, 'photons'));
+if isempty(photons), error('Non-adapted cone absorptions (photons) should be pre-computed'); end
+
+% Initialize the parameters for the adaptation model
+p = riekeInit;
+if isempty(p.bgPhotons), p.bgPhotons = median(photons(:)); end
 
 % Now copy fields that are sent in
 if notDefined('params')
@@ -54,7 +75,9 @@ else
             case 'n'
             case 'kGc'
             case 'h'
-            case 'bgVolts'
+            case 'bgPhotons'
+                % Over ride the assumed mean
+                p.bgPhotons = params.bgPhotons;
             otherwise
                 error('Unknown field name %s\n',fields{ii));
         end
@@ -62,41 +85,36 @@ else
 end
 
 %% Start calculation
-volts  = double(sensorGet(sensor, 'volts'));
 
-if isempty(volts), error('cone absorptions should be pre-computed'); end
+% Convert to the rate of isomerizations per second
+photons   = photons   / sensorGet(sensor, 'exposure time');
+bgPhotons = bgPhotons / sensorGet(sensor, 'exposure time');
 
-if isfield(params, 'vSwing'), vSwing = params.vSwing;
-else                          vSwing = sensorGet(sensor,'pixel voltageSwing');
-end
+% This is stored in the eye movement structure.
+dt = sensorGet(sensor, 'sample time interval');
+if isempty(dt), dt = 1e-3; end
 
-if isfield(params, 'bgVolts'), bgVolts = params.bgVolts; 
-else                           bgVolts = median(volts(:));
-end
+% Prior to the onset of the stimulus, there is some adaptation of the
+% system.  This function estimates the background current, bgCur, at the
+% initial time point by finding the current from the mean response.
+bgCur = riekeAdaptSteadyState(bgPhotons,p);
 
-q    = 2 * beta * cdark / (k * gdark^h);
-smax = eta/phi * gdark * (1 + (cdark / kGc)^n);
-
-photons = volts / sensorGet(sensor, 'conversion gain');
-photons = photons / sensorGet(sensor, 'exposure time');
-dt = sensorGet(sensor, 'timeInterval');
-
-% Compute background adaptation parameters
-bgR = bgVolts / sensorGet(sensor, 'conversion gain');
-bgCur = fminbnd(@(x) abs(x - k*beta*cdark*smax^h * phi^h / ...
-    (bgR/sigma + eta)^h / (beta*cdark + q*x) / ...
-    (1 + (q*x/beta/kGc)^n)^h), 0, 1000);
-
-% Compute starting values
-opsin   = ones(sensorGet(sensor, 'size')) * bgR / sigma;
+% Compute initial values for the differential equations
+opsin   = ones(sensorGet(sensor, 'size')) * bgPhotons / sigma;
 PDE     = (opsin + eta) / phi;
 Ca      = ones(sensorGet(sensor, 'size')) * bgCur * q / beta;
 Ca_slow = Ca;
 st      = smax ./ (1 + (Ca / kGc).^n);
 cGMP    = st * phi ./ (opsin + eta);
 
-% simulate differential equtions
+% The units are some kind of current (pico ampere, 10^-12 amps)
+% These are time course of the current at each of the photoreceptor sample
+% points. 
+% The time, dt, is the sample period.
 adaptedData = zeros([size(opsin) size(volts, 3)]);
+
+% Simulate differential equations from Fred's PowerPoint slides.
+% The adapted data are in units of current (pico amps)
 for ii = 1 : size(volts, 3)
     opsin = opsin + dt * (photons(:,:,ii) - sigma * opsin);
     PDE   = PDE   + dt * (opsin + eta - phi * PDE);
@@ -107,10 +125,8 @@ for ii = 1 : size(volts, 3)
     adaptedData(:,:,ii) = - k * cGMP.^h ./ (1 + Ca_slow / cdark);
 end
 
-% Set back
-% Currently, there's no space for temporally varying adaptation
-% data. Thus, we just return back the adapted data
-gainMap = [];
-bgVolts = [];
 
 end
+
+
+    

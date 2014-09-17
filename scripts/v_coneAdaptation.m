@@ -1,4 +1,5 @@
 %% v_coneAdaptation
+%
 %    This script makes comparison between steady state cone adapt
 %    computation (see coneAdapt, case 3) and physiological differential
 %    equations

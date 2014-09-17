@@ -1,0 +1,35 @@
+function p = riekeInit
+% Initialize parameters in Rieke adaptation model
+%
+%  p = riekeInit
+%  
+% HJ/VISTASOFT Copyright 2014
+
+
+sigma = 100;  % rhodopsin activity decay rate (1/sec)
+phi = 50;     % phosphodiesterase activity decay rate (1/sec)
+eta = 100;	  % phosphodiesterase activation rate constant (1/sec)
+gdark = 35;	  % concentration of cGMP in darkness
+k = 0.02;     % constant relating cGMP to current
+cdark = 0.5;  % dark calcium concentration
+beta = 50;	  % rate constant for calcium removal in 1/sec
+betaSlow = 2;
+n = 4;  	  % cooperativity, hill coef
+kGc = 0.35;   % hill affinity
+h = 3;
+
+% Need to deal with these ...
+bgPhotons = [];  % Default background voltage
+
+% Now copy fields that are sent in
+
+q    = 2 * beta * cdark / (k * gdark^h);
+smax = eta/phi * gdark * (1 + (cdark / kGc)^n);
+
+% Used for finding the steady-state current
+p = struct('sigma',sigma, 'phi',phi, 'eta',eta, 'gdark',gdark,...
+    'k',k,'cdark',cdark,'beta',beta,'betaSlow',betaSlow,  ...
+    'n',n,'kGc',kGc,'h',h,'q',q,'smax',smax','bgPhotons',bgPhotons);
+
+
+end
