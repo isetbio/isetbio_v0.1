@@ -1,17 +1,35 @@
-function PTB_vs_ISETBIO_Irradiance(inputParams)
-    %% Unload input params
-    fov               = inputParams.fov;
-    roiSize           = inputParams.roiSize;
+function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
+%
+%   Validate ISETBIO irradiance computations by comparing to PTB-irradiance computations.
+% 
+
+    %% Define parameters expected to be set by all validation scripts
+    
+    % Validation report
+    validationReport = 'None';
+    
+    % Flag indicating whether the validation failed due to incorrect results
+    validationFailedFlag = true;
+        
+    % struct with optional validation variables that we would like to save
+    validationDataToSave = struct();
     
     
     %% Initialize ISETBIO
-    s_initISET
+    s_initISET;
+    
+    
+    %% Set computation params
+    fov               = 20;  % need large field
+    roiSize           = 5;
+    
     
     %% Create a radiance image in ISETBIO
     scene = sceneCreate('uniform ee');    % Equal energy
     scene = sceneSet(scene,'name','Equal energy uniform field');
     scene = sceneSet(scene,'fov', fov);
 
+    
     %% Compute the irradiance in ISETBIO
     %
     % To make comparison to PTB work, we turn off
@@ -80,18 +98,19 @@ function PTB_vs_ISETBIO_Irradiance(inputParams)
     irradianceEnergy = irradianceEnergy(:);
     difference = ptbMagCorrectIrradiance-irradianceEnergy;
    
-    %% Generate report and set the validationFailedFlag according to the results
+    %% Set validationReport and validationFailedFlag
+    % All validation scripts must set the 'validationReport' and 'validationFailedFlag'
     if (max(abs(difference./irradianceEnergy)) > tolerance)
-        report = sprintf('Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance. !!!');
+        validationReport     = sprintf('Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance of %0.5f %% !!!', 100*tolerance);
         validationFailedFlag = true;
     else
-        report = sprintf('Validation PASSED. PTB and isetbio agree about irradiance to %0.0f%%',round(100*tolerance));
+        validationReport     = sprintf('Validation PASSED. PTB and isetbio agree about irradiance to %0.5f %%',100*tolerance);
         validationFailedFlag = false;
     end
 
     
     %% Generate plots, if so specified
-    if (inputParams.generatePlots)
+    if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
         figure(500);
         subplot(2,1,1);
         plot(wave, ptbIrradiance, 'ro', wave, irradianceEnergy, 'ko');
@@ -108,23 +127,38 @@ function PTB_vs_ISETBIO_Irradiance(inputParams)
         title('Magnification corrected comparison');
     end 
     
-    %% Call the setter method of the parent @UnitTest object to save the validation data.
-    if isfield(inputParams, 'parentUnitTestObject')
-        parentUnitTestOBJ = inputParams.parentUnitTestObject;
+    
+    %% Assemble the validation data to be saved into a struct.
+    validationDataToSave.fov        = fov;
+    validationDataToSave.roiSize    = roiSize;
+    validationDataToSave.tolerance  = tolerance;
+    validationDataToSave.scene      = scene;
+    validationDataToSave.oi         = oi;
         
-        % Set the validationReport and validationFailedFlag of the parent @UnitTest object
-        parentUnitTestOBJ.validationReport = report;
-        parentUnitTestOBJ.validationFailedFlag = validationFailedFlag;
-         
-        % Return any optional validationData to the parent @UnitTest object
-        parentUnitTestOBJ.validationData.roiSize = roiSize;
-    	parentUnitTestOBJ.validationData.scene   = scene;
-    	parentUnitTestOBJ.validationData.oi      = oi;
+    
+    %% Save the validation data.This part should be included as is in all validation scripts.
+    if (nargin >= 1) && isfield(runParams, 'parentUnitTestObject')
+        % Get parent @UnitTest object
+        parentUnitTestOBJ = runParams.parentUnitTestObject;
         
-        % Print report
+        % Return validation results to the parent @UnitTest object
+        parentUnitTestOBJ.storeValidationResults(...
+            'validationReport',     validationReport, ...
+            'validationFailedFlag', validationFailedFlag, ...
+            'validationData',       validationDataToSave ...
+        );
+       
+        % Set to empty as we returned the validation results to the parent @UnitTest object
+        validationResults = [];
+        
+        % Publish validation results
         parentUnitTestOBJ.printReport();
-    else
-        disp(report);
+    else 
+        % return validationResults to the user
+        validationResults = struct();
+        validationResults.validationReport      = validationReport;
+        validationResults.validationFailedFlag  = validationFailedFlag;
+        validationResults.validationDataToSave  = validationDataToSave;
     end
     
 end

@@ -16,15 +16,21 @@ function addProbe(obj, varargin)
     newProbe.functionParams = p.Results.functionParams;
     newProbe.onErrorReactBy = p.Results.onErrorReaction;
     newProbe.publishReport  = p.Results.publishReport;
+    newProbe.generatePlots  = p.Results.generatePlots;
     
     if (exist(newProbe.functionName, 'file') == 2)
-        % File in path. We're good to go.
+        % File in path. We're good to go
+        [functionDirectory, ~, ~] = fileparts(which(sprintf('%s.m',newProbe.functionName)));
+        htmlDirectory = sprintf('%s/%s_HTML', functionDirectory,newProbe.functionName);
     else
         error('File ''%s'' not found in Matlab''s path.', newProbe.functionName);
     end
     
     % input params to function
+    % add any passed input params
     params = newProbe.functionParams;
+    % add generatePlots flag
+    params.generatePlots = newProbe.generatePlots;
     % add parent @UnitTest object
     params.parentUnitTestObject = obj;
     
@@ -38,12 +44,13 @@ function addProbe(obj, varargin)
         % Critical: Assign the params variable to the base workstation
         assignin('base', 'params', params);
         
-        command = sprintf('%s(params)', newProbe.functionName);
+        command = sprintf('%s(params);', newProbe.functionName);
         options = struct(...
-            'codeToEvaluate', ['params', char(10), sprintf('%s',command), char(10)'], ...
+            'codeToEvaluate', ['params;', char(10), sprintf('%s',command), char(10)'], ...
             'evalCode', true, ...
             'showCode', p.Results.showTheCode, ...
-            'catchError', false ...
+            'catchError', false, ...
+            'outputDir', htmlDirectory ...
             );
         
         probeCommandString = sprintf(' publish(''%s'', options);', newProbe.functionName);
@@ -54,44 +61,59 @@ function addProbe(obj, varargin)
 
     % form try-catch command string 
     if (strcmp(newProbe.onErrorReactBy, 'CatchExcemption'))
-        command = sprintf('try \n\t%s \n\t newProbe.result.validationReport = obj.validationReport; \n\t newProbe.result.validationData = obj.validationData; \n\t newProbe.result.validationFailedFlag = obj.validationFailedFlag; \n\t newProbe.result.excemptionRaised = false;  \ncatch err \n\t disp(''Error''); \n\t newProbe.result.excemptionRaised = true; \n\t newProbe.result.message = err.message; \nend', probeCommandString);
+        command = sprintf('try \n\t%s \n\t newProbe.result.validationReport = obj.validationReport; \n\t newProbe.result.validationData = obj.validationData; \n\t newProbe.result.validationFailedFlag = obj.validationFailedFlag; \n\t newProbe.result.excemptionRaised = false;  \ncatch err \n\t newProbe.result.excemptionRaised = true; \n\t newProbe.result.message = err.message; \nend', probeCommandString);
     elseif (strcmp(newProbe.onErrorReactBy, 'RethrowExcemption'))
-        command = sprintf('try \n\t%s \n\t newProbe.result.validationReport = obj.validationReport; \n\t newProbe.result.validationData = obj.validationData; \n\t newProbe.result.validationFailedFlag = obj.validationFailedFlag; \n\t newProbe.result.excemptionRaised = false;  \ncatch err \n\t disp(''Error''); \n\t newProbe.result.excemptionRaised = true; newProbe.result.message = err.message; \n\t rethrow(err); \nend', probeCommandString);
+        command = sprintf('try \n\t%s \n\t newProbe.result.validationReport = obj.validationReport; \n\t newProbe.result.validationData = obj.validationData; \n\t newProbe.result.validationFailedFlag = obj.validationFailedFlag; \n\t newProbe.result.excemptionRaised = false;  \ncatch err \n\t newProbe.result.excemptionRaised = true; newProbe.result.message = err.message; \n\t rethrow(err); \nend', probeCommandString);
     else
         error('''onErrorReaction'':%s is an invalid mode. Choose either ''CatchingExcemption'' or ''RethrowingExcemption''.', newProbe.onErrorReactBy);
     end
     
     % Run the try-catch command
     eval(command);
-    newProbe.result.excemptionRaised 
     
-    % add the probe result
-    pIndex = numel(obj.probesPerformed) + 1;
-    obj.probesPerformed{pIndex} = newProbe;
-    
-    newProbe.result
+    % queue the probe to allProbeData list
+    pIndex = numel(obj.allProbeData) + 1;
+    obj.allProbeData{pIndex} = newProbe;
     
     if (newProbe.result.excemptionRaised)
-        fprintf(2,'\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, obj.probesPerformed{pIndex}.name);
-        fprintf(2,'\t ValidationScript\t:  %s.m\n', obj.probesPerformed{pIndex}.functionName);
-        fprintf(2,'\t Status\t\t\t:  Error. Code raised an excemption which we caught. \n');
-        fprintf(2,'\t Excemption message\t:  %s\n', obj.probesPerformed{pIndex}.result.message);
+        fprintf(2,'\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, newProbe.name);
+        fprintf(2,'\t ValidationScript\t:  %s.m\n', newProbe.functionName);
+        fprintf(2,'\t Status\t\t\t:  error (code raised an excemption which we caught). \n');
+        fprintf(2,'\t Excemption message\t:  %s\n', newProbe.result.message);
+        obj.printReport();
         return;
     end
     
     if (newProbe.result.validationFailedFlag)
-        fprintf(2,'\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, obj.probesPerformed{pIndex}.name);
-        fprintf(2,'\t ValidationScript\t:  %s.m\n', obj.probesPerformed{pIndex}.functionName);
-        fprintf(2,'\t Status\t\t\t:  Validation failed:%s\n', obj.probesPerformed{pIndex}.result.validationReport);
+        fprintf(2,'\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, newProbe.name);
+        fprintf(2,'\t ValidationScript\t:  %s.m\n', newProbe.functionName);
+        fprintf(2,'\t Status\t\t\t:  validation failure - %s.\n', newProbe.result.validationReport);
+        fprintf(2,'\t Validation data saved \t: ');
+        fieldNamesList = fieldnames(newProbe.result.validationData);
+        for k = 1:numel(fieldNamesList)-1
+            fprintf(2,'''%s'', ', char(fieldNamesList{k}));
+        end
+        fprintf(2,'''%s'' \n', char(fieldNamesList{numel(fieldNamesList)}));
+        obj.printReport();
         return;
     end
     
     
     if (~newProbe.result.validationFailedFlag) && (~newProbe.result.excemptionRaised)
-        fprintf('\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, obj.probesPerformed{pIndex}.name);
-        fprintf('\t ValidationScript\t:  %s.m\n', obj.probesPerformed{pIndex}.functionName);
-        fprintf('\t Status\t\t\t:  Success with report: %s.\n', obj.probesPerformed{pIndex}.result.validationReport);
+        fprintf('\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, newProbe.name);
+        fprintf('\t ValidationScript\t:  %s.m\n', newProbe.functionName);
+        fprintf('\t Status\t\t\t:  Success - %s.\n', newProbe.result.validationReport);
+        fprintf('\t Validation data saved \t: ');
+        fieldNamesList = fieldnames(newProbe.result.validationData);
+        for k = 1:numel(fieldNamesList)-1
+            fprintf('''%s'', ', char(fieldNamesList{k}));
+        end
+        fprintf('''%s'' \n', char(fieldNamesList{numel(fieldNamesList)}));
+        obj.printReport();
     end
+        
+    % Show published report
+    web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
     
 end
 

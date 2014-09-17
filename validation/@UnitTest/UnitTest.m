@@ -3,30 +3,32 @@ classdef UnitTest < handle
     
     % Public properties
     properties
-        validationFailedFlag = true;
-        validationData = [];
-        validationReport = [];
+        
     end
     
     properties (SetAccess = private) 
-        
-        data;
-        
-        % a cell array of structs describing all the probes performed
-        probesPerformed = {};
+        % a collection of various system information
+        systemData = struct();
 
+        % validation results for current probe
+        validationFailedFlag = true;
+        validationData       = struct();
+        validationReport     = 'None';
+        
+        % cell array with data for all examined probes
+        allProbeData = {};
     end
     
     % Public methods
     methods
         % Constructor
         function obj = UnitTest(validationScriptFileName)
-            obj.data.vScriptFileName = sprintf('%s',validationScriptFileName);
-            obj.data.vScriptListing  = fileread([validationScriptFileName '.m']);
-            obj.data.datePerformed   = datestr(now);
-            obj.data.matlabVersion   = version;
-            obj.data.computer        = computer;
-            obj.data.gitBranch       = '?';
+            obj.systemData.vScriptFileName = sprintf('%s',validationScriptFileName);
+            obj.systemData.vScriptListing  = fileread([validationScriptFileName '.m']);
+            obj.systemData.datePerformed   = datestr(now);
+            obj.systemData.matlabVersion   = version;
+            obj.systemData.computer        = computer;
+            obj.systemData.gitRepoBranch   = obj.retrieveGitBranch();
         end
         
         % Method to add and execute a new probe
@@ -35,10 +37,14 @@ classdef UnitTest < handle
         % Method to print the validation report
         printReport(obj);
     
+        % Method to store the validatation results
+        storeValidationResults(obj, varargin); ...
+
     end
     
     methods (Access = private)    
-        
+        % Method to retrieve the git branch string
+        gitBranchString = retrieveGitBranch(obj);
     end
     
 end
