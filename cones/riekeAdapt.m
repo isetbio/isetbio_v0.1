@@ -51,44 +51,25 @@ function adaptedData = riekeAdapt(sensor,params)
 % Number of isomerizations in a single integration time.
 % We make sure these are double, not single.
 photons = double(sensorGet(sensor, 'photons'));
-if isempty(photons), error('Non-adapted cone absorptions (photons) should be pre-computed'); end
+if isempty(photons)
+    error('Non-adapted cone absorptions (photons) should be pre-computed');
+end
 
 % Initialize the parameters for the adaptation model
 p = riekeInit;
-if isempty(p.bgPhotons), p.bgPhotons = median(photons(:)); end
+p.bgPhotons = median(photons(:));
 
 % Now copy fields that are sent in
-if notDefined('params')
-    % Do nothing
-else
+if ~notDefined('params')
     fields = fieldnames(params);
-    for ii=1:length(fields)
-        switch fields{ii}
-            case 'sigma'
-            case 'phi'
-            case 'eta'
-            case 'gdark'
-            case 'k'
-            case 'cdark'
-            case 'beta'
-            case 'betaSlow'
-            case 'n'
-            case 'kGc'
-            case 'h'
-            case 'bgPhotons'
-                % Over ride the assumed mean
-                p.bgPhotons = params.bgPhotons;
-            otherwise
-                error('Unknown field name %s\n',fields{ii));
-        end
-    end
+    for ii=1:length(fields), p.(fields{ii}) = params.(fields{ii}); end
 end
 
 %% Start calculation
 
 % Convert to the rate of isomerizations per second
 photons   = photons   / sensorGet(sensor, 'exposure time');
-bgPhotons = bgPhotons / sensorGet(sensor, 'exposure time');
+bgPhotons = p.bgPhotons / sensorGet(sensor, 'exposure time');
 
 % This is stored in the eye movement structure.
 dt = sensorGet(sensor, 'sample time interval');
@@ -124,7 +105,6 @@ for ii = 1 : size(volts, 3)
     Ca_slow = Ca_slow - dt * betaSlow * (Ca_slow - Ca);
     adaptedData(:,:,ii) = - k * cGMP.^h ./ (1 + Ca_slow / cdark);
 end
-
 
 end
 
