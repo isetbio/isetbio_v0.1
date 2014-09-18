@@ -20,8 +20,8 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
     
     
     %% Set computation params
-    fov               = 40;  % need large field
-    roiSize           = 10;
+    fov               = 33;  % need large field
+    roiSize           = 7;
     
     
     %% Create a radiance image in ISETBIO
@@ -111,20 +111,32 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
     
     %% Generate plots, if so specified
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
-        figure(500);
+        h = figure(500);
+        clf;
+        set(h, 'Position', [100 100 800 600]);
         subplot(2,1,1);
-        plot(wave, ptbIrradiance, 'ro', wave, irradianceEnergy, 'ko');
+        plot(wave, ptbIrradiance, 'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
+        hold on;
+        plot(wave, irradianceEnergy, 'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
+        hold off
         set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
-        legend('PTB','ISETBIO')
-        xlabel('Wave (nm)'); ylabel('Irradiance (q/s/nm/m^2)')
-        title('Without magnification correction');
+        set(gca, 'FontName', 'Helvetica', 'FontSize', 14,  'FontWeight', 'bold');
+        legend({'PTB','ISETBIO'}, 'Location','SouthEast','FontSize',12);
+        xlabel('Wave (nm)', 'FontName', 'Helvetica', 'FontSize', 16); ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 16)
+        title('Without magnification correction', 'FontName', 'Helvetica', 'FontSize', 18, 'FontWeight', 'bold');
     
+        
         subplot(2,1,2);
-        plot(wave,ptbMagCorrectIrradiance,'ro',wave,irradianceEnergy,'ko');
+        plot(wave,ptbMagCorrectIrradiance,'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
+        hold on;
+        plot(wave,irradianceEnergy,'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
+        hold off
         set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
-        xlabel('Wave (nm)'); ylabel('Irradiance (q/s/nm/m^2)')
-        legend('PTB','ISETBIO')
-        title('Magnification corrected comparison');
+        set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+        xlabel('Wave (nm)', 'FontName', 'Helvetica', 'FontSize', 14); ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 14)
+        legend({'PTB','ISETBIO'}, 'Location','SouthEast','FontSize',12)
+        title('Magnification-corrected comparison', 'FontName', 'Helvetica', 'FontSize', 18, 'FontWeight', 'bold');
+        
     end 
     
     
