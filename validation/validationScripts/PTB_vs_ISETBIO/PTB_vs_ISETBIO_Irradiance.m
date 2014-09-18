@@ -20,8 +20,8 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
     
     
     %% Set computation params
-    fov               = 20;  % need large field
-    roiSize           = 5;
+    fov               = 40;  % need large field
+    roiSize           = 10;
     
     
     %% Create a radiance image in ISETBIO
