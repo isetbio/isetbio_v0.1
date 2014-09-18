@@ -144,19 +144,18 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         hold <span class="string">on</span>;
         plot(wave, irradianceEnergy, <span class="string">'bo'</span>, <span class="string">'MarkerFaceColor'</span>, [0.8 0.8 1.0], <span class="string">'MarkerSize'</span>, 10);
         hold <span class="string">off</span>
-        box <span class="string">off</span>
         set(gca,<span class="string">'ylim'</span>,[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
-        set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'Color'</span>, <span class="string">'w'</span>);
+        set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14);
         legend({<span class="string">'PTB'</span>,<span class="string">'ISETBIO'</span>}, <span class="string">'Location'</span>,<span class="string">'SouthEast'</span>,<span class="string">'FontSize'</span>,12);
         xlabel(<span class="string">'Wave (nm)'</span>); ylabel(<span class="string">'Irradiance (q/s/nm/m^2)'</span>)
         title(<span class="string">'Without magnification correction'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+
 
         subplot(2,1,2);
         plot(wave,ptbMagCorrectIrradiance,<span class="string">'ro'</span>, <span class="string">'MarkerFaceColor'</span>, [1.0 0.8 0.8], <span class="string">'MarkerSize'</span>, 10);
         hold <span class="string">on</span>;
         plot(wave,irradianceEnergy,<span class="string">'bo'</span>, <span class="string">'MarkerFaceColor'</span>, [0.8 0.8 1.0], <span class="string">'MarkerSize'</span>, 10);
         hold <span class="string">off</span>
-        box <span class="string">off</span>;
         set(gca,<span class="string">'ylim'</span>,[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
         set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14);
         xlabel(<span class="string">'Wave (nm)'</span>); ylabel(<span class="string">'Irradiance (q/s/nm/m^2)'</span>)
@@ -198,7 +197,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 	 validation report      : Validation PASSED. PTB and isetbio agree about irradiance to 1.00000 %
 	 validation data saved  : 'fov', 'roiSize', 'tolerance', 'scene', 'oi'
 	-------------------------------------------------------------------------------------------------
-	 date last run          : 18-Sep-2014 17:40:48
+	 date last run          : 18-Sep-2014 17:47:25
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
@@ -327,19 +326,18 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
         hold on;
         plot(wave, irradianceEnergy, 'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
         hold off
-        box off
         set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'Color', 'w');
+        set(gca, 'FontName', 'Helvetica', 'FontSize', 14);
         legend({'PTB','ISETBIO'}, 'Location','SouthEast','FontSize',12);
         xlabel('Wave (nm)'); ylabel('Irradiance (q/s/nm/m^2)')
         title('Without magnification correction', 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
     
+        
         subplot(2,1,2);
         plot(wave,ptbMagCorrectIrradiance,'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
         hold on;
         plot(wave,irradianceEnergy,'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
         hold off
-        box off;
         set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14);
         xlabel('Wave (nm)'); ylabel('Irradiance (q/s/nm/m^2)')
