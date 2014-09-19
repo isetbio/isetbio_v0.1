@@ -110,7 +110,7 @@ function pushToGitHub
     % Protocols: dict file ftp ftps gopher http https imap imaps ldap ldaps pop3 pop3s rtsp smtp smtps telnet tftp 
     % Features: AsynchDNS GSS-Negotiate IPv6 Largefile NTLM NTLM_WB SSL libz 
     %
-    % To fix this, first go to the following directory:
+    % To fix this, open a terminal and go to the following directory:
     %   cd /Applications/MATLAB_R2014a.app/bin/maci64
     %   ls -al libcur*
     % This gives me:
