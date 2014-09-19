@@ -47,4 +47,8 @@ classdef UnitTest < handle
         gitBranchString = retrieveGitBranch(obj);
     end
     
+    methods (Static)
+        updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
+    end
+    
 end
