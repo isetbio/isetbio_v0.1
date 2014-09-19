@@ -37,9 +37,19 @@ function pushToGitHub
     % Empty all entries
     allEntries = [];
     
-    % Add an entry
+    % Add first entry
     entry.sectionLabelAndSubDirName = {'PTB vs. ISETBIO validations', 'PTB_vs_ISETBIO'};
     entry.validationScriptFileName  = 'PTB_vs_ISETBIO_Irradiance';
+    allEntries = [allEntries entry];
+    
+    % Add another entry
+    entry.sectionLabelAndSubDirName = {'Human Eye Compute validations', 'HumanEye'};
+    entry.validationScriptFileName  = 'validateHumanRetinalIlluminance580nm';
+    allEntries = [allEntries entry];
+    
+    % Add another entry
+    entry.sectionLabelAndSubDirName = {'A skeleton validation script. Copy and adapt to your needs.', 'SkeletonScript'};
+    entry.validationScriptFileName  = 'validateSkeleton';
     allEntries = [allEntries entry];
     
     % Determine name of validation root directory from the location of this script 

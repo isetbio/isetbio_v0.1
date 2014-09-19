@@ -1,4 +1,4 @@
-function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
+function PTB_vs_ISETBIO_Irradiance(runParams)
 %
 %   Validate ISETBIO irradiance computations by comparing to PTB-irradiance computations.
 % 
@@ -26,8 +26,8 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     
     %% Set computation params
-    fov               = 40;  % need large field
-    roiSize           = 10;
+    fov     = 40;  % need large field
+    roiSize = 10;
     
     
     %% Create a radiance image in ISETBIO
