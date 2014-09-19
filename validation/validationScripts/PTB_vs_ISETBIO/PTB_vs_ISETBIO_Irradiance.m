@@ -20,7 +20,7 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
     
     
     %% Set computation params
-    fov               = 25;  % need large field
+    fov               = 30;  % need large field
     roiSize           = 5;
     
     
