@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PTB_vs_ISETBIO_Irradiance</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-09-18"><meta name="DC.source" content="PTB_vs_ISETBIO_Irradiance.m"><style type="text/css">
+      --><title>PTB_vs_ISETBIO_Irradiance</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-09-19"><meta name="DC.source" content="PTB_vs_ISETBIO_Irradiance.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,25 +66,28 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Define parameters expected to be set by all validation scripts</a></li><li><a href="#4">Initialize ISETBIO</a></li><li><a href="#5">Set computation params</a></li><li><a href="#6">Create a radiance image in ISETBIO</a></li><li><a href="#7">Compute the irradiance in ISETBIO</a></li><li><a href="#8">Get wavelength and spectral radiance spd data (averaged within the scene ROI)</a></li><li><a href="#9">Get wavelength and spectral irradiance spd data (averaged within the scene ROI)</a></li><li><a href="#10">Get the underlying parameters that are needed from the ISETBIO structures.</a></li><li><a href="#11">Compute the irradiance in PTB</a></li><li><a href="#12">Numerical check to decide whether we passed.</a></li><li><a href="#13">Set validationReport and validationFailedFlag</a></li><li><a href="#14">Generate plots, if so specified</a></li><li><a href="#15">Assemble the validation data to be saved into a struct.</a></li><li><a href="#16">Save the validation data.This part should be included as is in all validation scripts.</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
-</pre><pre class="codeinput"><span class="comment">%</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Validation script for PTB_vs_ISETBIO_Irradiance test</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">Initialize ISETBIO</a></li><li><a href="#6">Set computation params</a></li><li><a href="#7">Create a radiance image in ISETBIO</a></li><li><a href="#8">Compute the irradiance in ISETBIO</a></li><li><a href="#9">Get wavelength and spectral radiance spd data (averaged within the scene ROI)</a></li><li><a href="#10">Get wavelength and spectral irradiance spd data (averaged within the scene ROI)</a></li><li><a href="#11">Get the underlying parameters that are needed from the ISETBIO structures.</a></li><li><a href="#12">Compute the irradiance in PTB</a></li><li><a href="#13">Numerical check to decide whether we passed.</a></li><li><a href="#14">Set validationReport, validationFailedFlag and validationData</a></li><li><a href="#15">Generate plots, if so specified</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
+<span class="comment">%</span>
 <span class="comment">%   Validate ISETBIO irradiance computations by comparing to PTB-irradiance computations.</span>
 <span class="comment">%</span>
-</pre><h2>Define parameters expected to be set by all validation scripts<a name="3"></a></h2><pre class="codeinput">    <span class="comment">% Validation report</span>
-    validationReport = <span class="string">'None'</span>;
 
-    <span class="comment">% Flag indicating whether the validation failed due to incorrect results</span>
-    validationFailedFlag = true;
+    <span class="comment">% Call the validation script</span>
+    [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
 
-    <span class="comment">% struct with optional validation variables that we would like to save</span>
-    validationDataToSave = struct();
-</pre><h2>Initialize ISETBIO<a name="4"></a></h2><pre class="codeinput">    s_initISET;
-</pre><h2>Set computation params<a name="5"></a></h2><pre class="codeinput">    fov               = 33;  <span class="comment">% need large field</span>
-    roiSize           = 7;
-</pre><h2>Create a radiance image in ISETBIO<a name="6"></a></h2><pre class="codeinput">    scene = sceneCreate(<span class="string">'uniform ee'</span>);    <span class="comment">% Equal energy</span>
+    <span class="comment">% Update the parent @UnitTest object</span>
+    UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
+<span class="keyword">end</span>
+</pre><h2>Validation script for PTB_vs_ISETBIO_Irradiance test<a name="2"></a></h2><pre class="codeinput"><span class="keyword">function</span> [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
+</pre><h2>Initialize return params<a name="4"></a></h2><pre class="codeinput">    validationReport = [];
+    validationFailedFlag = [];
+    validationDataToSave = [];
+</pre><h2>Initialize ISETBIO<a name="5"></a></h2><pre class="codeinput">    s_initISET;
+</pre><h2>Set computation params<a name="6"></a></h2><pre class="codeinput">    fov               = 40;  <span class="comment">% need large field</span>
+    roiSize           = 10;
+</pre><h2>Create a radiance image in ISETBIO<a name="7"></a></h2><pre class="codeinput">    scene = sceneCreate(<span class="string">'uniform ee'</span>);    <span class="comment">% Equal energy</span>
     scene = sceneSet(scene,<span class="string">'name'</span>,<span class="string">'Equal energy uniform field'</span>);
     scene = sceneSet(scene,<span class="string">'fov'</span>, fov);
-</pre><h2>Compute the irradiance in ISETBIO<a name="7"></a></h2><p>To make comparison to PTB work, we turn off off axis correction as well as optical blurring in the optics.</p><pre class="codeinput">    oi     = oiCreate(<span class="string">'human'</span>);
+</pre><h2>Compute the irradiance in ISETBIO<a name="8"></a></h2><p>To make comparison to PTB work, we turn off off axis correction as well as optical blurring in the optics.</p><pre class="codeinput">    oi     = oiCreate(<span class="string">'human'</span>);
     optics = oiGet(oi,<span class="string">'optics'</span>);
     optics = opticsSet(optics,<span class="string">'off axis method'</span>,<span class="string">'skip'</span>);
     optics = opticsSet(optics,<span class="string">'otf method'</span>,<span class="string">'skip otf'</span>);
@@ -96,7 +99,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     sz = sceneGet(scene,<span class="string">'size'</span>);
     rect = [sz(2)/2,sz(1)/2,roiSize,roiSize];
     sceneRoiLocs = ieRoi2Locs(rect);
-</pre><h2>Get wavelength and spectral radiance spd data (averaged within the scene ROI)<a name="8"></a></h2><pre class="codeinput">    wave  = sceneGet(scene,<span class="string">'wave'</span>);
+</pre><h2>Get wavelength and spectral radiance spd data (averaged within the scene ROI)<a name="9"></a></h2><pre class="codeinput">    wave  = sceneGet(scene,<span class="string">'wave'</span>);
     radiancePhotons = sceneGet(scene,<span class="string">'roi mean photons'</span>, sceneRoiLocs);
     radianceEnergy  = sceneGet(scene,<span class="string">'roi mean energy'</span>,  sceneRoiLocs);
 
@@ -105,12 +108,12 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     sz         = oiGet(oi,<span class="string">'size'</span>);
     rect       = [sz(2)/2,sz(1)/2,roiSize,roiSize];
     oiRoiLocs  = ieRoi2Locs(rect);
-</pre><h2>Get wavelength and spectral irradiance spd data (averaged within the scene ROI)<a name="9"></a></h2><pre class="codeinput">    wave             = oiGet(scene,<span class="string">'wave'</span>);
+</pre><h2>Get wavelength and spectral irradiance spd data (averaged within the scene ROI)<a name="10"></a></h2><pre class="codeinput">    wave             = oiGet(scene,<span class="string">'wave'</span>);
     irradianceEnergy = oiGet(oi, <span class="string">'roi mean energy'</span>, oiRoiLocs);
-</pre><h2>Get the underlying parameters that are needed from the ISETBIO structures.<a name="10"></a></h2><pre class="codeinput">    optics = oiGet(oi,<span class="string">'optics'</span>);
+</pre><h2>Get the underlying parameters that are needed from the ISETBIO structures.<a name="11"></a></h2><pre class="codeinput">    optics = oiGet(oi,<span class="string">'optics'</span>);
     pupilDiameterMm  = opticsGet(optics,<span class="string">'pupil diameter'</span>,<span class="string">'mm'</span>);
     focalLengthMm    = opticsGet(optics,<span class="string">'focal length'</span>,<span class="string">'mm'</span>);
-</pre><h2>Compute the irradiance in PTB<a name="11"></a></h2><p>The PTB calculation is encapsulated in ptb.ConeIsomerizationsFromRadiance. This routine also returns cone isomerizations, which we are not validating here. The macular pigment and integration time parameters affect the isomerizations, but don't affect the irradiance returned by the PTB routine. The integration time doesn't affect the irradiance, but we need to pass it</p><pre class="codeinput">    macularPigmentOffset = 0;
+</pre><h2>Compute the irradiance in PTB<a name="12"></a></h2><p>The PTB calculation is encapsulated in ptb.ConeIsomerizationsFromRadiance. This routine also returns cone isomerizations, which we are not validating here. The macular pigment and integration time parameters affect the isomerizations, but don't affect the irradiance returned by the PTB routine. The integration time doesn't affect the irradiance, but we need to pass it</p><pre class="codeinput">    macularPigmentOffset = 0;
     integrationTimeSec   = 0.05;
     [isoPerCone, ~, ptbPhotoreceptors, ptbIrradiance] = <span class="keyword">...</span>
         ptb.ConeIsomerizationsFromRadiance(radianceEnergy(:), wave(:),<span class="keyword">...</span>
@@ -123,19 +126,25 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="comment">% to about 1%.</span>
     m = opticsGet(optics,<span class="string">'magnification'</span>,sceneGet(scene,<span class="string">'distance'</span>));
     ptbMagCorrectIrradiance = ptbIrradiance(:)/(1+abs(m))^2;
-</pre><h2>Numerical check to decide whether we passed.<a name="12"></a></h2><p>We are checking against a 1% error.</p><pre class="codeinput">    tolerance = 0.01;
+</pre><h2>Numerical check to decide whether we passed.<a name="13"></a></h2><p>We are checking against a 1% error.</p><pre class="codeinput">    tolerance = 0.01;
 
     ptbMagCorrectIrradiance = ptbMagCorrectIrradiance(:);
     irradianceEnergy = irradianceEnergy(:);
     difference = ptbMagCorrectIrradiance-irradianceEnergy;
-</pre><h2>Set validationReport and validationFailedFlag<a name="13"></a></h2><p>All validation scripts must set the 'validationReport' and 'validationFailedFlag'</p><pre class="codeinput">    <span class="keyword">if</span> (max(abs(difference./irradianceEnergy)) &gt; tolerance)
+</pre><h2>Set validationReport, validationFailedFlag and validationData<a name="14"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (max(abs(difference./irradianceEnergy)) &gt; tolerance)
         validationReport     = sprintf(<span class="string">'Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance of %0.5f %% !!!'</span>, 100*tolerance);
         validationFailedFlag = true;
     <span class="keyword">else</span>
         validationReport     = sprintf(<span class="string">'Validation PASSED. PTB and isetbio agree about irradiance to %0.5f %%'</span>,100*tolerance);
         validationFailedFlag = false;
     <span class="keyword">end</span>
-</pre><h2>Generate plots, if so specified<a name="14"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
+
+    validationDataToSave.fov        = fov;
+    validationDataToSave.roiSize    = roiSize;
+    validationDataToSave.tolerance  = tolerance;
+    validationDataToSave.scene      = scene;
+    validationDataToSave.oi         = oi;
+</pre><h2>Generate plots, if so specified<a name="15"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
         h = figure(500);
         clf;
         set(h, <span class="string">'Position'</span>, [100 100 800 600]);
@@ -150,7 +159,6 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         xlabel(<span class="string">'Wave (nm)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 16); ylabel(<span class="string">'Irradiance (q/s/nm/m^2)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 16)
         title(<span class="string">'Without magnification correction'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 18, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
 
-
         subplot(2,1,2);
         plot(wave,ptbMagCorrectIrradiance,<span class="string">'ro'</span>, <span class="string">'MarkerFaceColor'</span>, [1.0 0.8 0.8], <span class="string">'MarkerSize'</span>, 10);
         hold <span class="string">on</span>;
@@ -161,48 +169,19 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         xlabel(<span class="string">'Wave (nm)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14); ylabel(<span class="string">'Irradiance (q/s/nm/m^2)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14)
         legend({<span class="string">'PTB'</span>,<span class="string">'ISETBIO'</span>}, <span class="string">'Location'</span>,<span class="string">'SouthEast'</span>,<span class="string">'FontSize'</span>,12)
         title(<span class="string">'Magnification-corrected comparison'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 18, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
-
     <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="PTB_vs_ISETBIO_Irradiance_01.png" alt=""> <h2>Assemble the validation data to be saved into a struct.<a name="15"></a></h2><pre class="codeinput">    validationDataToSave.fov        = fov;
-    validationDataToSave.roiSize    = roiSize;
-    validationDataToSave.tolerance  = tolerance;
-    validationDataToSave.scene      = scene;
-    validationDataToSave.oi         = oi;
-</pre><h2>Save the validation data.This part should be included as is in all validation scripts.<a name="16"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; isfield(runParams, <span class="string">'parentUnitTestObject'</span>)
-        <span class="comment">% Get parent @UnitTest object</span>
-        parentUnitTestOBJ = runParams.parentUnitTestObject;
-
-        <span class="comment">% Return validation results to the parent @UnitTest object</span>
-        parentUnitTestOBJ.storeValidationResults(<span class="keyword">...</span>
-            <span class="string">'validationReport'</span>,     validationReport, <span class="keyword">...</span>
-            <span class="string">'validationFailedFlag'</span>, validationFailedFlag, <span class="keyword">...</span>
-            <span class="string">'validationData'</span>,       validationDataToSave <span class="keyword">...</span>
-        );
-
-        <span class="comment">% Set to empty as we returned the validation results to the parent @UnitTest object</span>
-        validationResults = [];
-
-        <span class="comment">% Publish validation results</span>
-        parentUnitTestOBJ.printReport();
-    <span class="keyword">else</span>
-        <span class="comment">% return validationResults to the user</span>
-        validationResults = struct();
-        validationResults.validationReport      = validationReport;
-        validationResults.validationFailedFlag  = validationFailedFlag;
-        validationResults.validationDataToSave  = validationDataToSave;
-    <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="PTB_vs_ISETBIO_Irradiance_01.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 </pre><pre class="codeoutput">
 	Detailed validation results:
 	-------------------------------------------------------------------------------------------------
 	 validation report      : Validation PASSED. PTB and isetbio agree about irradiance to 1.00000 %
 	 validation data saved  : 'fov', 'roiSize', 'tolerance', 'scene', 'oi'
 	-------------------------------------------------------------------------------------------------
-	 date last run          : 18-Sep-2014 17:50:13
+	 date last run          : 19-Sep-2014 14:09:56
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
 	-------------------------------------------------------------------------------------------------
-</pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
@@ -210,16 +189,22 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
 %   Validate ISETBIO irradiance computations by comparing to PTB-irradiance computations.
 % 
 
-    %% Define parameters expected to be set by all validation scripts
-    
-    % Validation report
-    validationReport = 'None';
-    
-    % Flag indicating whether the validation failed due to incorrect results
-    validationFailedFlag = true;
+    % Call the validation script
+    [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
         
-    % struct with optional validation variables that we would like to save
-    validationDataToSave = struct();
+    % Update the parent @UnitTest object
+    UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
+end
+
+
+
+%% Validation script for PTB_vs_ISETBIO_Irradiance test
+function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
+
+    %% Initialize return params
+    validationReport = []; 
+    validationFailedFlag = []; 
+    validationDataToSave = [];
     
     
     %% Initialize ISETBIO
@@ -227,8 +212,8 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
     
     
     %% Set computation params
-    fov               = 33;  % need large field
-    roiSize           = 7;
+    fov               = 40;  % need large field
+    roiSize           = 10;
     
     
     %% Create a radiance image in ISETBIO
@@ -305,8 +290,7 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
     irradianceEnergy = irradianceEnergy(:);
     difference = ptbMagCorrectIrradiance-irradianceEnergy;
    
-    %% Set validationReport and validationFailedFlag
-    % All validation scripts must set the 'validationReport' and 'validationFailedFlag'
+    %% Set validationReport, validationFailedFlag and validationData
     if (max(abs(difference./irradianceEnergy)) > tolerance)
         validationReport     = sprintf('Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance of %0.5f %% !!!', 100*tolerance);
         validationFailedFlag = true;
@@ -315,6 +299,12 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
         validationFailedFlag = false;
     end
 
+    validationDataToSave.fov        = fov;
+    validationDataToSave.roiSize    = roiSize;
+    validationDataToSave.tolerance  = tolerance;
+    validationDataToSave.scene      = scene;
+    validationDataToSave.oi         = oi;
+    
     
     %% Generate plots, if so specified
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
@@ -332,7 +322,6 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
         xlabel('Wave (nm)', 'FontName', 'Helvetica', 'FontSize', 16); ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 16)
         title('Without magnification correction', 'FontName', 'Helvetica', 'FontSize', 18, 'FontWeight', 'bold');
     
-        
         subplot(2,1,2);
         plot(wave,ptbMagCorrectIrradiance,'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
         hold on;
@@ -343,43 +332,12 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
         xlabel('Wave (nm)', 'FontName', 'Helvetica', 'FontSize', 14); ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 14)
         legend({'PTB','ISETBIO'}, 'Location','SouthEast','FontSize',12)
         title('Magnification-corrected comparison', 'FontName', 'Helvetica', 'FontSize', 18, 'FontWeight', 'bold');
-        
     end 
     
-    
-    %% Assemble the validation data to be saved into a struct.
-    validationDataToSave.fov        = fov;
-    validationDataToSave.roiSize    = roiSize;
-    validationDataToSave.tolerance  = tolerance;
-    validationDataToSave.scene      = scene;
-    validationDataToSave.oi         = oi;
-        
-    
-    %% Save the validation data.This part should be included as is in all validation scripts.
-    if (nargin >= 1) && isfield(runParams, 'parentUnitTestObject')
-        % Get parent @UnitTest object
-        parentUnitTestOBJ = runParams.parentUnitTestObject;
-        
-        % Return validation results to the parent @UnitTest object
-        parentUnitTestOBJ.storeValidationResults(...
-            'validationReport',     validationReport, ...
-            'validationFailedFlag', validationFailedFlag, ...
-            'validationData',       validationDataToSave ...
-        );
-       
-        % Set to empty as we returned the validation results to the parent @UnitTest object
-        validationResults = [];
-        
-        % Publish validation results
-        parentUnitTestOBJ.printReport();
-    else 
-        % return validationResults to the user
-        validationResults = struct();
-        validationResults.validationReport      = validationReport;
-        validationResults.validationFailedFlag  = validationFailedFlag;
-        validationResults.validationDataToSave  = validationDataToSave;
-    end
-    
 end
+
+
+
+
 ##### SOURCE END #####
 --></body></html>
