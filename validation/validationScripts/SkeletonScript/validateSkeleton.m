@@ -10,7 +10,7 @@ function validateSkeleton(runParams)
     UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
 end
 
-%% Validation script for PTB_vs_ISETBIO_Irradiance test
+%% Skeleton validation script
 function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
     %% Initialize return params
