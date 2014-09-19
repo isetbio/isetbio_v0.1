@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Validation script for PTB_vs_ISETBIO_Irradiance test</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">Initialize ISETBIO</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> validateSkeleton(runParams)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">Initialize ISETBIO</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> validateSkeleton(runParams)
 <span class="comment">%</span>
 <span class="comment">% Skeleton validation script with the minimal amount of code required. Copy and adapt to your needs.</span>
 <span class="comment">%</span>
@@ -77,7 +77,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="comment">% Update the parent @UnitTest object</span>
     UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
 <span class="keyword">end</span>
-</pre><h2>Validation script for PTB_vs_ISETBIO_Irradiance test<a name="2"></a></h2><pre class="codeinput"><span class="keyword">function</span> [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
+</pre><h2>Skeleton validation script<a name="2"></a></h2><pre class="codeinput"><span class="keyword">function</span> [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 </pre><h2>Initialize return params<a name="4"></a></h2><pre class="codeinput">    validationReport = <span class="string">'Skeleton script. Copy and adapt to your needs.'</span>;
     validationFailedFlag = false;
     validationDataToSave = struct();
@@ -102,7 +102,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 	 validation report      : Skeleton script. Copy and adapt to your needs.
 	 validation data saved  : None
 	-------------------------------------------------------------------------
-	 date last run          : 19-Sep-2014 16:28:24
+	 date last run          : 19-Sep-2014 16:34:43
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
@@ -121,7 +121,7 @@ function validateSkeleton(runParams)
     UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
 end
 
-%% Validation script for PTB_vs_ISETBIO_Irradiance test
+%% Skeleton validation script
 function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
     %% Initialize return params
