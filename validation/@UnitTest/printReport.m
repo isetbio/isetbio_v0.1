@@ -1,17 +1,34 @@
 function printReport(obj)
 
     fprintf('\n\tDetailed validation results:');
+    
+    % Compose validationStatusString
+    if (obj.validationFailedFlag)
+        validationStatusString = sprintf('validation status      : FAILED');
+    else
+        validationStatusString = sprintf('validation status      : PASSED');
+    end
+    
     % Compose validationReportString
     validationReportString = sprintf('validation report      : %s', obj.validationReport);
     
+    
     % Compose savedVarString
     savedVarsString = sprintf('validation data saved  : ');
-    fieldNamesList = fieldnames(obj.validationData);
-    for k = 1:numel(fieldNamesList)-1
-        savedVarsString = [savedVarsString sprintf('''%s'', ', char(fieldNamesList{k}))];
+    if (~isempty(obj.validationData))
+        fieldNamesList = fieldnames(obj.validationData);
+        for k = 1:numel(fieldNamesList)-1
+            savedVarsString = [savedVarsString sprintf('''%s'', ', char(fieldNamesList{k}))];
+        end
+        if (numel(fieldNamesList) > 0)
+            savedVarsString = [savedVarsString sprintf('''%s''', char(fieldNamesList{numel(fieldNamesList)}))];
+        else
+            savedVarsString = [savedVarsString 'None'];
+        end
+    else
+        savedVarsString = [savedVarsString 'None'];
     end
-    savedVarsString = [savedVarsString sprintf('''%s''', char(fieldNamesList{numel(fieldNamesList)}))];
-        
+    
     % Compose sysInfoStrings
     sysInfoString1 = sprintf('date last run          : %s', obj.systemData.datePerformed);
     sysInfoString2 = sprintf('matlabVersion          : %s', obj.systemData.matlabVersion);
@@ -25,6 +42,7 @@ function printReport(obj)
         fprintf('-');
     end
     
+    fprintf('\n\t %s', validationStatusString);
     fprintf('\n\t %s', validationReportString);
     fprintf('\n\t %s', savedVarsString);
     fprintf('\n\t');

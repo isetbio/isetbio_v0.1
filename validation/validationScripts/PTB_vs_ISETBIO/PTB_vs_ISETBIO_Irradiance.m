@@ -16,9 +16,9 @@ end
 function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
     %% Initialize return params
-    validationReport = []; 
-    validationFailedFlag = []; 
-    validationDataToSave = [];
+    validationReport = 'None'; 
+    validationFailedFlag = true; 
+    validationDataToSave = struct();
     
     
     %% Initialize ISETBIO

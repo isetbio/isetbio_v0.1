@@ -81,6 +81,8 @@ function addProbe(obj, varargin)
         fprintf(2,'\t Status\t\t\t:  error (code raised an excemption which we caught). \n');
         fprintf(2,'\t Excemption message\t:  %s\n', newProbe.result.message);
         obj.printReport();
+        % Show published report
+        web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
         return;
     end
     
@@ -93,8 +95,14 @@ function addProbe(obj, varargin)
         for k = 1:numel(fieldNamesList)-1
             fprintf(2,'''%s'', ', char(fieldNamesList{k}));
         end
-        fprintf(2,'''%s'' \n', char(fieldNamesList{numel(fieldNamesList)}));
+        if (numel(fieldNamesList) > 0)
+            fprintf(2,'''%s'' \n', char(fieldNamesList{numel(fieldNamesList)}));
+        else
+            fprintf(2,'None \n');
+        end
         obj.printReport();
+        % Show published report
+        web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
         return;
     end
     
@@ -108,12 +116,15 @@ function addProbe(obj, varargin)
         for k = 1:numel(fieldNamesList)-1
             fprintf('''%s'', ', char(fieldNamesList{k}));
         end
-        fprintf('''%s'' \n', char(fieldNamesList{numel(fieldNamesList)}));
+        if (numel(fieldNamesList) > 0)
+            fprintf('''%s'' \n', char(fieldNamesList{numel(fieldNamesList)}));
+        else
+            fprintf('None \n');
+        end
         obj.printReport();
+        % Show published report
+        web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
     end
         
-    % Show published report
-    web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
-    
 end
 
