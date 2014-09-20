@@ -68,7 +68,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
   </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">Initialize ISETBIO</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> validateSkeleton(runParams)
 <span class="comment">%</span>
-<span class="comment">% Skeleton validation script with the minimal amount of code required. Copy and adapt to your needs.</span>
+<span class="comment">% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code.</span>
 <span class="comment">%</span>
 
     <span class="comment">% Call the validation script</span>
@@ -78,7 +78,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
 <span class="keyword">end</span>
 </pre><h2>Skeleton validation script<a name="2"></a></h2><pre class="codeinput"><span class="keyword">function</span> [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
-</pre><h2>Initialize return params<a name="4"></a></h2><pre class="codeinput">    validationReport = <span class="string">'Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code.'</span>;
+</pre><h2>Initialize return params<a name="4"></a></h2><pre class="codeinput">    validationReport = <span class="string">'Nothing to report.'</span>;
     validationFailedFlag = false;
     validationDataToSave = struct();
 </pre><h2>Initialize ISETBIO<a name="5"></a></h2><pre class="codeinput">    s_initISET;
@@ -97,21 +97,21 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><pre class="codeoutput">
 	Detailed validation results:
-	-----------------------------------------------------------------------------------------------------------------------------
+	------------------------------------------------------
 	 validation status      : PASSED
-	 validation report      : Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code.
+	 validation report      : Nothing to report.
 	 validation data saved  : None
-	-----------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 20-Sep-2014 11:35:47
+	------------------------------------------------------
+	 date last run          : 20-Sep-2014 11:39:01
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of isetbio
-	-----------------------------------------------------------------------------------------------------------------------------
+	------------------------------------------------------
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function validateSkeleton(runParams)
 %
-% Skeleton validation script with the minimal amount of code required. Copy and adapt to your needs. 
+% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code. 
 %
 
     % Call the validation script
@@ -125,7 +125,7 @@ end
 function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
     %% Initialize return params
-    validationReport = 'Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code.'; 
+    validationReport = 'Nothing to report.'; 
     validationFailedFlag = false; 
     validationDataToSave = struct();
     
