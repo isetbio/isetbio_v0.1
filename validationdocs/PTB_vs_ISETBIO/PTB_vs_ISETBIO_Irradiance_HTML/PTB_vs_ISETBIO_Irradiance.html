@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PTB_vs_ISETBIO_Irradiance</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-09-19"><meta name="DC.source" content="PTB_vs_ISETBIO_Irradiance.m"><style type="text/css">
+      --><title>PTB_vs_ISETBIO_Irradiance</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-09-20"><meta name="DC.source" content="PTB_vs_ISETBIO_Irradiance.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -82,8 +82,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     validationFailedFlag = true;
     validationDataToSave = struct();
 </pre><h2>Initialize ISETBIO<a name="5"></a></h2><pre class="codeinput">    s_initISET;
-</pre><h2>Set computation params<a name="6"></a></h2><pre class="codeinput">    fov     = 40;  <span class="comment">% need large field</span>
-    roiSize = 10;
+</pre><h2>Set computation params<a name="6"></a></h2><pre class="codeinput">    fov     = 20;  <span class="comment">% need large field</span>
+    roiSize = 5;
 </pre><h2>Create a radiance image in ISETBIO<a name="7"></a></h2><pre class="codeinput">    scene = sceneCreate(<span class="string">'uniform ee'</span>);    <span class="comment">% Equal energy</span>
     scene = sceneSet(scene,<span class="string">'name'</span>,<span class="string">'Equal energy uniform field'</span>);
     scene = sceneSet(scene,<span class="string">'fov'</span>, fov);
@@ -178,10 +178,10 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 	 validation report      : Validation PASSED. PTB and isetbio agree about irradiance to 1.00000 %
 	 validation data saved  : 'fov', 'roiSize', 'tolerance', 'scene', 'oi'
 	-------------------------------------------------------------------------------------------------
-	 date last run          : 19-Sep-2014 16:34:43
+	 date last run          : 20-Sep-2014 11:35:47
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
-	 git branch...tracking  : dev...origin/dev of ISETBIO
+	 git branch...tracking  : dev...origin/dev of isetbio
 	-------------------------------------------------------------------------------------------------
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -213,8 +213,8 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     
     %% Set computation params
-    fov     = 40;  % need large field
-    roiSize = 10;
+    fov     = 20;  % need large field
+    roiSize = 5;
     
     
     %% Create a radiance image in ISETBIO
