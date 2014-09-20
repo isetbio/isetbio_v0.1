@@ -2,6 +2,7 @@ function addProbe(obj, varargin)
     % validate input params
     p = inputParser;
     p.addParamValue('name', @ischar);
+    p.addParamValue('functionSectionName', @ischar);
     p.addParamValue('functionName', @ischar);
     p.addParamValue('functionParams', @isstruct);
     p.addParamValue('publishReport',  @islogical);
@@ -12,6 +13,7 @@ function addProbe(obj, varargin)
     
     % get input params
     newProbe.name = p.Results.name;
+    newProbe.functionSectionName   = p.Results.functionSectionName;
     newProbe.functionName   = p.Results.functionName;
     newProbe.functionParams = p.Results.functionParams;
     newProbe.onErrorReactBy = p.Results.onErrorReaction;
@@ -89,7 +91,7 @@ function addProbe(obj, varargin)
     if (newProbe.result.validationFailedFlag)
         fprintf(2,'\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, newProbe.name);
         fprintf(2,'\t ValidationScript\t:  %s.m\n', newProbe.functionName);
-        fprintf(2,'\t Status\t\t\t:  validation failure - %s.\n', newProbe.result.validationReport);
+        fprintf(2,'\t Status\t\t\t:  validation failure - %s\n', newProbe.result.validationReport);
         fprintf(2,'\t Validation data saved \t: ');
         fieldNamesList = fieldnames(newProbe.result.validationData);
         for k = 1:numel(fieldNamesList)-1
@@ -110,7 +112,7 @@ function addProbe(obj, varargin)
     if (~newProbe.result.validationFailedFlag) && (~newProbe.result.excemptionRaised)
         fprintf('\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, newProbe.name);
         fprintf('\t ValidationScript\t:  %s.m\n', newProbe.functionName);
-        fprintf('\t Status\t\t\t:  Success - %s.\n', newProbe.result.validationReport);
+        fprintf('\t Status\t\t\t:  Success - %s\n', newProbe.result.validationReport);
         fprintf('\t Validation data saved \t: ');
         fieldNamesList = fieldnames(newProbe.result.validationData);
         for k = 1:numel(fieldNamesList)-1

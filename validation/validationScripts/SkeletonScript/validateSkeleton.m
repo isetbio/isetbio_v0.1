@@ -1,6 +1,6 @@
 function validateSkeleton(runParams)
 %
-% Skeleton validation script with the minimal amount of code required. Copy and adapt to your needs. 
+% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code. 
 %
 
     % Call the validation script
@@ -14,14 +14,14 @@ end
 function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
     %% Initialize return params
-    validationReport = 'Skeleton script. Copy and adapt to your needs.'; 
+    validationReport = 'Nothing to report.'; 
     validationFailedFlag = false; 
     validationDataToSave = struct();
     
     %% Initialize ISETBIO
     s_initISET;
     
-    % Your isetbio computation code goes here.  
+    % Your isetbio validation code goes here.  
     
     % Do not forget to update the following params:
     % - validationReport (string),

@@ -40,6 +40,11 @@ classdef UnitTest < handle
         % Method to store the validatation results
         storeValidationResults(obj, varargin); ...
 
+        % Method that returns info for all probes run
+        [sectionNames, functionNames] = getProbesInfo(obj);
+    
+        % Method to save probes info to a file. pushToGit reads this file.
+        saveProbesInfo(obj);
     end
     
     methods (Access = private)    

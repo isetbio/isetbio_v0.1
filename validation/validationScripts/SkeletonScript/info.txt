@@ -1,0 +1,1 @@
+This section contains a skeleton validation script that users can adapt to write their own validation scripts.

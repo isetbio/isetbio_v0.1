@@ -26,8 +26,8 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     
     %% Set computation params
-    fov     = 40;  % need large field
-    roiSize = 10;
+    fov     = 20;  % need large field
+    roiSize = 5;
     
     
     %% Create a radiance image in ISETBIO
