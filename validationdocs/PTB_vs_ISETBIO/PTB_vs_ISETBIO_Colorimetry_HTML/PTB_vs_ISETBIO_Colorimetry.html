@@ -94,6 +94,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
     <span class="keyword">if</span> (any(abs(ptbxys-isetxys) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to xy (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to xy (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -106,6 +107,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><h2>xyY<a name="7"></a></h2><pre class="codeinput">    ptbXYZs = xyYToXYZ(ptbxyYs);
     <span class="keyword">if</span> (any(abs(testXYZs-ptbXYZs) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB FAILS XYZ to xyY to XYZ (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB PASSES XYZ to xyY to XYZ (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -117,6 +119,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     isetXYZs = xyy2xyz(ptbxyYs')';
     <span class="keyword">if</span> (any(abs(testXYZs-isetXYZs) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for xyY to XYZ (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for xyY to XYZ (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -131,6 +134,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="keyword">if</span> (any(abs(ptbuvs-isetuvs) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to uv (tolerance: %g)'</span>, tolerance);
         message = sprintf(<span class="string">'%s\n\t\t\tI think this is because ISET implements an obsolete version of the standard'</span>, message);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to uv (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -145,6 +149,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="keyword">if</span> (any(abs(ptbLuvs-isetLuvs) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to Luv (tolerance: %g)'</span>, tolerance);
         message = sprintf(<span class="string">'%s\n\t\t\tPresumably because the uv transformation differs.'</span>, message);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to Luv (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -161,6 +166,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     cd(curDir);
     <span class="keyword">if</span> (any(abs(ptbLabs-isetLabs) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to Lab (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -173,6 +179,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     isetXYZCheck = lab2xyz(isetLabs',whiteXYZ')';
     <span class="keyword">if</span> (any(abs(testXYZs-ptbXYZCheck) &gt; tolerance ))
         message = sprintf(<span class="string">'\n\t\tPTB FAILS XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB PASSES XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -182,13 +189,14 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
     <span class="keyword">if</span> (any(abs(testXYZs-isetXYZCheck) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tISET FAILS XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tISET PASSES XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
     <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
     validationDataToSave.isetXYZCheck  = isetXYZCheck;
-</pre><h2>sRGB<a name="11"></a></h2><p>The iset routines seem to use a matrix that is 1/100 of the standard definition.  Or, at least, 1/100 of what the PTB routines use.  To account for this, I multiply XYZ values by 100 before passing them to the iset routines.</p><p>The iset routines take an exponent argument for the sRGB gamma transform. At <a href="http://www.w3.org/Graphics/Color/sRGB">http://www.w3.org/Graphics/Color/sRGB</a> this is specified as 2.4.  The iset routine xyz2srgb uses 2.2, with a comment that an update at www.srgb.com changed this from 2.4 to 2.2.  I think this is wrong, though.  The text I can find on the web says that the 2.4 exponent, plus the linear initial region, is designed to approximate a gamma of 2.2. That is, you want 2.4 in the formulae to approximate the 2.2 industry standard gamma.  Site www.srgb.com now appears gone, by the way, but all the other sites I find seem to be the same in this regard.</p><p>Also note that if you change the exponent in the iset sRGB formulae, you also should probably change the cutoff used at the low-end, where the sRGB standard special cases the functional form of the gamma curve.  Here the test is set for 2.4.</p><p>Finally,the default gamma used by iset lrgb2srgb and by xzy2srgb currently differ, so you really want to be careful using these.  The inverse routine srgb2lrgb doesn't allow passing of the exponent, and it is hard coded as 2.4.  This causes a failure of the iset sRGB gamma routines to self-invert for gamma other than 2.4, and with their defaults.</p><p>One other convention difference is that the PTB routine rounds to integers for the settings, while the iset routine leaves the rounding up to the caller.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** sRGB*****'</span>)
+</pre><h2>sRGB<a name="11"></a></h2><p>The iset routines seem to use a matrix that is 1/100 of the standard definition.  Or, at least, 1/100 of what the PTB routines use.  To account for this, I multiply XYZ values by 100 before passing them to the iset routines.</p><p>The iset routines take an exponent argument for the sRGB gamma transform. At <a href="http://www.w3.org/Graphics/Color/sRGB">http://www.w3.org/Graphics/Color/sRGB</a> this is specified as 2.4.  The iset routine xyz2srgb uses 2.2, with a comment that an update at www.srgb.com changed this from 2.4 to 2.2.  I think this is wrong, though.  The text I can find on the web says that the 2.4 exponent, plus the linear initial region, is designed to approximate a gamma of 2.2. That is, you want 2.4 in the formulae to approximate the 2.2 industry standard gamma.  Site www.srgb.com now appears gone, by the way, but all the other sites I find seem to be the same in this regard.</p><p>Also note that if you change the exponent in the iset sRGB formulae, you also should probably change the cutoff used at the low-end, where the sRGB standard special cases the functional form of the gamma curve.  Here the test is set for 2.4.</p><p>Finally,the default gamma used by iset lrgb2srgb and by xzy2srgb currently differ, so you really want to be careful using these.  The inverse routine srgb2lrgb doesn't allow passing of the exponent, and it is hard coded as 2.4.  This causes a failure of the iset sRGB gamma routines to self-invert for gamma other than 2.4, and with their defaults.</p><p>One other convention difference is that the PTB routine rounds to integers for the settings, while the iset routine leaves the rounding up to the caller.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** sRGB*****'</span>);
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
 
     <span class="comment">% Create some test sRGB values and convert them in the PTB framework</span>
@@ -207,6 +215,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)'</span>,max(abs(d(:))), tolerance);
         d = d ./ptbXYZs;
         message = sprintf(<span class="string">'%s\n\t\tPTB-ISET Percent XYZ DIFFERENCE: %f\n'</span>, message, max(abs(d(:))));
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to sRGB (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -219,6 +228,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="comment">% PTB testing of inversion</span>
     <span class="keyword">if</span> (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB FAILS linear sRGB to XYZ to linear sRGB (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -229,6 +239,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
     <span class="keyword">if</span> (any(abs(SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB FAILS sRGB to linear sRGB to sRGB (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB PASSES sRGB to linear sRGB to sRGB (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -243,6 +254,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
     <span class="keyword">if</span> (any(abs(ptbSRGBMatrix-isetSRGBMatrix) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for sRGB transform matrix (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for sRGB transform matrix (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -267,6 +279,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)'</span>,max(abs(d(:))), tolerance);
         d = d ./isetSRGBPrimary;
         message = sprintf(<span class="string">'%s\n\t\tPTB-ISET Percent RGB DIFFERENCE: %f'</span>, message, max(abs(d(:))));
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to linear sRGB (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -279,6 +292,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="comment">% ISET/PTB sRGB comparison in integer gamma corrected space</span>
     <span class="keyword">if</span> (any(abs(round(isetSRGBs*255)-ptbSRGBs) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to sRGB (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -293,6 +307,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
     <span class="keyword">if</span> (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) &gt; 1e-10))
         message = sprintf(<span class="string">'\n\t\tISET FAILS linear sRGB to sRGB to linear sRGB (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -300,14 +315,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
     validationDataToSave.isetSRGBPrimaryCheck = isetSRGBPrimaryCheck;
     validationDataToSave.isetSRGBPrimary = isetSRGBPrimary;
-</pre><pre class="codeoutput">
-message =
-
-
-
-		***** sRGB*****
-
-</pre><h2>Quanta/Energy<a name="12"></a></h2><p>The ISET routines define c and h to more places than the PTB, so the agreement is only good to about 5 significant places.  Seems OK to me.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** Energy/Quanta *****'</span>)
+</pre><h2>Quanta/Energy<a name="12"></a></h2><p>The ISET routines define c and h to more places than the PTB, so the agreement is only good to about 5 significant places.  Seems OK to me.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** Energy/Quanta *****'</span>);
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
 
     load <span class="string">spd_D65</span>
@@ -319,6 +327,7 @@ message =
     toleranceQuanta = (10^-testPlaces)*min(ptbQuanta);
     <span class="keyword">if</span> (any(abs(ptbQuanta-isetQuanta) &gt; toleranceQuanta))
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for energy to quanta conversion at %d significant places (tolerance: %g)'</span>,testPlaces, toleranceQuanta);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for energy to quanta conversion to %d significant places (tolerance: %g)'</span>,testPlaces,  toleranceQuanta);
     <span class="keyword">end</span>
@@ -331,6 +340,7 @@ message =
 
     <span class="keyword">if</span> (any(abs(QuantaToEnergy(wlsTest,ptbQuanta)-spdEnergyTest) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB FAILS energy to quanta to energy (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB PASSES energy to quanta to energy (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -341,20 +351,14 @@ message =
 
     <span class="keyword">if</span> (any(abs(Quanta2Energy(wlsTest,isetQuanta')'- spdEnergyTest) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tISET FAILS energy to quanta to energy (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tISET PASSES energy to quanta to energy (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
     <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
     validationDataToSave.isetEnergyFromQuanta = Quanta2Energy(wlsTest,isetQuanta')';
-</pre><pre class="codeoutput">
-message =
-
-
-
-		***** Energy/Quanta *****
-
-</pre><h2>CIE daylights<a name="13"></a></h2><p>These routines are now running in ISET and everything agrees.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** Energy/Quanta *****'</span>)
+</pre><h2>CIE daylights<a name="13"></a></h2><p>These routines are now running in ISET and everything agrees.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** Energy/Quanta *****'</span>);
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
 
     load <span class="string">B_cieday</span>
@@ -368,6 +372,7 @@ message =
     isetDaySpd = isetDaySpd/max(isetDaySpd(:));
     <span class="keyword">if</span> (any(abs(isetDaySpd-ptbDaySpd) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for daylight (tolerance: %g)'</span>, tolerance);
+        validationFailedFlag = true;
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for for daylight (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
@@ -377,23 +382,10 @@ message =
     validationDataToSave.ptbDaySpd  = ptbDaySpd;
 
 
-    <span class="comment">% Print</span>
-    <span class="comment">% Do not forget to update the following params:</span>
-    <span class="comment">% - validationReport (string),</span>
-    <span class="comment">% - validationFailedFlag (boolean)</span>
-    <span class="comment">% - validationDataToSave (struct with fields containing validation data that you want to save for comparison to ground truth data)</span>
-
     <span class="comment">% Generate plots, if so specified</span>
     <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
         <span class="comment">% Your plotting code goes here.</span>
     <span class="keyword">end</span>
-</pre><pre class="codeoutput">
-message =
-
-
-
-		***** Energy/Quanta *****
-
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><pre class="codeoutput">
  Results for 'PTB_vs_ISETBIO_Colorimetry' probe:
@@ -428,7 +420,7 @@ message =
 		PTB-ISET AGREE for for daylight (tolerance: 1e-10)
 	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck', 'ptbSRGBPrimary', 'ptbSRGBs', 'ptbSRGBMatrix', 'isetSRGBMatrix', 'isetSRGBPrimary', 'isetSRGBs', 'isetSRGBPrimaryCheck', 'ptbQuanta', 'isetQuanta', 'ptbEnergyFromQuanta', 'spdEnergyTest', 'isetEnergyFromQuanta', 'isetDaySpd', 'ptbDaySpd'
 	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 16:56:36
+	 date last run          : 22-Sep-2014 16:59:28
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
@@ -473,6 +465,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     if (any(abs(ptbxys-isetxys) > tolerance))
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to xy (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to xy (tolerance: %g)', tolerance);
     end
@@ -487,6 +480,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     ptbXYZs = xyYToXYZ(ptbxyYs);
     if (any(abs(testXYZs-ptbXYZs) > tolerance))
         message = sprintf('\n\t\tPTB FAILS XYZ to xyY to XYZ (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB PASSES XYZ to xyY to XYZ (tolerance: %g)', tolerance);
     end
@@ -498,6 +492,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetXYZs = xyy2xyz(ptbxyYs')';
     if (any(abs(testXYZs-isetXYZs) > tolerance))
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for xyY to XYZ (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB-ISET AGREE for xyY to XYZ (tolerance: %g)', tolerance);
     end 
@@ -515,6 +510,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     if (any(abs(ptbuvs-isetuvs) > tolerance))
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to uv (tolerance: %g)', tolerance);
         message = sprintf('%s\n\t\t\tI think this is because ISET implements an obsolete version of the standard', message);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to uv (tolerance: %g)', tolerance);
     end
@@ -531,6 +527,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     if (any(abs(ptbLuvs-isetLuvs) > tolerance))
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to Luv (tolerance: %g)', tolerance);
         message = sprintf('%s\n\t\t\tPresumably because the uv transformation differs.', message);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to Luv (tolerance: %g)', tolerance);
     end
@@ -549,6 +546,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     cd(curDir);
     if (any(abs(ptbLabs-isetLabs) > tolerance))
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to Lab (tolerance: %g)', tolerance);
     end
@@ -561,6 +559,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetXYZCheck = lab2xyz(isetLabs',whiteXYZ')';
     if (any(abs(testXYZs-ptbXYZCheck) > tolerance ))
         message = sprintf('\n\t\tPTB FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB PASSES XYZ to Lab to XYZ (tolerance: %g)', tolerance);
     end
@@ -570,6 +569,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     if (any(abs(testXYZs-isetXYZCheck) > tolerance))
         message = sprintf('\n\t\tISET FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tISET PASSES XYZ to Lab to XYZ (tolerance: %g)', tolerance);
     end
@@ -610,7 +610,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     % One other convention difference is that the PTB routine rounds to
     % integers for the settings, while the iset routine leaves the rounding up
     % to the caller.
-    message = sprintf('\n\n\t\t***** sRGB*****')
+    message = sprintf('\n\n\t\t***** sRGB*****');
     validationReport = sprintf('%s %s', validationReport, message);
 
     % Create some test sRGB values and convert them in the PTB framework
@@ -629,6 +629,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)',max(abs(d(:))), tolerance);
         d = d ./ptbXYZs;
         message = sprintf('%s\n\t\tPTB-ISET Percent XYZ DIFFERENCE: %f\n', message, max(abs(d(:))));
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to sRGB (tolerance: %g)', tolerance);
     end
@@ -641,6 +642,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     % PTB testing of inversion
     if (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) > tolerance))
         message = sprintf('\n\t\tPTB FAILS linear sRGB to XYZ to linear sRGB (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: %g)', tolerance);
     end
@@ -651,6 +653,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     if (any(abs(SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs) > tolerance))
         message = sprintf('\n\t\tPTB FAILS sRGB to linear sRGB to sRGB (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB PASSES sRGB to linear sRGB to sRGB (tolerance: %g)', tolerance);
     end
@@ -665,6 +668,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
 
     if (any(abs(ptbSRGBMatrix-isetSRGBMatrix) > tolerance))
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for sRGB transform matrix (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB-ISET AGREE for sRGB transform matrix (tolerance: %g)', tolerance);
     end
@@ -689,6 +693,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)',max(abs(d(:))), tolerance);
         d = d ./isetSRGBPrimary;
         message = sprintf('%s\n\t\tPTB-ISET Percent RGB DIFFERENCE: %f', message, max(abs(d(:))));
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to linear sRGB (tolerance: %g)', tolerance);
     end
@@ -701,6 +706,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     % ISET/PTB sRGB comparison in integer gamma corrected space
     if (any(abs(round(isetSRGBs*255)-ptbSRGBs) > tolerance))
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to sRGB (tolerance: %g)', tolerance);
     end
@@ -715,6 +721,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
     if (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) > 1e-10))
         message = sprintf('\n\t\tISET FAILS linear sRGB to sRGB to linear sRGB (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: %g)', tolerance);
     end
@@ -728,7 +735,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     %
     % The ISET routines define c and h to more places than the PTB, so the
     % agreement is only good to about 5 significant places.  Seems OK to me.
-    message = sprintf('\n\n\t\t***** Energy/Quanta *****')
+    message = sprintf('\n\n\t\t***** Energy/Quanta *****');
     validationReport = sprintf('%s %s', validationReport, message);
  
     load spd_D65
@@ -740,6 +747,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     toleranceQuanta = (10^-testPlaces)*min(ptbQuanta);
     if (any(abs(ptbQuanta-isetQuanta) > toleranceQuanta))
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for energy to quanta conversion at %d significant places (tolerance: %g)',testPlaces, toleranceQuanta);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB-ISET AGREE for energy to quanta conversion to %d significant places (tolerance: %g)',testPlaces,  toleranceQuanta);
     end
@@ -752,6 +760,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     if (any(abs(QuantaToEnergy(wlsTest,ptbQuanta)-spdEnergyTest) > tolerance))
         message = sprintf('\n\t\tPTB FAILS energy to quanta to energy (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB PASSES energy to quanta to energy (tolerance: %g)', tolerance);
     end
@@ -762,6 +771,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     if (any(abs(Quanta2Energy(wlsTest,isetQuanta')'- spdEnergyTest) > tolerance))
         message = sprintf('\n\t\tISET FAILS energy to quanta to energy (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tISET PASSES energy to quanta to energy (tolerance: %g)', tolerance);
     end
@@ -773,7 +783,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     %% CIE daylights
     % 
     % These routines are now running in ISET and everything agrees.
-    message = sprintf('\n\n\t\t***** Energy/Quanta *****')
+    message = sprintf('\n\n\t\t***** Energy/Quanta *****');
     validationReport = sprintf('%s %s', validationReport, message);
     
     load B_cieday
@@ -787,6 +797,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetDaySpd = isetDaySpd/max(isetDaySpd(:));
     if (any(abs(isetDaySpd-ptbDaySpd) > tolerance))
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for daylight (tolerance: %g)', tolerance);
+        validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB-ISET AGREE for for daylight (tolerance: %g)', tolerance);
     end
@@ -796,12 +807,6 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     validationDataToSave.ptbDaySpd  = ptbDaySpd;
     
 
-    % Print
-    % Do not forget to update the following params:
-    % - validationReport (string),
-    % - validationFailedFlag (boolean)
-    % - validationDataToSave (struct with fields containing validation data that you want to save for comparison to ground truth data)
-    
     % Generate plots, if so specified
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
         % Your plotting code goes here.
