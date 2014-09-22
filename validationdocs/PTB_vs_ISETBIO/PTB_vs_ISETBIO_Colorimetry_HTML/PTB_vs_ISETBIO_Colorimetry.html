@@ -358,7 +358,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
     validationDataToSave.isetEnergyFromQuanta = Quanta2Energy(wlsTest,isetQuanta')';
-</pre><h2>CIE daylights<a name="13"></a></h2><p>These routines are now running in ISET and everything agrees.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** Energy/Quanta *****'</span>);
+</pre><h2>CIE daylights<a name="13"></a></h2><p>These routines are now running in ISET and everything agrees.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** CIE Daylights *****'</span>);
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
 
     load <span class="string">B_cieday</span>
@@ -417,12 +417,12 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 		PTB PASSES energy to quanta to energy (tolerance: 1e-10) 
 		ISET PASSES energy to quanta to energy (tolerance: 1e-10) 
 
-		***** Energy/Quanta ***** 
+		***** CIE Daylights ***** 
 		PTB-ISET AGREE for for daylight (tolerance: 1e-10)
 	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck', 'ptbSRGBPrimary', 'ptbSRGBs', 'ptbSRGBMatrix', 'isetSRGBMatrix', 'isetSRGBPrimary', 'isetSRGBs', 'isetSRGBPrimaryCheck', 'ptbQuanta', 'isetQuanta', 'ptbEnergyFromQuanta', 'spdEnergyTest', 'isetEnergyFromQuanta', 'isetDaySpd', 'ptbDaySpd'
 	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 17:32:46
+	 date last run          : 22-Sep-2014 17:34:09
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
@@ -785,7 +785,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     %% CIE daylights
     % 
     % These routines are now running in ISET and everything agrees.
-    message = sprintf('\n\n\t\t***** Energy/Quanta *****');
+    message = sprintf('\n\n\t\t***** CIE Daylights *****');
     validationReport = sprintf('%s %s', validationReport, message);
     
     load B_cieday
