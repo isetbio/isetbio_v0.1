@@ -353,7 +353,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     %% CIE daylights
     % 
     % These routines are now running in ISET and everything agrees.
-    message = sprintf('\n\n\t\t***** Energy/Quanta *****');
+    message = sprintf('\n\n\t\t***** CIE Daylights *****');
     validationReport = sprintf('%s %s', validationReport, message);
     
     load B_cieday
