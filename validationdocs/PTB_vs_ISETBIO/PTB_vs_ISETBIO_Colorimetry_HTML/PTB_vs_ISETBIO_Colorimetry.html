@@ -212,6 +212,11 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to sRGB (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
 
+    <span class="comment">% update validation report and validationDataToSave struct</span>
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.isetXYZs = isetXYZs;
+    validationDataToSave.ptbXYZs = ptbXYZs;
+
 <span class="comment">% PTB testing of inversion</span>
 <span class="keyword">if</span> (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) &gt; 1e-10))
     fprintf(<span class="string">'PTB FAILS linear sRGB to XYZ to linear sRGB\n'</span>);
@@ -293,7 +298,7 @@ ISET PASSES linear sRGB to sRGB to linear sRGB
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><pre class="codeoutput">
  Results for 'PTB_vs_ISETBIO_Colorimetry' probe:
-	----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 validation status      : PASSED
 	 validation report      :  
 		***** Basic XYZ ***** 
@@ -306,14 +311,15 @@ ISET PASSES linear sRGB to sRGB to linear sRGB
 		PTB PASSES XYZ to Lab to XYZ (tolerance: 1e-10) 
 		ISET PASSES XYZ to Lab to XYZ (tolerance: 1e-10) 
 
-		***** sRGB*****
+		***** sRGB***** 
+		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-10)
 	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck'
-	----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 16:28:13
+	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 date last run          : 22-Sep-2014 16:30:09
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
-	----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function PTB_vs_ISETBIO_Colorimetry(runParams)
@@ -515,6 +521,11 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to sRGB (tolerance: %g)', tolerance);
     end
 
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.isetXYZs = isetXYZs;
+    validationDataToSave.ptbXYZs = ptbXYZs;
+    
 % PTB testing of inversion
 if (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) > 1e-10))
     fprintf('PTB FAILS linear sRGB to XYZ to linear sRGB\n');
