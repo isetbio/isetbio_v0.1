@@ -133,7 +133,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     isetuvs = [isetus' ; isetvs'];
     <span class="keyword">if</span> (any(abs(ptbuvs-isetuvs) &gt; 1e-10))
         message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to uv\n'</span>);
-        message = printf(<span class="string">'%s\tI think this is because ISET implements an obsolete version of the standard\n'</span>, message);
+        message = sprintf(<span class="string">'%s\tI think this is because ISET implements an obsolete version of the standard\n'</span>, message);
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'PTB-ISET AGREE for XYZ to uv\n'</span>);
     <span class="keyword">end</span>
@@ -180,7 +180,7 @@ validationReport =
 
 	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs'
 	-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 16:01:11
+	 date last run          : 22-Sep-2014 16:01:55
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
@@ -270,7 +270,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetuvs = [isetus' ; isetvs'];
     if (any(abs(ptbuvs-isetuvs) > 1e-10))
         message = sprintf('PTB-ISET DIFFERENCE for XYZ to uv\n');
-        message = printf('%s\tI think this is because ISET implements an obsolete version of the standard\n', message);
+        message = sprintf('%s\tI think this is because ISET implements an obsolete version of the standard\n', message);
     else
         message = sprintf('PTB-ISET AGREE for XYZ to uv\n');
     end
@@ -292,7 +292,6 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
         % Your plotting code goes here.
     end
-    
     
 end
 
