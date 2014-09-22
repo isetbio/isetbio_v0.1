@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">SETUP</a></li><li><a href="#6">XYZ-related colorimetry</a></li><li><a href="#7">xyY</a></li><li><a href="#8">CIE uv chromaticity</a></li><li><a href="#9">CIELUV</a></li><li><a href="#10">CIELAB</a></li><li><a href="#11">sRGB</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> PTB_vs_ISETBIO_Colorimetry(runParams)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">SETUP</a></li><li><a href="#6">XYZ-related colorimetry</a></li><li><a href="#7">xyY</a></li><li><a href="#8">CIE uv chromaticity</a></li><li><a href="#9">CIELUV</a></li><li><a href="#10">CIELAB</a></li><li><a href="#11">sRGB</a></li><li><a href="#12">Quanta/Energy</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> PTB_vs_ISETBIO_Colorimetry(runParams)
 <span class="comment">%</span>
 <span class="comment">% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code.</span>
 <span class="comment">%</span>
@@ -220,7 +220,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="keyword">if</span> (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB FAILS linear sRGB to XYZ to linear sRGB (tolerance: %g)'</span>, tolerance);
     <span class="keyword">else</span>
-        message = sprintf(<span class="string">'\n\t\tPTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: %g)\n'</span>, tolerance);
+        message = sprintf(<span class="string">'\n\t\tPTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
     <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
@@ -288,15 +288,65 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     validationDataToSave.ptbSRGBs = ptbSRGBs;
 
 
-<span class="comment">% lrgb -&gt; srgb -&gt; lrgb in ISET</span>
-isetSRGBPrimaryCheckImage = srgb2lrgb(isetSRGBImage);
-isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
-<span class="keyword">if</span> (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) &gt; 1e-10))
-    fprintf(<span class="string">'ISET FAILS linear sRGB to sRGB to linear sRGB\n'</span>);
-<span class="keyword">else</span>
-    fprintf(<span class="string">'ISET PASSES linear sRGB to sRGB to linear sRGB\n'</span>);
-<span class="keyword">end</span>
+    <span class="comment">% lrgb -&gt; srgb -&gt; lrgb in ISET</span>
+    isetSRGBPrimaryCheckImage = srgb2lrgb(isetSRGBImage);
+    isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
+    <span class="keyword">if</span> (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) &gt; 1e-10))
+        message = sprintf(<span class="string">'\n\t\tISET FAILS linear sRGB to sRGB to linear sRGB (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">else</span>
+        message = sprintf(<span class="string">'\n\t\tISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">end</span>
+    <span class="comment">% update validation report and validationDataToSave struct</span>
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.isetSRGBPrimaryCheck = isetSRGBPrimaryCheck;
+    validationDataToSave.isetSRGBPrimary = isetSRGBPrimary;
+</pre><pre class="codeoutput">
+message =
 
+
+
+		***** sRGB*****
+
+</pre><h2>Quanta/Energy<a name="12"></a></h2><p>The ISET routines define c and h to more places than the PTB, so the agreement is only good to about 5 significant places.  Seems OK to me.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** Energy/Quanta *****'</span>)
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+
+    load <span class="string">spd_D65</span>
+    spdEnergyTest = spd_D65;
+    wlsTest = SToWls(S_D65);
+    testPlaces = 5;
+    ptbQuanta = EnergyToQuanta(wlsTest,spdEnergyTest);
+    isetQuanta = Energy2Quanta(wlsTest,spdEnergyTest);
+    toleranceQuanta = (10^-testPlaces)*min(ptbQuanta);
+    <span class="keyword">if</span> (any(abs(ptbQuanta-isetQuanta) &gt; toleranceQuanta))
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for energy to quanta conversion at %d significant places (tolerance: %g)'</span>,testPlaces, toleranceQuanta);
+    <span class="keyword">else</span>
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for energy to quanta conversion to %d significant places (tolerance: %g)'</span>,testPlaces,  toleranceQuanta);
+    <span class="keyword">end</span>
+
+    <span class="comment">% update validation report and validationDataToSave struct</span>
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.ptbQuanta = ptbQuanta;
+    validationDataToSave.isetQuanta = isetQuanta;
+
+
+    <span class="keyword">if</span> (any(abs(QuantaToEnergy(wlsTest,ptbQuanta)-spdEnergyTest) &gt; tolerance))
+        message = sprintf(<span class="string">'\n\t\tPTB FAILS energy to quanta to energy (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">else</span>
+        message = sprintf(<span class="string">'\n\t\tPTB PASSES energy to quanta to energy (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">end</span>
+    <span class="comment">% update validation report and validationDataToSave struct</span>
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.ptbEnergyFromQuanta = QuantaToEnergy(wlsTest,ptbQuanta);
+    validationDataToSave.spdEnergyTest = spdEnergyTest;
+
+    <span class="keyword">if</span> (any(abs(Quanta2Energy(wlsTest,isetQuanta')'- spdEnergyTest) &gt; tolerance))
+        message = sprintf(<span class="string">'\n\t\tISET FAILS energy to quanta to energy (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">else</span>
+        message = sprintf(<span class="string">'\n\t\tISET PASSES energy to quanta to energy (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">end</span>
+    <span class="comment">% update validation report and validationDataToSave struct</span>
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.isetEnergyFromQuanta = Quanta2Energy(wlsTest,isetQuanta')';
 
 
     <span class="comment">% Print</span>
@@ -314,13 +364,12 @@ message =
 
 
 
-		***** sRGB*****
+		***** Energy/Quanta *****
 
-ISET PASSES linear sRGB to sRGB to linear sRGB
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><pre class="codeoutput">
  Results for 'PTB_vs_ISETBIO_Colorimetry' probe:
-	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 validation status      : PASSED
 	 validation report      :  
 		***** Basic XYZ ***** 
@@ -335,19 +384,24 @@ ISET PASSES linear sRGB to sRGB to linear sRGB
 
 		***** sRGB***** 
 		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-10) 
-		PTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: 1e-10)
- 
+		PTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: 1e-10) 
 		PTB PASSES sRGB to linear sRGB to sRGB (tolerance: 1e-10) 
 		PTB-ISET AGREE for sRGB transform matrix (tolerance: 1e-10) 
 		PTB-ISET AGREE for XYZ to linear sRGB (tolerance: 1e-10) 
-		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-10)
-	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck', 'ptbSRGBPrimary', 'ptbSRGBs', 'ptbSRGBMatrix', 'isetSRGBMatrix', 'isetSRGBPrimary', 'isetSRGBs'
-	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 16:44:07
+		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-10) 
+		ISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: 1e-10) 
+
+		***** Energy/Quanta ***** 
+		PTB-ISET AGREE for energy to quanta conversion to 5 significant places (tolerance: 9.56086e+14) 
+		PTB PASSES energy to quanta to energy (tolerance: 1e-10) 
+		ISET PASSES energy to quanta to energy (tolerance: 1e-10)
+	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck', 'ptbSRGBPrimary', 'ptbSRGBs', 'ptbSRGBMatrix', 'isetSRGBMatrix', 'isetSRGBPrimary', 'isetSRGBs', 'isetSRGBPrimaryCheck', 'ptbQuanta', 'isetQuanta', 'ptbEnergyFromQuanta', 'spdEnergyTest', 'isetEnergyFromQuanta'
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 date last run          : 22-Sep-2014 16:53:44
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
-	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function PTB_vs_ISETBIO_Colorimetry(runParams)
@@ -557,7 +611,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     if (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) > tolerance))
         message = sprintf('\n\t\tPTB FAILS linear sRGB to XYZ to linear sRGB (tolerance: %g)', tolerance);
     else
-        message = sprintf('\n\t\tPTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: %g)\n', tolerance);
+        message = sprintf('\n\t\tPTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: %g)', tolerance);
     end
     % update validation report and validationDataToSave struct
     validationReport = sprintf('%s %s', validationReport, message);
@@ -625,16 +679,65 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     validationDataToSave.ptbSRGBs = ptbSRGBs;
     
     
-% lrgb -> srgb -> lrgb in ISET
-isetSRGBPrimaryCheckImage = srgb2lrgb(isetSRGBImage);
-isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
-if (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) > 1e-10))
-    fprintf('ISET FAILS linear sRGB to sRGB to linear sRGB\n');
-else
-    fprintf('ISET PASSES linear sRGB to sRGB to linear sRGB\n');
-end
+    % lrgb -> srgb -> lrgb in ISET
+    isetSRGBPrimaryCheckImage = srgb2lrgb(isetSRGBImage);
+    isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
+    if (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) > 1e-10))
+        message = sprintf('\n\t\tISET FAILS linear sRGB to sRGB to linear sRGB (tolerance: %g)', tolerance);
+    else
+        message = sprintf('\n\t\tISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: %g)', tolerance);
+    end
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.isetSRGBPrimaryCheck = isetSRGBPrimaryCheck;
+    validationDataToSave.isetSRGBPrimary = isetSRGBPrimary;
+    
 
-
+    %% Quanta/Energy
+    %
+    % The ISET routines define c and h to more places than the PTB, so the
+    % agreement is only good to about 5 significant places.  Seems OK to me.
+    message = sprintf('\n\n\t\t***** Energy/Quanta *****')
+    validationReport = sprintf('%s %s', validationReport, message);
+ 
+    load spd_D65
+    spdEnergyTest = spd_D65;
+    wlsTest = SToWls(S_D65);
+    testPlaces = 5;
+    ptbQuanta = EnergyToQuanta(wlsTest,spdEnergyTest);
+    isetQuanta = Energy2Quanta(wlsTest,spdEnergyTest);
+    toleranceQuanta = (10^-testPlaces)*min(ptbQuanta);
+    if (any(abs(ptbQuanta-isetQuanta) > toleranceQuanta))
+        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for energy to quanta conversion at %d significant places (tolerance: %g)',testPlaces, toleranceQuanta);
+    else
+        message = sprintf('\n\t\tPTB-ISET AGREE for energy to quanta conversion to %d significant places (tolerance: %g)',testPlaces,  toleranceQuanta);
+    end
+    
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.ptbQuanta = ptbQuanta;
+    validationDataToSave.isetQuanta = isetQuanta;
+    
+    
+    if (any(abs(QuantaToEnergy(wlsTest,ptbQuanta)-spdEnergyTest) > tolerance))
+        message = sprintf('\n\t\tPTB FAILS energy to quanta to energy (tolerance: %g)', tolerance);
+    else
+        message = sprintf('\n\t\tPTB PASSES energy to quanta to energy (tolerance: %g)', tolerance);
+    end
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.ptbEnergyFromQuanta = QuantaToEnergy(wlsTest,ptbQuanta);
+    validationDataToSave.spdEnergyTest = spdEnergyTest;
+    
+    if (any(abs(Quanta2Energy(wlsTest,isetQuanta')'- spdEnergyTest) > tolerance))
+        message = sprintf('\n\t\tISET FAILS energy to quanta to energy (tolerance: %g)', tolerance);
+    else
+        message = sprintf('\n\t\tISET PASSES energy to quanta to energy (tolerance: %g)', tolerance);
+    end
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.isetEnergyFromQuanta = Quanta2Energy(wlsTest,isetQuanta')';
+    
 
     % Print
     % Do not forget to update the following params:
