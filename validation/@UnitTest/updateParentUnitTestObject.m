@@ -21,8 +21,9 @@ function validationResults = updateParentUnitTestObject(validationReport, valida
         parentUnitTestOBJ.validationReport = validationReport;
         parentUnitTestOBJ.validationFailedFlag = validationFailedFlag;
         parentUnitTestOBJ.validationData = validationDataToSave;
+        parentUnitTestOBJ.printReport();
         validationResults = [];
-
+        
     else 
         % return validationResults to the user
         validationResults = struct();

@@ -1,7 +1,6 @@
 function printReport(obj)
 
-    lastProbe = obj.allProbeData{numel(obj.allProbeData)};
-    fprintf('\n Results for ''%s'' probe:', lastProbe.functionName);
+    fprintf('\n Results for ''%s'' probe:', obj.validationFunctionName);
     
     % Compose validationStatusString
     if (obj.validationFailedFlag)
@@ -37,26 +36,28 @@ function printReport(obj)
     
     charsLength = max([numel(validationReportString) numel(savedVarsString) numel(sysInfoString1) numel(sysInfoString2) numel(sysInfoString3) numel(sysInfoString4)])+2;
     
-    fprintf('\n\t');
-    for k = 1:charsLength
-        fprintf('-');
-    end
-    
+    dashedLine(charsLength);    
     fprintf('\n\t %s', validationStatusString);
+    
+    dashedLine(charsLength);
     fprintf('\n\t %s', validationReportString);
+    
+    dashedLine(charsLength);
     fprintf('\n\t %s', savedVarsString);
-    fprintf('\n\t');
-    for k = 1:charsLength
-        fprintf('-');
-    end
+    
+    dashedLine(charsLength);
     fprintf('\n\t %s', sysInfoString1);
     fprintf('\n\t %s', sysInfoString2);
     fprintf('\n\t %s', sysInfoString3);
     fprintf('\n\t %s', sysInfoString4);
     fprintf('\n\t');
+    dashedLine(charsLength);
+    fprintf('\n');    
+end
+ 
+function dashedLine(charsLength)
+    fprintf('\n\t');
     for k = 1:charsLength
         fprintf('-');
     end
-    fprintf('\n');
-        
- end
+end

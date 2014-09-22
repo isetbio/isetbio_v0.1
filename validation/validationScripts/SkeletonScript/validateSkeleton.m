@@ -25,7 +25,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     % Do not forget to update the following params:
     % - validationReport (string),
-    % - validationFailedFlag (boolean)
+    % - validationFailedFlag (boolean) true if the results are not what we expect 
     % - validationDataToSave (struct with fields containing validation data that you want to save for comparison to ground truth data)
     
     % Generate plots, if so specified

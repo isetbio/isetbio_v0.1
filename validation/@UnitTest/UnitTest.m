@@ -19,6 +19,7 @@ classdef UnitTest < handle
     
     properties (Access = private)  
          % validation results for current probe
+        validationFunctionName = '';
         validationFailedFlag = true;
         validationData       = struct();
         validationReport     = 'None';

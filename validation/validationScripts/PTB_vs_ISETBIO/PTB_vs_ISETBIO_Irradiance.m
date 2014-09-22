@@ -1,6 +1,6 @@
 function PTB_vs_ISETBIO_Irradiance(runParams)
 %
-%   Validate ISETBIO irradiance computations by comparing to PTB-irradiance computations.
+%   Validate ISETBIO-based irradiance computations by comparing to PTB-based irradiance computations.
 % 
 
     % Call the validation script

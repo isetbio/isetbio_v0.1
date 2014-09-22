@@ -39,7 +39,6 @@ function addProbe(obj, varargin)
         else
             s{1} = newProbe.functionName; 
         end
-
         obj.sectionData(newProbe.functionSectionName) = s;
     end
     
@@ -53,6 +52,7 @@ function addProbe(obj, varargin)
     params.parentUnitTestObject = obj;
     
     % Reset returned validation stuff
+    obj.validationFunctionName = newProbe.functionName;
     obj.validationData = [];
     obj.validationReport = 'None';
     obj.validationFailedFlag = false;
@@ -100,7 +100,7 @@ function addProbe(obj, varargin)
         fprintf(2,'\t Excemption message\t:  %s\n', newProbe.result.message);
         obj.printReport();
         % Show published report
-        web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
+        % web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
         return;
     end
     
@@ -120,7 +120,7 @@ function addProbe(obj, varargin)
         end
         obj.printReport();
         % Show published report
-        web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
+        % web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
         return;
     end
     
@@ -141,7 +141,7 @@ function addProbe(obj, varargin)
         end
         obj.printReport();
         % Show published report
-        web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
+        % web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
     end
         
 end
