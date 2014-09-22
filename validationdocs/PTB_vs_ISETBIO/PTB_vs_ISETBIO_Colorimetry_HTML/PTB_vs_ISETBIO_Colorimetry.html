@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">SETUP</a></li><li><a href="#6">XYZ-related colorimetry</a></li><li><a href="#7">xyY</a></li><li><a href="#8">CIE uv chromaticity</a></li><li><a href="#9">CIELUV</a></li><li><a href="#10">CIELAB</a></li><li><a href="#11">sRGB</a></li><li><a href="#12">Quanta/Energy</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> PTB_vs_ISETBIO_Colorimetry(runParams)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">SETUP</a></li><li><a href="#6">XYZ-related colorimetry</a></li><li><a href="#7">xyY</a></li><li><a href="#8">CIE uv chromaticity</a></li><li><a href="#9">CIELUV</a></li><li><a href="#10">CIELAB</a></li><li><a href="#11">sRGB</a></li><li><a href="#12">Quanta/Energy</a></li><li><a href="#13">CIE daylights</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> PTB_vs_ISETBIO_Colorimetry(runParams)
 <span class="comment">%</span>
 <span class="comment">% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code.</span>
 <span class="comment">%</span>
@@ -347,6 +347,34 @@ message =
     <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
     validationDataToSave.isetEnergyFromQuanta = Quanta2Energy(wlsTest,isetQuanta')';
+</pre><pre class="codeoutput">
+message =
+
+
+
+		***** Energy/Quanta *****
+
+</pre><h2>CIE daylights<a name="13"></a></h2><p>These routines are now running in ISET and everything agrees.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** Energy/Quanta *****'</span>)
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+
+    load <span class="string">B_cieday</span>
+    testWls = SToWls(S_cieday);
+    testTemp = 4987;
+    ptbDaySpd = GenerateCIEDay(testTemp,B_cieday);
+    ptbDaySpd = ptbDaySpd/max(ptbDaySpd(:));
+
+    <span class="comment">% Iset version of normalized daylight</span>
+    isetDaySpd = daylight(testWls,testTemp);
+    isetDaySpd = isetDaySpd/max(isetDaySpd(:));
+    <span class="keyword">if</span> (any(abs(isetDaySpd-ptbDaySpd) &gt; tolerance))
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for daylight (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">else</span>
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for for daylight (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">end</span>
+    <span class="comment">% update validation report and validationDataToSave struct</span>
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.isetDaySpd = isetDaySpd;
+    validationDataToSave.ptbDaySpd  = ptbDaySpd;
 
 
     <span class="comment">% Print</span>
@@ -369,7 +397,7 @@ message =
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><pre class="codeoutput">
  Results for 'PTB_vs_ISETBIO_Colorimetry' probe:
-	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 validation status      : PASSED
 	 validation report      :  
 		***** Basic XYZ ***** 
@@ -394,14 +422,17 @@ message =
 		***** Energy/Quanta ***** 
 		PTB-ISET AGREE for energy to quanta conversion to 5 significant places (tolerance: 9.56086e+14) 
 		PTB PASSES energy to quanta to energy (tolerance: 1e-10) 
-		ISET PASSES energy to quanta to energy (tolerance: 1e-10)
-	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck', 'ptbSRGBPrimary', 'ptbSRGBs', 'ptbSRGBMatrix', 'isetSRGBMatrix', 'isetSRGBPrimary', 'isetSRGBs', 'isetSRGBPrimaryCheck', 'ptbQuanta', 'isetQuanta', 'ptbEnergyFromQuanta', 'spdEnergyTest', 'isetEnergyFromQuanta'
-	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 16:53:44
+		ISET PASSES energy to quanta to energy (tolerance: 1e-10) 
+
+		***** Energy/Quanta ***** 
+		PTB-ISET AGREE for for daylight (tolerance: 1e-10)
+	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck', 'ptbSRGBPrimary', 'ptbSRGBs', 'ptbSRGBMatrix', 'isetSRGBMatrix', 'isetSRGBPrimary', 'isetSRGBs', 'isetSRGBPrimaryCheck', 'ptbQuanta', 'isetQuanta', 'ptbEnergyFromQuanta', 'spdEnergyTest', 'isetEnergyFromQuanta', 'isetDaySpd', 'ptbDaySpd'
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 date last run          : 22-Sep-2014 16:56:36
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
-	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function PTB_vs_ISETBIO_Colorimetry(runParams)
@@ -737,6 +768,32 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     % update validation report and validationDataToSave struct
     validationReport = sprintf('%s %s', validationReport, message);
     validationDataToSave.isetEnergyFromQuanta = Quanta2Energy(wlsTest,isetQuanta')';
+    
+
+    %% CIE daylights
+    % 
+    % These routines are now running in ISET and everything agrees.
+    message = sprintf('\n\n\t\t***** Energy/Quanta *****')
+    validationReport = sprintf('%s %s', validationReport, message);
+    
+    load B_cieday
+    testWls = SToWls(S_cieday);
+    testTemp = 4987;
+    ptbDaySpd = GenerateCIEDay(testTemp,B_cieday);
+    ptbDaySpd = ptbDaySpd/max(ptbDaySpd(:));
+
+    % Iset version of normalized daylight
+    isetDaySpd = daylight(testWls,testTemp);
+    isetDaySpd = isetDaySpd/max(isetDaySpd(:));
+    if (any(abs(isetDaySpd-ptbDaySpd) > tolerance))
+        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for daylight (tolerance: %g)', tolerance);
+    else
+        message = sprintf('\n\t\tPTB-ISET AGREE for for daylight (tolerance: %g)', tolerance);
+    end
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.isetDaySpd = isetDaySpd;
+    validationDataToSave.ptbDaySpd  = ptbDaySpd;
     
 
     % Print
