@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">SETUP</a></li><li><a href="#6">XYZ-related colorimetry</a></li><li><a href="#7">xyY</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> PTB_vs_ISETBIO_Colorimetry(runParams)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">SETUP</a></li><li><a href="#6">XYZ-related colorimetry</a></li><li><a href="#7">xyY</a></li><li><a href="#8">CIE uv chromaticity</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> PTB_vs_ISETBIO_Colorimetry(runParams)
 <span class="comment">%</span>
 <span class="comment">% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code.</span>
 <span class="comment">%</span>
@@ -83,24 +83,28 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     validationDataToSave = struct();
 </pre><h2>SETUP<a name="5"></a></h2><pre class="codeinput">    isetbioPath = fileparts(which(<span class="string">'colorTransformMatrix'</span>));
     curDir = pwd;
-</pre><h2>XYZ-related colorimetry<a name="6"></a></h2><p>xy</p><pre class="codeinput">    fprintf(<span class="string">'\n***** Basic XYZ *****\n'</span>);
+</pre><h2>XYZ-related colorimetry<a name="6"></a></h2><p>xy</p><pre class="codeinput">    message = sprintf(<span class="string">'\n***** Basic XYZ *****\n'</span>);
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+
     testXYZs = [[1 2 1]' [2 1 0.5]' [1 1 1]' [0.6 2.3 4]'];
     ptbxyYs = XYZToxyY(testXYZs);
     ptbxys  = ptbxyYs(1:2,:);
     isetxys = chromaticity(testXYZs')';
+
     tolerance = 1e-10;
     <span class="keyword">if</span> (any(abs(ptbxys-isetxys) &gt; 1e-10))
         message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to xy (tolerance: %g) \n'</span>, tolerance);
     <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB-ISET AGREE for XYZ to xy (tolerance: %f)\n'</span>, tolerance);
+        message = sprintf(<span class="string">'PTB-ISET AGREE for XYZ to xy (tolerance: %g)\n'</span>, tolerance);
     <span class="keyword">end</span>
 
     <span class="comment">% update validation report</span>
-    fprintf(<span class="string">'%s'</span>, message);
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
-</pre><pre class="codeoutput">
-***** Basic XYZ *****
-PTB-ISET AGREE for XYZ to xy (tolerance: 0.000000)
+
+    <span class="comment">% update validationDataToSave struct</span>
+    validationDataToSave.testXYZs = testXYZs;
+    validationDataToSave.ptbxys = ptbxys;
+    validationDataToSave.isetxys = isetxys;
 </pre><h2>xyY<a name="7"></a></h2><pre class="codeinput">    ptbXYZs = xyYToXYZ(ptbxyYs);
     tolerance = 1e-10;
     <span class="keyword">if</span> (any(abs(testXYZs-ptbXYZs) &gt; tolerance))
@@ -108,9 +112,10 @@ PTB-ISET AGREE for XYZ to xy (tolerance: 0.000000)
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'PTB PASSES XYZ to xyY to XYZ (tolerance: %g)\n'</span>, tolerance);
     <span class="keyword">end</span>
-    <span class="comment">% update validation report</span>
-    fprintf(<span class="string">'%s'</span>, message);
+
+    <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.ptbXYZs = ptbXYZs;
 
     isetXYZs = xyy2xyz(ptbxyYs')';
     <span class="keyword">if</span> (any(abs(testXYZs-isetXYZs) &gt; tolerance))
@@ -118,11 +123,26 @@ PTB-ISET AGREE for XYZ to xy (tolerance: 0.000000)
     <span class="keyword">else</span>
         message = sprintf(<span class="string">'PTB-ISET AGREE for xyY to XYZ (tolerance: %g)\n'</span>, tolerance);
     <span class="keyword">end</span>
-    <span class="comment">% update validation report</span>
-    fprintf(<span class="string">'%s'</span>, message);
+
+    <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.isetXYZs = isetXYZs;
+</pre><h2>CIE uv chromaticity<a name="8"></a></h2><pre class="codeinput">    ptbuvYs = XYZTouvY(testXYZs);
+    ptbuvs = ptbuvYs(1:2,:);
+    [isetus,isetvs] = xyz2uv(testXYZs');
+    isetuvs = [isetus' ; isetvs'];
+    <span class="keyword">if</span> (any(abs(ptbuvs-isetuvs) &gt; 1e-10))
+        message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to uv\n'</span>);
+        message = printf(<span class="string">'%s\tI think this is because ISET implements an obsolete version of the standard\n'</span>, message);
+    <span class="keyword">else</span>
+        message = sprintf(<span class="string">'PTB-ISET AGREE for XYZ to uv\n'</span>);
+    <span class="keyword">end</span>
+    <span class="comment">% update validation report and validationDataToSave struct</span>
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.ptbuvs = ptbuvs;
+    validationDataToSave.isetuvs = isetuvs;
 
-
+    <span class="comment">% %% CIELUV</span>
 
     <span class="comment">% Do not forget to update the following params:</span>
     <span class="comment">% - validationReport (string),</span>
@@ -133,8 +153,6 @@ PTB-ISET AGREE for XYZ to xy (tolerance: 0.000000)
     <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
         <span class="comment">% Your plotting code goes here.</span>
     <span class="keyword">end</span>
-</pre><pre class="codeoutput">PTB PASSES XYZ to xyY to XYZ (tolerance: 1e-10)
-PTB-ISET AGREE for xyY to XYZ (tolerance: 1e-10)
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -166,21 +184,28 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     %% XYZ-related colorimetry
     %
     % xy
-    fprintf('\n***** Basic XYZ *****\n');
+    message = sprintf('\n***** Basic XYZ *****\n');
+    validationReport = sprintf('%s %s', validationReport, message);
+    
     testXYZs = [[1 2 1]' [2 1 0.5]' [1 1 1]' [0.6 2.3 4]'];
     ptbxyYs = XYZToxyY(testXYZs);
     ptbxys  = ptbxyYs(1:2,:);
     isetxys = chromaticity(testXYZs')';
+    
     tolerance = 1e-10;
     if (any(abs(ptbxys-isetxys) > 1e-10))
         message = sprintf('PTB-ISET DIFFERENCE for XYZ to xy (tolerance: %g) \n', tolerance);
     else
-        message = sprintf('PTB-ISET AGREE for XYZ to xy (tolerance: %f)\n', tolerance);
+        message = sprintf('PTB-ISET AGREE for XYZ to xy (tolerance: %g)\n', tolerance);
     end
     
     % update validation report
-    fprintf('%s', message);
     validationReport = sprintf('%s %s', validationReport, message);
+    
+    % update validationDataToSave struct
+    validationDataToSave.testXYZs = testXYZs;
+    validationDataToSave.ptbxys = ptbxys;
+    validationDataToSave.isetxys = isetxys;
     
     %% xyY
     ptbXYZs = xyYToXYZ(ptbxyYs);
@@ -190,9 +215,10 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     else
         message = sprintf('PTB PASSES XYZ to xyY to XYZ (tolerance: %g)\n', tolerance);
     end
-    % update validation report
-    fprintf('%s', message);
+    
+    % update validation report and validationDataToSave struct
     validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.ptbXYZs = ptbXYZs;
     
     isetXYZs = xyy2xyz(ptbxyYs')';
     if (any(abs(testXYZs-isetXYZs) > tolerance))
@@ -200,12 +226,30 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     else
         message = sprintf('PTB-ISET AGREE for xyY to XYZ (tolerance: %g)\n', tolerance);
     end 
-    % update validation report
-    fprintf('%s', message);
-    validationReport = sprintf('%s %s', validationReport, message);
     
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.isetXYZs = isetXYZs;
 
     
+    %% CIE uv chromaticity
+    ptbuvYs = XYZTouvY(testXYZs);
+    ptbuvs = ptbuvYs(1:2,:);
+    [isetus,isetvs] = xyz2uv(testXYZs');
+    isetuvs = [isetus' ; isetvs'];
+    if (any(abs(ptbuvs-isetuvs) > 1e-10))
+        message = sprintf('PTB-ISET DIFFERENCE for XYZ to uv\n');
+        message = printf('%s\tI think this is because ISET implements an obsolete version of the standard\n', message);
+    else
+        message = sprintf('PTB-ISET AGREE for XYZ to uv\n');
+    end
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.ptbuvs = ptbuvs;
+    validationDataToSave.isetuvs = isetuvs;
+    
+    % %% CIELUV
+
     % Do not forget to update the following params:
     % - validationReport (string),
     % - validationFailedFlag (boolean)
