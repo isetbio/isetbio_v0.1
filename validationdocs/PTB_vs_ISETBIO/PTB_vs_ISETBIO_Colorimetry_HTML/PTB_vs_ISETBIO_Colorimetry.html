@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">SETUP</a></li><li><a href="#6">XYZ-related colorimetry</a></li><li><a href="#7">xyY</a></li><li><a href="#8">CIE uv chromaticity</a></li><li><a href="#9">CIELUV</a></li><li><a href="#10">CIELAB</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> PTB_vs_ISETBIO_Colorimetry(runParams)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">SETUP</a></li><li><a href="#6">XYZ-related colorimetry</a></li><li><a href="#7">xyY</a></li><li><a href="#8">CIE uv chromaticity</a></li><li><a href="#9">CIELUV</a></li><li><a href="#10">CIELAB</a></li><li><a href="#11">sRGB</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> PTB_vs_ISETBIO_Colorimetry(runParams)
 <span class="comment">%</span>
 <span class="comment">% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code.</span>
 <span class="comment">%</span>
@@ -188,6 +188,88 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
     validationDataToSave.isetXYZCheck  = isetXYZCheck;
+</pre><h2>sRGB<a name="11"></a></h2><p>The iset routines seem to use a matrix that is 1/100 of the standard definition.  Or, at least, 1/100 of what the PTB routines use.  To account for this, I multiply XYZ values by 100 before passing them to the iset routines.</p><p>The iset routines take an exponent argument for the sRGB gamma transform. At <a href="http://www.w3.org/Graphics/Color/sRGB">http://www.w3.org/Graphics/Color/sRGB</a> this is specified as 2.4.  The iset routine xyz2srgb uses 2.2, with a comment that an update at www.srgb.com changed this from 2.4 to 2.2.  I think this is wrong, though.  The text I can find on the web says that the 2.4 exponent, plus the linear initial region, is designed to approximate a gamma of 2.2. That is, you want 2.4 in the formulae to approximate the 2.2 industry standard gamma.  Site www.srgb.com now appears gone, by the way, but all the other sites I find seem to be the same in this regard.</p><p>Also note that if you change the exponent in the iset sRGB formulae, you also should probably change the cutoff used at the low-end, where the sRGB standard special cases the functional form of the gamma curve.  Here the test is set for 2.4.</p><p>Finally,the default gamma used by iset lrgb2srgb and by xzy2srgb currently differ, so you really want to be careful using these.  The inverse routine srgb2lrgb doesn't allow passing of the exponent, and it is hard coded as 2.4.  This causes a failure of the iset sRGB gamma routines to self-invert for gamma other than 2.4, and with their defaults.</p><p>One other convention difference is that the PTB routine rounds to integers for the settings, while the iset routine leaves the rounding up to the caller.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** sRGB*****'</span>);
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    fprintf(<span class="string">'\n***** sRGB *****\n'</span>);
+
+    <span class="comment">% Create some test sRGB values and convert them in the PTB framework</span>
+    ptbSRGBs = [[188 188 188]' [124 218 89]' [255 149 203]' [255 3 203]'];
+    ptbSRGBPrimary = SRGBGammaUncorrect(ptbSRGBs);
+    ptbXYZs = SRGBPrimaryToXYZ(ptbSRGBPrimary);
+
+    <span class="comment">% The ISET form takes the frame buffer values in the [0,1] regime</span>
+    isetSRGBs = ptbSRGBs/255;
+    isetSRGBs = XW2RGBFormat(isetSRGBs',4,1);
+    isetXYZ   = srgb2xyz(isetSRGBs);
+    isetXYZs  = RGB2XWFormat(isetXYZ)';
+
+    <span class="keyword">if</span> (any(abs(isetXYZs-ptbXYZs) &gt; tolerance))
+        d = isetXYZs - ptbXYZs;
+        message = sprintf(<span class="string">'\n\t\PTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)'</span>,max(abs(d(:))), tolerance);
+        d = d ./ptbXYZs;
+        message = sprintf(<span class="string">'%s\n\t\tPTB-ISET Percent XYZ DIFFERENCE: %f\n'</span>, message, max(abs(d(:))));
+    <span class="keyword">else</span>
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to sRGB (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">end</span>
+
+<span class="comment">% PTB testing of inversion</span>
+<span class="keyword">if</span> (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) &gt; 1e-10))
+    fprintf(<span class="string">'PTB FAILS linear sRGB to XYZ to linear sRGB\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'PTB PASSES linear sRGB to XYZ to linear sRGB\n'</span>);
+<span class="keyword">end</span>
+<span class="keyword">if</span> (any(abs(SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs) &gt; 1e-10))
+    fprintf(<span class="string">'PTB FAILS sRGB to linear sRGB to sRGB\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'PTB PASSES sRGB to linear sRGB to sRGB\n'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% Compare sRGB matrices</span>
+[nil,ptbSRGBMatrix] = XYZToSRGBPrimary([]);
+isetSRGBMatrix = colorTransformMatrix(<span class="string">'xyz2srgb'</span>)';
+
+<span class="keyword">if</span> (any(abs(ptbSRGBMatrix-isetSRGBMatrix) &gt; 1e-10))
+    fprintf(<span class="string">'PTB-ISET DIFFERENCE for sRGB transform matrix\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'PTB-ISET AGREE for sRGB transform matrix\n'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% XYZ -&gt; lRGB</span>
+<span class="comment">% Reformat shape</span>
+ptbXYZsImage = CalFormatToImage(ptbXYZs,1,size(ptbXYZs,2));
+
+<span class="comment">% ISET convert</span>
+[isetSRGBImage,isetSRGBPrimaryImage] = xyz2srgb(ptbXYZsImage);
+
+<span class="comment">% Reformat shape</span>
+isetSRGBs = ImageToCalFormat(isetSRGBImage);
+isetSRGBPrimary = ImageToCalFormat(isetSRGBPrimaryImage);
+
+<span class="keyword">if</span> (any(abs(ptbSRGBPrimary-isetSRGBPrimary) &gt; 1e-10))
+    d = ptbSRGBPrimary - isetSRGBPrimary;
+    fprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to sRGB: %f\n'</span>,max(abs(d(:))));
+    d = d ./isetSRGBPrimary;
+    fprintf(<span class="string">'PTB-ISET Percent RGB DIFFERENCE: %f\n'</span>,max(abs(d(:))));
+<span class="keyword">else</span>
+    fprintf(<span class="string">'PTB-ISET AGREE for XYZ to linear sRGB\n'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% ISET/PTB sRGB comparison in integer gamma corrected space</span>
+<span class="keyword">if</span> (any(abs(round(isetSRGBs*255)-ptbSRGBs) &gt; 1e-10))
+    fprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to sRGB\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'PTB-ISET AGREE for XYZ to sRGB\n'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% lrgb -&gt; srgb -&gt; lrgb in ISET</span>
+isetSRGBPrimaryCheckImage = srgb2lrgb(isetSRGBImage);
+isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
+<span class="keyword">if</span> (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) &gt; 1e-10))
+    fprintf(<span class="string">'ISET FAILS linear sRGB to sRGB to linear sRGB\n'</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'ISET PASSES linear sRGB to sRGB to linear sRGB\n'</span>);
+<span class="keyword">end</span>
+
 
 
     <span class="comment">% Print</span>
@@ -200,10 +282,18 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
         <span class="comment">% Your plotting code goes here.</span>
     <span class="keyword">end</span>
+</pre><pre class="codeoutput">
+***** sRGB *****
+PTB PASSES linear sRGB to XYZ to linear sRGB
+PTB PASSES sRGB to linear sRGB to sRGB
+PTB-ISET AGREE for sRGB transform matrix
+PTB-ISET AGREE for XYZ to linear sRGB
+PTB-ISET AGREE for XYZ to sRGB
+ISET PASSES linear sRGB to sRGB to linear sRGB
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><pre class="codeoutput">
  Results for 'PTB_vs_ISETBIO_Colorimetry' probe:
-	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 validation status      : PASSED
 	 validation report      :  
 		***** Basic XYZ ***** 
@@ -214,14 +304,16 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 		PTB-ISET AGREE for XYZ to Luv (tolerance: 1e-10) 
 		PTB-ISET AGREE for XYZ to Lab (tolerance: 1e-10) 
 		PTB PASSES XYZ to Lab to XYZ (tolerance: 1e-10) 
-		ISET PASSES XYZ to Lab to XYZ (tolerance: 1e-10)
+		ISET PASSES XYZ to Lab to XYZ (tolerance: 1e-10) 
+
+		***** sRGB*****
 	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck'
-	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 16:24:29
+	----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 date last run          : 22-Sep-2014 16:28:13
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
-	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function PTB_vs_ISETBIO_Colorimetry(runParams)
@@ -367,6 +459,122 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     validationDataToSave.isetXYZCheck  = isetXYZCheck;
 
     
+    %% sRGB
+    %
+    % The iset routines seem to use a matrix that is 1/100 of the standard
+    % definition.  Or, at least, 1/100 of what the PTB routines use.  To
+    % account for this, I multiply XYZ values by 100 before passing them
+    % to the iset routines.
+    %
+    % The iset routines take an exponent argument for the sRGB gamma transform.
+    % At http://www.w3.org/Graphics/Color/sRGB this is specified as 2.4.  The
+    % iset routine xyz2srgb uses 2.2, with a comment that an update at
+    % www.srgb.com changed this from 2.4 to 2.2.  I think this is wrong,
+    % though.  The text I can find on the web says that the 2.4 exponent, plus
+    % the linear initial region, is designed to approximate a gamma of 2.2.
+    % That is, you want 2.4 in the formulae to approximate the 2.2 industry
+    % standard gamma.  Site www.srgb.com now appears gone, by the way, but all
+    % the other sites I find seem to be the same in this regard.
+    % 
+    % Also note that if you change the exponent in the iset sRGB formulae, you
+    % also should probably change the cutoff used at the low-end, where the
+    % sRGB standard special cases the functional form of the gamma curve.  Here
+    % the test is set for 2.4.
+    %
+    % Finally,the default gamma used by iset lrgb2srgb and by xzy2srgb
+    % currently differ, so you really want to be careful using these.  The
+    % inverse routine srgb2lrgb doesn't allow passing of the exponent, and it
+    % is hard coded as 2.4.  This causes a failure of the iset sRGB gamma
+    % routines to self-invert for gamma other than 2.4, and with their
+    % defaults.
+    %
+    % One other convention difference is that the PTB routine rounds to
+    % integers for the settings, while the iset routine leaves the rounding up
+    % to the caller.
+    message = sprintf('\n\n\t\t***** sRGB*****');
+    validationReport = sprintf('%s %s', validationReport, message);
+    fprintf('\n***** sRGB *****\n');
+
+    % Create some test sRGB values and convert them in the PTB framework
+    ptbSRGBs = [[188 188 188]' [124 218 89]' [255 149 203]' [255 3 203]'];
+    ptbSRGBPrimary = SRGBGammaUncorrect(ptbSRGBs);
+    ptbXYZs = SRGBPrimaryToXYZ(ptbSRGBPrimary);
+
+    % The ISET form takes the frame buffer values in the [0,1] regime
+    isetSRGBs = ptbSRGBs/255;
+    isetSRGBs = XW2RGBFormat(isetSRGBs',4,1);
+    isetXYZ   = srgb2xyz(isetSRGBs);
+    isetXYZs  = RGB2XWFormat(isetXYZ)';
+
+    if (any(abs(isetXYZs-ptbXYZs) > tolerance))
+        d = isetXYZs - ptbXYZs;
+        message = sprintf('\n\t\PTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)',max(abs(d(:))), tolerance);
+        d = d ./ptbXYZs;
+        message = sprintf('%s\n\t\tPTB-ISET Percent XYZ DIFFERENCE: %f\n', message, max(abs(d(:))));
+    else
+        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to sRGB (tolerance: %g)', tolerance);
+    end
+
+% PTB testing of inversion
+if (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) > 1e-10))
+    fprintf('PTB FAILS linear sRGB to XYZ to linear sRGB\n');
+else
+    fprintf('PTB PASSES linear sRGB to XYZ to linear sRGB\n');
+end
+if (any(abs(SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs) > 1e-10))
+    fprintf('PTB FAILS sRGB to linear sRGB to sRGB\n');
+else
+    fprintf('PTB PASSES sRGB to linear sRGB to sRGB\n');
+end
+
+% Compare sRGB matrices
+[nil,ptbSRGBMatrix] = XYZToSRGBPrimary([]);
+isetSRGBMatrix = colorTransformMatrix('xyz2srgb')';
+
+if (any(abs(ptbSRGBMatrix-isetSRGBMatrix) > 1e-10))
+    fprintf('PTB-ISET DIFFERENCE for sRGB transform matrix\n');
+else
+    fprintf('PTB-ISET AGREE for sRGB transform matrix\n');
+end
+
+% XYZ -> lRGB 
+% Reformat shape
+ptbXYZsImage = CalFormatToImage(ptbXYZs,1,size(ptbXYZs,2));
+
+% ISET convert 
+[isetSRGBImage,isetSRGBPrimaryImage] = xyz2srgb(ptbXYZsImage);
+
+% Reformat shape
+isetSRGBs = ImageToCalFormat(isetSRGBImage); 
+isetSRGBPrimary = ImageToCalFormat(isetSRGBPrimaryImage);
+
+if (any(abs(ptbSRGBPrimary-isetSRGBPrimary) > 1e-10))
+    d = ptbSRGBPrimary - isetSRGBPrimary;
+    fprintf('PTB-ISET DIFFERENCE for XYZ to sRGB: %f\n',max(abs(d(:))));
+    d = d ./isetSRGBPrimary;
+    fprintf('PTB-ISET Percent RGB DIFFERENCE: %f\n',max(abs(d(:))));
+else
+    fprintf('PTB-ISET AGREE for XYZ to linear sRGB\n');
+end
+
+% ISET/PTB sRGB comparison in integer gamma corrected space
+if (any(abs(round(isetSRGBs*255)-ptbSRGBs) > 1e-10))
+    fprintf('PTB-ISET DIFFERENCE for XYZ to sRGB\n');
+else
+    fprintf('PTB-ISET AGREE for XYZ to sRGB\n');
+end
+
+% lrgb -> srgb -> lrgb in ISET
+isetSRGBPrimaryCheckImage = srgb2lrgb(isetSRGBImage);
+isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
+if (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) > 1e-10))
+    fprintf('ISET FAILS linear sRGB to sRGB to linear sRGB\n');
+else
+    fprintf('ISET PASSES linear sRGB to sRGB to linear sRGB\n');
+end
+
+
+
     % Print
     % Do not forget to update the following params:
     % - validationReport (string),
