@@ -130,9 +130,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     isetuvs = [isetus' ; isetvs'];
     <span class="keyword">if</span> (any(abs(ptbuvs-isetuvs) &gt; tolerance))
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to uv (tolerance: %g)'</span>, tolerance);
-        message = sprintf(<span class="string">'%s\n\t\t\tI think this is because ISET implements an obsolete version of the standard\n'</span>, message);
+        message = sprintf(<span class="string">'%s\n\t\t\tI think this is because ISET implements an obsolete version of the standard'</span>, message);
     <span class="keyword">else</span>
-        message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to uv (tolerance: %g)\n'</span>, tolerance);
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to uv (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
 
     <span class="comment">% update validation report and validationDataToSave struct</span>
@@ -146,7 +146,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to Luv (tolerance: %g)'</span>, tolerance);
         message = sprintf(<span class="string">'%s\n\t\t\tPresumably because the uv transformation differs.'</span>, message);
     <span class="keyword">else</span>
-        message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to Luv (tolerance: %g)\n'</span>, tolerance);
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to Luv (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
 
     <span class="comment">% update validation report and validationDataToSave struct</span>
@@ -160,9 +160,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     isetLabs = xyz2lab(testXYZs',whiteXYZ')';
     cd(curDir);
     <span class="keyword">if</span> (any(abs(ptbLabs-isetLabs) &gt; tolerance))
-        message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)\n'</span>, tolerance);
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)'</span>, tolerance);
     <span class="keyword">else</span>
-        message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to Lab (tolerance: %g)\n'</span>, tolerance);
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to Lab (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
     <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
@@ -172,18 +172,18 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     ptbXYZCheck = LabToXYZ(ptbLabs,whiteXYZ);
     isetXYZCheck = lab2xyz(isetLabs',whiteXYZ')';
     <span class="keyword">if</span> (any(abs(testXYZs-ptbXYZCheck) &gt; tolerance ))
-        message = sprintf(<span class="string">'\n\t\tPTB FAILS XYZ to Lab to XYZ (tolerance: %g)\n'</span>, tolerance);
+        message = sprintf(<span class="string">'\n\t\tPTB FAILS XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
     <span class="keyword">else</span>
-        message = sprintf(<span class="string">'\n\t\tPTB PASSES XYZ to Lab to XYZ (tolerance: %g)\n'</span>, tolerance);
+        message = sprintf(<span class="string">'\n\t\tPTB PASSES XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
     <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
     validationDataToSave.ptbXYZCheck  = ptbXYZCheck;
 
     <span class="keyword">if</span> (any(abs(testXYZs-isetXYZCheck) &gt; tolerance))
-        message = sprintf(<span class="string">'\n\t\tISET FAILS XYZ to Lab to XYZ (tolerance: %g)\n'</span>, tolerance);
+        message = sprintf(<span class="string">'\n\t\tISET FAILS XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
     <span class="keyword">else</span>
-        message = sprintf(<span class="string">'\n\t\tISET PASSES XYZ to Lab to XYZ (tolerance: %g)\n'</span>, tolerance);
+        message = sprintf(<span class="string">'\n\t\tISET PASSES XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
     <span class="keyword">end</span>
     <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
@@ -203,30 +203,25 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><pre class="codeoutput">
  Results for 'PTB_vs_ISETBIO_Colorimetry' probe:
-	-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 validation status      : PASSED
 	 validation report      :  
 		***** Basic XYZ ***** 
 		PTB-ISET AGREE for XYZ to xy (tolerance: 1e-10) 
 		PTB PASSES XYZ to xyY to XYZ (tolerance: 1e-10) 
 		PTB-ISET AGREE for xyY to XYZ (tolerance: 1e-10) 
-		PTB-ISET AGREE for XYZ to uv (tolerance: 1e-10)
- 
-		PTB-ISET AGREE for XYZ to Luv (tolerance: 1e-10)
- 
-		PTB-ISET AGREE for XYZ to Lab (tolerance: 1e-10)
- 
-		PTB PASSES XYZ to Lab to XYZ (tolerance: 1e-10)
- 
+		PTB-ISET AGREE for XYZ to uv (tolerance: 1e-10) 
+		PTB-ISET AGREE for XYZ to Luv (tolerance: 1e-10) 
+		PTB-ISET AGREE for XYZ to Lab (tolerance: 1e-10) 
+		PTB PASSES XYZ to Lab to XYZ (tolerance: 1e-10) 
 		ISET PASSES XYZ to Lab to XYZ (tolerance: 1e-10)
-
 	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck'
-	-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 16:23:01
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 date last run          : 22-Sep-2014 16:24:29
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
-	-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function PTB_vs_ISETBIO_Colorimetry(runParams)
@@ -308,9 +303,9 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetuvs = [isetus' ; isetvs'];
     if (any(abs(ptbuvs-isetuvs) > tolerance))
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to uv (tolerance: %g)', tolerance);
-        message = sprintf('%s\n\t\t\tI think this is because ISET implements an obsolete version of the standard\n', message);
+        message = sprintf('%s\n\t\t\tI think this is because ISET implements an obsolete version of the standard', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to uv (tolerance: %g)\n', tolerance);
+        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to uv (tolerance: %g)', tolerance);
     end
     
     % update validation report and validationDataToSave struct
@@ -326,7 +321,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to Luv (tolerance: %g)', tolerance);
         message = sprintf('%s\n\t\t\tPresumably because the uv transformation differs.', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to Luv (tolerance: %g)\n', tolerance);
+        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to Luv (tolerance: %g)', tolerance);
     end
     
     % update validation report and validationDataToSave struct
@@ -342,9 +337,9 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetLabs = xyz2lab(testXYZs',whiteXYZ')';
     cd(curDir);
     if (any(abs(ptbLabs-isetLabs) > tolerance))
-        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)\n', tolerance);
+        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)', tolerance);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to Lab (tolerance: %g)\n', tolerance);
+        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to Lab (tolerance: %g)', tolerance);
     end
     % update validation report and validationDataToSave struct
     validationReport = sprintf('%s %s', validationReport, message);
@@ -354,18 +349,18 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     ptbXYZCheck = LabToXYZ(ptbLabs,whiteXYZ);
     isetXYZCheck = lab2xyz(isetLabs',whiteXYZ')';
     if (any(abs(testXYZs-ptbXYZCheck) > tolerance ))
-        message = sprintf('\n\t\tPTB FAILS XYZ to Lab to XYZ (tolerance: %g)\n', tolerance);
+        message = sprintf('\n\t\tPTB FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
     else
-        message = sprintf('\n\t\tPTB PASSES XYZ to Lab to XYZ (tolerance: %g)\n', tolerance);
+        message = sprintf('\n\t\tPTB PASSES XYZ to Lab to XYZ (tolerance: %g)', tolerance);
     end
     % update validation report and validationDataToSave struct
     validationReport = sprintf('%s %s', validationReport, message);
     validationDataToSave.ptbXYZCheck  = ptbXYZCheck;
     
     if (any(abs(testXYZs-isetXYZCheck) > tolerance))
-        message = sprintf('\n\t\tISET FAILS XYZ to Lab to XYZ (tolerance: %g)\n', tolerance);
+        message = sprintf('\n\t\tISET FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
     else
-        message = sprintf('\n\t\tISET PASSES XYZ to Lab to XYZ (tolerance: %g)\n', tolerance);
+        message = sprintf('\n\t\tISET PASSES XYZ to Lab to XYZ (tolerance: %g)', tolerance);
     end
     % update validation report and validationDataToSave struct
     validationReport = sprintf('%s %s', validationReport, message);
