@@ -1,4 +1,4 @@
-function updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams)
+function validationResults = updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams)
     %% Book-keeping ops. All validation scripts should contain the following.
     if (isempty(validationReport))
         validationReport = 'None';
@@ -18,17 +18,11 @@ function updateParentUnitTestObject(validationReport, validationFailedFlag, vali
         parentUnitTestOBJ = runParams.parentUnitTestObject;
         
         % Return validation results to the parent @UnitTest object
-        parentUnitTestOBJ.storeValidationResults(...
-            'validationReport',     validationReport, ...
-            'validationFailedFlag', validationFailedFlag, ...
-            'validationData',       validationDataToSave ...
-        );
-       
-        % Set to empty as we returned the validation results to the parent @UnitTest object
+        parentUnitTestOBJ.validationReport = validationReport;
+        parentUnitTestOBJ.validationFailedFlag = validationFailedFlag;
+        parentUnitTestOBJ.validationData = validationDataToSave;
         validationResults = [];
-        
-        % Publish validation results
-        parentUnitTestOBJ.printReport();
+
     else 
         % return validationResults to the user
         validationResults = struct();

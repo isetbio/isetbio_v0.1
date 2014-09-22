@@ -10,25 +10,36 @@ classdef UnitTest < handle
         % a collection of various system information
         systemData = struct();
 
-        % validation results for current probe
+        % validation root directory: same as dir of the executive script
+        validationRootDirectory;
+        
+        % cell array with data for all examined probes
+        allProbeData;
+    end
+    
+    properties (Access = private)  
+         % validation results for current probe
         validationFailedFlag = true;
         validationData       = struct();
         validationReport     = 'None';
         
-        % cell array with data for all examined probes
-        allProbeData = {};
+        % map describing section organization
+        sectionData;
     end
     
     % Public methods
     methods
         % Constructor
         function obj = UnitTest(validationScriptFileName)
-            obj.systemData.vScriptFileName = sprintf('%s',validationScriptFileName);
-            obj.systemData.vScriptListing  = fileread([validationScriptFileName '.m']);
-            obj.systemData.datePerformed   = datestr(now);
-            obj.systemData.matlabVersion   = version;
-            obj.systemData.computer        = computer;
-            obj.systemData.gitRepoBranch   = obj.retrieveGitBranch();
+            [obj.validationRootDirectory, ~, ~] = fileparts(which(validationScriptFileName));
+            obj.systemData.vScriptFileName      = sprintf('%s',validationScriptFileName);
+            obj.systemData.vScriptListing       = fileread([validationScriptFileName '.m']);
+            obj.systemData.datePerformed        = datestr(now);
+            obj.systemData.matlabVersion        = version;
+            obj.systemData.computer             = computer;
+            obj.systemData.gitRepoBranch        = obj.retrieveGitBranch();
+            obj.sectionData                     = containers.Map();
+            obj.allProbeData                    = {};
         end
         
         % Method to add and execute a new probe
@@ -38,13 +49,10 @@ classdef UnitTest < handle
         printReport(obj);
     
         % Method to store the validatation results
-        storeValidationResults(obj, varargin); ...
-
-        % Method that returns info for all probes run
-        [sectionNames, functionNames] = getProbesInfo(obj);
-    
-        % Method to save probes info to a file. pushToGit reads this file.
-        saveProbesInfo(obj);
+        %storeValidationResults(obj, varargin); ...
+   
+        % Method that pushes results to github
+        pushToGitHub(obj);
     end
     
     methods (Access = private)    
@@ -53,7 +61,7 @@ classdef UnitTest < handle
     end
     
     methods (Static)
-        updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
+        validationResults = updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
     end
     
 end

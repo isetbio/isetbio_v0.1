@@ -1,4 +1,5 @@
 function addProbe(obj, varargin)
+    
     % validate input params
     p = inputParser;
     p.addParamValue('name', @ischar);
@@ -27,6 +28,21 @@ function addProbe(obj, varargin)
     else
         error('File ''%s'' not found in Matlab''s path.', newProbe.functionName);
     end
+    
+    
+    if (newProbe.publishReport)
+        % update sectionData map
+        s = {};
+        if (isKey(obj.sectionData,newProbe.functionSectionName))
+            s = obj.sectionData(newProbe.functionSectionName);
+            s{numel(s)+1} = newProbe.functionName;
+        else
+            s{1} = newProbe.functionName; 
+        end
+
+        obj.sectionData(newProbe.functionSectionName) = s;
+    end
+    
     
     % input params to function
     % add any passed input params
@@ -110,18 +126,18 @@ function addProbe(obj, varargin)
     
     
     if (~newProbe.result.validationFailedFlag) && (~newProbe.result.excemptionRaised)
-        fprintf('\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, newProbe.name);
-        fprintf('\t ValidationScript\t:  %s.m\n', newProbe.functionName);
-        fprintf('\t Status\t\t\t:  Success - %s\n', newProbe.result.validationReport);
-        fprintf('\t Validation data saved \t: ');
+        %fprintf('\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, newProbe.name);
+        %fprintf('\t ValidationScript\t:  %s.m\n', newProbe.functionName);
+        %fprintf('\t Status\t\t\t:  Success - %s\n', newProbe.result.validationReport);
+        %fprintf('\t Validation data saved \t: ');
         fieldNamesList = fieldnames(newProbe.result.validationData);
         for k = 1:numel(fieldNamesList)-1
-            fprintf('''%s'', ', char(fieldNamesList{k}));
+        %    fprintf('''%s'', ', char(fieldNamesList{k}));
         end
         if (numel(fieldNamesList) > 0)
-            fprintf('''%s'' \n', char(fieldNamesList{numel(fieldNamesList)}));
+        %    fprintf('''%s'' \n', char(fieldNamesList{numel(fieldNamesList)}));
         else
-            fprintf('None \n');
+        %    fprintf('None \n');
         end
         obj.printReport();
         % Show published report

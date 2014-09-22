@@ -1,6 +1,7 @@
 function printReport(obj)
 
-    fprintf('\n\tDetailed validation results:');
+    lastProbe = obj.allProbeData{numel(obj.allProbeData)};
+    fprintf('\n Results for ''%s'' probe:', lastProbe.functionName);
     
     % Compose validationStatusString
     if (obj.validationFailedFlag)
@@ -11,7 +12,6 @@ function printReport(obj)
     
     % Compose validationReportString
     validationReportString = sprintf('validation report      : %s', obj.validationReport);
-    
     
     % Compose savedVarString
     savedVarsString = sprintf('validation data saved  : ');
