@@ -68,7 +68,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
   </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">SETUP</a></li><li><a href="#6">XYZ-related colorimetry</a></li><li><a href="#7">xyY</a></li><li><a href="#8">CIE uv chromaticity</a></li><li><a href="#9">CIELUV</a></li><li><a href="#10">CIELAB</a></li><li><a href="#11">sRGB</a></li><li><a href="#12">Quanta/Energy</a></li><li><a href="#13">CIE daylights</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> PTB_vs_ISETBIO_Colorimetry(runParams)
 <span class="comment">%</span>
-<span class="comment">% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code.</span>
+<span class="comment">%  Validate ISETBIO-based colorimetric computations by comparing to PTB-based colorimetric computations.</span>
 <span class="comment">%</span>
 
     <span class="comment">% Call the validation script</span>
@@ -420,7 +420,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 		PTB-ISET AGREE for for daylight (tolerance: 1e-10)
 	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck', 'ptbSRGBPrimary', 'ptbSRGBs', 'ptbSRGBMatrix', 'isetSRGBMatrix', 'isetSRGBPrimary', 'isetSRGBs', 'isetSRGBPrimaryCheck', 'ptbQuanta', 'isetQuanta', 'ptbEnergyFromQuanta', 'spdEnergyTest', 'isetEnergyFromQuanta', 'isetDaySpd', 'ptbDaySpd'
 	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 16:59:28
+	 date last run          : 22-Sep-2014 17:01:39
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
@@ -429,7 +429,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 ##### SOURCE BEGIN #####
 function PTB_vs_ISETBIO_Colorimetry(runParams)
 %
-% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code. 
+%  Validate ISETBIO-based colorimetric computations by comparing to PTB-based colorimetric computations.
 %
 
     % Call the validation script

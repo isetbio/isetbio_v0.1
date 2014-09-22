@@ -68,7 +68,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
   </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Validation script for PTB_vs_ISETBIO_Irradiance test</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">Initialize ISETBIO</a></li><li><a href="#6">Set computation params</a></li><li><a href="#7">Create a radiance image in ISETBIO</a></li><li><a href="#8">Compute the irradiance in ISETBIO</a></li><li><a href="#9">Get wavelength and spectral radiance spd data (averaged within the scene ROI)</a></li><li><a href="#10">Get wavelength and spectral irradiance spd data (averaged within the scene ROI)</a></li><li><a href="#11">Get the underlying parameters that are needed from the ISETBIO structures.</a></li><li><a href="#12">Compute the irradiance in PTB</a></li><li><a href="#13">Numerical check to decide whether we passed.</a></li><li><a href="#14">Set validationReport, validationFailedFlag and validationData</a></li><li><a href="#15">Generate plots, if so specified</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> PTB_vs_ISETBIO_Irradiance(runParams)
 <span class="comment">%</span>
-<span class="comment">%   Validate ISETBIO irradiance computations by comparing to PTB-irradiance computations.</span>
+<span class="comment">%   Validate ISETBIO-based irradiance computations by comparing to PTB-based irradiance computations.</span>
 <span class="comment">%</span>
 
     <span class="comment">% Call the validation script</span>
@@ -178,7 +178,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 	 validation report      : Validation PASSED. PTB and isetbio agree about irradiance to 1.00000 %
 	 validation data saved  : 'fov', 'roiSize', 'tolerance', 'scene', 'oi'
 	-------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 16:59:28
+	 date last run          : 22-Sep-2014 17:01:39
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
@@ -187,7 +187,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 ##### SOURCE BEGIN #####
 function PTB_vs_ISETBIO_Irradiance(runParams)
 %
-%   Validate ISETBIO irradiance computations by comparing to PTB-irradiance computations.
+%   Validate ISETBIO-based irradiance computations by comparing to PTB-based irradiance computations.
 % 
 
     % Call the validation script
