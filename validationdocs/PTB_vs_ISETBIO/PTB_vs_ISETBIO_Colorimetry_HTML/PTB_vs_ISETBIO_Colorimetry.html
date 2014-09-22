@@ -188,9 +188,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
     validationDataToSave.isetXYZCheck  = isetXYZCheck;
-</pre><h2>sRGB<a name="11"></a></h2><p>The iset routines seem to use a matrix that is 1/100 of the standard definition.  Or, at least, 1/100 of what the PTB routines use.  To account for this, I multiply XYZ values by 100 before passing them to the iset routines.</p><p>The iset routines take an exponent argument for the sRGB gamma transform. At <a href="http://www.w3.org/Graphics/Color/sRGB">http://www.w3.org/Graphics/Color/sRGB</a> this is specified as 2.4.  The iset routine xyz2srgb uses 2.2, with a comment that an update at www.srgb.com changed this from 2.4 to 2.2.  I think this is wrong, though.  The text I can find on the web says that the 2.4 exponent, plus the linear initial region, is designed to approximate a gamma of 2.2. That is, you want 2.4 in the formulae to approximate the 2.2 industry standard gamma.  Site www.srgb.com now appears gone, by the way, but all the other sites I find seem to be the same in this regard.</p><p>Also note that if you change the exponent in the iset sRGB formulae, you also should probably change the cutoff used at the low-end, where the sRGB standard special cases the functional form of the gamma curve.  Here the test is set for 2.4.</p><p>Finally,the default gamma used by iset lrgb2srgb and by xzy2srgb currently differ, so you really want to be careful using these.  The inverse routine srgb2lrgb doesn't allow passing of the exponent, and it is hard coded as 2.4.  This causes a failure of the iset sRGB gamma routines to self-invert for gamma other than 2.4, and with their defaults.</p><p>One other convention difference is that the PTB routine rounds to integers for the settings, while the iset routine leaves the rounding up to the caller.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** sRGB*****'</span>);
+</pre><h2>sRGB<a name="11"></a></h2><p>The iset routines seem to use a matrix that is 1/100 of the standard definition.  Or, at least, 1/100 of what the PTB routines use.  To account for this, I multiply XYZ values by 100 before passing them to the iset routines.</p><p>The iset routines take an exponent argument for the sRGB gamma transform. At <a href="http://www.w3.org/Graphics/Color/sRGB">http://www.w3.org/Graphics/Color/sRGB</a> this is specified as 2.4.  The iset routine xyz2srgb uses 2.2, with a comment that an update at www.srgb.com changed this from 2.4 to 2.2.  I think this is wrong, though.  The text I can find on the web says that the 2.4 exponent, plus the linear initial region, is designed to approximate a gamma of 2.2. That is, you want 2.4 in the formulae to approximate the 2.2 industry standard gamma.  Site www.srgb.com now appears gone, by the way, but all the other sites I find seem to be the same in this regard.</p><p>Also note that if you change the exponent in the iset sRGB formulae, you also should probably change the cutoff used at the low-end, where the sRGB standard special cases the functional form of the gamma curve.  Here the test is set for 2.4.</p><p>Finally,the default gamma used by iset lrgb2srgb and by xzy2srgb currently differ, so you really want to be careful using these.  The inverse routine srgb2lrgb doesn't allow passing of the exponent, and it is hard coded as 2.4.  This causes a failure of the iset sRGB gamma routines to self-invert for gamma other than 2.4, and with their defaults.</p><p>One other convention difference is that the PTB routine rounds to integers for the settings, while the iset routine leaves the rounding up to the caller.</p><pre class="codeinput">    message = sprintf(<span class="string">'\n\n\t\t***** sRGB*****'</span>)
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
-    fprintf(<span class="string">'\n***** sRGB *****\n'</span>);
 
     <span class="comment">% Create some test sRGB values and convert them in the PTB framework</span>
     ptbSRGBs = [[188 188 188]' [124 218 89]' [255 149 203]' [255 3 203]'];
@@ -288,7 +287,12 @@ isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
         <span class="comment">% Your plotting code goes here.</span>
     <span class="keyword">end</span>
 </pre><pre class="codeoutput">
-***** sRGB *****
+message =
+
+
+
+		***** sRGB*****
+
 PTB PASSES linear sRGB to XYZ to linear sRGB
 PTB PASSES sRGB to linear sRGB to sRGB
 PTB-ISET AGREE for sRGB transform matrix
@@ -315,7 +319,7 @@ ISET PASSES linear sRGB to sRGB to linear sRGB
 		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-10)
 	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck'
 	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 16:30:09
+	 date last run          : 22-Sep-2014 16:32:17
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
@@ -497,9 +501,8 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     % One other convention difference is that the PTB routine rounds to
     % integers for the settings, while the iset routine leaves the rounding up
     % to the caller.
-    message = sprintf('\n\n\t\t***** sRGB*****');
+    message = sprintf('\n\n\t\t***** sRGB*****')
     validationReport = sprintf('%s %s', validationReport, message);
-    fprintf('\n***** sRGB *****\n');
 
     % Create some test sRGB values and convert them in the PTB framework
     ptbSRGBs = [[188 188 188]' [124 218 89]' [255 149 203]' [255 3 203]'];
