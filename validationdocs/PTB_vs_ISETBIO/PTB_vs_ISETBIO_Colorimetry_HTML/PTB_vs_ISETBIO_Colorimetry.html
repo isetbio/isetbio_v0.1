@@ -204,7 +204,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
     <span class="keyword">if</span> (any(abs(isetXYZs-ptbXYZs) &gt; tolerance))
         d = isetXYZs - ptbXYZs;
-        message = sprintf(<span class="string">'\n\t\PTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)'</span>,max(abs(d(:))), tolerance);
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)'</span>,max(abs(d(:))), tolerance);
         d = d ./ptbXYZs;
         message = sprintf(<span class="string">'%s\n\t\tPTB-ISET Percent XYZ DIFFERENCE: %f\n'</span>, message, max(abs(d(:))));
     <span class="keyword">else</span>
@@ -216,54 +216,77 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     validationDataToSave.isetXYZs = isetXYZs;
     validationDataToSave.ptbXYZs = ptbXYZs;
 
-<span class="comment">% PTB testing of inversion</span>
-<span class="keyword">if</span> (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) &gt; 1e-10))
-    fprintf(<span class="string">'PTB FAILS linear sRGB to XYZ to linear sRGB\n'</span>);
-<span class="keyword">else</span>
-    fprintf(<span class="string">'PTB PASSES linear sRGB to XYZ to linear sRGB\n'</span>);
-<span class="keyword">end</span>
-<span class="keyword">if</span> (any(abs(SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs) &gt; 1e-10))
-    fprintf(<span class="string">'PTB FAILS sRGB to linear sRGB to sRGB\n'</span>);
-<span class="keyword">else</span>
-    fprintf(<span class="string">'PTB PASSES sRGB to linear sRGB to sRGB\n'</span>);
-<span class="keyword">end</span>
+    <span class="comment">% PTB testing of inversion</span>
+    <span class="keyword">if</span> (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) &gt; tolerance))
+        message = sprintf(<span class="string">'\n\t\tPTB FAILS linear sRGB to XYZ to linear sRGB (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">else</span>
+        message = sprintf(<span class="string">'\n\t\tPTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: %g)\n'</span>, tolerance);
+    <span class="keyword">end</span>
+    <span class="comment">% update validation report and validationDataToSave struct</span>
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.ptbSRGBPrimary = ptbSRGBPrimary;
 
-<span class="comment">% Compare sRGB matrices</span>
-[nil,ptbSRGBMatrix] = XYZToSRGBPrimary([]);
-isetSRGBMatrix = colorTransformMatrix(<span class="string">'xyz2srgb'</span>)';
 
-<span class="keyword">if</span> (any(abs(ptbSRGBMatrix-isetSRGBMatrix) &gt; 1e-10))
-    fprintf(<span class="string">'PTB-ISET DIFFERENCE for sRGB transform matrix\n'</span>);
-<span class="keyword">else</span>
-    fprintf(<span class="string">'PTB-ISET AGREE for sRGB transform matrix\n'</span>);
-<span class="keyword">end</span>
+    <span class="keyword">if</span> (any(abs(SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs) &gt; tolerance))
+        message = sprintf(<span class="string">'\n\t\tPTB FAILS sRGB to linear sRGB to sRGB (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">else</span>
+        message = sprintf(<span class="string">'\n\t\tPTB PASSES sRGB to linear sRGB to sRGB (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">end</span>
+    <span class="comment">% update validation report and validationDataToSave struct</span>
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.ptbSRGBs = ptbSRGBs;
 
-<span class="comment">% XYZ -&gt; lRGB</span>
-<span class="comment">% Reformat shape</span>
-ptbXYZsImage = CalFormatToImage(ptbXYZs,1,size(ptbXYZs,2));
 
-<span class="comment">% ISET convert</span>
-[isetSRGBImage,isetSRGBPrimaryImage] = xyz2srgb(ptbXYZsImage);
+    <span class="comment">% Compare sRGB matrices</span>
+    [nil,ptbSRGBMatrix] = XYZToSRGBPrimary([]);
+    isetSRGBMatrix = colorTransformMatrix(<span class="string">'xyz2srgb'</span>)';
 
-<span class="comment">% Reformat shape</span>
-isetSRGBs = ImageToCalFormat(isetSRGBImage);
-isetSRGBPrimary = ImageToCalFormat(isetSRGBPrimaryImage);
+    <span class="keyword">if</span> (any(abs(ptbSRGBMatrix-isetSRGBMatrix) &gt; tolerance))
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for sRGB transform matrix (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">else</span>
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for sRGB transform matrix (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">end</span>
+    <span class="comment">% update validation report and validationDataToSave struct</span>
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.ptbSRGBMatrix = ptbSRGBMatrix;
+    validationDataToSave.isetSRGBMatrix = isetSRGBMatrix;
 
-<span class="keyword">if</span> (any(abs(ptbSRGBPrimary-isetSRGBPrimary) &gt; 1e-10))
-    d = ptbSRGBPrimary - isetSRGBPrimary;
-    fprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to sRGB: %f\n'</span>,max(abs(d(:))));
-    d = d ./isetSRGBPrimary;
-    fprintf(<span class="string">'PTB-ISET Percent RGB DIFFERENCE: %f\n'</span>,max(abs(d(:))));
-<span class="keyword">else</span>
-    fprintf(<span class="string">'PTB-ISET AGREE for XYZ to linear sRGB\n'</span>);
-<span class="keyword">end</span>
+    <span class="comment">% XYZ -&gt; lRGB</span>
+    <span class="comment">% Reformat shape</span>
+    ptbXYZsImage = CalFormatToImage(ptbXYZs,1,size(ptbXYZs,2));
 
-<span class="comment">% ISET/PTB sRGB comparison in integer gamma corrected space</span>
-<span class="keyword">if</span> (any(abs(round(isetSRGBs*255)-ptbSRGBs) &gt; 1e-10))
-    fprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to sRGB\n'</span>);
-<span class="keyword">else</span>
-    fprintf(<span class="string">'PTB-ISET AGREE for XYZ to sRGB\n'</span>);
-<span class="keyword">end</span>
+    <span class="comment">% ISET convert</span>
+    [isetSRGBImage,isetSRGBPrimaryImage] = xyz2srgb(ptbXYZsImage);
+
+    <span class="comment">% Reformat shape</span>
+    isetSRGBs = ImageToCalFormat(isetSRGBImage);
+    isetSRGBPrimary = ImageToCalFormat(isetSRGBPrimaryImage);
+
+    <span class="keyword">if</span> (any(abs(ptbSRGBPrimary-isetSRGBPrimary) &gt; tolerance))
+        d = ptbSRGBPrimary - isetSRGBPrimary;
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)'</span>,max(abs(d(:))), tolerance);
+        d = d ./isetSRGBPrimary;
+        message = sprintf(<span class="string">'%s\n\t\tPTB-ISET Percent RGB DIFFERENCE: %f'</span>, message, max(abs(d(:))));
+    <span class="keyword">else</span>
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to linear sRGB (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">end</span>
+    <span class="comment">% update validation report and validationDataToSave struct</span>
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.ptbSRGBPrimary = ptbSRGBPrimary;
+    validationDataToSave.isetSRGBPrimary = isetSRGBPrimary;
+
+
+    <span class="comment">% ISET/PTB sRGB comparison in integer gamma corrected space</span>
+    <span class="keyword">if</span> (any(abs(round(isetSRGBs*255)-ptbSRGBs) &gt; tolerance))
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">else</span>
+        message = sprintf(<span class="string">'\n\t\tPTB-ISET AGREE for XYZ to sRGB (tolerance: %g)'</span>, tolerance);
+    <span class="keyword">end</span>
+    <span class="comment">% update validation report and validationDataToSave struct</span>
+    validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
+    validationDataToSave.isetSRGBs = isetSRGBs*255;
+    validationDataToSave.ptbSRGBs = ptbSRGBs;
+
 
 <span class="comment">% lrgb -&gt; srgb -&gt; lrgb in ISET</span>
 isetSRGBPrimaryCheckImage = srgb2lrgb(isetSRGBImage);
@@ -293,16 +316,11 @@ message =
 
 		***** sRGB*****
 
-PTB PASSES linear sRGB to XYZ to linear sRGB
-PTB PASSES sRGB to linear sRGB to sRGB
-PTB-ISET AGREE for sRGB transform matrix
-PTB-ISET AGREE for XYZ to linear sRGB
-PTB-ISET AGREE for XYZ to sRGB
 ISET PASSES linear sRGB to sRGB to linear sRGB
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><pre class="codeoutput">
  Results for 'PTB_vs_ISETBIO_Colorimetry' probe:
-	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 validation status      : PASSED
 	 validation report      :  
 		***** Basic XYZ ***** 
@@ -316,14 +334,20 @@ ISET PASSES linear sRGB to sRGB to linear sRGB
 		ISET PASSES XYZ to Lab to XYZ (tolerance: 1e-10) 
 
 		***** sRGB***** 
+		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-10) 
+		PTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: 1e-10)
+ 
+		PTB PASSES sRGB to linear sRGB to sRGB (tolerance: 1e-10) 
+		PTB-ISET AGREE for sRGB transform matrix (tolerance: 1e-10) 
+		PTB-ISET AGREE for XYZ to linear sRGB (tolerance: 1e-10) 
 		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-10)
-	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck'
-	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 16:32:17
+	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs', 'whiteXYZ', 'ptbLuvs', 'isetLuvs', 'ptbLabs', 'isetLabs', 'ptbXYZCheck', 'isetXYZCheck', 'ptbSRGBPrimary', 'ptbSRGBs', 'ptbSRGBMatrix', 'isetSRGBMatrix', 'isetSRGBPrimary', 'isetSRGBs'
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 date last run          : 22-Sep-2014 16:44:07
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
-	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function PTB_vs_ISETBIO_Colorimetry(runParams)
@@ -517,7 +541,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
 
     if (any(abs(isetXYZs-ptbXYZs) > tolerance))
         d = isetXYZs - ptbXYZs;
-        message = sprintf('\n\t\PTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)',max(abs(d(:))), tolerance);
+        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)',max(abs(d(:))), tolerance);
         d = d ./ptbXYZs;
         message = sprintf('%s\n\t\tPTB-ISET Percent XYZ DIFFERENCE: %f\n', message, max(abs(d(:))));
     else
@@ -529,55 +553,78 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     validationDataToSave.isetXYZs = isetXYZs;
     validationDataToSave.ptbXYZs = ptbXYZs;
     
-% PTB testing of inversion
-if (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) > 1e-10))
-    fprintf('PTB FAILS linear sRGB to XYZ to linear sRGB\n');
-else
-    fprintf('PTB PASSES linear sRGB to XYZ to linear sRGB\n');
-end
-if (any(abs(SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs) > 1e-10))
-    fprintf('PTB FAILS sRGB to linear sRGB to sRGB\n');
-else
-    fprintf('PTB PASSES sRGB to linear sRGB to sRGB\n');
-end
+    % PTB testing of inversion
+    if (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) > tolerance))
+        message = sprintf('\n\t\tPTB FAILS linear sRGB to XYZ to linear sRGB (tolerance: %g)', tolerance);
+    else
+        message = sprintf('\n\t\tPTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: %g)\n', tolerance);
+    end
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.ptbSRGBPrimary = ptbSRGBPrimary;
+    
+    
+    if (any(abs(SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs) > tolerance))
+        message = sprintf('\n\t\tPTB FAILS sRGB to linear sRGB to sRGB (tolerance: %g)', tolerance);
+    else
+        message = sprintf('\n\t\tPTB PASSES sRGB to linear sRGB to sRGB (tolerance: %g)', tolerance);
+    end
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.ptbSRGBs = ptbSRGBs;
+    
+    
+    % Compare sRGB matrices
+    [nil,ptbSRGBMatrix] = XYZToSRGBPrimary([]);
+    isetSRGBMatrix = colorTransformMatrix('xyz2srgb')';
 
-% Compare sRGB matrices
-[nil,ptbSRGBMatrix] = XYZToSRGBPrimary([]);
-isetSRGBMatrix = colorTransformMatrix('xyz2srgb')';
+    if (any(abs(ptbSRGBMatrix-isetSRGBMatrix) > tolerance))
+        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for sRGB transform matrix (tolerance: %g)', tolerance);
+    else
+        message = sprintf('\n\t\tPTB-ISET AGREE for sRGB transform matrix (tolerance: %g)', tolerance);
+    end
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.ptbSRGBMatrix = ptbSRGBMatrix;
+    validationDataToSave.isetSRGBMatrix = isetSRGBMatrix;
+    
+    % XYZ -> lRGB 
+    % Reformat shape
+    ptbXYZsImage = CalFormatToImage(ptbXYZs,1,size(ptbXYZs,2));
 
-if (any(abs(ptbSRGBMatrix-isetSRGBMatrix) > 1e-10))
-    fprintf('PTB-ISET DIFFERENCE for sRGB transform matrix\n');
-else
-    fprintf('PTB-ISET AGREE for sRGB transform matrix\n');
-end
+    % ISET convert 
+    [isetSRGBImage,isetSRGBPrimaryImage] = xyz2srgb(ptbXYZsImage);
 
-% XYZ -> lRGB 
-% Reformat shape
-ptbXYZsImage = CalFormatToImage(ptbXYZs,1,size(ptbXYZs,2));
+    % Reformat shape
+    isetSRGBs = ImageToCalFormat(isetSRGBImage); 
+    isetSRGBPrimary = ImageToCalFormat(isetSRGBPrimaryImage);
 
-% ISET convert 
-[isetSRGBImage,isetSRGBPrimaryImage] = xyz2srgb(ptbXYZsImage);
-
-% Reformat shape
-isetSRGBs = ImageToCalFormat(isetSRGBImage); 
-isetSRGBPrimary = ImageToCalFormat(isetSRGBPrimaryImage);
-
-if (any(abs(ptbSRGBPrimary-isetSRGBPrimary) > 1e-10))
-    d = ptbSRGBPrimary - isetSRGBPrimary;
-    fprintf('PTB-ISET DIFFERENCE for XYZ to sRGB: %f\n',max(abs(d(:))));
-    d = d ./isetSRGBPrimary;
-    fprintf('PTB-ISET Percent RGB DIFFERENCE: %f\n',max(abs(d(:))));
-else
-    fprintf('PTB-ISET AGREE for XYZ to linear sRGB\n');
-end
-
-% ISET/PTB sRGB comparison in integer gamma corrected space
-if (any(abs(round(isetSRGBs*255)-ptbSRGBs) > 1e-10))
-    fprintf('PTB-ISET DIFFERENCE for XYZ to sRGB\n');
-else
-    fprintf('PTB-ISET AGREE for XYZ to sRGB\n');
-end
-
+    if (any(abs(ptbSRGBPrimary-isetSRGBPrimary) > tolerance))
+        d = ptbSRGBPrimary - isetSRGBPrimary;
+        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)',max(abs(d(:))), tolerance);
+        d = d ./isetSRGBPrimary;
+        message = sprintf('%s\n\t\tPTB-ISET Percent RGB DIFFERENCE: %f', message, max(abs(d(:))));
+    else
+        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to linear sRGB (tolerance: %g)', tolerance);
+    end
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.ptbSRGBPrimary = ptbSRGBPrimary;
+    validationDataToSave.isetSRGBPrimary = isetSRGBPrimary;
+    
+    
+    % ISET/PTB sRGB comparison in integer gamma corrected space
+    if (any(abs(round(isetSRGBs*255)-ptbSRGBs) > tolerance))
+        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB (tolerance: %g)', tolerance);
+    else
+        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to sRGB (tolerance: %g)', tolerance);
+    end
+    % update validation report and validationDataToSave struct
+    validationReport = sprintf('%s %s', validationReport, message);
+    validationDataToSave.isetSRGBs = isetSRGBs*255;
+    validationDataToSave.ptbSRGBs = ptbSRGBs;
+    
+    
 % lrgb -> srgb -> lrgb in ISET
 isetSRGBPrimaryCheckImage = srgb2lrgb(isetSRGBImage);
 isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
