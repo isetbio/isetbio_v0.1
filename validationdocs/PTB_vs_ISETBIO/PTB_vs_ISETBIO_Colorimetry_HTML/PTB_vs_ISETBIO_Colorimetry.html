@@ -73,7 +73,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
     <span class="comment">% Call the validation script</span>
     [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
-       validationReport
+
     <span class="comment">% Update the parent @UnitTest object</span>
     UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
 <span class="keyword">end</span>
@@ -131,11 +131,12 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     ptbuvs = ptbuvYs(1:2,:);
     [isetus,isetvs] = xyz2uv(testXYZs');
     isetuvs = [isetus' ; isetvs'];
-    <span class="keyword">if</span> (any(abs(ptbuvs-isetuvs) &gt; 1e-10))
-        message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to uv\n'</span>);
+    tolerance = 1e-10;
+    <span class="keyword">if</span> (any(abs(ptbuvs-isetuvs) &gt; tolerance))
+        message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to uv (tolerance: %g)\n'</span>, tolerance);
         message = sprintf(<span class="string">'%s\tI think this is because ISET implements an obsolete version of the standard\n'</span>, message);
     <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB-ISET AGREE for XYZ to uv\n'</span>);
+        message = sprintf(<span class="string">'PTB-ISET AGREE for XYZ to uv (tolerance: %g)\n'</span>, tolerance);
     <span class="keyword">end</span>
     <span class="comment">% update validation report and validationDataToSave struct</span>
     validationReport = sprintf(<span class="string">'%s %s'</span>, validationReport, message);
@@ -157,34 +158,23 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><pre class="codeoutput">
-validationReport =
-
- 
-***** Basic XYZ *****
- PTB-ISET AGREE for XYZ to xy (tolerance: 1e-10)
- PTB PASSES XYZ to xyY to XYZ (tolerance: 1e-10)
- PTB-ISET AGREE for xyY to XYZ (tolerance: 1e-10)
- PTB-ISET AGREE for XYZ to uv
-
-
-
  Results for 'PTB_vs_ISETBIO_Colorimetry' probe:
-	-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 validation status      : PASSED
 	 validation report      :  
 ***** Basic XYZ *****
  PTB-ISET AGREE for XYZ to xy (tolerance: 1e-10)
  PTB PASSES XYZ to xyY to XYZ (tolerance: 1e-10)
  PTB-ISET AGREE for xyY to XYZ (tolerance: 1e-10)
- PTB-ISET AGREE for XYZ to uv
+ PTB-ISET AGREE for XYZ to uv (tolerance: 1e-10)
 
 	 validation data saved  : 'testXYZs', 'ptbxys', 'isetxys', 'ptbXYZs', 'isetXYZs', 'ptbuvs', 'isetuvs'
-	-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 date last run          : 22-Sep-2014 16:01:55
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 date last run          : 22-Sep-2014 16:05:06
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
-	-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function PTB_vs_ISETBIO_Colorimetry(runParams)
@@ -194,7 +184,7 @@ function PTB_vs_ISETBIO_Colorimetry(runParams)
 
     % Call the validation script
     [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
-       validationReport 
+
     % Update the parent @UnitTest object
     UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
 end
@@ -268,11 +258,12 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     ptbuvs = ptbuvYs(1:2,:);
     [isetus,isetvs] = xyz2uv(testXYZs');
     isetuvs = [isetus' ; isetvs'];
-    if (any(abs(ptbuvs-isetuvs) > 1e-10))
-        message = sprintf('PTB-ISET DIFFERENCE for XYZ to uv\n');
+    tolerance = 1e-10;
+    if (any(abs(ptbuvs-isetuvs) > tolerance))
+        message = sprintf('PTB-ISET DIFFERENCE for XYZ to uv (tolerance: %g)\n', tolerance);
         message = sprintf('%s\tI think this is because ISET implements an obsolete version of the standard\n', message);
     else
-        message = sprintf('PTB-ISET AGREE for XYZ to uv\n');
+        message = sprintf('PTB-ISET AGREE for XYZ to uv (tolerance: %g)\n', tolerance);
     end
     % update validation report and validationDataToSave struct
     validationReport = sprintf('%s %s', validationReport, message);
