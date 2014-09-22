@@ -73,7 +73,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
     <span class="comment">% Call the validation script</span>
     [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
-
+       validationReport
     <span class="comment">% Update the parent @UnitTest object</span>
     UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
 <span class="keyword">end</span>
@@ -144,6 +144,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
     <span class="comment">% %% CIELUV</span>
 
+
+    <span class="comment">% Print</span>
     <span class="comment">% Do not forget to update the following params:</span>
     <span class="comment">% - validationReport (string),</span>
     <span class="comment">% - validationFailedFlag (boolean)</span>
@@ -154,6 +156,17 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="comment">% Your plotting code goes here.</span>
     <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeoutput">
+validationReport =
+
+ 
+***** Basic XYZ *****
+ PTB-ISET AGREE for XYZ to xy (tolerance: 1e-10)
+ PTB PASSES XYZ to xyY to XYZ (tolerance: 1e-10)
+ PTB-ISET AGREE for xyY to XYZ (tolerance: 1e-10)
+ PTB-ISET AGREE for XYZ to uv
+
+
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function PTB_vs_ISETBIO_Colorimetry(runParams)
@@ -163,7 +176,7 @@ function PTB_vs_ISETBIO_Colorimetry(runParams)
 
     % Call the validation script
     [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
-        
+       validationReport 
     % Update the parent @UnitTest object
     UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
 end
@@ -250,6 +263,8 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     % %% CIELUV
 
+    
+    % Print
     % Do not forget to update the following params:
     % - validationReport (string),
     % - validationFailedFlag (boolean)
@@ -259,6 +274,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
         % Your plotting code goes here.
     end
+    
     
 end
 
