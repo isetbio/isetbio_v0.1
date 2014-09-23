@@ -1,14 +1,34 @@
 function printReport(obj)
 
-    fprintf('\n Results for ''%s'' probe:', obj.validationFunctionName);
+    if obj.validationFailedFlag
+        port = 2;
+    else
+        port = 1;
+    end
+    
+    fprintf(port, '\n[%2d.] Results for ''%s'' probe:', obj.validationProbeIndex, obj.validationFunctionName);
     
     % Compose validationStatusString
     if (obj.validationFailedFlag)
         validationStatusString = sprintf('validation status      : FAILED');
+        validationSummary = sprintf('`[%s] %s.m`\n', obj.validationFailureShortReport, obj.validationFunctionName);
     else
         validationStatusString = sprintf('validation status      : PASSED');
+        validationSummary = sprintf('`[Validation passed] %s.m `\n', obj.validationFunctionName);
     end
     
+    dashedLine(port, numel(validationStatusString)+10);    
+    fprintf(port, '\n\t %s', validationStatusString);
+    dashedLine(port, numel(validationStatusString)+10);
+    
+    % Update validation summary
+    obj.validationSummary{obj.validationProbeIndex} = validationSummary;
+    
+    if obj.validationFailedFlag
+        return;
+    end
+    
+    port = 1;
     % Compose validationReportString
     validationReportString = sprintf('validation report      : %s', obj.validationReport);
     
@@ -32,32 +52,33 @@ function printReport(obj)
     sysInfoString1 = sprintf('date last run          : %s', obj.systemData.datePerformed);
     sysInfoString2 = sprintf('matlabVersion          : %s', obj.systemData.matlabVersion);
     sysInfoString3 = sprintf('computer architecture  : %s', obj.systemData.computer);
-    sysInfoString4 = sprintf('git branch...tracking  : %s', obj.systemData.gitRepoBranch);
+    sysInfoString4 = sprintf('computer IP address    : %s', obj.systemData.computerAddress);
+    sysInfoString5 = sprintf('username               : %s', obj.systemData.userName);
+    sysInfoString6 = sprintf('git branch...tracking  : %s', obj.systemData.gitRepoBranch);
     
-    charsLength = max([numel(validationReportString) numel(savedVarsString) numel(sysInfoString1) numel(sysInfoString2) numel(sysInfoString3) numel(sysInfoString4)])+2;
+    charsLength = max([numel(validationReportString) numel(savedVarsString) numel(sysInfoString1) numel(sysInfoString2) numel(sysInfoString3) numel(sysInfoString4) numel(sysInfoString5) numel(sysInfoString6)])+2;
     
-    dashedLine(charsLength);    
-    fprintf('\n\t %s', validationStatusString);
     
-    dashedLine(charsLength);
-    fprintf('\n\t %s', validationReportString);
+    fprintf(port, '\n\t %s', validationReportString);
     
-    dashedLine(charsLength);
-    fprintf('\n\t %s', savedVarsString);
+    dashedLine(port, charsLength);
+    fprintf(port, '\n\t %s', savedVarsString);
     
-    dashedLine(charsLength);
-    fprintf('\n\t %s', sysInfoString1);
-    fprintf('\n\t %s', sysInfoString2);
-    fprintf('\n\t %s', sysInfoString3);
-    fprintf('\n\t %s', sysInfoString4);
-    fprintf('\n\t');
-    dashedLine(charsLength);
-    fprintf('\n');    
+    dashedLine(port, charsLength);
+    fprintf(port, '\n\t %s', sysInfoString1);
+    fprintf(port, '\n\t %s', sysInfoString2);
+    fprintf(port, '\n\t %s', sysInfoString3);
+    fprintf(port, '\n\t %s', sysInfoString4);
+    fprintf(port, '\n\t %s', sysInfoString5);
+    fprintf(port, '\n\t %s', sysInfoString6);
+    
+    dashedLine(port, charsLength);
+    fprintf(port, '\n');    
 end
  
-function dashedLine(charsLength)
-    fprintf('\n\t');
+function dashedLine(port, charsLength)
+    fprintf(port, '\n\t');
     for k = 1:charsLength
-        fprintf('-');
+        fprintf(port, '-');
     end
 end

@@ -1,5 +1,5 @@
 function validationResults = updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams)
-    %% Book-keeping ops. All validation scripts should contain the following.
+    %% Book-keeping ops
     if (isempty(validationReport))
         validationReport = 'None';
     end
@@ -18,9 +18,9 @@ function validationResults = updateParentUnitTestObject(validationReport, valida
         parentUnitTestOBJ = runParams.parentUnitTestObject;
         
         % Return validation results to the parent @UnitTest object
-        parentUnitTestOBJ.validationReport = validationReport;
-        parentUnitTestOBJ.validationFailedFlag = validationFailedFlag;
-        parentUnitTestOBJ.validationData = validationDataToSave;
+        parentUnitTestOBJ.validationReport      = validationReport;
+        parentUnitTestOBJ.validationFailedFlag  = validationFailedFlag;
+        parentUnitTestOBJ.validationData        = validationDataToSave;
         parentUnitTestOBJ.printReport();
         validationResults = [];
         

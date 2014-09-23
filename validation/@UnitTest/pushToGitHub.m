@@ -53,6 +53,11 @@ function pushToGitHub(obj)
         
         % Write section info text
         functionNames = obj.sectionData(sectionName);
+        if (isempty(functionNames))
+            fprintf(validationResultsCatalogFID,'_This section contains no scripts with successful validation outcomes._ \n');
+            continue;
+        end
+        
         [validationScriptDirectory, ~, ~] = fileparts(which(sprintf('%s.m', char(functionNames{1}))));
         cd(validationScriptDirectory);
         fprintf(validationResultsCatalogFID,'_%s_ \n', sprintf('%s', fileread('info.txt')));
@@ -101,6 +106,15 @@ function pushToGitHub(obj)
         fprintf('\n');
     end % sectionIndex
     
+    
+    % Now add some summary about the state of all the probes
+    fprintf(validationResultsCatalogFID,'\n***\n#  Validation run summary \n');
+    fprintf(validationResultsCatalogFID,'Performed by **%s** from **%s** on **%s**\n', obj.systemData.userName, obj.systemData.computerAddress, obj.systemData.datePerformed);
+    
+    for probeIndex = 1:numel(obj.validationSummary)
+        fprintf(validationResultsCatalogFID, '* %s', char(obj.validationSummary{probeIndex}));
+    end
+     
     % Close the validationResultsCatalogFile
     fclose(validationResultsCatalogFID);
         

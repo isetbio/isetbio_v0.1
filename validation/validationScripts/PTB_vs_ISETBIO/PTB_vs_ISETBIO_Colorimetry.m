@@ -289,7 +289,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     % lrgb -> srgb -> lrgb in ISET
     isetSRGBPrimaryCheckImage = srgb2lrgb(isetSRGBImage);
     isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
-    if (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) > 1e-10))
+    if (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) >  tolerance))
         message = sprintf('\n\t\tISET FAILS linear sRGB to sRGB to linear sRGB (tolerance: %g)', tolerance);
         validationFailedFlag = true;
     else
@@ -316,7 +316,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetQuanta = Energy2Quanta(wlsTest,spdEnergyTest);
     toleranceQuanta = (10^-testPlaces)*min(ptbQuanta);
     if (any(abs(ptbQuanta-isetQuanta) > toleranceQuanta))
-        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for energy to quanta conversion at %d significant places (tolerance: %g)',testPlaces, toleranceQuanta);
+        message = sprintf('\n\t\tPTB-ISET DO NOT AGREE for energy to quanta conversion at %d significant places (tolerance: %g)',testPlaces, toleranceQuanta);
         validationFailedFlag = true;
     else
         message = sprintf('\n\t\tPTB-ISET AGREE for energy to quanta conversion to %d significant places (tolerance: %g)',testPlaces,  toleranceQuanta);

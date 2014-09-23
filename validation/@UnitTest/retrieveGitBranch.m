@@ -51,6 +51,7 @@ function gitString = retrieveGitBranch(obj)
     % Form gitString
     gitString = sprintf('%s of %s', gitBranchString, gitRepoNameString);
     
+    % go back to current dir
     cd(currentDir);
     
 end

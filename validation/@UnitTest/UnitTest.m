@@ -3,7 +3,9 @@ classdef UnitTest < handle
     
     % Public properties
     properties
-        
+        % Flag indicaring whether info for successful validations is
+        % displayed in the command window
+        displayAllValidationResults = false;
     end
     
     properties (SetAccess = private) 
@@ -15,6 +17,9 @@ classdef UnitTest < handle
         
         % cell array with data for all examined probes
         allProbeData;
+        
+        % cell array with info about all failed probes
+        validationSummary;
     end
     
     properties (Access = private)  
@@ -23,6 +28,8 @@ classdef UnitTest < handle
         validationFailedFlag = true;
         validationData       = struct();
         validationReport     = 'None';
+        validationFailureShortReport = '';
+        validationProbeIndex = 0;
         
         % map describing section organization
         sectionData;
@@ -38,6 +45,8 @@ classdef UnitTest < handle
             obj.systemData.datePerformed        = datestr(now);
             obj.systemData.matlabVersion        = version;
             obj.systemData.computer             = computer;
+            obj.systemData.computerAddress      = char(java.net.InetAddress.getLocalHost.getHostName);
+            obj.systemData.userName             = char(java.lang.System.getProperty('user.name'));
             obj.systemData.gitRepoBranch        = obj.retrieveGitBranch();
             obj.sectionData                     = containers.Map();
             obj.allProbeData                    = {};
