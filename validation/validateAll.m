@@ -68,6 +68,9 @@ function validateAll()
 
     % Push results to gitHub, i.e.:  https://github.com/isetbio/isetbio/wiki/ValidationResults
     unitTestOBJ.pushToGitHub(); 
+    
+    % Save validation results
+    % unitTestOBJ.saveValidationResults();
 end
 
 

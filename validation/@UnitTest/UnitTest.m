@@ -10,7 +10,6 @@ classdef UnitTest < handle
         % Directories where ISETBIO branches are cloned
         ISETBIO_gh_pages_CloneDir = '/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio';
         ISETBIO_wikiCloneDir = '/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki';
-        
     end
     
     properties (SetAccess = private) 
@@ -23,17 +22,16 @@ classdef UnitTest < handle
         % cell array with data for all examined probes
         allProbeData;
         
-        % cell array with info about all failed probes
+        % cell array with info about all probes
         validationSummary;
-
     end
     
     properties (Access = private)  
          % validation results for current probe
         validationFunctionName = '';
-        validationFailedFlag = true;
-        validationData       = struct();
-        validationReport     = 'None';
+        validationFailedFlag   = true;
+        validationData         = struct();
+        validationReport       = 'None';
         validationFailureShortReport = '';
         validationProbeIndex = 0;
         
@@ -64,8 +62,8 @@ classdef UnitTest < handle
         % Method to print the validation report
         printReport(obj);
     
-        % Method to store the validatation results
-        %storeValidationResults(obj, varargin); ...
+        % Method to update the validation results
+        saveValidationResults(obj);
    
         % Method that pushes results to github
         pushToGitHub(obj);

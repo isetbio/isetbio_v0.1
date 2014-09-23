@@ -95,6 +95,7 @@ function addProbe(obj, varargin)
     pIndex = obj.validationProbeIndex;
     obj.allProbeData{pIndex} = newProbe;
     
+    
     if (newProbe.result.excemptionRaised)
         % remove generated htmlDirectory so that it is not published to gitHub
         system(sprintf('rm -r -f %s',htmlDirectory));
@@ -116,7 +117,6 @@ function addProbe(obj, varargin)
         obj.printReport();
         fprintf(2,'\n\t ValidationReport\t:  Error (code raised an excemption which we caught). \n');
         fprintf(2,'\t Excemption message\t:  %s\n', newProbe.result.message);
-        
         return;
     end
     
@@ -143,7 +143,7 @@ function addProbe(obj, varargin)
         return;
     end
     
-    
+    % 
     if (~newProbe.result.validationFailedFlag) && (~newProbe.result.excemptionRaised)
         if (obj.displayAllValidationResults)
             obj.printReport();
