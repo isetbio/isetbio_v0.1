@@ -14,6 +14,12 @@ function validateAll()
     % Print information about passed validations in the command window
     unitTestOBJ.displayAllValidationResults = true;
     
+    % Optionally change the locations of the ISETBIO cloning directories
+    % Defaults are '/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio'
+    % and '/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki'
+    % unitTestOBJ.ISETBIO_gh_pages_CloneDir = ...
+    % unitTestOBJ.ISETBIO_wikiCloneDir = ...
+    
     unitTestOBJ.addProbe(...
         'name',           'comparison of PTB- vs. ISETBIO-computed irradiance', ... % name to identify this probe
         'functionSectionName', '1. PTB vs. ISETBIO validations', ...                   % section to which validation script belong to

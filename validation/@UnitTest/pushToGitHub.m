@@ -3,7 +3,7 @@ function pushToGitHub(obj)
     % For this to work, we must clone a second version of ISETBIO
     % and check-out the gh-pages branch. 
     % Directory for ISETBIO - gh-pages branch 
-    ISETBIO_gh_pages_CloneDir = '/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio';
+    ISETBIO_gh_pages_CloneDir = obj.ISETBIO_gh_pages_CloneDir;
     
     % Directory where all validation HTML docs will be moved to
     validationDocsDir  = sprintf('%s/validationdocs', ISETBIO_gh_pages_CloneDir);
@@ -15,7 +15,7 @@ function pushToGitHub(obj)
     % with contains a the catalog of the validation runs and pointers to
     % the html files containing the code and results
     % wikiCloneDir = '/Users/Shared/GitWebSites/ISETBIO/ISETBIO_ValidationDocs.wiki';
-    wikiCloneDir = '/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki';
+    wikiCloneDir = obj.ISETBIO_wikiCloneDir;
     
     % Name of the markup file containing the catalog of validation runs and
     % pointers to the corresponding html files.

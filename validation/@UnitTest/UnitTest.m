@@ -6,6 +6,11 @@ classdef UnitTest < handle
         % Flag indicaring whether info for successful validations is
         % displayed in the command window
         displayAllValidationResults = false;
+        
+        % Directories where ISETBIO branches are cloned
+        ISETBIO_gh_pages_CloneDir = '/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio';
+        ISETBIO_wikiCloneDir = '/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki';
+        
     end
     
     properties (SetAccess = private) 
@@ -20,6 +25,7 @@ classdef UnitTest < handle
         
         % cell array with info about all failed probes
         validationSummary;
+
     end
     
     properties (Access = private)  
