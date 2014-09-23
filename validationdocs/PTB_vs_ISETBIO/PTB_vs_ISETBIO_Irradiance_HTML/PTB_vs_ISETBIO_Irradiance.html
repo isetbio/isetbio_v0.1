@@ -133,7 +133,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     difference = ptbMagCorrectIrradiance-irradianceEnergy;
 </pre><h2>Set validationReport, validationFailedFlag and validationData<a name="14"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (max(abs(difference./irradianceEnergy)) &gt; tolerance)
         validationReport     = sprintf(<span class="string">'Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance of %0.5f %% !!!'</span>, 100*tolerance);
-        validationFailedFlag = true;
+        validationFailedFlag = truef;
     <span class="keyword">else</span>
         validationReport     = sprintf(<span class="string">'Validation PASSED. PTB and isetbio agree about irradiance to %0.5f %%'</span>,100*tolerance);
         validationFailedFlag = false;
@@ -180,7 +180,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 	-------------------------------------------------------------------------------------------------
 	 validation data saved  : 'fov', 'roiSize', 'tolerance', 'scene', 'oi'
 	-------------------------------------------------------------------------------------------------
-	 date last run          : 23-Sep-2014 11:53:08
+	 date last run          : 23-Sep-2014 11:56:58
 	 matlabVersion          : 8.3.0.532 (R2014a)
 	 computer architecture  : MACI64
 	 git branch...tracking  : dev...origin/dev of ISETBIO
@@ -296,7 +296,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     %% Set validationReport, validationFailedFlag and validationData
     if (max(abs(difference./irradianceEnergy)) > tolerance)
         validationReport     = sprintf('Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance of %0.5f %% !!!', 100*tolerance);
-        validationFailedFlag = true;
+        validationFailedFlag = truef;
     else
         validationReport     = sprintf('Validation PASSED. PTB and isetbio agree about irradiance to %0.5f %%',100*tolerance);
         validationFailedFlag = false;
