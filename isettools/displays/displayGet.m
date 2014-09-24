@@ -304,6 +304,36 @@ switch parm
         % render function handle. If user does not specify this render 
         % function, return empty
         if isfield(d, 'renderFunc'), val = d.renderFunc; end
+    case {'contrast', 'peakcontrast'}
+        % peak contrast
+        %
+        % displayGet(d, 'peak contrast') returns the black/white contrast
+        % of the display.
+        peakLum = displayGet(d, 'peak luminance');
+        darkLum = displayGet(d, 'dark luminance');
+        val = peakLum / darkLum;
+    case {'blackradiance', 'blackspectrum'}
+        % black radiance
+        %
+        % displayGet(d, 'black radiance') returns dark spectrum / radiance
+        % of the display in units of energy (watts / ...)
+        if isfield(d, 'blackRadiance'), val = d.blackRadiance;
+        else val = zeros(displayGet(d, 'n wave'), 1); end
+    case {'darkluminance', 'blackluminance'}
+        % dark luminance
+        %
+        % displayGet(d, 'dark luminance') returns the luminance of display
+        % when all pixels are turned off
+        blackSpd = displayGet(d, 'black radiance');
+        blackXYZ = ieXYZFromEnergy(blackSpd, displayGet(d, 'wave'));
+        val = blackXYZ(2);
+    case {'blackmaskreflectance', 'maskreflectance', 'blackreflectance'}
+        % black mask reflectance
+        %
+        % dipslayGet(d, 'black mask reflectance') returns the reflectance
+        % property of the black mask of display
+        if isfield(d, 'blackReflectance'), val = d.blackReflectance;
+        else val = zeros(displayGet(d, 'nwave'), 1); end
     otherwise
         error('Unknown parameter %s\n',parm);
 end

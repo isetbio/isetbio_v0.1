@@ -66,23 +66,48 @@ switch parm
         if size(val,1) < size(val, 2), val = val'; end
         d.spd = val;
         
-        % Spatial matters
     case {'dpi'}
+        % displaySet(d, 'dpi', val);
         % Dots per inch of the pixels (full pixel center-to-center)
         d.dpi = val;
     case {'viewingdistance'}
+        % viewing distance in meters
         d.dist = val;
     case {'refreshrate'}
+        % refresh rate of the display in Hz
         d.refreshRate = val;
     case {'psfs', 'point spread', 'psf'}
+        % subpixel image of the display (point spread)
         assert(size(val,3)==displayGet(d, 'n primaries'), 'size mismatch');
         d.psfs = val;
     case {'comment'}
+        % comment for the display
         d.comment = val;
     case {'pixelsperpsfs'}
+        % number of pixels in one subpixel image
         d.pixelsPerPSFs = val;
     case {'renderfunction'}
+        % rendering function that converts input image to subpixel level
         d.renderFunc = val;
+    case {'blackradiance', 'blackspectrum'}
+        % black radiance
+        nWave = displayGet(d, 'n wave');
+        if isscalar(val)
+            d.blackRadiance = val * ones(nWave, 1);
+        else
+            assert(length(val(:)) == nWave, 'bad black radiance length');
+            d.blackRadiance = val(:);
+        end
+    case {'blackmaskreflectance', 'maskreflectance', 'blackreflectance'}
+        % black mask reflectance
+        assert(all(val(:) >= 0 & val(:) <= 1), 'bad reflectance val');
+        nWave = displayGet(d, 'n wave');
+        if isscalar(val)
+            d.blackReflectance = val * ones(nWave, 1);
+        else
+            assert(length(val) == nWave, 'bad black reflectance length');
+            d.blackReflectance = val(:);
+        end
     otherwise
         error('Unknown parameter %s\n',parm);
 end
