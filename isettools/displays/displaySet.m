@@ -79,6 +79,10 @@ switch parm
         d.psfs = val;
     case {'comment'}
         d.comment = val;
+    case {'pixelsperpsfs'}
+        d.pixelsPerPSFs = val;
+    case {'renderfunction'}
+        d.renderFunc = val;
     otherwise
         error('Unknown parameter %s\n',parm);
 end

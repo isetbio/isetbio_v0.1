@@ -1,4 +1,4 @@
-function [outImage,display] = displayCompute(display, I, varargin)
+function [outImage, display] = displayCompute(display, I)
 % Computes the upsampled subpixel level image to use in creating a scene
 %
 %    [outImage,display] = displayCompute(display, I, varargin)
@@ -8,8 +8,6 @@ function [outImage,display] = displayCompute(display, I, varargin)
 %               displayCreate for detail
 %    I        - input image, should be M*N*k matrix. k should be equal to
 %               the number of primaries of display
-%    varargin - parameters to be used, could contain
-%       varargin{1} - scalar, upsampling scale
 %
 %  Output:
 %    outImage - upsampled image, should be in Ms * Ns * k matrix. Default
@@ -34,7 +32,6 @@ function [outImage,display] = displayCompute(display, I, varargin)
 %  check inputs and init parameters
 if notDefined('display'), error('display required'); end
 if notDefined('I'), error('Input image required'); end
-if nargin > 2, s = varargin{1}; end
 
 if ischar(display), display = displayCreate(display); end
 if ischar(I), I = im2double(imread(I)); else I = double(I); end
@@ -49,24 +46,31 @@ if isempty(psfs), error('psf not defined for display'); end
 % for ii=1:3, subplot(3,1,ii), mesh(psfs(:,:,ii)); end
 
 % If no upsampling, then s is the size of the psf
-if ~exist('s', 'var'), s = size(psfs, 1); end
-psfs = imresize(psfs, [s s]);
+s = displayGet(display, 'over sample');
 
-% crop psfs to be greater than 0
-psfs(psfs < 0) = 0;
+% check psfs values to be no less than 0
+assert(min(psfs(:)) >= 0, 'psfs values should be non-negative');
 
 % If a single matrix, assume it is gray scale
 if ismatrix(I), I = repmat(I, [1 1 nPrimary]); end
 
 % Expand the image so there are s samples within each of the pixels,
 % allowing a representation of the psf.
-[M,N,~] = size(I);
-outImage = imresize(I, s, 'nearest');
+[M, N, ~] = size(I);
+pixelPerPSFs = displayGet(display, 'pixels per psfs');
+hRender = displayGet(display, 'render function');
 
-% crop outImage
-outImage(outImage < 0) = 0;
+if ~isempty(hRender)
+    outImage = hRender(I);
+else
+    outImage = imresize(I, s, 'nearest');
+end
+
+% check the size of outImage
+assert(all(size(outImage) == [M*s, N*s, 3]), 'bad outImage size');
 
 % 
-outImage = outImage .* repmat(psfs, [M N 1]);
+outImage = outImage .* repmat(psfs, [M/pixelPerPSFs N/pixelPerPSFs 1]);
 
+end
 %% END

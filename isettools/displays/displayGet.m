@@ -30,11 +30,20 @@ function val = displayGet(d,parm,varargin)
 %     {'primaries xy'}
 %
 % Spatial parameters
-%     {'dpi', 'ppi'}                  % Dots per inch
+%     {'dpi', 'ppi'}           % Dots per inch
 %     {'meters per dot'}
 %     {'dots per meter'}
 %     {'dots per deg'}         % Dots per degree visual angle
 %     {'viewing distance'}     % Meters
+%
+% Subpixel structure
+%     {'psfs', 'point spread'}
+%     {'subpixel spd'}
+%     {'over sample'}
+%     {'psf sample spacing'}
+%     {'fill factor'}
+%     {'pixels per psfs'}
+%     {'render function'}
 %
 % Examples
 %   d = displayCreate;
@@ -103,24 +112,8 @@ switch parm
         % displayGet(dsp,'spd');
         % displayGet(d,'spd',wave);
         %
-        % The issue of scaling the units of the SPD is worth thinking
-        % about. When we calibrate a display we are at a distance and we
-        % obtain the SPD of each channel maximum averaging over a lot of
-        % pixels. 
-        %
-        % When we want to represent the data at high spatial
-        % resolution, it should always be the case that the peak luminance
-        % of each channel, averaged over a large region of image, equals
-        % that peak.  But at high spatial resolution, the channel may be
-        % zero over large portions of the image.  For example, the red
-        % channel doesn't span the green/blue or black lines.  So, when we
-        % create a spatially resolved subpixel image we need to know how to
-        % scale the spd for that image so that the mean luminance is
-        % preserved.
-        
-        
         % Always make sure the spd has rows equal to number of wavelength
-        % samples.  The PTB uses spectra rather than spd.  This hack makes
+        % samples. The PTB uses spectra rather than spd.  This hack makes
         % it compatible.  Or, we could convert displayCreate from spd to
         % spectra some day.
         if checkfields(d,'spd'),         val = d.spd;
@@ -267,6 +260,7 @@ switch parm
     case {'psfsamples','oversample', 'osample'}
         % Number of psf samples per pixel
         if isfield(d, 'psfs'), val = size(d.psfs, 1); end
+        val = val / displayGet(d, 'pixels per psfs');
         
     case {'psfsamplespacing'}
         % spacing between psf samples
@@ -287,15 +281,31 @@ switch parm
         val = val(:);
     case {'subpixelspd'}
         % spectral power distribution for subpixels
-        % see comments in spd
+        %
         % This is the real subpixel spd, not the spatial averaged one
         % To get the spd for the whole pixel, use displayGet(d, 'spd')
         % instead
         spd = displayGet(d, 'spd');
         ff  = displayGet(d, 'filling factor');
         val = spd ./ repmat(ff(:)', [size(spd, 1) 1]);
+    case {'pixelsperpsfs'}
+        % number of pixels per psfs
+        %
+        % In some subpixel designs, subpixel patterns are not repeated by
+        % every pixel, but by block of pixels
+        % displayGet(d, 'pixels per psfs') returns number of pixels in one
+        % block (unit repeated pattern)
+        if isfield(d, 'pixelPerPSFs'), val = d.pixelPerPSFs; 
+        else val = 1; end
+    case {'renderfunction'}
+        % render function
+        %
+        % displayGet(d, 'render function') returns user defined subpixel
+        % render function handle. If user does not specify this render 
+        % function, return empty
+        if isfield(d, 'renderFunc'), val = d.renderFunc; end
     otherwise
         error('Unknown parameter %s\n',parm);
 end
 
-return;
+end
