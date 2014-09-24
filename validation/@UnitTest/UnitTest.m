@@ -3,12 +3,33 @@ classdef UnitTest < handle
     
     % Public properties
     properties
-        % Flag indicaring whether info for successful validations is
-        % displayed in the command window
+        % Flag indicating whether info for all validation runs is
+        % displayed in the command window. If set to false, only
+        % information regarding failed validation runs is displayed.
         displayAllValidationResults = false;
         
-        % Directories where ISETBIO branches are cloned
+        % Flag indicating whether to add the validation results to the
+        % history of validation runs.
+        addResultsToValidationResultsHistory = false;
+        
+        % Flag indicating whether to append the validation results to the 
+        % history of ground truth data sets.
+        addResultsToGroundTruthHistory = true;
+    
+        % Flag indicaring whether to push results to github upon a sucessful validation
+        % outcome.
+        pushToGitHubOnSuccessfulValidation = true;
+        
+        % Flag indicating whether @UnitTest should ask the user which
+        % ground truth data set to use if more than one are found in the
+        % history of saved ground truth data sets.
+        % If set to false, the last ground truth data set will be used.
+        queryUserIfMoreThanOneGroundTruthDataSetsExist = false;
+        
+        % Local directory where ISETBIO ghPages branch is cloned
         ISETBIO_gh_pages_CloneDir = '/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio';
+        
+        % Local directory where ISETBIO wiki is cloned
         ISETBIO_wikiCloneDir = '/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki';
     end
     
@@ -24,6 +45,12 @@ classdef UnitTest < handle
         
         % cell array with info about all probes
         validationSummary;
+        
+        % full path to the file containing the history of validation data runs 
+        validationDataSetsFileName = 'ISETBIO_ValidationDataSetHistory.mat';
+        
+        % full path to the file containing the ground truth data sets
+        groundTruthDataSetsFileName = 'ISETBIO_GroundTruthDataSetHistory.mat';
     end
     
     properties (Access = private)  
@@ -32,11 +59,18 @@ classdef UnitTest < handle
         validationFailedFlag   = true;
         validationData         = struct();
         validationReport       = 'None';
-        validationFailureShortReport = '';
-        validationProbeIndex = 0;
+        validationProbeIndex   = 0;
         
         % map describing section organization
         sectionData;
+        
+        % struct with data from current validation run. 
+        % this is compared to ground truth data set
+        currentValidationRunDataSet;
+        
+        % struct with data from selected ground truth history. 
+        % this is compared to the current validation run
+        groundTruthDataSet;
     end
     
     % Public methods
@@ -62,16 +96,30 @@ classdef UnitTest < handle
         % Method to print the validation report
         printReport(obj);
     
-        % Method to update the validation results
-        saveValidationResults(obj);
-   
-        % Method that pushes results to github
-        pushToGitHub(obj);
+        % Method to contrast current validation run data to that loaded
+        % from a ground truth data set
+        diff = contrastValidationRunDataToGroundTruth(obj); 
     end
     
     methods (Access = private)    
         % Method to retrieve the git branch string
         gitBranchString = retrieveGitBranch(obj);
+        
+        % Method to generate a grand struct with all results for a single probe
+        validationRunData = assembleResultsIntoValidationRunStuct(obj);
+        
+        % Method to retrieve ground truth data set against which we will
+        % validate the current run
+        groundTruthData = retrieveHistoricalGroundTruthDataToValidateAgaist(obj);
+        
+        % Method to compare the structs: obj.currentValidationRunDataSet and obj.groundTruthDataSet
+        diff = obj.compareDataSets();
+        
+        % Method to update the validation results
+        saveValidationResults(obj, dataType);
+   
+        % Method that pushes results to github
+        pushToGitHub(obj);
     end
     
     methods (Static)

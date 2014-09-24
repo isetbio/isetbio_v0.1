@@ -73,9 +73,10 @@ function addProbe(obj, varargin)
             'catchError', false, ...
             'outputDir', htmlDirectory ...
             );
-        
+        % Run validation script via MATLAB's publish method
         probeCommandString = sprintf(' publish(''%s'', options);', newProbe.functionName);
     else 
+        % Run validation script the regular way
         probeCommandString = sprintf(' %s(params);', newProbe.functionName);
     end
         

@@ -1,5 +1,9 @@
 function pushToGitHub(obj)
 
+    if (~obj.pushToGitHubOnSuccessfulValidation)
+       return; 
+    end
+    
     % For this to work, we must clone a second version of ISETBIO
     % and check-out the gh-pages branch. 
     % Directory for ISETBIO - gh-pages branch 
