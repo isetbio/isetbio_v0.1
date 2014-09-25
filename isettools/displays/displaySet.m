@@ -112,4 +112,4 @@ switch parm
         error('Unknown parameter %s\n',parm);
 end
 
-return;
+end

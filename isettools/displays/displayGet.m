@@ -312,11 +312,20 @@ switch parm
         peakLum = displayGet(d, 'peak luminance');
         darkLum = displayGet(d, 'dark luminance');
         val = peakLum / darkLum;
-    case {'blackradiance', 'blackspectrum'}
+    case {'darklevel'}
+        % dark level
+        % 
+        % displayGet(d, 'dark level') returns the first line in the gamma
+        % table.
+        gTable = displayGet(d, 'gTable');
+        val = gTable(1, :);
+    case {'blackradiance', 'blackspectrum', 'darkradiance'}
         % black radiance
         %
         % displayGet(d, 'black radiance') returns dark spectrum / radiance
-        % of the display in units of energy (watts / ...)
+        % of the display in units of energy (watts / ...).
+        % Note that the spd of dark radiance could be different from the 
+        % display spd.
         if isfield(d, 'blackRadiance'), val = d.blackRadiance;
         else val = zeros(displayGet(d, 'n wave'), 1); end
     case {'darkluminance', 'blackluminance'}
