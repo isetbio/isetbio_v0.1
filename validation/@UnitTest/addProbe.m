@@ -112,9 +112,6 @@ function addProbe(obj, varargin)
             obj.sectionData(newProbe.functionSectionName) = s;
         end
         
-        % write short report of why probe failed to validate
-        obj.validationFailureShortReport = 'Runtime exception';
-        
         obj.printReport();
         fprintf(2,'\n\t ValidationReport\t:  Error (code raised an excemption which we caught). \n');
         fprintf(2,'\t Excemption message\t:  %s\n', newProbe.result.message);
@@ -136,11 +133,8 @@ function addProbe(obj, varargin)
             obj.sectionData(newProbe.functionSectionName) = s;
         end
         
-        % write short report of why probe failed to validate
-        obj.validationFailureShortReport = 'Outcome>tolerance';
-        
         obj.printReport();
-        fprintf(2,'\n\t ValidationReport\t:  \n%s\n', newProbe.result.validationReport);
+        fprintf(2,'\n\t ValidationReport\t: %s\n', newProbe.result.validationReport);
         return;
     end
     

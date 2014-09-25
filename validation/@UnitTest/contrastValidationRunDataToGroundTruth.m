@@ -1,29 +1,28 @@
-function diff = contrastValidationRunDataToGroundTruth(obj)
-    % assemble current data into a validation run struct for comparison and
-    % storage
+function [diffs, criticalDiffs]= contrastValidationRunDataToGroundTruth(obj)
+    % assemble current data into a validation run struct for comparison and storage
     obj.currentValidationRunDataSet = obj.assembleResultsIntoValidationRunStuct();
     
     % Retrieve ground truth data
     obj.groundTruthDataSet = retrieveHistoricalGroundTruthDataToValidateAgaist(obj);
     
-    % an empty indicates perfect agreement of currentValidationRunData with ground truth
-    diff = nan;
+    % empty diffs indicates perfect agreement of currentValidationRunData with ground truth
+    diffs = {};
+    crificalDiffs = {};
     
     if (isempty(obj.groundTruthDataSet))
         ans = input('Ground truth data set does not exist. Save current run as ground truth [1=yes]? ');
         if (ans == 1)
             obj.saveValidationResults('Ground truth');
-            diff = [];
         else
-            diff = nan;
+            diffs{1} = 'Ground truth data set does not exist.';
         end
     else
         % compare structs now
-        diff = obj.compareDataSets();
+        [diffs, criticalDiffs] = obj.compareDataSets();
     end
     
-    if isempty(diff) 
-        fprintf('Current validation run agrees prefectly with ground truth data.\n');
+    if (isempty(diffs) && isempty(crificalDiffs))
+        fprintf('Current validation run agrees prefectly with ground truth data set.\n');
         
         if (obj.addResultsToValidationResultsHistory) && (obj.addResultsToGroundTruthHistory)
             % Append current validation to both validation and ground truth history files
@@ -38,12 +37,26 @@ function diff = contrastValidationRunDataToGroundTruth(obj)
         
         % Push results to github, i.e.:  https://github.com/isetbio/isetbio/wiki/ValidationResults
         obj.pushToGitHub(); 
+    else
+        if (numel(criticalDiffs) > 0)
+            fprintf('\n\n(A) There are critical differences between the current validation run and the ground truth data set.\n');
+            fprintf('\nCritical differences found (%d):\n', numel(criticalDiffs));
+            for k = 1:numel(criticalDiffs)
+                fprintf(2, '\t[%03d] %s\n', k, char(criticalDiffs{k}));
+            end
+        else
+            fprintf('\n\n(A) There are NO critical differences between the current validation run and the ground truth data set.\n');
+        end
         
-    elseif (isnan(diff))
-        fprintf(2, 'Current validation run does not agree with ground truth data.\n');
-        fprintf(2, 'Will not save data, nor push to github.\n');
-    else 
-        fprintf('Current validation agrees partially with ground truth data.\n');  
+        if (numel(diffs) > 0)
+            fprintf('\n\n(B) There are some non-critical differences between the current validation run and the ground truth data set.\n');
+            fprintf('Non-critical differences found (%d):\n', numel(diffs));
+            for k = 1:numel(diffs)
+                fprintf('\t[%03d] %s\n', k, char(diffs{k}));
+            end
+        else
+             fprintf('\n\n(B) There are NO non-critical differences between the current validation run and the ground truth data set.\n');
+        end
     end
     
 end

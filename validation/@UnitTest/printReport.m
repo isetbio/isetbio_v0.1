@@ -11,7 +11,7 @@ function printReport(obj)
     % Compose validationStatusString
     if (obj.validationFailedFlag)
         validationStatusString = sprintf('validation status      : FAILED');
-        validationSummary = sprintf('`[%s] %s.m`\n', obj.validationFailureShortReport, obj.validationFunctionName);
+        validationSummary = sprintf('`[%s] %s.m`\n', obj.validationReport, obj.validationFunctionName);
     else
         validationStatusString = sprintf('validation status      : PASSED');
         validationSummary = sprintf('`[Validation passed] %s.m `\n', obj.validationFunctionName);

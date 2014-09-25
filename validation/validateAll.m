@@ -17,7 +17,7 @@ function validateAll()
     
     % 3. Whether to append the validation results to the history of ground truth data sets.
     % Defaults to false.
-    unitTestOBJ.addResultsToGroundTruthHistory = true;
+    unitTestOBJ.addResultsToGroundTruthHistory = false;
     
     % 4. Whether to push results to github upon a sucessful validation
     % outcome. Defaults to true;
@@ -35,14 +35,19 @@ function validateAll()
     % unitTestOBJ.ISETBIO_gh_pages_CloneDir = ...
     % unitTestOBJ.ISETBIO_wikiCloneDir = ...
     
+    % 7. Set numeric tolerance below which two numeric values are to be
+    % considered equal. Defaults to 10*eps.
+    unitTestOBJ.numericTolerance = 10*eps;
     
-    
-    % Specify how to react if an excemption is raised
-    % If you want execution to stop on error use the following setting:
-    onErrorReaction = 'RethrowExcemption';
     
     % If you want execution to continue on error use the following setting:
-    onErrorReaction = 'CatchExcemption';  
+    onErrorReaction = 'CatchExcemption'; 
+
+    % Specify how to react if an excemption is raised
+    % If you want execution to stop on error (so you can fix it) use the following setting:
+    onErrorReaction = 'RethrowExcemption';
+    
+     
     
     % Add probes
     unitTestOBJ.addProbe(...
@@ -58,7 +63,7 @@ function validateAll()
     
 
     unitTestOBJ.addProbe(...
-        'name',           'comparison of PTB- vs. ISETBIO-computed colorimetery', ... % name to identify this probe
+        'name',           'comparison of PTB- vs. ISETBIO-computed colorimetry', ... % name to identify this probe
         'functionSectionName', '1. PTB vs. ISETBIO validations', ...                   % section to which validation script belong to
         'functionName',   'PTB_vs_ISETBIO_Colorimetry', ...                          % name of the validation script
         'functionParams',  struct(), ...                                            % struct with input arguments expected by the validation script

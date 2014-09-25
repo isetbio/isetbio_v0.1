@@ -20,6 +20,9 @@ classdef UnitTest < handle
         % outcome.
         pushToGitHubOnSuccessfulValidation = true;
         
+        % Tolernace below which two numeric values are to be considered equal
+        numericTolerance = 10*eps;
+        
         % Flag indicating whether @UnitTest should ask the user which
         % ground truth data set to use if more than one are found in the
         % history of saved ground truth data sets.
@@ -47,10 +50,10 @@ classdef UnitTest < handle
         validationSummary;
         
         % full path to the file containing the history of validation data runs 
-        validationDataSetsFileName = 'ISETBIO_ValidationDataSetHistory.mat';
+        validationDataSetsFileName
         
         % full path to the file containing the ground truth data sets
-        groundTruthDataSetsFileName = 'ISETBIO_GroundTruthDataSetHistory.mat';
+        groundTruthDataSetsFileName
     end
     
     properties (Access = private)  
@@ -88,6 +91,13 @@ classdef UnitTest < handle
             obj.systemData.gitRepoBranch        = obj.retrieveGitBranch();
             obj.sectionData                     = containers.Map();
             obj.allProbeData                    = {};
+            obj.currentValidationRunDataSet     = {};
+            obj.groundTruthDataSet              = {};
+            
+            % full path to the file containing the history of validation data runs 
+            obj.validationDataSetsFileName = fullfile(fileparts(which('validateAll')), 'ISETBIO_ValidationDataSetHistory.mat');
+            % full path to the file containing the ground truth data sets
+            obj.groundTruthDataSetsFileName = fullfile(fileparts(which('validateAll')), 'ISETBIO_GroundTruthDataSetHistory.mat');
         end
         
         % Method to add and execute a new probe
@@ -98,7 +108,7 @@ classdef UnitTest < handle
     
         % Method to contrast current validation run data to that loaded
         % from a ground truth data set
-        diff = contrastValidationRunDataToGroundTruth(obj); 
+        [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj); 
     end
     
     methods (Access = private)    
@@ -124,6 +134,9 @@ classdef UnitTest < handle
     
     methods (Static)
         validationResults = updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
+        
+        % Method to recursively compare 2 structs
+        result = compareStructs(struct1Name, struct1, struct2Name, struct2, probeName, tolerance);
     end
     
 end
