@@ -154,6 +154,11 @@ switch lower(imageType)
             
             % Convert energy units to quanta
             photons = Energy2Quanta(wave,(xwImg*spd')')';
+            
+            % Add dark radiance
+            darkRadiance = displayGet(d, 'dark radiance');
+            darkQuanta = Energy2Quanta(wave, darkRadiance);
+            photons = bsxfun(@plus, photons, darkQuanta(:)');
         end
         photons = XW2RGBFormat(photons,r,c);
         
