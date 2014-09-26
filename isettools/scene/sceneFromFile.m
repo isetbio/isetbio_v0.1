@@ -1,7 +1,9 @@
-function [scene,I] = sceneFromFile(I, imType, meanLuminance,dispCal,wList, doSub)
+function [scene,I] = sceneFromFile(I, imType, meanLuminance, dispCal, ...
+    wList, varargin)
 % Create a scene structure by reading data from a file
 %
-%     [scene,fname,comment] = sceneFromFile(imageData,imageType,[meanLuminance],[dispCal],[wList])
+%     [scene, I] = sceneFromFile(imageData, imageType, ...
+%                  [meanLuminance], [display], [wave], [doSub], [ambient])
 %
 % imageData:  Usually the filename of an RGB image.  It is allowed to send
 %             in RGB data itself, rather than the file name.
@@ -65,7 +67,6 @@ if notDefined('I')
     end
     if isempty(I), scene = []; return; end
 end
-if notDefined('doSub'), doSub = false; end
 
 %% Read the photons and illuminant structure
 % Remove spaces and force lower case.
@@ -73,31 +74,40 @@ imType = ieParamFormat(imType);
 
 switch lower(imType)
     case {'monochrome','rgb'}  % 'unispectral'
+        % init display structure
         if notDefined('dispCal')
             warning('Default display lcdExample is used to create scene');
-            dispCal = fullfile(isetRootPath,'data','displays','lcdExample.mat');
+            dispCal = displayCreate('lcdExample');
         end
         
-        photons = vcReadImage(I,imType,dispCal, doSub);
-        
-        % Match the display wavelength and the scene wavelength
-        scene = sceneCreate('rgb');
         if ischar(dispCal), d = displayCreate(dispCal);
         elseif isstruct(dispCal) && isequal(dispCal.type,'display'),
             d = dispCal;
         end
         
-        wave = displayGet(d,'wave');
-        scene = sceneSet(scene,'wave',wave);
+        wave  = displayGet(d, 'wave');
+        nwave = displayGet(d, 'n wave');
+        
+        % get additional parameter values
+        if ~isempty(varargin), doSub = varargin{1}; else doSub = false; end
+        if length(varargin) > 1, ambientSpd = varargin{2};
+        else ambientSpd = zeros(nwave, 1); end
+        
+        photons = vcReadImage(I,imType,dispCal, doSub);
+        
+        % Match the display wavelength and the scene wavelength
+        scene = sceneCreate('rgb');
+        
+        scene = sceneSet(scene, 'wave', wave);
         
         % Set the illuminant SPD to the white point of the display. This
         % also forces the peak reflectance to 1, so we could delete
         % illuminant scaling below.
         
         % Initialize
-        il    = illuminantCreate('d65',wave);
+        il    = illuminantCreate('d65', wave);
         % Replace default with white point
-        il    = illuminantSet(il,'energy',sum(d.spd,2));
+        il    = illuminantSet(il, 'energy', sum(d.spd,2));
         scene = sceneSet(scene, 'illuminant', il);
         
         % Set viewing distance
@@ -106,6 +116,23 @@ switch lower(imType)
         % Set field of view
         imgFov = size(I, 2)*displayGet(d, 'deg per dot');
         scene  = sceneSet(scene, 'h fov', imgFov);
+        
+        % Add dark mask reflectance of the display
+        maskReflectance = displayGet(d, 'black mask reflectance');
+        if ~notDefined('wList') && length(ambientSpd) == length(wList)
+            % ambient light is sampled by wavelength defined in wList
+            ambientSpd = interp1(wList, ambientSpd, wave, 'linear');
+        end
+        assert(length(ambientSpd) == length(wave), 'bad ambient length');
+        photons = bsxfun(@plus, photons, reshape(ambientSpd(:) .* ...
+            maskReflectance(:), [1 1 nwave]));
+        
+        % Add ambient light
+        % assuming ambient lights to display and directly into the eyes are
+        % the same
+        photons = bsxfun(@plus, photons, ...
+            reshape(ambientSpd(:), [1 1 nwave]));
+        
     case {'multispectral','hyperspectral'}
         if ~ischar(I), error('File name required for multispectral'); end
         if notDefined('wList'), wList = []; end
