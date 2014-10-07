@@ -14,9 +14,9 @@ classdef UnitTest < handle
         
         % Flag indicating whether to append the validation results to the 
         % history of ground truth data sets.
-        addResultsToGroundTruthHistory = true;
+        addResultsToGroundTruthHistory = false;
     
-        % Flag indicaring whether to push results to github upon a sucessful validation
+        % Flag indicating whether to push results to github upon a sucessful validation
         % outcome.
         pushToGitHubOnSuccessfulValidation = true;
         
@@ -34,6 +34,13 @@ classdef UnitTest < handle
         
         % Local directory where ISETBIO wiki is cloned
         ISETBIO_wikiCloneDir = '/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki';
+        
+        % SVN URL where ground truth data sets are kept
+        ISETBIO_DataSets_SVN_URL  = 'https://platypus.psych.upenn.edu/repos/ISETBIO_DataSets';
+        
+        % Flag indicating whether to use the ground truth table kept on
+        % platypus.psych.upenn.edu SVN server
+        useRemoteGroundTruthDataSet = true;
     end
     
     properties (SetAccess = private) 
@@ -74,6 +81,8 @@ classdef UnitTest < handle
         % struct with data from selected ground truth history. 
         % this is compared to the current validation run
         groundTruthDataSet;
+        
+        ISETBIO_DataSets_Local_SVN_DIR;
     end
     
     % Public methods
@@ -95,7 +104,7 @@ classdef UnitTest < handle
             obj.groundTruthDataSet              = {};
             
             % full path to the file containing the history of validation data runs 
-            obj.validationDataSetsFileName = fullfile(fileparts(which('validateAll')), 'ISETBIO_ValidationDataSetHistory.mat');
+            obj.validationDataSetsFileName = fullfile(fileparts(which('validateAll')), 'ISETBIO_LocalValidationDataSetHistory.mat');
             % full path to the file containing the ground truth data sets
             obj.groundTruthDataSetsFileName = fullfile(fileparts(which('validateAll')), 'ISETBIO_GroundTruthDataSetHistory.mat');
         end
@@ -130,6 +139,15 @@ classdef UnitTest < handle
    
         % Method that pushes results to github
         pushToGitHub(obj);
+        
+        % Method to return the filename of the SVN-hosted ground truth data set
+        dataSetFilename = svnHostedGroundTruthDataSetsFileName(obj); 
+        
+        % Method to checkout the SVN_hosted ground truth data set
+        issueSVNCheckoutCommand(obj);
+        
+        % Method to commit the SVN_hosted ground truth data set
+        issueSVNCommitCommand(obj, validationDataParamName);
     end
     
     methods (Static)

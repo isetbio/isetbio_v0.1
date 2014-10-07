@@ -3,6 +3,11 @@ function groundTruthDataSet = retrieveHistoricalGroundTruthDataToValidateAgaist(
     % ground truth data file
     dataSetFilename = obj.groundTruthDataSetsFileName;
     
+    if (obj.useRemoteGroundTruthDataSet)
+        dataSetFilename = obj.svnHostedGroundTruthDataSetsFileName();
+        obj.issueSVNCheckoutCommand();
+    end
+    
     % create a MAT-file object that supports partial loading and saving.
     matOBJ = matfile(dataSetFilename, 'Writable', false);
     
