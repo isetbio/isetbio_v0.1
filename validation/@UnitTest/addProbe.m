@@ -6,7 +6,6 @@ function addProbe(obj, varargin)
     p.addParamValue('functionSectionName', @ischar);
     p.addParamValue('functionName', @ischar);
     p.addParamValue('functionParams', @isstruct);
-    p.addParamValue('publishReport',  @islogical);
     p.addParamValue('showTheCode',  @islogical);
     p.addParamValue('generatePlots',  @islogical);
     p.addParamValue('onErrorReaction', @ischar); 
@@ -18,7 +17,6 @@ function addProbe(obj, varargin)
     newProbe.functionName   = p.Results.functionName;
     newProbe.functionParams = p.Results.functionParams;
     newProbe.onErrorReactBy = p.Results.onErrorReaction;
-    newProbe.publishReport  = p.Results.publishReport;
     newProbe.generatePlots  = p.Results.generatePlots;
     
     if (exist(newProbe.functionName, 'file') == 2)
@@ -30,7 +28,7 @@ function addProbe(obj, varargin)
     end
     
     
-    if (newProbe.publishReport)
+    if (obj.pushToGitHubOnSuccessfulValidation)
         % update sectionData map
         s = {};
         if (isKey(obj.sectionData,newProbe.functionSectionName))
@@ -61,7 +59,7 @@ function addProbe(obj, varargin)
     obj.validationProbeIndex = obj.validationProbeIndex + 1;
     
     % form probe command string
-    if (newProbe.publishReport)    
+    if (obj.pushToGitHubOnSuccessfulValidation)    
         % Critical: Assign the params variable to the base workstation
         assignin('base', 'params', params);
         
@@ -101,7 +99,7 @@ function addProbe(obj, varargin)
         % remove generated htmlDirectory so that it is not published to gitHub
         system(sprintf('rm -r -f %s',htmlDirectory));
         % also remove entry in sectionData
-        if (newProbe.publishReport)
+        if (obj.pushToGitHubOnSuccessfulValidation)
             % update sectionData map
             s = obj.sectionData(newProbe.functionSectionName);
             if (numel(s) == 1)
@@ -122,7 +120,7 @@ function addProbe(obj, varargin)
         % remove generated htmlDirectory so that it is not published to gitHub
         system(sprintf('rm -r -f %s', htmlDirectory));
         % also remove entry in sectionData
-        if (newProbe.publishReport)
+        if (obj.pushToGitHubOnSuccessfulValidation)
             % update sectionData map
             s = obj.sectionData(newProbe.functionSectionName);
             if (numel(s) == 1)

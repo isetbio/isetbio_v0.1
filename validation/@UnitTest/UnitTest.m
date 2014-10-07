@@ -57,10 +57,10 @@ classdef UnitTest < handle
         validationSummary;
         
         % full path to the file containing the history of validation data runs 
-        validationDataSetsFileName
+        validationDataSetsFileName;
         
         % full path to the file containing the ground truth data sets
-        groundTruthDataSetsFileName
+        groundTruthDataSetsFileName;
     end
     
     properties (Access = private)  
@@ -82,6 +82,7 @@ classdef UnitTest < handle
         % this is compared to the current validation run
         groundTruthDataSet;
         
+        % Temporary directory to sync ground truth data set with remote SVN
         ISETBIO_DataSets_Local_SVN_DIR;
     end
     

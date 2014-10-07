@@ -12,7 +12,7 @@ function [diffs, criticalDiffs] = compareDataSets(obj)
     for fIndex = 1:numel(currentRunFieldNames)
        % get field name
        fieldName = currentRunFieldNames{fIndex};
-       % Do not compare these fields
+       % Do not compare these fields right now (or ever, in the case of 'date')
        if (strcmp(fieldName, 'probeData')) || (strcmp(fieldName, 'sectionData')) || (strcmp(fieldName, 'date'))
            continue;
        end
@@ -24,10 +24,17 @@ function [diffs, criticalDiffs] = compareDataSets(obj)
            groundTruthValue = getfield(obj.groundTruthDataSet, fieldName);
            if ischar(currentRunValue)
                quotedFieldName = sprintf('''%s''', fieldName);
-               if ~strcmp(currentRunValue, groundTruthValue)
+               if (strcmp(fieldName, 'executiveScriptName')) || (strcmp(fieldName, 'gitRepoBranch'))
+                    % case -insensitive comparison
+                    stringsAreEqual = strcmpi(currentRunValue, groundTruthValue);
+               else
+                    % case-sensitive comparison
+                    stringsAreEqual = strcmp(currentRunValue, groundTruthValue);
+               end
+               if (~stringsAreEqual)
                    mismatchesNum = numel(diffs) + 1;
                    if strcmp(fieldName, 'executiveScriptListing')
-                       diffs{mismatchesNum} = sprintf('Variable %s is different in Ground Truth Data Set. Code not shown.', quotedFieldName);
+                       diffs{mismatchesNum} = sprintf('Variable %s is different in Ground Truth Data Set.\n\t      This is probably because of changes in the ''%s'' script. Code not shown.', quotedFieldName, obj.currentValidationRunDataSet.executiveScriptName);
                    else
                        diffs{mismatchesNum} = sprintf('Variable %s = ''%s'' vs. ''%s'' in Ground Truth Data Set.', quotedFieldName, currentRunValue, groundTruthValue);
                    end

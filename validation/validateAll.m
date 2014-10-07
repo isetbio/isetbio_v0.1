@@ -56,7 +56,6 @@ function validateAll()
         'functionName',   'PTB_vs_ISETBIO_Irradiance', ...                          % name of the validation script
         'functionParams',  struct(), ...                                            % struct with input arguments expected by the validation script
         'onErrorReaction', onErrorReaction, ...                                     % how to react on errors in the validation script. Options are 'CatchExcemption' or 'RethrowExcemption'
-        'publishReport',   true, ...                                                % if set to true, generate HTML of validation script and of any figures produced and push it to gitHub
         'showTheCode',     true, ...                                                % If set to true, the published report will include the MATLAB code that was run
         'generatePlots',   true ...
     );
@@ -68,7 +67,6 @@ function validateAll()
         'functionName',   'PTB_vs_ISETBIO_Colorimetry', ...                             % name of the validation script
         'functionParams',  struct(), ...                                                % struct with input arguments expected by the validation script
         'onErrorReaction', onErrorReaction, ...                                         % how to react on errors in the validation script. Options are 'CatchExcemption' or 'RethrowExcemption'
-        'publishReport',   true, ...                                                    % if set to true, generate HTML of validation script and of any figures produced
         'showTheCode',     true, ...                                                    % If set to true, the published report will include the MATLAB code that was run
         'generatePlots',   true ...
     );
@@ -80,7 +78,6 @@ function validateAll()
         'functionName',   'validateHumanRetinalIlluminance580nm', ...               % name of the validation script to run
         'functionParams',  struct(), ...                                            % struct with input arguments expected by the validation script
         'onErrorReaction', onErrorReaction, ...                                     % how to react on errors in the validation script. Options are 'CatchExcemption' or 'RethrowExcemption'
-        'publishReport',   true, ...                                                % if set to true, generate HTML of validation script and of any figures produced
         'showTheCode',     true, ...                                                % If set to true, the published report will include the MATLAB code that was run
         'generatePlots',   true ...
     );
@@ -91,7 +88,6 @@ function validateAll()
         'functionName',   'validateSkeleton', ...                                   % name of the validation script to run
         'functionParams',  struct(), ...                                            % struct with input arguments expected by the validation script
         'onErrorReaction', onErrorReaction, ...                                     % how to react on errors in the validation script. Options are 'CatchExcemption' or 'RethrowExcemption'
-        'publishReport',   true, ...                                                % if set to true, generate HTML of validation script and of any figures produced
         'showTheCode',     true, ...                                                % If set to true, the published report will include the MATLAB code that was run
         'generatePlots',   true ...
     );
