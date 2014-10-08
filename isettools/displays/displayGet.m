@@ -334,7 +334,7 @@ switch parm
         % displayGet(d, 'dark luminance') returns the luminance of display
         % when all pixels are turned off
         blackSpd = displayGet(d, 'black radiance');
-        blackXYZ = ieXYZFromEnergy(blackSpd, displayGet(d, 'wave'));
+        blackXYZ = ieXYZFromEnergy(blackSpd', displayGet(d, 'wave'));
         val = blackXYZ(2);
     case {'blackmaskreflectance', 'maskreflectance', 'blackreflectance'}
         % black mask reflectance
