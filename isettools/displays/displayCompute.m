@@ -67,7 +67,8 @@ else
 end
 
 % check the size of outImage
-assert(all(size(outImage) == [M*s, N*s, 3]), 'bad outImage size');
+assert(size(outImage, 1) == M*s && ...
+       size(outImage, 2) == N*s, 'bad outImage size');
 
 % 
 outImage = outImage .* repmat(psfs, [M/pixelPerPSFs N/pixelPerPSFs 1]);

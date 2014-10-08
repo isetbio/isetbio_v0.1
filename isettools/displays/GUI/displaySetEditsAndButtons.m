@@ -42,7 +42,16 @@ displayShowImage(d, [], handles.axes1);
 %% Set subpixel figure
 psfs = displayGet(d, 'psfs');
 if ~isempty(psfs)
-    imshow(psfs / max(psfs(:)), 'Parent', handles.axes4);
+    if size(psfs,3) == 3
+        imshow(psfs / max(psfs(:)), 'Parent', handles.axes4);
+    else
+        gam = 1;
+        wave = displayGet(d, 'wave');
+        photons = vcReadImage(psfs, 'rgb', d);
+        axes(handles.axes4);
+        imageSPD(photons, wave, gam, [], [], 1);
+        axes(handles.axes1);
+    end
 end
 
 %% END
