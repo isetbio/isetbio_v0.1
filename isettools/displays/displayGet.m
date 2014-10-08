@@ -138,7 +138,7 @@ switch parm
         else                   wave = displayGet(d,'wave');
         end
         e = displayGet(d,'spd',wave);
-        val = e*ones(3,1);
+        val = sum(e, 2);
         
         % Color conversion
     case {'rgb2xyz'}
@@ -165,8 +165,8 @@ switch parm
         %
         wave = displayGet(d,'wave');
         coneFile = fullfile(isetRootPath,'data','human','Stockman');
-        cones = ieReadSpectra(coneFile,wave);   % plot(wave,spCones)
-        spd = displayGet(d,'spd',wave);         % plot(wave,displaySPD)
+        cones = ieReadSpectra(coneFile,wave);     % plot(wave,spCones)
+        spd = displayGet(d, 'spd', wave);         % plot(wave,displaySPD)
         val = cones'* spd;                  
         val = val';
         
@@ -174,7 +174,7 @@ switch parm
         % white 
         e = displayGet(d,'white spd',wave);
         whiteXYZ = ieXYZFromEnergy(e',wave);
-        whiteLMS = ones(1,3)*val;
+        whiteLMS = sum(val);
         val = val*(whiteXYZ(2)/(whiteLMS(1)+whiteLMS(2)));
         
      case {'whitexyz','whitepoint'}
@@ -204,7 +204,7 @@ switch parm
         % displayGet(dsp,'white lms')
         rgb2lms = displayGet(d,'rgb2lms');        
         % Sent back in XW format, so a row vector
-        val = ones(1,3)*rgb2lms;
+        val = sum(rgb2lms);
 
         % Spatial parameters
     case {'dpi', 'ppi'}
