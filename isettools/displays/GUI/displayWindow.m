@@ -128,8 +128,19 @@ ind = vcGetSelectedObject('display');
 if isempty(ind), disp('No display selected'); return; end
 d = vcGetObject('display', ind);
 psfs = displayGet(d, 'psfs');
-if isempty(psfs), disp('no psfs in display model'); return;
-else figure; imshow(psfs/ max(psfs(:)));
+if isempty(psfs)
+    disp('no psfs in display model');
+    return;
+else
+    figure;
+    if size(psfs,3) == 3
+        imshow(psfs / max(psfs(:)));
+    else
+        gam = 1;
+        wave = displayGet(d, 'wave');
+        photons = vcReadImage(psfs, 'rgb', d);
+        imageSPD(photons, wave, gam, [], [], 1);
+    end
 end
 
 return;
