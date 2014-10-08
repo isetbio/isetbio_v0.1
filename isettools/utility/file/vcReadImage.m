@@ -81,15 +81,12 @@ switch lower(imageType)
         else                 inImg = double(fullname);
         end
         
-        % If the data are 2 or 3 dimensions, then we have a unispectral or
-        % an RGB image.
-        if ismatrix(inImg), inImg = repmat(inImg, [1 1 3]); end
-        if ndims(inImg) ~= 3
-            error('Bad number of dimensions (%.0f) for image',ndims(img));
-        end
-        
         % An rgb image.
         if isempty(dispCal)
+            if ismatrix(inImg), inImg = repmat(inImg, [1 1 3]); end
+            if ndims(inImg) ~= 3
+                error('Bad number of dimensions %.0f of image',ndims(img));
+            end
             % If there is no display calibration file, we arrange the
             % photon values so that the scene window shows the same RGB
             % values as in the original file.
@@ -124,6 +121,14 @@ switch lower(imageType)
             spd    = displayGet(d, 'spd');   % Primary SPD in energy
             gTable = displayGet(d, 'gamma table');
             
+            nprimaries = displayGet(d, 'n primaries');
+            if ismatrix(inImg)
+                inImg = repmat(inImg, [1 1 nprimaries]);
+            end
+            inImg = padarray(inImg, ...
+                        [0 0 nprimaries-size(inImg,3)], 0, 'post');
+            assert(size(inImg, 3)==nprimaries, 'bad image size');
+            
             % Check whether the gTable has enough entries for this
             % image.
             if max(inImg(:)) > size(gTable,1)
@@ -137,7 +142,7 @@ switch lower(imageType)
                 % bit, then we stretch the image values out to span the
                 % same range as the gTable.
                 s = size(gTable,1);
-                if s > 256,
+                if s > 256
                     fprintf('[%s] Assuming 8 bit RGB image and %d-bit LUT\n',mfilename,log2(s));
                     inImg = round(inImg/255*(s-1));
                 end
