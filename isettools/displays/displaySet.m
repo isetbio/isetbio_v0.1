@@ -39,10 +39,10 @@ switch parm
         % d = displaySet(d,'gamma','linear');
         % From digital values to primary intensity
         % Should be same number of columns as primaries
-        if ischar(val) && strcmp(val,'linear')
+        if ischar(val) && strcmp(val, 'linear')
             % User just wants a linear gamma table
             val = linspace(0,1,size(d.gamma,1));
-            val = repmat(val(:),1,3);
+            val = repmat(val(:),1,displayGet(d, 'nprimaries'));
         end
         d.gamma = val;
     case {'wave','wavelength'}  %nanometers
