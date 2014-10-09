@@ -13,6 +13,9 @@ end
 %% Skeleton validation script
 function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
+     % Use ISETBIO's version of lab2xyz.
+     lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');
+     
     %% Initialize return params
     validationReport = ''; 
     validationFailedFlag = false; 
