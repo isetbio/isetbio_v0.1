@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PTB_vs_ISETBIO_Irradiance</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-09-24"><meta name="DC.source" content="PTB_vs_ISETBIO_Irradiance.m"><style type="text/css">
+      --><title>PTB_vs_ISETBIO_Irradiance</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-09"><meta name="DC.source" content="PTB_vs_ISETBIO_Irradiance.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -108,8 +108,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     sz         = oiGet(oi,<span class="string">'size'</span>);
     rect       = [sz(2)/2,sz(1)/2,roiSize,roiSize];
     oiRoiLocs  = ieRoi2Locs(rect);
-</pre><h2>Get wavelength and spectral irradiance spd data (averaged within the scene ROI)<a name="10"></a></h2><pre class="codeinput">    wave             = oiGet(scene,<span class="string">'wave'</span>);
-    irradianceEnergy = oiGet(oi, <span class="string">'roi mean energy'</span>, oiRoiLocs);
+</pre><h2>Get wavelength and spectral irradiance spd data (averaged within the scene ROI)<a name="10"></a></h2><pre class="codeinput">    wave                    = oiGet(scene,<span class="string">'wave'</span>);
+    isetbioIrradianceEnergy = oiGet(oi, <span class="string">'roi mean energy'</span>, oiRoiLocs);
 </pre><h2>Get the underlying parameters that are needed from the ISETBIO structures.<a name="11"></a></h2><pre class="codeinput">    optics = oiGet(oi,<span class="string">'optics'</span>);
     pupilDiameterMm  = opticsGet(optics,<span class="string">'pupil diameter'</span>,<span class="string">'mm'</span>);
     focalLengthMm    = opticsGet(optics,<span class="string">'focal length'</span>,<span class="string">'mm'</span>);
@@ -129,9 +129,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><h2>Numerical check to decide whether we passed.<a name="13"></a></h2><p>We are checking against a 1% error.</p><pre class="codeinput">    tolerance = 0.01;
 
     ptbMagCorrectIrradiance = ptbMagCorrectIrradiance(:);
-    irradianceEnergy = irradianceEnergy(:);
-    difference = ptbMagCorrectIrradiance-irradianceEnergy;
-</pre><h2>Set validationReport, validationFailedFlag and validationData<a name="14"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (max(abs(difference./irradianceEnergy)) &gt; tolerance)
+    isetbioIrradianceEnergy = isetbioIrradianceEnergy(:);
+    difference = ptbMagCorrectIrradiance-isetbioIrradianceEnergy;
+</pre><h2>Set validationReport, validationFailedFlag and validationData<a name="14"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (max(abs(difference./isetbioIrradianceEnergy)) &gt; tolerance)
         validationReport     = sprintf(<span class="string">'Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance of %0.5f %% !!!'</span>, 100*tolerance);
         validationFailedFlag = true;
     <span class="keyword">else</span>
@@ -144,6 +144,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     validationDataToSave.tolerance  = tolerance;
     validationDataToSave.scene      = scene;
     validationDataToSave.oi         = oi;
+    validationDataToSave.ptbMagCorrectIrradiance = ptbMagCorrectIrradiance;
+    validationDataToSave.isetbioIrradianceEnergy = isetbioIrradianceEnergy;
 </pre><h2>Generate plots, if so specified<a name="15"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
         h = figure(500);
         clf;
@@ -151,9 +153,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         subplot(2,1,1);
         plot(wave, ptbIrradiance, <span class="string">'ro'</span>, <span class="string">'MarkerFaceColor'</span>, [1.0 0.8 0.8], <span class="string">'MarkerSize'</span>, 10);
         hold <span class="string">on</span>;
-        plot(wave, irradianceEnergy, <span class="string">'bo'</span>, <span class="string">'MarkerFaceColor'</span>, [0.8 0.8 1.0], <span class="string">'MarkerSize'</span>, 10);
+        plot(wave, isetbioIrradianceEnergy, <span class="string">'bo'</span>, <span class="string">'MarkerFaceColor'</span>, [0.8 0.8 1.0], <span class="string">'MarkerSize'</span>, 10);
         hold <span class="string">off</span>
-        set(gca,<span class="string">'ylim'</span>,[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
+        set(gca,<span class="string">'ylim'</span>,[0 1.2*max([max(ptbIrradiance(:)) max(isetbioIrradianceEnergy(:))])]);
         set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14,  <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
         legend({<span class="string">'PTB'</span>,<span class="string">'ISETBIO'</span>}, <span class="string">'Location'</span>,<span class="string">'SouthEast'</span>,<span class="string">'FontSize'</span>,12);
         xlabel(<span class="string">'Wave (nm)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 16); ylabel(<span class="string">'Irradiance (q/s/nm/m^2)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 16)
@@ -162,9 +164,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         subplot(2,1,2);
         plot(wave,ptbMagCorrectIrradiance,<span class="string">'ro'</span>, <span class="string">'MarkerFaceColor'</span>, [1.0 0.8 0.8], <span class="string">'MarkerSize'</span>, 10);
         hold <span class="string">on</span>;
-        plot(wave,irradianceEnergy,<span class="string">'bo'</span>, <span class="string">'MarkerFaceColor'</span>, [0.8 0.8 1.0], <span class="string">'MarkerSize'</span>, 10);
+        plot(wave,isetbioIrradianceEnergy,<span class="string">'bo'</span>, <span class="string">'MarkerFaceColor'</span>, [0.8 0.8 1.0], <span class="string">'MarkerSize'</span>, 10);
         hold <span class="string">off</span>
-        set(gca,<span class="string">'ylim'</span>,[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
+        set(gca,<span class="string">'ylim'</span>,[0 1.2*max([max(ptbIrradiance(:)) max(isetbioIrradianceEnergy(:))])]);
         set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
         xlabel(<span class="string">'Wave (nm)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14); ylabel(<span class="string">'Irradiance (q/s/nm/m^2)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14)
         legend({<span class="string">'PTB'</span>,<span class="string">'ISETBIO'</span>}, <span class="string">'Location'</span>,<span class="string">'SouthEast'</span>,<span class="string">'FontSize'</span>,12)
@@ -177,17 +179,17 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 	 validation status      : PASSED
 	-----------------------------------------
 	 validation report      : Validation PASSED. PTB and isetbio agree about irradiance to 1.00000 %
-	-------------------------------------------------------------------------------------------------
-	 validation data saved  : 'fov', 'roiSize', 'tolerance', 'scene', 'oi'
-	-------------------------------------------------------------------------------------------------
-	 date last run          : 24-Sep-2014 16:55:06
-	 matlabVersion          : 8.3.0.532 (R2014a)
+	-----------------------------------------------------------------------------------------------------------------------------
+	 validation data saved  : 'fov', 'roiSize', 'tolerance', 'scene', 'oi', 'ptbMagCorrectIrradiance', 'isetbioIrradianceEnergy'
+	-----------------------------------------------------------------------------------------------------------------------------
+	 date last run          : 09-Oct-2014 16:40:44
+	 matlabVersion          : 8.4.0.150421 (R2014b)
 	 computer architecture  : MACI64
 	 computer IP address    : manta.psych.upenn.edu
 	 username               : nicolas
 	 git branch...tracking  : dev...origin/dev of ISETBIO
-	-------------------------------------------------------------------------------------------------
-</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+	-----------------------------------------------------------------------------------------------------------------------------
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function PTB_vs_ISETBIO_Irradiance(runParams)
 %
@@ -257,8 +259,8 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     oiRoiLocs  = ieRoi2Locs(rect);
 
     %% Get wavelength and spectral irradiance spd data (averaged within the scene ROI)
-    wave             = oiGet(scene,'wave');
-    irradianceEnergy = oiGet(oi, 'roi mean energy', oiRoiLocs);
+    wave                    = oiGet(scene,'wave');
+    isetbioIrradianceEnergy = oiGet(oi, 'roi mean energy', oiRoiLocs);
 
     %% Get the underlying parameters that are needed from the ISETBIO structures.
     optics = oiGet(oi,'optics');
@@ -292,11 +294,11 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     tolerance = 0.01;
     
     ptbMagCorrectIrradiance = ptbMagCorrectIrradiance(:);
-    irradianceEnergy = irradianceEnergy(:);
-    difference = ptbMagCorrectIrradiance-irradianceEnergy;
+    isetbioIrradianceEnergy = isetbioIrradianceEnergy(:);
+    difference = ptbMagCorrectIrradiance-isetbioIrradianceEnergy;
    
     %% Set validationReport, validationFailedFlag and validationData
-    if (max(abs(difference./irradianceEnergy)) > tolerance)
+    if (max(abs(difference./isetbioIrradianceEnergy)) > tolerance)
         validationReport     = sprintf('Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance of %0.5f %% !!!', 100*tolerance);
         validationFailedFlag = true;
     else
@@ -309,7 +311,8 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     validationDataToSave.tolerance  = tolerance;
     validationDataToSave.scene      = scene;
     validationDataToSave.oi         = oi;
-    
+    validationDataToSave.ptbMagCorrectIrradiance = ptbMagCorrectIrradiance;
+    validationDataToSave.isetbioIrradianceEnergy = isetbioIrradianceEnergy;
     
     %% Generate plots, if so specified
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
@@ -319,9 +322,9 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         subplot(2,1,1);
         plot(wave, ptbIrradiance, 'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
         hold on;
-        plot(wave, irradianceEnergy, 'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
+        plot(wave, isetbioIrradianceEnergy, 'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
         hold off
-        set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
+        set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(isetbioIrradianceEnergy(:))])]);
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14,  'FontWeight', 'bold');
         legend({'PTB','ISETBIO'}, 'Location','SouthEast','FontSize',12);
         xlabel('Wave (nm)', 'FontName', 'Helvetica', 'FontSize', 16); ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 16)
@@ -330,9 +333,9 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         subplot(2,1,2);
         plot(wave,ptbMagCorrectIrradiance,'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
         hold on;
-        plot(wave,irradianceEnergy,'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
+        plot(wave,isetbioIrradianceEnergy,'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
         hold off
-        set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
+        set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(isetbioIrradianceEnergy(:))])]);
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
         xlabel('Wave (nm)', 'FontName', 'Helvetica', 'FontSize', 14); ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 14)
         legend({'PTB','ISETBIO'}, 'Location','SouthEast','FontSize',12)
