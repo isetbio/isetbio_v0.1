@@ -31,10 +31,18 @@ function pushToGitHub(obj)
     
     % First do a git pull (so we can push later with no conflicts)
     cd(validationDocsDir);
-    system('git pull');
+    if (obj.messageEmissionStrategy < UnitTest.MEDIUM_IMPORTANCE)
+        system('git pull');
+    else
+        system('git pull --quiet');
+    end
     
     cd(wikiCloneDir);
-    system('git pull');
+    if (obj.messageEmissionStrategy < UnitTest.MEDIUM_IMPORTANCE)
+        system('git pull');
+    else
+        system('git pull --quiet');
+    end
     
     % Now we can modify things
     % Remove previous validationResultsCatalogFile
@@ -156,7 +164,7 @@ function pushToGitHub(obj)
     % ----------------- IMPORTANT NOTE REGARDING PUSHING TO GIT  FROM MATLAB -----------------
     
     % First push the HTML validation datafiles
-    fprintf('\n\n1. Pushing validation reports (HTML) to github ...\n');
+    fprintf('1. Pushing validation reports (HTML) to github ...\n');
     cd(validationDocsDir);
     
     system('git config --global push.default matching');
@@ -165,36 +173,50 @@ function pushToGitHub(obj)
     % Stage everything
     system('git add -A');
     
-    % Commit everything
-    system('git commit -a -m "Validation results docs update";');
     
-    % Push to remote
-    system('git push origin gh-pages');
+    if (obj.messageEmissionStrategy < UnitTest.MEDIUM_IMPORTANCE)
+        % Commit everything
+        system('git commit -a -m "Validation results docs update";');
+        % Push to remote
+        system('git push  origin gh-pages');
+    else
+        % Commit everything
+        system('git commit --quiet -a -m "Validation results docs update";');
+        % Push to remote
+        system('git push --quiet origin gh-pages');
+    end
     
     
     
     % Next update the wiki catalog of validation runs
-    fprintf('\n\n2. Pushing catalog of validation reports to github ...\n');
+    fprintf('2. Pushing catalog of validation reports to github ...\n');
     cd(wikiCloneDir);
     
     system('git config --global push.default matching');
     %system('git config --global push.default simple');
     
-    % Pull first in case there are changes
-    system('git pull');
-    
     % Stage everything
     system('git add -A');
     
-    % Commit everything
-    system('git commit -a -m "Validation results catalog update";');
     
-    % Push to remote
-    system('git push');
+    if (obj.messageEmissionStrategy < UnitTest.MEDIUM_IMPORTANCE)
+        % Commit everything
+        system('git commit  -a -m "Validation results catalog update";');
+    
+        % Push to remote
+        system('git push');
+    else
+        % Commit everything
+        system('git commit --quiet -a -m "Validation results catalog update";');
+    
+        % Push to remote
+        system('git push --quiet');
+    end
+    
     
     % Open git web page with validation results for visualization. 
     % This may take a while to update.
-    fprintf('\n\nValidation results pushed to: %s\n\n', validationResultsCatalogFileURL);
+    fprintf('3. Validation results available at: %s\n\n', validationResultsCatalogFileURL);
     
     % All done. Return to root directory
     cd(validationRootDirectory);

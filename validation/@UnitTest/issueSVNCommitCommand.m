@@ -13,7 +13,8 @@ function issueSVNCommitCommand(obj, validationDataParamName)
     errorFile   = 'svn_errors.tmp';
     svnCommitCommand  = sprintf('(echo p | %s commit  -m "Auto commit by @UnitTest. Appended new ground truth data set (''%s'')." %s --username %s --password %s --trust-server-cert  --non-interactive  > %s) >& %s', svnBinDirectory, validationDataParamName, obj.ISETBIO_DataSets_Local_SVN_DIR, ISETBIO_SVN_Username, ISETBIO_SVN_password, resultsFile, errorFile);
     
-    fprintf('Issuing SVN commit command for user: %s\n%s\n', ISETBIO_SVN_Username, svnCommitCommand);
+    feedbackMessage = sprintf('Issuing SVN commit command for user: %s\n%s\n', ISETBIO_SVN_Username, svnCommitCommand);
+    obj.emitMessage(feedbackMessage, UnitTest.MINIMUM_IMPORTANCE);
     system(svnCommitCommand);
     
     results = textread(resultsFile, '%s', 'whitespace', '');
@@ -28,10 +29,12 @@ function issueSVNCommitCommand(obj, validationDataParamName)
     end
     
     if (numel(results) > 0)
-        fprintf('\nSVN commit results:\n');
+        feedbackMessage = '';
+        feedbackMessage = sprintf('%s\nSVN commit results:\n', feedbackMessage);
         for k = 1:numel(results)
-            fprintf('%s\n', char(results{k}));
+            feedbackMessage = sprintf('%s%s\n', feedbackMessage, char(results{k}));
         end
+        obj.emitMessage(feedbackMessage, UnitTest.MINIMUM_IMPORTANCE);
     end
     
     % remove temporary svn files

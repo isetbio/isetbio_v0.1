@@ -13,7 +13,8 @@ function issueSVNCheckoutCommand(obj)
     svnCheckOutCommand  = sprintf('(echo p | %s checkout  %s %s --username %s --password %s --trust-server-cert  --non-interactive  > %s) >& %s', svnBinDirectory, obj.ISETBIO_DataSets_SVN_URL, obj.ISETBIO_DataSets_Local_SVN_DIR, ISETBIO_SVN_Username, ISETBIO_SVN_password, resultsFile, errorFile);
     
     % Issue SVN export command. 
-    fprintf('Issuing SVN checkout command for user: %s\n%s\n', ISETBIO_SVN_Username, svnCheckOutCommand);
+    feedbackMessage = sprintf('Issuing SVN checkout command for user: %s\n%s\n', ISETBIO_SVN_Username, svnCheckOutCommand);
+    obj.emitMessage(feedbackMessage, UnitTest.MINIMUM_IMPORTANCE);
     system(svnCheckOutCommand);
     
     results = textread(resultsFile, '%s', 'whitespace', '');
@@ -27,10 +28,12 @@ function issueSVNCheckoutCommand(obj)
     end
     
     if (numel(results) > 0)
-        fprintf('\nSVN checkout results:\n');
+        feedbackMessage = '';
+        feedbackMessage = sprintf('%s\nSVN checkout results:\n', feedbackMessage);
         for k = 1:numel(results)
-            fprintf('%s\n', char(results{k}));
+            feedbackMessage = sprintf('%s%s\n', feedbackMessage, char(results{k}));
         end
+        obj.emitMessage(feedbackMessage, UnitTest.MINIMUM_IMPORTANCE);
     end
     
     % remove temporary svn files

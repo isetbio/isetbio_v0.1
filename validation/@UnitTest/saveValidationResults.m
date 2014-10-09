@@ -29,7 +29,7 @@ function saveValidationResults(obj, dataType)
         validationDataParamName = sprintf('dataRun_%05d', length(varList)+1);
         eval(sprintf('matOBJ.%s = obj.currentValidationRunDataSet;', validationDataParamName)); 
         
-        fprintf('\nUpdated %s with current data (''%s'').\n', dataSetFilename, validationDataParamName);
+        fprintf('Updated %s with current data (''%s'').\n', dataSetFilename, validationDataParamName);
         
         if (strcmp(validationDataSetType, 'Ground truth') && (obj.addResultsToGroundTruthHistory))
             obj.issueSVNCommitCommand(validationDataParamName);

@@ -1,4 +1,4 @@
-function [diffs, criticalDiffs]= contrastValidationRunDataToGroundTruth(obj)
+function [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj)
     % assemble current data into a validation run struct for comparison and storage
     obj.currentValidationRunDataSet = obj.assembleResultsIntoValidationRunStuct();
     
@@ -43,32 +43,18 @@ function [diffs, criticalDiffs]= contrastValidationRunDataToGroundTruth(obj)
         end
     else
         if (numel(criticalDiffs) > 0)
-            fprintf(  '\n----------------------------------------------------------------------------------------------------\n');
-            fprintf('\n\n(A) There are critical differences between the current validation run and the ground truth data set.\n');
-            fprintf('\nCritical differences found (%d):\n', numel(criticalDiffs));
+            fprintf('\n\nThere are some (%d) **critical** differences between the current validation run and the ground truth data set:\n', numel(criticalDiffs));
             for k = 1:numel(criticalDiffs)
-                fprintf(2, '\t[%03d] %s\n', k, char(criticalDiffs{k}));
+                fprintf(2, '[%03d]\t %s\n', k, char(criticalDiffs{k}));
             end
             fprintf('\nWill not push to github nor update the ground truth data set in the SVN server.\n');
-            fprintf(  '\n----------------------------------------------------------------------------------------------------\n');
-        else
-            fprintf(  '\n-------------------------------------------------------------------------------------------------------\n');
-            fprintf('\n\n(A) There are NO critical differences between the current validation run and the ground truth data set.\n');
-            fprintf(  '\n-------------------------------------------------------------------------------------------------------\n');
         end
         
         if (numel(diffs) > 0)
-            fprintf(  '\n-------------------------------------------------------------------------------------------------------------\n');
-            fprintf('\n\n(B) There are some non-critical differences between the current validation run and the ground truth data set.\n');
-            fprintf('Non-critical differences found (%d):\n', numel(diffs));
+            fprintf('\n\nThere are some (%d) non-critical differences between the current validation run and the ground truth data set:\n', numel(diffs));
             for k = 1:numel(diffs)
-                fprintf('\t[%03d] %s\n', k, char(diffs{k}));
+                fprintf('[%03d]\t %s\n', k, char(diffs{k}));
             end
-            fprintf(  '\n-------------------------------------------------------------------------------------------------------------\n');
-        else
-            fprintf(  '\n-----------------------------------------------------------------------------------------------------------\n');
-            fprintf('\n\n(B) There are NO non-critical differences between the current validation run and the ground truth data set.\n');
-            fprintf(  '\n-----------------------------------------------------------------------------------------------------------\n');
         end
         
         % Query user whether to push to gitHub and to SVN server
@@ -76,34 +62,34 @@ function [diffs, criticalDiffs]= contrastValidationRunDataToGroundTruth(obj)
             % Query regarding GroundTruth history update
             if (obj.addResultsToGroundTruthHistory)
                 if  (obj.useRemoteGroundTruthDataSet)
-                    updateGroundTruthDataSet = input('You have requested to update the *REMOTELY* kept Ground Truth Data Set history. Do you still want to do this despite the non-critical differences found ? (1=YES): ');
+                    updateGroundTruthDataSet = input('\nYou have requested to update the *REMOTELY* kept Ground Truth Data Set history. Do you still want to do this despite the non-critical differences found ? (1=YES): ');
                 else
-                    updateGroundTruthDataSet = input('You have requested to update the *LOCALLY* kept Ground Truth Data Set history. Do you still want to do this despite the non-critical differences found ? (1=YES): ');
+                    updateGroundTruthDataSet = input('\nYou have requested to update the *LOCALLY* kept Ground Truth Data Set history. Do you still want to do this despite the non-critical differences found ? (1=YES): ');
                 end
                 if (~isempty(updateGroundTruthDataSet)) && (updateGroundTruthDataSet == 1)
                     obj.saveValidationResults('Ground truth');
                 else
-                    fprintf('\n----> Will not update the Ground Truth Data Set history.\n');
+                    fprintf('\t----> Will not update the Ground Truth Data Set history.\n\n');
                 end
             end
             
             % Query regarding Validation history update
             if (obj.addResultsToValidationResultsHistory)
-                updateValidationDataSet = input('You have requested to update the *LOCALLY* kept Validation Data Set history. Do you still want to do this despite the non-critical differences found ? (1=YES): ');
+                updateValidationDataSet = input('\nYou have requested to update the *LOCALLY* kept Validation Data Set history. Do you still want to do this despite the non-critical differences found ? (1=YES): ');
                 if (~isempty(updateValidationDataSet)) &&  (updateValidationDataSet == 1)
                     obj.saveValidationResults('Validation');
                 else
-                   fprintf('\n---->  Will not update the Validation Data Set history. \n'); 
+                   fprintf('\t---->  Will not update the Validation Data Set history. \n\n'); 
                 end
             end
             
             % Query regarding git hub update
             if (obj.pushToGitHubOnSuccessfulValidation)
-                updateGithub = input('You have requested to update github. Do you still want to do this despite the non-critical differences found ? (1=YES): ');
+                updateGithub = input('\nYou have requested to update github. Do you still want to do this despite the non-critical differences found ? (1=YES): ');
                 if (~isempty(updateGithub)) &&  (updateGithub == 1)
                     obj.pushToGitHub();
                 else
-                   fprintf('\n---->  Will not push to github. \n');  
+                   fprintf('\t---->  Will not push to github. \n\n');  
                 end
             end
         end

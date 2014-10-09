@@ -41,6 +41,9 @@ classdef UnitTest < handle
         % Flag indicating whether to use the ground truth table kept on
         % platypus.psych.upenn.edu SVN server
         useRemoteGroundTruthDataSet = true;
+        
+        % Minimum level at which messages will be emitted to the user via the command window.
+        messageEmissionStrategy = UnitTest.MEDIUM_IMPORTANCE; 
     end
     
     properties (SetAccess = private) 
@@ -64,7 +67,7 @@ classdef UnitTest < handle
     end
     
     properties (Access = private)  
-         % validation results for current probe
+        % validation results for current probe
         validationFunctionName = '';
         validationFailedFlag   = true;
         validationData         = struct();
@@ -84,6 +87,12 @@ classdef UnitTest < handle
         
         % Temporary directory to sync ground truth data set with remote SVN
         ISETBIO_DataSets_Local_SVN_DIR;
+    end
+    
+    properties (Constant)
+        MAXIMUM_IMPORTANCE = 99;
+        MEDIUM_IMPORTANCE  = 10;
+        MINIMUM_IMPORTANCE = 0;
     end
     
     % Public methods
@@ -108,14 +117,20 @@ classdef UnitTest < handle
             obj.validationDataSetsFileName = fullfile(fileparts(which('validateAll')), 'ISETBIO_LocalValidationDataSetHistory.mat');
             % full path to the file containing the ground truth data sets
             obj.groundTruthDataSetsFileName = fullfile(fileparts(which('validateAll')), 'ISETBIO_GroundTruthDataSetHistory.mat');
+            
         end
         
         % Method to add and execute a new probe
         addProbe(obj, varargin);
          
         % Method to print the validation report
-        printReport(obj);
+        printReport(obj, versbosity);
     
+        % Method to return feedback messages via the command window.
+        % Whether a message is printed or not will depend on its importance
+        % and the set 'minMessageEmissionLevel' property.
+        emitMessage(obj, message, importanceLevel);
+        
         % Method to contrast current validation run data to that loaded
         % from a ground truth data set
         [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj); 

@@ -24,7 +24,7 @@ function groundTruthDataSet = retrieveHistoricalGroundTruthDataToValidateAgaist(
         return;        
     end
     
-    fprintf('\nFound %d ground truth data sets in the saved history.', numel(varList));
+    fprintf('\n\nFound %d ground truth data sets in the saved history.', numel(varList));
     
     if (obj.queryUserIfMoreThanOneGroundTruthDataSetsExist)
         % Display a list of ground truth data set and their dates
@@ -44,5 +44,5 @@ function groundTruthDataSet = retrieveHistoricalGroundTruthDataToValidateAgaist(
     
     % return the selected ground truth data set
     eval(sprintf('groundTruthDataSet = matOBJ.%s;',varList{dataSetIndex}));
-    fprintf('\nUsing the ground truth data set from the %s validation run.\n', groundTruthDataSet.date);
+    fprintf('Using the ground truth data set from the %s validation run.\n', groundTruthDataSet.date);
 end

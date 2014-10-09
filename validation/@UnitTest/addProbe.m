@@ -139,10 +139,10 @@ function addProbe(obj, varargin)
     % 
     if (~newProbe.result.validationFailedFlag) && (~newProbe.result.excemptionRaised)
         if (obj.displayAllValidationResults)
-            obj.printReport();
+            obj.printReport('All');
+        else
+            obj.printReport('SummaryOnly');
         end
-        % Show published report
-        % web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
     end
         
 end
