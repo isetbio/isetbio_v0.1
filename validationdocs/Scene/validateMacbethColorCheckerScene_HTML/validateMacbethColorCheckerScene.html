@@ -112,7 +112,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         h = figure(500);
         clf;
 
-        subplot(3,3,1);
+        subplot(2,4,1);
         image(1:size(rgbImage,2), 1:size(rgbImage,2), rgbImage);
         axis <span class="string">'image'</span>
         xlabel(<span class="string">'x'</span>);
@@ -120,7 +120,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         title(<span class="string">'RGB image'</span>);
         set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
 
-        subplot(3,3,3);
+        subplot(2,4,5);
         imagesc(1:size(luminanceMap,2), 1:size(luminanceMap,2), luminanceMap);
         axis <span class="string">'image'</span>
         pos = get(gca,<span class="string">'position'</span>);
@@ -131,9 +131,10 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
 
 
-        subplot(3,3,[4:9]);
-        wavelengthSubSamplingInterval = 4;
+        subplot(2,4,[3 4 7 8]);
+        wavelengthSubSamplingInterval = 3;
         plotRadianceMap(photonRadianceMap, wavelengthSampling, wavelengthSubSamplingInterval);
+        drawnow;
     <span class="keyword">end</span>
 
     <span class="comment">% Do not forget to update the following params:</span>
@@ -180,7 +181,7 @@ maxRadiance =
     set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
     title(<span class="string">'Radiance (photons) map'</span>);
     colormap(hot(256));
-    colorbar(<span class="string">'Ticks'</span>, [0:0.2:1.0], <span class="string">'TickLabels'</span>, [0:0.2:1.0]*maxRadiance + minRadiance);
+    colorbar(<span class="string">'horiz'</span>, <span class="string">'Ticks'</span>, [min(radianceMap(:)) max(radianceMap(:))], <span class="string">'TickLabels'</span>, [0 1.0]*(maxRadiance-minRadiance) + minRadiance);
 
     box <span class="string">off</span>;
     grid <span class="string">off</span>;
@@ -194,7 +195,7 @@ maxRadiance =
 	-----------------------------------------------------------------------
 	 validation data saved  : 'scene'
 	-----------------------------------------------------------------------
-	 date last run          : 10-Oct-2014 15:18:57
+	 date last run          : 10-Oct-2014 18:08:53
 	 matlabVersion          : 8.4.0.150421 (R2014b)
 	 computer architecture  : MACI64
 	 computer IP address    : manta.psych.upenn.edu
@@ -255,7 +256,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         h = figure(500);
         clf;
     
-        subplot(3,3,1);
+        subplot(2,4,1);
         image(1:size(rgbImage,2), 1:size(rgbImage,2), rgbImage);
         axis 'image'
         xlabel('x');
@@ -263,7 +264,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         title('RGB image');
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
 
-        subplot(3,3,3);
+        subplot(2,4,5);
         imagesc(1:size(luminanceMap,2), 1:size(luminanceMap,2), luminanceMap);
         axis 'image'
         pos = get(gca,'position');
@@ -274,9 +275,10 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
 
     
-        subplot(3,3,[4:9]);
-        wavelengthSubSamplingInterval = 4;
+        subplot(2,4,[3 4 7 8]);
+        wavelengthSubSamplingInterval = 3;
         plotRadianceMap(photonRadianceMap, wavelengthSampling, wavelengthSubSamplingInterval);
+        drawnow;
     end
     
     % Do not forget to update the following params:
@@ -314,7 +316,7 @@ function plotRadianceMap(radianceMap, wavelengthSampling, wavelengthSubSamplingI
     set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
     title('Radiance (photons) map');
     colormap(hot(256));
-    colorbar('Ticks', [0:0.2:1.0], 'TickLabels', [0:0.2:1.0]*maxRadiance + minRadiance);
+    colorbar('horiz', 'Ticks', [min(radianceMap(:)) max(radianceMap(:))], 'TickLabels', [0 1.0]*(maxRadiance-minRadiance) + minRadiance);
     
     box off;
     grid off;
