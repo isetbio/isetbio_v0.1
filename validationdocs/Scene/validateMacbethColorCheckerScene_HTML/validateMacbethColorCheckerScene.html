@@ -127,6 +127,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         colorbar(<span class="string">'location'</span>,<span class="string">'manual'</span>,<span class="string">'position'</span>,[pos(1)+pos(3)+.01 pos(2) .03 pos(4)]);
         xlabel(<span class="string">'x'</span>);
         ylabel(<span class="string">'y'</span>);
+        title(<span class="string">'Luminance map'</span>);
         set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
 
 
@@ -144,13 +145,25 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
         <span class="comment">% Your plotting code goes here.</span>
     <span class="keyword">end</span>
+</pre><pre class="codeoutput">
+minRadiance =
+
+   3.3654e+14
+
+
+maxRadiance =
+
+   1.3119e+16
+
 </pre><img vspace="5" hspace="5" src="validateMacbethColorCheckerScene_01.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
 
 <span class="keyword">function</span> plotRadianceMap(radianceMap, wavelengthSampling, wavelengthSubSamplingInterval)
     [X,Y,Z] = meshgrid(1:size(radianceMap,2), wavelengthSampling, 1:size(radianceMap,1));
     radianceMap = permute(radianceMap, [3 2 1]);
-    radianceMap = radianceMap/max(radianceMap(:));
+    minRadiance = min(radianceMap(:))
+    maxRadiance = max(radianceMap(:))
+    radianceMap = radianceMap/maxRadiance;
     h = slice(X,Y,Z, radianceMap, Inf, wavelengthSampling(1):wavelengthSubSamplingInterval:wavelengthSampling(end), Inf);
 
     <span class="keyword">for</span> n = 1:numel(h)
@@ -165,12 +178,30 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     axis <span class="string">'image'</span>
     set(gca, <span class="string">'ZDir'</span>, <span class="string">'reverse'</span>, <span class="string">'Color'</span>, [1 1 0.6]);
     set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    title(<span class="string">'Radiance (photons) map'</span>);
     colormap(hot(256));
+    colorbar(<span class="string">'Ticks'</span>, [0:0.2:1.0], <span class="string">'TickLabels'</span>, [0:0.2:1.0]*maxRadiance + minRadiance);
+
     box <span class="string">off</span>;
     grid <span class="string">off</span>;
 <span class="keyword">end</span>
 </pre><pre class="codeoutput">
-[ 4.] Results for 'validateMacbethColorCheckerScene' probe: PASSED</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+[ 4.] Results for 'validateMacbethColorCheckerScene' probe:
+	-----------------------------------------
+	 validation status      : PASSED
+	-----------------------------------------
+	 validation report      : Scene get/set operations perform as expected
+	-----------------------------------------------------------------------
+	 validation data saved  : 'scene'
+	-----------------------------------------------------------------------
+	 date last run          : 10-Oct-2014 15:18:57
+	 matlabVersion          : 8.4.0.150421 (R2014b)
+	 computer architecture  : MACI64
+	 computer IP address    : manta.psych.upenn.edu
+	 username               : nicolas
+	 git branch...tracking  : dev...origin/dev of ISETBIO
+	-----------------------------------------------------------------------
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function validateMacbethColorCheckerScene(runParams)
 %
@@ -239,6 +270,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         colorbar('location','manual','position',[pos(1)+pos(3)+.01 pos(2) .03 pos(4)]);
         xlabel('x');
         ylabel('y');
+        title('Luminance map');
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
 
     
@@ -263,7 +295,9 @@ end
 function plotRadianceMap(radianceMap, wavelengthSampling, wavelengthSubSamplingInterval)
     [X,Y,Z] = meshgrid(1:size(radianceMap,2), wavelengthSampling, 1:size(radianceMap,1));
     radianceMap = permute(radianceMap, [3 2 1]);
-    radianceMap = radianceMap/max(radianceMap(:));
+    minRadiance = min(radianceMap(:))
+    maxRadiance = max(radianceMap(:))
+    radianceMap = radianceMap/maxRadiance;
     h = slice(X,Y,Z, radianceMap, Inf, wavelengthSampling(1):wavelengthSubSamplingInterval:wavelengthSampling(end), Inf);
     
     for n = 1:numel(h)
@@ -278,7 +312,10 @@ function plotRadianceMap(radianceMap, wavelengthSampling, wavelengthSubSamplingI
     axis 'image'
     set(gca, 'ZDir', 'reverse', 'Color', [1 1 0.6]);
     set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+    title('Radiance (photons) map');
     colormap(hot(256));
+    colorbar('Ticks', [0:0.2:1.0], 'TickLabels', [0:0.2:1.0]*maxRadiance + minRadiance);
+    
     box off;
     grid off;
 end
