@@ -9,7 +9,7 @@ function validateAll()
     % If set to false, info regarding only failed validation runs will be displayed.
     % If set to true, info regarding all validation runs will be displayed.
     % Defaults to false
-    unitTestOBJ.displayAllValidationResults = false;
+    unitTestOBJ.displayAllValidationResults = true;
     
     % 2. Whether to append the validation results to the history of validation runs.
     % Defaults to false.
@@ -94,6 +94,17 @@ function validateAll()
     );
 
     unitTestOBJ.addProbe(...
+        'name',           'scene set/get ops validation', ...                                  % name to identify this probe
+        'functionSectionName', '3. Scene set/get operation validations', ...        % section to which validation script belong to
+        'functionName',   'validateMacbethColorCheckerScene', ...                                   % name of the validation script to run
+        'functionParams',  struct(), ...                                            % struct with input arguments expected by the validation script
+        'onErrorReaction', onErrorReaction, ...                                     % how to react on errors in the validation script. Options are 'CatchExcemption' or 'RethrowExcemption'
+        'showTheCode',     showCodeInPublishedReport, ...                                                % If set to true, the published report will include the MATLAB code that was run
+        'generatePlots',   generatePlots ...
+    );
+
+   
+    unitTestOBJ.addProbe(...
         'name',           'validation skeleton', ...                                % name to identify this probe
         'functionSectionName', 'z. Skeleton validation scripts', ...                   % section to which validation script belong to
         'functionName',   'validateSkeleton', ...                                   % name of the validation script to run
@@ -103,7 +114,6 @@ function validateAll()
         'generatePlots',   generatePlots ...
     );
 
-   
     % Contrast validation run data to ground truth data set
     unitTestOBJ.contrastValidationRunDataToGroundTruth(); 
 end

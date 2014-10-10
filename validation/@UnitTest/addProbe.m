@@ -138,11 +138,15 @@ function addProbe(obj, varargin)
     
     % 
     if (~newProbe.result.validationFailedFlag) && (~newProbe.result.excemptionRaised)
+        
+        if (1==2)
         if (obj.displayAllValidationResults)
             obj.printReport('All');
         else
             obj.printReport('SummaryOnly');
         end
+        end
+        
     end
         
 end

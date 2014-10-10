@@ -6,7 +6,6 @@ function printReport(obj, verbosity)
         port = 1;
     end
     
-   
     if (strcmp(verbosity, 'SummaryOnly'))
         if (obj.validationFailedFlag)
             fprintf(port, '\n[%2d.] Results for ''%s'' probe: FAILED', obj.validationProbeIndex, obj.validationFunctionName);
