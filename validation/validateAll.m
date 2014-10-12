@@ -94,9 +94,9 @@ function validateAll()
     );
 
     unitTestOBJ.addProbe(...
-        'name',           'scene set/get ops validation', ...                                  % name to identify this probe
+        'name',           'scene re-illumination validation', ...                                  % name to identify this probe
         'functionSectionName', '3. Scene set/get operation validations', ...        % section to which validation script belong to
-        'functionName',   'validateMacbethColorCheckerScene', ...                                   % name of the validation script to run
+        'functionName',   'validateSceneReIllumination', ...                                   % name of the validation script to run
         'functionParams',  struct(), ...                                            % struct with input arguments expected by the validation script
         'onErrorReaction', onErrorReaction, ...                                     % how to react on errors in the validation script. Options are 'CatchExcemption' or 'RethrowExcemption'
         'showTheCode',     showCodeInPublishedReport, ...                                                % If set to true, the published report will include the MATLAB code that was run

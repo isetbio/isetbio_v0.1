@@ -1,1 +1,1 @@
-This section contains validation scripts that test scene object operations.
+This section contains scripts that validate various scene set/get operations.
