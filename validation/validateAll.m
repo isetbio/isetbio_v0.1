@@ -37,7 +37,7 @@ function validateAll()
     
     % 7. Set numeric tolerance below which two numeric values are to be
     % considered equal. Defaults to 10*eps.
-    unitTestOBJ.numericTolerance = 10*eps;
+    unitTestOBJ.numericTolerance = 100*eps;
     
     % 8. Minimum level at which feedback messages will be emitted to the user via the command window.
     % For minimum output set this to UnitTest.MAXIMUM_IMPORTANCE

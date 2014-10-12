@@ -26,7 +26,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     
     %% Generate Macbeth scene with D65 illuminant
-    scene               = sceneCreate('macbethd65');
+    scene = sceneCreate('macbethd65');
     
     %% Extract various spectral parameters of the scene
     illuminantPhotons   = sceneGet(scene, 'illuminantPhotons');
@@ -36,7 +36,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     illuminantXYZ       = sceneGet(scene,'illuminant xyz');
     
     %% Generate an RGB rendition of the scene
-    rgbImage            = sceneGet(scene,'rgb image');
+    rgbImage = sceneGet(scene,'rgb image');
     
     
     %% Compute scene reflectance functions at all (row,col) positions
@@ -56,7 +56,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     illuminantEnergy    = illuminantGet(il,'energy');
     
     %% Re-illuminate scene using the new illuminant
-    scene               = sceneAdjustIlluminant(scene,illuminantEnergy);
+    scene = sceneAdjustIlluminant(scene,illuminantEnergy);
  
     
     %% Extract various spectral parameters of the scene
@@ -65,7 +65,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     photonRadianceMap2  = sceneGet(scene, 'photons');
     
     %% Generate an RGB rendition of the scene
-    rgbImage2        = sceneGet(scene,'rgb image');
+    rgbImage2 = sceneGet(scene,'rgb image');
     
      %% Compute scene reflectance functions at all (row,col) positions
     reflectanceMap2 = zeros(size(photonRadianceMap2));
@@ -74,12 +74,22 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
             reflectanceMap2(row,col,:) = squeeze(photonRadianceMap2(row,col,:)) ./ illuminantPhotons2;
         end
     end
-
+    
     
     
     %% Set validationReport, validationFailedFlag and validationData
-    validationFailedFlag = false;
-    validationReport = sprintf('Scene get/set operations perform as expected');
+    % Reflectance range is [0 .. 1]. Specify tolerance as 0.1%
+    tolerance = 1E-6;
+    maxDiff = max(abs(reflectanceMap2(:)-reflectanceMap(:)));
+    if (maxDiff > tolerance)
+        validationFailedFlag = true;
+        validationReport = sprintf('Scene reflectance before and after re-illumination do not agree to %g. Max diff: %g', tolerance, maxDiff);
+    else
+        validationFailedFlag = false;
+        validationReport = sprintf('Scene reflectance before and after re-illumination agree to %g. Max diff: %g', tolerance, maxDiff);
+    end
+    
+    % Save original and modified scene
     validationDataToSave.originalScene = originalScene;
     validationDataToSave.scene = scene;
     
@@ -94,8 +104,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         ylabel('y');
         title(sprintf('Macbeth under D65 light\nRGB image'));
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-
-    
+  
         subplot('Position', [0.09 0.63 0.34 0.12]);  hold on;
         plot(wavelengthSampling, illuminantPhotons, 'r-');
         plot(wavelengthSampling, peakRadiance, 'k-');
@@ -113,7 +122,6 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         subplot('Position', [0.06 0.02 0.39 0.26]); 
         plotRadianceMap(reflectanceMap, wavelengthSampling, wavelengthSubSamplingInterval, 'Reflectance')
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-
 
         % Now, plot re-illuminated scene data  
         subplot('Position', [0.11+0.5 0.8 0.30 0.15]);
@@ -140,7 +148,6 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         plotRadianceMap(reflectanceMap2, wavelengthSampling, wavelengthSubSamplingInterval, 'Reflectance')
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
 
-    
         % Adjust figure
         set(h,'PaperOrientation','Portrait');
         set(h,'PaperUnits','normalized');
