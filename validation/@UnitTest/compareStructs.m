@@ -97,7 +97,8 @@ function result = recursivelyCompareStructs(struct1Name, struct1, struct2Name, s
                        % equal size numerics
                        if (any(abs(field1(:)-field2(:)) > tolerance))
                             resultIndex = numel(result)+1;
-                            result{resultIndex} = sprintf('Probe ''%s'':\n\t\t''%s'' and ''%s'' difference exceeds the set tolerance (%g).\n', probeName, field1Name, field2Name, tolerance);
+                            maxDiff = max(abs(field1(:)-field2(:)));
+                            result{resultIndex} = sprintf('Probe named ''%s'':\n\t\tMax difference between ''%s'' and ''%s'' (%g) is greater than the set tolerance (%g).\n', probeName, field1Name, field2Name, maxDiff, tolerance);
                        end
                    end
                end

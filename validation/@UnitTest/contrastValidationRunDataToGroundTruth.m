@@ -47,7 +47,9 @@ function [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj)
             for k = 1:numel(criticalDiffs)
                 fprintf(2, '[%03d]\t %s\n', k, char(criticalDiffs{k}));
             end
+            fprintf('\nIs the chosen tolerance (%g) set too low? If so, adjust and re-run the validation.\n', obj.numericTolerance);
             fprintf('\nWill not push to github nor update the ground truth data set in the SVN server.\n');
+            return;
         end
         
         if (numel(diffs) > 0)

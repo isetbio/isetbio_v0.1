@@ -21,7 +21,7 @@ classdef UnitTest < handle
         pushToGitHubOnSuccessfulValidation = true;
         
         % Tolernace below which two numeric values are to be considered equal
-        numericTolerance = 10*eps;
+        numericTolerance = 100*eps;
         
         % Flag indicating whether @UnitTest should ask the user which
         % ground truth data set to use if more than one are found in the
