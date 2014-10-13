@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>validateSkeleton</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-12"><meta name="DC.source" content="validateSkeleton.m"><style type="text/css">
+      --><title>validateSkeleton</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-13"><meta name="DC.source" content="validateSkeleton.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -85,10 +85,14 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
     <span class="comment">% Your isetbio validation code goes here.</span>
 
-    <span class="comment">% Do not forget to update the following params:</span>
-    <span class="comment">% - validationReport (string),</span>
-    <span class="comment">% - validationFailedFlag (boolean) true if the results are not what we expect</span>
-    <span class="comment">% - validationDataToSave (struct with fields containing validation data that you want to save for comparison to ground truth data)</span>
+    <span class="comment">% At the end of the validation code update the following params:</span>
+    <span class="comment">% - validationReport (string) This should contain a useful message about the result of the script.</span>
+    <span class="comment">%</span>
+    <span class="comment">% - validationFailedFlag (boolean) This should be set to true if the results are not what you expect</span>
+    <span class="comment">%   (indicating a failed validation). Otherwise, if everything went OK, set it to false.</span>
+    <span class="comment">%</span>
+    <span class="comment">% - validationDataToSave (struct) Use this struct to add data which you  would like to save and</span>
+    <span class="comment">%    which will be contrasted against a ground truth data set.</span>
 
     <span class="comment">% Generate plots, if so specified</span>
     <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
@@ -104,7 +108,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 	------------------------------------------------------
 	 validation data saved  : None
 	------------------------------------------------------
-	 date last run          : 12-Oct-2014 13:21:26
+	 date last run          : 13-Oct-2014 13:23:37
 	 matlabVersion          : 8.4.0.150421 (R2014b)
 	 computer architecture  : MACI64
 	 computer IP address    : manta.psych.upenn.edu
@@ -138,10 +142,14 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     % Your isetbio validation code goes here.  
     
-    % Do not forget to update the following params:
-    % - validationReport (string),
-    % - validationFailedFlag (boolean) true if the results are not what we expect 
-    % - validationDataToSave (struct with fields containing validation data that you want to save for comparison to ground truth data)
+    % At the end of the validation code update the following params:
+    % - validationReport (string) This should contain a useful message about the result of the script. 
+    %
+    % - validationFailedFlag (boolean) This should be set to true if the results are not what you expect 
+    %   (indicating a failed validation). Otherwise, if everything went OK, set it to false.
+    %
+    % - validationDataToSave (struct) Use this struct to add data which you  would like to save and
+    %    which will be contrasted against a ground truth data set.
     
     % Generate plots, if so specified
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)

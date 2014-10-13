@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>validateSceneReIllumination</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-12"><meta name="DC.source" content="validateSceneReIllumination.m"><style type="text/css">
+      --><title>validateSceneReIllumination</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-13"><meta name="DC.source" content="validateSceneReIllumination.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -85,13 +85,13 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     validationFailedFlag = false;
     validationDataToSave = struct();
 </pre><h2>Initialize ISETBIO<a name="5"></a></h2><pre class="codeinput">    s_initISET;
-</pre><h2>Generate Macbeth scene with D65 illuminant<a name="6"></a></h2><pre class="codeinput">    scene               = sceneCreate(<span class="string">'macbethd65'</span>);
+</pre><h2>Generate Macbeth scene with D65 illuminant<a name="6"></a></h2><pre class="codeinput">    scene = sceneCreate(<span class="string">'macbethd65'</span>);
 </pre><h2>Extract various spectral parameters of the scene<a name="7"></a></h2><pre class="codeinput">    illuminantPhotons   = sceneGet(scene, <span class="string">'illuminantPhotons'</span>);
     peakRadiance        = sceneGet(scene, <span class="string">'peakRadiance'</span>);
     photonRadianceMap   = sceneGet(scene, <span class="string">'photons'</span>);
     wavelengthSampling  = sceneGet(scene, <span class="string">'wave'</span>);
     illuminantXYZ       = sceneGet(scene,<span class="string">'illuminant xyz'</span>);
-</pre><h2>Generate an RGB rendition of the scene<a name="8"></a></h2><pre class="codeinput">    rgbImage            = sceneGet(scene,<span class="string">'rgb image'</span>);
+</pre><h2>Generate an RGB rendition of the scene<a name="8"></a></h2><pre class="codeinput">    rgbImage = sceneGet(scene,<span class="string">'rgb image'</span>);
 </pre><h2>Compute scene reflectance functions at all (row,col) positions<a name="9"></a></h2><pre class="codeinput">    samplingGridPositions = sceneGet(scene,<span class="string">'size'</span>);
     reflectanceMap = zeros(size(photonRadianceMap));
     <span class="keyword">for</span> row = 1:samplingGridPositions(1)
@@ -104,19 +104,28 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     originalScene = scene;
 </pre><h2>Generate new illuminant: fluorescent light with a luminance equal to that of D65 above<a name="10"></a></h2><pre class="codeinput">    il                  = illuminantCreate(<span class="string">'fluorescent'</span>,[],illuminantXYZ(2));
     illuminantEnergy    = illuminantGet(il,<span class="string">'energy'</span>);
-</pre><h2>Re-illuminate scene using the new illuminant<a name="11"></a></h2><pre class="codeinput">    scene               = sceneAdjustIlluminant(scene,illuminantEnergy);
+</pre><h2>Re-illuminate scene using the new illuminant<a name="11"></a></h2><pre class="codeinput">    scene = sceneAdjustIlluminant(scene,illuminantEnergy);
 </pre><h2>Extract various spectral parameters of the scene<a name="12"></a></h2><pre class="codeinput">    illuminantPhotons2  = sceneGet(scene, <span class="string">'illuminantPhotons'</span>);
     peakRadiance2       = sceneGet(scene, <span class="string">'peakRadiance'</span>);
     photonRadianceMap2  = sceneGet(scene, <span class="string">'photons'</span>);
-</pre><h2>Generate an RGB rendition of the scene<a name="13"></a></h2><pre class="codeinput">    rgbImage2        = sceneGet(scene,<span class="string">'rgb image'</span>);
+</pre><h2>Generate an RGB rendition of the scene<a name="13"></a></h2><pre class="codeinput">    rgbImage2 = sceneGet(scene,<span class="string">'rgb image'</span>);
 </pre><h2>Compute scene reflectance functions at all (row,col) positions<a name="14"></a></h2><pre class="codeinput">    reflectanceMap2 = zeros(size(photonRadianceMap2));
     <span class="keyword">for</span> row = 1:samplingGridPositions(1)
         <span class="keyword">for</span> col = 1:samplingGridPositions(2)
             reflectanceMap2(row,col,:) = squeeze(photonRadianceMap2(row,col,:)) ./ illuminantPhotons2;
         <span class="keyword">end</span>
     <span class="keyword">end</span>
-</pre><h2>Set validationReport, validationFailedFlag and validationData<a name="15"></a></h2><pre class="codeinput">    validationFailedFlag = false;
-    validationReport = sprintf(<span class="string">'Scene get/set operations perform as expected'</span>);
+</pre><h2>Set validationReport, validationFailedFlag and validationData<a name="15"></a></h2><p>Reflectance range is [0 .. 1]. Specify tolerance as 0.1%</p><pre class="codeinput">    tolerance = 1E-6;
+    maxDiff = max(abs(reflectanceMap2(:)-reflectanceMap(:)));
+    <span class="keyword">if</span> (maxDiff &gt; tolerance)
+        validationFailedFlag = true;
+        validationReport = sprintf(<span class="string">'Scene reflectance before and after re-illumination do not agree to %g. Max diff: %g'</span>, tolerance, maxDiff);
+    <span class="keyword">else</span>
+        validationFailedFlag = false;
+        validationReport = sprintf(<span class="string">'Scene reflectance before and after re-illumination agree to %g. Max diff: %g'</span>, tolerance, maxDiff);
+    <span class="keyword">end</span>
+
+    <span class="comment">% Save original and modified scene</span>
     validationDataToSave.originalScene = originalScene;
     validationDataToSave.scene = scene;
 
@@ -131,7 +140,6 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         ylabel(<span class="string">'y'</span>);
         title(sprintf(<span class="string">'Macbeth under D65 light\nRGB image'</span>));
         set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
-
 
         subplot(<span class="string">'Position'</span>, [0.09 0.63 0.34 0.12]);  hold <span class="string">on</span>;
         plot(wavelengthSampling, illuminantPhotons, <span class="string">'r-'</span>);
@@ -150,7 +158,6 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         subplot(<span class="string">'Position'</span>, [0.06 0.02 0.39 0.26]);
         plotRadianceMap(reflectanceMap, wavelengthSampling, wavelengthSubSamplingInterval, <span class="string">'Reflectance'</span>)
         set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
-
 
         <span class="comment">% Now, plot re-illuminated scene data</span>
         subplot(<span class="string">'Position'</span>, [0.11+0.5 0.8 0.30 0.15]);
@@ -176,7 +183,6 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         subplot(<span class="string">'Position'</span>, [0.06+0.50 0.02 0.39 0.26]);
         plotRadianceMap(reflectanceMap2, wavelengthSampling, wavelengthSubSamplingInterval, <span class="string">'Reflectance'</span>)
         set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
-
 
         <span class="comment">% Adjust figure</span>
         set(h,<span class="string">'PaperOrientation'</span>,<span class="string">'Portrait'</span>);
@@ -219,17 +225,17 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 	-----------------------------------------
 	 validation status      : PASSED
 	-----------------------------------------
-	 validation report      : Scene get/set operations perform as expected
-	-----------------------------------------------------------------------
+	 validation report      : Scene reflectance before and after re-illumination agree to 1e-06. Max diff: 1.78814e-07
+	-------------------------------------------------------------------------------------------------------------------
 	 validation data saved  : 'originalScene', 'scene'
-	-----------------------------------------------------------------------
-	 date last run          : 12-Oct-2014 13:21:26
+	-------------------------------------------------------------------------------------------------------------------
+	 date last run          : 13-Oct-2014 13:23:37
 	 matlabVersion          : 8.4.0.150421 (R2014b)
 	 computer architecture  : MACI64
 	 computer IP address    : manta.psych.upenn.edu
 	 username               : nicolas
 	 git branch...tracking  : dev...origin/dev of ISETBIO
-	-----------------------------------------------------------------------
+	-------------------------------------------------------------------------------------------------------------------
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function validateSceneReIllumination(runParams)
@@ -260,7 +266,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     
     %% Generate Macbeth scene with D65 illuminant
-    scene               = sceneCreate('macbethd65');
+    scene = sceneCreate('macbethd65');
     
     %% Extract various spectral parameters of the scene
     illuminantPhotons   = sceneGet(scene, 'illuminantPhotons');
@@ -270,7 +276,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     illuminantXYZ       = sceneGet(scene,'illuminant xyz');
     
     %% Generate an RGB rendition of the scene
-    rgbImage            = sceneGet(scene,'rgb image');
+    rgbImage = sceneGet(scene,'rgb image');
     
     
     %% Compute scene reflectance functions at all (row,col) positions
@@ -290,7 +296,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     illuminantEnergy    = illuminantGet(il,'energy');
     
     %% Re-illuminate scene using the new illuminant
-    scene               = sceneAdjustIlluminant(scene,illuminantEnergy);
+    scene = sceneAdjustIlluminant(scene,illuminantEnergy);
  
     
     %% Extract various spectral parameters of the scene
@@ -299,7 +305,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     photonRadianceMap2  = sceneGet(scene, 'photons');
     
     %% Generate an RGB rendition of the scene
-    rgbImage2        = sceneGet(scene,'rgb image');
+    rgbImage2 = sceneGet(scene,'rgb image');
     
      %% Compute scene reflectance functions at all (row,col) positions
     reflectanceMap2 = zeros(size(photonRadianceMap2));
@@ -308,12 +314,22 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
             reflectanceMap2(row,col,:) = squeeze(photonRadianceMap2(row,col,:)) ./ illuminantPhotons2;
         end
     end
-
+    
     
     
     %% Set validationReport, validationFailedFlag and validationData
-    validationFailedFlag = false;
-    validationReport = sprintf('Scene get/set operations perform as expected');
+    % Reflectance range is [0 .. 1]. Specify tolerance as 0.1%
+    tolerance = 1E-6;
+    maxDiff = max(abs(reflectanceMap2(:)-reflectanceMap(:)));
+    if (maxDiff > tolerance)
+        validationFailedFlag = true;
+        validationReport = sprintf('Scene reflectance before and after re-illumination do not agree to %g. Max diff: %g', tolerance, maxDiff);
+    else
+        validationFailedFlag = false;
+        validationReport = sprintf('Scene reflectance before and after re-illumination agree to %g. Max diff: %g', tolerance, maxDiff);
+    end
+    
+    % Save original and modified scene
     validationDataToSave.originalScene = originalScene;
     validationDataToSave.scene = scene;
     
@@ -328,8 +344,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         ylabel('y');
         title(sprintf('Macbeth under D65 light\nRGB image'));
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-
-    
+  
         subplot('Position', [0.09 0.63 0.34 0.12]);  hold on;
         plot(wavelengthSampling, illuminantPhotons, 'r-');
         plot(wavelengthSampling, peakRadiance, 'k-');
@@ -347,7 +362,6 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         subplot('Position', [0.06 0.02 0.39 0.26]); 
         plotRadianceMap(reflectanceMap, wavelengthSampling, wavelengthSubSamplingInterval, 'Reflectance')
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-
 
         % Now, plot re-illuminated scene data  
         subplot('Position', [0.11+0.5 0.8 0.30 0.15]);
@@ -374,7 +388,6 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         plotRadianceMap(reflectanceMap2, wavelengthSampling, wavelengthSubSamplingInterval, 'Reflectance')
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
 
-    
         % Adjust figure
         set(h,'PaperOrientation','Portrait');
         set(h,'PaperUnits','normalized');
