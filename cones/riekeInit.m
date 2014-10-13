@@ -1,9 +1,11 @@
 function p = riekeInit
 % Initialize parameters in Rieke adaptation model
 %
-%  p = riekeInit
+%    p = riekeInit
+%
+% See also:  riekeAdaptSteadyState, riekeAdaptTemporal, coneAdapt
 %  
-% HJ/VISTASOFT Copyright 2014
+% HJ, ISETBIO Team Copyright 2014
 
 % Init parameters
 sigma = 100;  % rhodopsin activity decay rate (1/sec)

@@ -68,6 +68,7 @@ function val = sensorGet(sensor,param,varargin)
 %
 % Sensor array data
 %      {'volts'}          - Sensor output in volts
+%      {'photon rate'}    - Photons captured per second
 %      {'digital values'} - Sensor output in digital units
 %      {'electrons'}      - Sensor output in electrons
 %         A single color plane can be returned
@@ -363,6 +364,11 @@ switch param
         if ~isempty(varargin)
             val = sensorColorData(val,sensor,varargin{1});
         end
+    case {'photonrate'}
+        % pRate = sensorGet(sensor,'photon rate');
+        % Photons captured per second
+        val = sensorGet(sensor,'photons')/sensorGet(sensor,'exposure time');
+        
     case{'volts2maxratio','responseratio'}
         v = sensorGet(sensor,'volts');
         pixel = sensorGet(sensor,'pixel');

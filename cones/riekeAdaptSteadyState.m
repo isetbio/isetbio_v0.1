@@ -1,28 +1,36 @@
-function bgCur = riekeAdaptSteadyState(bgR,p)
+function p = riekeAdaptSteadyState(bgR,p,sz)
 % Steady-state background current calculated from the background rates.
 %
-%    bgCur = riekeAdaptSteadyState(bgR,p)
+%    initialState = riekeAdaptSteadyState(bgR,p,sz)
 %
-% bgR:  Vector of background isomerization rates
-% p:    Parameter list (from riekeInit)
+% Inputs
+%  bgR:  Vector of background isomerization rates
+%  p:    Parameter list (from riekeInit)
+%  sz:   Sensor array size, (e.g., sensorGet(sensor,'size'))
 %
-% bgCur: Current for each steady-state background rate in bgR
-%
-% This calculation is complicated enough that we thought we should put it
-% here for now, and maybe pull it out as its own function in the future.
+% Returns
+%  initialState:  The parameters in p augmented by additional terms needed
+%                 for the dynamic calculation in riekeAdaptTemporal
 %
 % Example:
-%   riekeAdaptSteadyState(1000:1000:5000)
+%   riekeAdaptSteadyState(1000,[],[1 1])
 %
 % HJ got the formula from Fred's slide.
 % HJ/VISTASOFT Team, 2014
 
-% Notice that this is a search over a bounded variable.  The upper and
-% lower bounds are huge for current and thus good enough to always find
-% something, we think.
+%% Programming note
+%
+% Notice that the computation is a search over a bounded variable.  The
+% upper and lower bounds are huge for current and thus good enough to
+% always find something, we think.
 
+%% Parameters
+if notDefined('bgR'), error('Background isomerization rate required.'); end
+if notDefined('sz'), sz = [1 1]; warning('Assuming 1,1 array size'); end
 if notDefined('p'),  p = riekeInit; end
 
+
+%% Calculation
 bgCur = zeros(size(bgR));
 for ii=1:length(bgR)
     v = bgR(ii);
@@ -31,6 +39,14 @@ for ii=1:length(bgR)
         (1 + (p.q*x/p.beta/p.kGc)^p.n)^p.h), 0, 1000);
 end
 
-% Can we check the solution somehow?
+% Compute additional initial values
+p.opsin   = ones(sz) * bgR / p.sigma;
+p.PDE     = (p.opsin + p.eta) / p.phi;
+p.Ca      = ones(sz) * bgCur * p.q / p.beta;
+p.Ca_slow = p.Ca;
+p.st      = p.smax ./ (1 + (p.Ca / p.kGc).^p.n);
+p.cGMP    = p.st * p.phi ./ (p.opsin + p.eta);
+
+p.bgCur = bgCur;
 
 end
