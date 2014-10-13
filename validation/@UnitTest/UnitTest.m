@@ -163,7 +163,10 @@ classdef UnitTest < handle
         issueSVNCheckoutCommand(obj);
         
         % Method to commit the SVN_hosted ground truth data set
-        issueSVNCommitCommand(obj, validationDataParamName);
+        issueSVNCommitCommand(obj, validationDataParamName, addNewFileFlag);
+        
+        % Method to cleanup stuff after we are done
+        cleanUp(obj);
     end
     
     methods (Static)

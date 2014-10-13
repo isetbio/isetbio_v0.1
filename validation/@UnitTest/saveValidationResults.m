@@ -8,10 +8,14 @@ function saveValidationResults(obj, dataType)
         exportData('Ground truth');
     end
     
+    if  (strcmp(dataType, 'Ground truth - NEW'))
+        exportData('Ground truth - NEW');
+    end
+    
     % Helper function for serializing the data to the disk
     function exportData(validationDataSetType)
         % select data file name
-        if strcmp(validationDataSetType, 'Ground truth')
+        if (strcmp(validationDataSetType, 'Ground truth') || strcmp(validationDataSetType, 'Ground truth - NEW'))
             if (obj.useRemoteGroundTruthDataSet)
                 dataSetFilename = obj.svnHostedGroundTruthDataSetsFileName();
             else
@@ -28,12 +32,15 @@ function saveValidationResults(obj, dataType)
         % add new variable with new validation data
         validationDataParamName = sprintf('dataRun_%05d', length(varList)+1);
         eval(sprintf('matOBJ.%s = obj.currentValidationRunDataSet;', validationDataParamName)); 
-        
+
         fprintf('Updated %s with current data (''%s'').\n', dataSetFilename, validationDataParamName);
         
-        if (strcmp(validationDataSetType, 'Ground truth') && (obj.addResultsToGroundTruthHistory))
-            obj.issueSVNCommitCommand(validationDataParamName);
+        if (obj.addResultsToGroundTruthHistory)
+            if (strcmp(validationDataSetType, 'Ground truth'))
+                obj.issueSVNCommitCommand(validationDataParamName, false);
+            elseif (strcmp(validationDataSetType, 'Ground truth - NEW'))
+                obj.issueSVNCommitCommand(validationDataParamName, true);
+            end  
         end
-        
     end
 end

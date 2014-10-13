@@ -10,12 +10,35 @@ function [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj)
     crificalDiffs = {};
     
     if (isempty(obj.groundTruthDataSet))
-        ans = input('Ground truth data set does not exist. Save current run as ground truth [1=yes]? ');
-        if (ans == 1)
-            obj.saveValidationResults('Ground truth');
-        else
-            diffs{1} = 'Ground truth data set does not exist.';
+        
+        atLeastOneProbeFailed = false;
+        for pIndex = 1:numel(obj.currentValidationRunDataSet.probeData)
+            currentProbe = obj.currentValidationRunDataSet.probeData{pIndex};
+            if (currentProbe.result.validationFailedFlag)
+               atLeastOneProbeFailed = true; 
+            end
         end
+        
+        if (atLeastOneProbeFailed == false)
+            ans = input('Ground truth data set does not exist. Save current run as ground truth [1=yes]? ');
+            if (ans == 1)
+                obj.saveValidationResults('Ground truth - NEW');
+            else
+                diffs{1} = 'Ground truth data set does not exist.';
+            end
+
+            fprintf('No previous ground truth data to compare to ==> Validating by default. \n');
+
+            if (obj.pushToGitHubOnSuccessfulValidation)
+                % Push results to github
+                obj.pushToGitHub();
+            end
+        else
+            fprintf('Ground truth data does not exist, but at least one probe did not validate. Will not save current run as ground truth.\n');
+        end
+        
+        obj.cleanUp();
+        return;
     else
         % compare structs now
         [diffs, criticalDiffs] = obj.compareDataSets();
@@ -23,7 +46,7 @@ function [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj)
     
     if (isempty(diffs) && isempty(crificalDiffs))
         fprintf('\n-------------------------------------------------------------------\n');
-        fprintf(  'Current validation run agrees prefectly with ground truth data set.\n');
+        fprintf(  'Current validation run agrees prefectly with ground truth data set.');
         fprintf('\n-------------------------------------------------------------------\n');
         
         if (obj.addResultsToValidationResultsHistory) && (obj.addResultsToGroundTruthHistory)
@@ -49,9 +72,8 @@ function [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj)
             end
             fprintf('\nIs the chosen tolerance (%g) set too low? If so, adjust and re-run the validation.\n', obj.numericTolerance);
             fprintf('\nWill not push to github nor update the ground truth data set in the SVN server.\n');
-            % Here must call a cleanup method to remove HTML directories
-            % and SVNDIR directory
-            fprintf('\nCleanup needed.\n');
+            
+            obj.cleanUp();
             return;
         end
         
@@ -73,9 +95,6 @@ function [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj)
                 end
                 if (~isempty(updateGroundTruthDataSet)) && (updateGroundTruthDataSet == 1)
                     obj.saveValidationResults('Ground truth');
-                else
-                    fprintf('\nCleanup needed.\n');
-                    fprintf('\t----> Will not update the Ground Truth Data Set history.\n\n');
                 end
             end
             
@@ -89,16 +108,21 @@ function [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj)
                 end
             end
             
-            % Query regarding git hub update
+            % Query regarding github update
             if (obj.pushToGitHubOnSuccessfulValidation)
                 updateGithub = input('\nYou have requested to update github. Do you still want to do this despite the non-critical differences found ? (1=YES): ');
                 if (~isempty(updateGithub)) &&  (updateGithub == 1)
                     obj.pushToGitHub();
                 else
-                   fprintf('\nCleanup needed.\n');
                    fprintf('\t---->  Will not push to github. \n\n');  
                 end
             end
         end
     end
+    
+    obj.cleanUp();
 end
+
+
+
+

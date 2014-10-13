@@ -7,6 +7,7 @@ function validationRunData = assembleResultsIntoValidationRunStuct(obj)
     validationRunData.matlabVersion             = obj.systemData.matlabVersion;
     validationRunData.computerArchitecture      = obj.systemData.computer; 
     validationRunData.computerAddress           = obj.systemData.computerAddress;
+    validationRunData.userName                  = obj.systemData.userName; 
     validationRunData.gitRepoBranch             = obj.systemData.gitRepoBranch; 
     validationRunData.sectionData               = obj.sectionData;
     

@@ -5,13 +5,13 @@ function validateAll()
     
     % Set optional parameters.
     %
-    % 1. Information displayed in command window.
-    % If set to false, info regarding only failed validation runs will be displayed.
+    % 1. Amount of information to be outputted in command window.
+    % If set to false,  only failed validation runs produce output.
     % If set to true, info regarding all validation runs will be displayed.
     % Defaults to false
-    unitTestOBJ.displayAllValidationResults = true;
+    unitTestOBJ.displayAllValidationResults = false;
     
-    % 2. Whether to append the validation results to the history of validation runs.
+    % 2. Whether to append the validation results to the history of (local) validation runs.
     % Defaults to false.
     unitTestOBJ.addResultsToValidationResultsHistory = true;
     
@@ -19,33 +19,35 @@ function validateAll()
     % Defaults to false.
     unitTestOBJ.addResultsToGroundTruthHistory = true;
     
-    % 4. Whether to push results to github upon a sucessful validation
-    % outcome. Defaults to true;
-    unitTestOBJ.pushToGitHubOnSuccessfulValidation = true;
+    % 4. Whether to push results to github upon a sucessful validation outcome. 
+    % Defaults to true;
+    unitTestOBJ.pushToGitHubOnSuccessfulValidation = false;
     
-    % 5. Whether @UnitTest will ask the user which ground truth data set to use 
-    % if more than one are found in the history of saved ground truth data sets.
+    % 5. Whether @UnitTest will ask the user which ground truth data set to use in case there are
+    % more than one in the history of saved ground truth data sets.
     % If set to false, the last ground truth data set will be used.
     unitTestOBJ.queryUserIfMoreThanOneGroundTruthDataSetsExist = true;
     
-    % 6. Locations of directories where ISETBIO gh-Pages and wiki are cloned
+    % 6. Set numeric tolerance below which two numeric values are to be
+    % considered equal. Defaults to 100*eps.
+    unitTestOBJ.numericTolerance = 100*eps;
+    
+    % 7. Minimum level at which feedback messages will be emitted to the user via the command window.
+    % For minimum output set this to UnitTest.MAXIMUM_IMPORTANCE
+    % For maximum output set this to UnitTest.MININUM_IMPORTANCE
+    % For itermediate output set this to UnitTest.MEDIUM_IMPORTANCE
+    unitTestOBJ.messageEmissionStrategy = UnitTest.MEDIUM_IMPORTANCE; 
+    
+    % 8. Locations of directories where ISETBIO gh-Pages and wiki are cloned
     % Defaults are '/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio'
     % and '/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki'
     % If these locations are not desired, enter new ones here:
     % unitTestOBJ.ISETBIO_gh_pages_CloneDir = ...
     % unitTestOBJ.ISETBIO_wikiCloneDir = ...
-    
-    % 7. Set numeric tolerance below which two numeric values are to be
-    % considered equal. Defaults to 10*eps.
-    unitTestOBJ.numericTolerance = 100*eps;
-    
-    % 8. Minimum level at which feedback messages will be emitted to the user via the command window.
-    % For minimum output set this to UnitTest.MAXIMUM_IMPORTANCE
-    % For maximum output set this to UnitTest.MININUM_IMPORTANCE
-    unitTestOBJ.messageEmissionStrategy = UnitTest.MEDIUM_IMPORTANCE; 
+
+
      
-     
-    % Parameter that can be set separately for each probe.
+    % Parameters that can be set separately (if need be) for each probe.
     % If you want execution to continue on error use the following setting:
     onErrorReaction = 'CatchExcemption'; 
 

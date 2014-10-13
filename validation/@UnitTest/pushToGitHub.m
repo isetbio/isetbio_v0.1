@@ -110,12 +110,9 @@ function pushToGitHub(obj)
             % get summary text from validation script.
             summaryText = getSummaryText(validationScriptName);
         
-             % Add entry to validationResultsCatalogFile
+            % Add entry to validationResultsCatalogFile
             fprintf(validationResultsCatalogFID, '* [ %s ]( %s/%s/%s/%s.html) - %s \n',  validationScriptName, validationDocsURL, validationScriptSubDir, sourceHTMLdir, validationScriptName, summaryText);  
-        
         end
-       
-        fprintf('\n');
     end % sectionIndex
     
     
@@ -197,7 +194,6 @@ function pushToGitHub(obj)
     
     % Stage everything
     system('git add -A');
-    
     
     if (obj.messageEmissionStrategy < UnitTest.MEDIUM_IMPORTANCE)
         % Commit everything

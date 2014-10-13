@@ -131,7 +131,7 @@ function addProbe(obj, varargin)
             obj.sectionData(newProbe.functionSectionName) = s;
         end
         
-        obj.printReport();
+        obj.printReport('All');
         fprintf(2,'\n\t ValidationReport\t: %s\n', newProbe.result.validationReport);
         return;
     end

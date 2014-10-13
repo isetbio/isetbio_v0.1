@@ -105,7 +105,7 @@ function [diffs, criticalDiffs] = compareDataSets(obj)
         % Check whether the validationReports match
         if (~strcmp(currentProbe.result.validationReport, groundTruthProbe.result.validationReport))
             mismatchesNum = numel(diffs) + 1;
-            diffs{mismatchesNum} = sprintf('Probe ''%s'':\n\t\t''currentProbe.result.validationReport'' and ''groundTruthProbe.result.validationReport'' are different:\n\t\t''%s'' \n\t\t   vs. \n\t\t''%s''\n', currentProbeName, currentProbe.result.validationReport, groundTruthProbe.result.validationReport);
+            diffs{mismatchesNum} = sprintf('Probe ''%s'':\n\t\t''currentProbe.result.validationReport'' and ''groundTruthProbe.result.validationReport'' are different:\n\t\t''currentProbe.result.validationReport'': ''%s''   \n\t\t''groundTruthProbe.result.validationReport'': ''%s''\n', currentProbeName, currentProbe.result.validationReport, groundTruthProbe.result.validationReport);
         end
         
         % Check whether the validationFailedFlags match
@@ -117,7 +117,7 @@ function [diffs, criticalDiffs] = compareDataSets(obj)
          % Check whether the excemptionRaisedFlags match
         if (currentProbe.result.excemptionRaised ~= groundTruthProbe.result.excemptionRaised)
             mismatchesNum = numel(criticalDiffs) + 1;
-            criticalDiffs{mismatchesNum} = sprintf('Probe ''%s'':\n\t\t''currentProbe.result.excemptionRaised'' = %d whereas ''groundTruthProbe.result.excemptionRaised'' = %d.\n', currentProbeName, currentProbe.result.excemptionRaised, groundTruthProbe.result.excemptionRaised);
+            criticalDiffs{mismatchesNum} = sprintf('Probe ''%s'':\n\t\t''currentProbe.result.excemptionRaised'' = %d \n\t\t''groundTruthProbe.result.excemptionRaised'' = %d.\n', currentProbeName, currentProbe.result.excemptionRaised, groundTruthProbe.result.excemptionRaised);
         end
         
         

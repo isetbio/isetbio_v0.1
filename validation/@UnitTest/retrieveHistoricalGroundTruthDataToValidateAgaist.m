@@ -30,7 +30,7 @@ function groundTruthDataSet = retrieveHistoricalGroundTruthDataToValidateAgaist(
         % Display a list of ground truth data set and their dates
         for k = 1:numel(varList)
             eval(sprintf('v = matOBJ.%s;',varList{k}));
-            fprintf('\n\t[%3d]. Performed on %s.', k, v.date);
+            fprintf('\n\t[%3d]. Performed by %s on %s (MATLAB: %s, computer: ARCH=%s, IP=%s)', k, v.userName, v.date, v.matlabVersion, v.computerArchitecture, v.computerAddress);
         end
         % ask the user to select one
         defaultDataSetNo = numel(varList);
