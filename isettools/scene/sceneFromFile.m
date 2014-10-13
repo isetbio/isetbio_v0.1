@@ -90,8 +90,8 @@ switch lower(imType)
         
         % get additional parameter values
         if ~isempty(varargin), doSub = varargin{1}; else doSub = false; end
-        if length(varargin) > 1, ambientSpd = varargin{2};
-        else ambientSpd = zeros(nwave, 1); end
+        if length(varargin) > 1, ambientIll = varargin{2};
+        else ambientIll = illuminantCreate('equal energy', wave, 0); end
         
         photons = vcReadImage(I,imType,dispCal, doSub);
         
@@ -119,19 +119,20 @@ switch lower(imType)
         
         % Add dark mask reflectance of the display
         maskReflectance = displayGet(d, 'black mask reflectance');
-        if ~notDefined('wList') && length(ambientSpd) == length(wList)
-            % ambient light is sampled by wavelength defined in wList
-            ambientSpd = interp1(wList, ambientSpd, wave, 'linear');
-        end
-        assert(length(ambientSpd) == length(wave), 'bad ambient length');
-        photons = bsxfun(@plus, photons, reshape(ambientSpd(:) .* ...
+        % if ~notDefined('wList') && length(ambientIll) == length(wList)
+        %    % ambient light is sampled by wavelength defined in wList
+        %    ambientIll = interp1(wList, ambientIll, wave, 'linear');
+        % end
+        % assert(length(ambientIll) == length(wave), 'bad ambient length');
+        ambientP = illuminantGet(ambientIll, 'photons');
+        photons = bsxfun(@plus, photons, reshape(ambientP(:) .* ...
             maskReflectance(:), [1 1 nwave]));
         
         % Add ambient light
         % assuming ambient lights to display and directly into the eyes are
         % the same
-        photons = bsxfun(@plus, photons, ...
-            reshape(ambientSpd(:), [1 1 nwave]));
+        % photons = bsxfun(@plus, photons, ...
+        %    reshape(ambientP(:), [1 1 nwave]));
         
     case {'multispectral','hyperspectral'}
         if ~ischar(I), error('File name required for multispectral'); end

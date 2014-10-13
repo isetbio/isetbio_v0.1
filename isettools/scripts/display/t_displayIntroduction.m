@@ -66,11 +66,12 @@ vcAddObject(scene); sceneWindow;
 
 %% More parameters for display
 %  black reflectance
-d = displaySet(d, 'black reflectance', 1);
-d = displaySet(d, 'black radiance', 0.002); % this is in energy
+d = displaySet(d, 'black reflectance', 0.2);
+d = displaySet(d, 'black radiance', 0.0002); % this is in energy
 
 nwave = displayGet(d, 'nwave');
-scene = sceneFromFile(I, 'rgb', [], d, [], false, 1e15*ones(nwave, 1));
+ambientIl = illuminantCreate('equal energy', displayGet(d, 'wave'), 0);
+scene = sceneFromFile(I, 'rgb', [], d, [], false, ambientIl);
 
 vcAddObject(scene); sceneWindow;
 
