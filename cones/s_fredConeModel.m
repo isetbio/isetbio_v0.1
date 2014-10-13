@@ -46,16 +46,26 @@ Stm(1600) = FlashAmp;
 Stm(2200) = FlashAmp;
 Stm(2600) = FlashAmp;
 
+% Why is this created and then cleared in the next step?
 
-%%
+
+%%  Create a stimulus ... think more about the choice here.
 % inc/dec asymmetry
 clear Stm;
-MeanAmp = 10000;
-StepAmp = 10000;
-NumPts = 1000;
-Stm(1:NumPts) = MeanAmp;
-% Stm(NumPts/2:NumPts/2+500) = MeanAmp - StepAmp;
-% Stm(3*NumPts/4:3*NumPts/4+500) = MeanAmp + StepAmp;
+MeanAmp = 30000;
+StepAmp = 30000;
+NumPts = 1000;    % One millisecond per step, 1 sec stimulus
+s = [250 500 750 1000];
+Stm(1:s(1)) = MeanAmp;
+Stm((s(1)+1):s(2)) = MeanAmp - StepAmp;
+Stm((s(2)+1):s(3)) = MeanAmp;
+Stm((s(3)+1):s(4)) = MeanAmp + StepAmp;
+
+vcNewGraphWin;
+plot(Stm); grid on;
+
+% Save this out for comparison with ISETBIO
+riekeStim1 = Stm;
 
 %%
 tme = 1:NumPts;
@@ -77,6 +87,7 @@ for pnt = 2:NumPts
 end
 % determine current change
 cur = -2 * cgmp2cur * g.^3 * 1 ./ (1 + cslow ./ cdark);
+riekeCurrent1 = cur;
 
 % plot current, pde, synthesis, cGMP and calcium
 figure(1); clf;
@@ -129,6 +140,8 @@ figure(3)
 plot(tme,Stm)
 %%
 % solve difference equations for step or pulse
+clear Stm;
+
 StmPts = 5;
 StmAmp = 1000;
 NumPts = 800;
@@ -143,13 +156,15 @@ cslow(1) = cdark;
 
 for pnt = 2:NumPts
 	if (pnt <= NumPts/4)
-        r(pnt) = 0;
+        r(pnt) = 0; Stm(pnt) = 0;
     end
     if ((pnt > NumPts/4) && (pnt < (NumPts/4+StmPts)))
         r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1) + StmAmp);
+        Stm(pnt) = StmAmp;
     end
     if (pnt >= (NumPts/4+StmPts))
         r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1));
+        Stm(pnt) = 0;
     end
 	p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
 	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 - beta * c(pnt-1));
@@ -159,6 +174,8 @@ for pnt = 2:NumPts
 end
 % determine current change
 cur = -cgmp2cur * g.^3 ./ (1 + cslow ./ cdark);
+riekeCurrent2 = cur;
+riekeStim2 = Stm;
 
 % plot current, pde, synthesis, cGMP and calcium
 figure(1); clf;
@@ -185,3 +202,5 @@ ylabel('[calcium slow]');
 
 figure(2); clf;
 plot(cur);
+
+
