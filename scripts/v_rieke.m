@@ -57,3 +57,23 @@ plot(1:nSample, riekeCurrent2, 'r', 'lineWidth', 2);
 plot(1:nSample, isetbioCur2(:), '--b', 'lineWidth', 2);
 xlabel('time (ms)'); ylabel('Adapted Current');
 legend('Rieke', 'ISETBIO');
+
+%% Plot the two currents against one another
+
+vcNewGraphWin;
+plot(riekeCurrent1(:),isetbioCur1(:),'.')
+mean(riekeCurrent1(:) ./ isetbioCur1(:))
+
+% Compare the means for the impulse
+grid on; axis equal; identityLine;
+disp(mean(riekeCurrent2(:)) / mean(isetbioCur2(:)))
+
+% Scale and plot adapted currents
+vcNewGraphWin;
+hold on; grid on;
+plot(1:nSample, riekeCurrent1/mean(riekeCurrent1(:)), 'r', 'lineWidth', 2);
+plot(1:nSample, isetbioCur1(:)/mean(isetbioCur1(:)), '--b', 'lineWidth', 2);
+xlabel('time (ms)'); ylabel('Adapted Current');
+legend('Rieke', 'ISETBIO');
+
+%% END
