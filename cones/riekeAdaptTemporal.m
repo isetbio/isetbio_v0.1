@@ -45,9 +45,10 @@ for ii = 1 : size(pRate, 3)
     p.opsin = p.opsin + dt * (pRate(:,:,ii) - p.sigma * p.opsin);
     p.PDE   = p.PDE   + dt * (p.opsin + p.eta - p.phi * p.PDE);
     p.Ca    = p.Ca    + dt * (p.q*p.k * p.cGMP.^p.h./(1+p.Ca_slow/p.cdark)-p.beta*p.Ca);
+    p.Ca_slow = p.Ca_slow - dt * p.betaSlow * (p.Ca_slow - p.Ca);
     p.st    = p.smax ./ (1 + (p.Ca / p.kGc).^p.n);
     p.cGMP  = p.cGMP  + dt * (p.st - p.PDE .* p.cGMP);
-    p.Ca_slow = p.Ca_slow - dt * p.betaSlow * (p.Ca_slow - p.Ca);
+    
     adaptedData(:,:,ii) = - p.k * p.cGMP.^p.h ./ (1 + p.Ca_slow / p.cdark);
 end
 
