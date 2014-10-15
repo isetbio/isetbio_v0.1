@@ -1,10 +1,11 @@
 function addProbe(obj, varargin)
+    
     % validate input params
     p = inputParser;
     p.addParamValue('name', @ischar);
+    p.addParamValue('functionSectionName', @ischar);
     p.addParamValue('functionName', @ischar);
     p.addParamValue('functionParams', @isstruct);
-    p.addParamValue('publishReport',  @islogical);
     p.addParamValue('showTheCode',  @islogical);
     p.addParamValue('generatePlots',  @islogical);
     p.addParamValue('onErrorReaction', @ischar); 
@@ -12,10 +13,10 @@ function addProbe(obj, varargin)
     
     % get input params
     newProbe.name = p.Results.name;
+    newProbe.functionSectionName   = p.Results.functionSectionName;
     newProbe.functionName   = p.Results.functionName;
     newProbe.functionParams = p.Results.functionParams;
     newProbe.onErrorReactBy = p.Results.onErrorReaction;
-    newProbe.publishReport  = p.Results.publishReport;
     newProbe.generatePlots  = p.Results.generatePlots;
     
     if (exist(newProbe.functionName, 'file') == 2)
@@ -26,6 +27,20 @@ function addProbe(obj, varargin)
         error('File ''%s'' not found in Matlab''s path.', newProbe.functionName);
     end
     
+    
+    if (obj.pushToGitHubOnSuccessfulValidation)
+        % update sectionData map
+        s = {};
+        if (isKey(obj.sectionData,newProbe.functionSectionName))
+            s = obj.sectionData(newProbe.functionSectionName);
+            s{numel(s)+1} = newProbe.functionName;
+        else
+            s{1} = newProbe.functionName; 
+        end
+        obj.sectionData(newProbe.functionSectionName) = s;
+    end
+    
+    
     % input params to function
     % add any passed input params
     params = newProbe.functionParams;
@@ -35,12 +50,16 @@ function addProbe(obj, varargin)
     params.parentUnitTestObject = obj;
     
     % Reset returned validation stuff
+    obj.validationFunctionName = newProbe.functionName;
     obj.validationData = [];
     obj.validationReport = 'None';
     obj.validationFailedFlag = false;
     
+    % update probeIndex
+    obj.validationProbeIndex = obj.validationProbeIndex + 1;
+    
     % form probe command string
-    if (newProbe.publishReport)    
+    if (obj.pushToGitHubOnSuccessfulValidation)    
         % Critical: Assign the params variable to the base workstation
         assignin('base', 'params', params);
         
@@ -52,68 +71,83 @@ function addProbe(obj, varargin)
             'catchError', false, ...
             'outputDir', htmlDirectory ...
             );
-        
+        % Run validation script via MATLAB's publish method
         probeCommandString = sprintf(' publish(''%s'', options);', newProbe.functionName);
     else 
+        % Run validation script the regular way
         probeCommandString = sprintf(' %s(params);', newProbe.functionName);
     end
-   
-
+        
     % form try-catch command string 
     if (strcmp(newProbe.onErrorReactBy, 'CatchExcemption'))
-        command = sprintf('try \n\t%s \n\t newProbe.result.validationReport = obj.validationReport; \n\t newProbe.result.validationData = obj.validationData; \n\t newProbe.result.validationFailedFlag = obj.validationFailedFlag; \n\t newProbe.result.excemptionRaised = false;  \ncatch err \n\t newProbe.result.excemptionRaised = true; \n\t newProbe.result.message = err.message; \nend', probeCommandString);
+        command = sprintf('try \n\t%s \n\t newProbe.result.validationReport = obj.validationReport; \n\t newProbe.result.validationData = obj.validationData; \n\t newProbe.result.validationFailedFlag = obj.validationFailedFlag; \n\t newProbe.result.excemptionRaised = false;  \ncatch err \n\t newProbe.result.excemptionRaised = true; \n\t obj.validationFailedFlag = true; \n\t newProbe.result.message = err.message; \nend', probeCommandString);
     elseif (strcmp(newProbe.onErrorReactBy, 'RethrowExcemption'))
-        command = sprintf('try \n\t%s \n\t newProbe.result.validationReport = obj.validationReport; \n\t newProbe.result.validationData = obj.validationData; \n\t newProbe.result.validationFailedFlag = obj.validationFailedFlag; \n\t newProbe.result.excemptionRaised = false;  \ncatch err \n\t newProbe.result.excemptionRaised = true; newProbe.result.message = err.message; \n\t rethrow(err); \nend', probeCommandString);
+        command = sprintf('try \n\t%s \n\t newProbe.result.validationReport = obj.validationReport; \n\t newProbe.result.validationData = obj.validationData; \n\t newProbe.result.validationFailedFlag = obj.validationFailedFlag; \n\t newProbe.result.excemptionRaised = false;  \ncatch err \n\t newProbe.result.excemptionRaised = true; \n\t obj.validationFailedFlag = true; \n\t newProbe.result.message = err.message; \n\t rethrow(err); \nend', probeCommandString);
     else
         error('''onErrorReaction'':%s is an invalid mode. Choose either ''CatchingExcemption'' or ''RethrowingExcemption''.', newProbe.onErrorReactBy);
     end
     
     % Run the try-catch command
     eval(command);
-    
+
     % queue the probe to allProbeData list
-    pIndex = numel(obj.allProbeData) + 1;
+    pIndex = obj.validationProbeIndex;
     obj.allProbeData{pIndex} = newProbe;
     
+    
     if (newProbe.result.excemptionRaised)
-        fprintf(2,'\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, newProbe.name);
-        fprintf(2,'\t ValidationScript\t:  %s.m\n', newProbe.functionName);
-        fprintf(2,'\t Status\t\t\t:  error (code raised an excemption which we caught). \n');
-        fprintf(2,'\t Excemption message\t:  %s\n', newProbe.result.message);
+        % remove generated htmlDirectory so that it is not published to gitHub
+        system(sprintf('rm -r -f %s',htmlDirectory));
+        % also remove entry in sectionData
+        if (obj.pushToGitHubOnSuccessfulValidation)
+            % update sectionData map
+            s = obj.sectionData(newProbe.functionSectionName);
+            if (numel(s) == 1)
+                s = {};
+            else
+                s = {s{1:end-1}};
+            end
+            obj.sectionData(newProbe.functionSectionName) = s;
+        end
+        
         obj.printReport();
+        fprintf(2,'\n\t ValidationReport\t:  Error (code raised an excemption which we caught). \n');
+        fprintf(2,'\t Excemption message\t:  %s\n', newProbe.result.message);
         return;
     end
     
     if (newProbe.result.validationFailedFlag)
-        fprintf(2,'\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, newProbe.name);
-        fprintf(2,'\t ValidationScript\t:  %s.m\n', newProbe.functionName);
-        fprintf(2,'\t Status\t\t\t:  validation failure - %s.\n', newProbe.result.validationReport);
-        fprintf(2,'\t Validation data saved \t: ');
-        fieldNamesList = fieldnames(newProbe.result.validationData);
-        for k = 1:numel(fieldNamesList)-1
-            fprintf(2,'''%s'', ', char(fieldNamesList{k}));
+        % remove generated htmlDirectory so that it is not published to gitHub
+        system(sprintf('rm -r -f %s', htmlDirectory));
+        % also remove entry in sectionData
+        if (obj.pushToGitHubOnSuccessfulValidation)
+            % update sectionData map
+            s = obj.sectionData(newProbe.functionSectionName);
+            if (numel(s) == 1)
+                s = {};
+            else
+                s = {s{1:end-1}};
+            end
+            obj.sectionData(newProbe.functionSectionName) = s;
         end
-        fprintf(2,'''%s'' \n', char(fieldNamesList{numel(fieldNamesList)}));
-        obj.printReport();
+        
+        obj.printReport('All');
+        fprintf(2,'\n\t ValidationReport\t: %s\n', newProbe.result.validationReport);
         return;
     end
     
-    
+    % 
     if (~newProbe.result.validationFailedFlag) && (~newProbe.result.excemptionRaised)
-        fprintf('\n%2d. \t Name\t\t\t: ''%s'' \n', pIndex, newProbe.name);
-        fprintf('\t ValidationScript\t:  %s.m\n', newProbe.functionName);
-        fprintf('\t Status\t\t\t:  Success - %s.\n', newProbe.result.validationReport);
-        fprintf('\t Validation data saved \t: ');
-        fieldNamesList = fieldnames(newProbe.result.validationData);
-        for k = 1:numel(fieldNamesList)-1
-            fprintf('''%s'', ', char(fieldNamesList{k}));
+        
+        if (1==2)
+        if (obj.displayAllValidationResults)
+            obj.printReport('All');
+        else
+            obj.printReport('SummaryOnly');
         end
-        fprintf('''%s'' \n', char(fieldNamesList{numel(fieldNamesList)}));
-        obj.printReport();
+        end
+        
     end
         
-    % Show published report
-    web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
-    
 end
 

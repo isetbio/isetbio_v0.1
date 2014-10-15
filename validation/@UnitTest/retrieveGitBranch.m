@@ -4,7 +4,6 @@ function gitString = retrieveGitBranch(obj)
     currentDir = pwd;
     cd(functionDirectory);
     
-    
     % Execute git command to retrieve the repository name
     status = system('basename `git rev-parse --show-toplevel` > gitRepoName.txt');
     if (status ~= 0)
@@ -52,6 +51,7 @@ function gitString = retrieveGitBranch(obj)
     % Form gitString
     gitString = sprintf('%s of %s', gitBranchString, gitRepoNameString);
     
+    % go back to current dir
     cd(currentDir);
     
 end

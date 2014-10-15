@@ -328,6 +328,22 @@ switch parm
                val = double(oi.data.photons(:,:,idx)); 
            end
        end
+    
+    case 'roiphotons'
+       if isempty(varargin), error('ROI required')
+       else
+           roiLocs = varargin{1};
+       end
+       val = vcGetROIData(oi,roiLocs,'photons');
+    
+   case 'roimeanphotons'
+       if isempty(varargin), error('ROI required')
+       else
+           roiLocs = varargin{1};
+       end
+       val = oiGet(oi,'roiphotons', roiLocs);
+       val = mean(val,1);
+       
        
     case {'photonsnoise','photonswithnoise'}
         % pn = oiGet(oi,'photons noise');
@@ -695,7 +711,7 @@ switch parm
         % Get the photons that are within the specified depth map region
         error('Not yet implemented.  See oiCombineDepth for algorithm');
     otherwise
-        disp(['Unknown parameter: ',parm]);
+        error(['Unknown parameter: ',parm]);
         
  end
 

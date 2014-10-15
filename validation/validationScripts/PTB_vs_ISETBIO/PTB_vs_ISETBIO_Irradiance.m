@@ -1,17 +1,23 @@
-function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
+function PTB_vs_ISETBIO_Irradiance(runParams)
 %
-%   Validate ISETBIO irradiance computations by comparing to PTB-irradiance computations.
+%   Validate ISETBIO-based irradiance computations by comparing to PTB-based irradiance computations.
 % 
 
-    %% Define parameters expected to be set by all validation scripts
-    
-    % Validation report
-    validationReport = 'None';
-    
-    % Flag indicating whether the validation failed due to incorrect results
-    validationFailedFlag = true;
+    % Call the validation script
+    [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
         
-    % struct with optional validation variables that we would like to save
+    % Update the parent @UnitTest object
+    UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
+end
+
+
+
+%% Validation script for PTB_vs_ISETBIO_Irradiance test
+function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
+
+    %% Initialize return params
+    validationReport = 'None'; 
+    validationFailedFlag = true; 
     validationDataToSave = struct();
     
     
@@ -20,8 +26,8 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
     
     
     %% Set computation params
-    fov               = 30;  % need large field
-    roiSize           = 5;
+    fov     = 20;  % need large field
+    roiSize = 5;
     
     
     %% Create a radiance image in ISETBIO
@@ -60,8 +66,8 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
     oiRoiLocs  = ieRoi2Locs(rect);
 
     %% Get wavelength and spectral irradiance spd data (averaged within the scene ROI)
-    wave             = oiGet(scene,'wave');
-    irradianceEnergy = oiGet(oi, 'roi mean energy', oiRoiLocs);
+    wave                    = oiGet(scene,'wave');
+    isetbioIrradianceEnergy = oiGet(oi, 'roi mean energy', oiRoiLocs);
 
     %% Get the underlying parameters that are needed from the ISETBIO structures.
     optics = oiGet(oi,'optics');
@@ -95,12 +101,11 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
     tolerance = 0.01;
     
     ptbMagCorrectIrradiance = ptbMagCorrectIrradiance(:);
-    irradianceEnergy = irradianceEnergy(:);
-    difference = ptbMagCorrectIrradiance-irradianceEnergy;
+    isetbioIrradianceEnergy = isetbioIrradianceEnergy(:);
+    difference = ptbMagCorrectIrradiance-isetbioIrradianceEnergy;
    
-    %% Set validationReport and validationFailedFlag
-    % All validation scripts must set the 'validationReport' and 'validationFailedFlag'
-    if (max(abs(difference./irradianceEnergy)) > tolerance)
+    %% Set validationReport, validationFailedFlag and validationData
+    if (max(abs(difference./isetbioIrradianceEnergy)) > tolerance)
         validationReport     = sprintf('Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance of %0.5f %% !!!', 100*tolerance);
         validationFailedFlag = true;
     else
@@ -108,6 +113,13 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
         validationFailedFlag = false;
     end
 
+    validationDataToSave.fov        = fov;
+    validationDataToSave.roiSize    = roiSize;
+    validationDataToSave.tolerance  = tolerance;
+    validationDataToSave.scene      = scene;
+    validationDataToSave.oi         = oi;
+    validationDataToSave.ptbMagCorrectIrradiance = ptbMagCorrectIrradiance;
+    validationDataToSave.isetbioIrradianceEnergy = isetbioIrradianceEnergy;
     
     %% Generate plots, if so specified
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
@@ -117,60 +129,27 @@ function validationResults = PTB_vs_ISETBIO_Irradiance(runParams)
         subplot(2,1,1);
         plot(wave, ptbIrradiance, 'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
         hold on;
-        plot(wave, irradianceEnergy, 'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
+        plot(wave, isetbioIrradianceEnergy, 'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
         hold off
-        set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
+        set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(isetbioIrradianceEnergy(:))])]);
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14,  'FontWeight', 'bold');
         legend({'PTB','ISETBIO'}, 'Location','SouthEast','FontSize',12);
         xlabel('Wave (nm)', 'FontName', 'Helvetica', 'FontSize', 16); ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 16)
         title('Without magnification correction', 'FontName', 'Helvetica', 'FontSize', 18, 'FontWeight', 'bold');
     
-        
         subplot(2,1,2);
         plot(wave,ptbMagCorrectIrradiance,'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
         hold on;
-        plot(wave,irradianceEnergy,'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
+        plot(wave,isetbioIrradianceEnergy,'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
         hold off
-        set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
+        set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(isetbioIrradianceEnergy(:))])]);
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
         xlabel('Wave (nm)', 'FontName', 'Helvetica', 'FontSize', 14); ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 14)
         legend({'PTB','ISETBIO'}, 'Location','SouthEast','FontSize',12)
         title('Magnification-corrected comparison', 'FontName', 'Helvetica', 'FontSize', 18, 'FontWeight', 'bold');
-        
     end 
     
-    
-    %% Assemble the validation data to be saved into a struct.
-    validationDataToSave.fov        = fov;
-    validationDataToSave.roiSize    = roiSize;
-    validationDataToSave.tolerance  = tolerance;
-    validationDataToSave.scene      = scene;
-    validationDataToSave.oi         = oi;
-        
-    
-    %% Save the validation data.This part should be included as is in all validation scripts.
-    if (nargin >= 1) && isfield(runParams, 'parentUnitTestObject')
-        % Get parent @UnitTest object
-        parentUnitTestOBJ = runParams.parentUnitTestObject;
-        
-        % Return validation results to the parent @UnitTest object
-        parentUnitTestOBJ.storeValidationResults(...
-            'validationReport',     validationReport, ...
-            'validationFailedFlag', validationFailedFlag, ...
-            'validationData',       validationDataToSave ...
-        );
-       
-        % Set to empty as we returned the validation results to the parent @UnitTest object
-        validationResults = [];
-        
-        % Publish validation results
-        parentUnitTestOBJ.printReport();
-    else 
-        % return validationResults to the user
-        validationResults = struct();
-        validationResults.validationReport      = validationReport;
-        validationResults.validationFailedFlag  = validationFailedFlag;
-        validationResults.validationDataToSave  = validationDataToSave;
-    end
-    
 end
+
+
+
