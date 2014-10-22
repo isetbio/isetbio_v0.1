@@ -17,7 +17,7 @@ s_initISET;
 %    d = displayCreate('CRT-Dell');
 %  Calibration files are stored in 
 %       ISETBIO_ROOT_PATH/isettools/data/displays/
-d = displayCreate('LCD-Apple');
+d = displayCreate('OLED-Samsung');
 
 %% Show default image and GUI
 %  show display structure in a GUI window
@@ -59,19 +59,8 @@ vcAddObject(scene); sceneWindow;
 %  render with subpixel structure
 %  subpixel rendering will up-sample the image. So the input image cannot
 %  be too large (no more than 100x100)
-I_small = imresize(I, 0.1);
+I_small = imresize(I, [34 52]);
 scene = sceneFromFile(I_small, 'rgb', [], d, [], true);
-
-vcAddObject(scene); sceneWindow;
-
-%% More parameters for display
-%  black reflectance
-d = displaySet(d, 'black reflectance', 0.2);
-d = displaySet(d, 'black radiance', 0.0002); % this is in energy
-
-nwave = displayGet(d, 'nwave');
-ambientIl = illuminantCreate('equal energy', displayGet(d, 'wave'), 0);
-scene = sceneFromFile(I, 'rgb', [], d, [], false, ambientIl);
 
 vcAddObject(scene); sceneWindow;
 

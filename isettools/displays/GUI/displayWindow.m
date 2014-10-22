@@ -127,7 +127,7 @@ function subpixeImage_Callback(~, ~, ~)
 ind = vcGetSelectedObject('display');
 if isempty(ind), disp('No display selected'); return; end
 d = vcGetObject('display', ind);
-psfs = displayGet(d, 'psfs');
+psfs = displayGet(d, 'dixel image');
 if isempty(psfs)
     disp('no psfs in display model');
     return;

@@ -57,7 +57,10 @@ function [photons, illuminant, basis, comment, mcCOEF] = vcReadImage(fullname,im
 % Copyright ImagEval Consultants, LLC, 2005.
 
 if notDefined('imageType'), imageType = 'rgb'; end
-if notDefined('fullname'), [fullname,imageType] = vcSelectImage(imageType); end
+if notDefined('fullname')
+    [fullname,imageType] = vcSelectImage(imageType);
+end
+
 if isempty(fullname), photons = []; return; end
 
 % These are loaded for a file, when they are returned.
@@ -125,6 +128,10 @@ switch lower(imageType)
             if ismatrix(inImg)
                 inImg = repmat(inImg, [1 1 nprimaries]);
             end
+            
+            % pad third dimension of inImg to nprimaries
+            % we pad 0 here because in most cases, the primary missing in
+            % the inImg is black
             inImg = padarray(inImg, ...
                         [0 0 nprimaries-size(inImg,3)], 0, 'post');
             assert(size(inImg, 3)==nprimaries, 'bad image size');
@@ -159,11 +166,6 @@ switch lower(imageType)
             
             % Convert energy units to quanta
             photons = Energy2Quanta(wave,(xwImg*spd')')';
-            
-            % Add dark radiance
-            darkRadiance = displayGet(d, 'dark radiance');
-            darkQuanta = Energy2Quanta(wave, darkRadiance);
-            photons = bsxfun(@plus, photons, darkQuanta(:)');
         end
         photons = XW2RGBFormat(photons,r,c);
         

@@ -4,14 +4,14 @@ function d = displaySet(d,parm,val,varargin)
 %   d = displaySet(d,parm,val,varargin)
 %
 % Parameters
-%   name
-%   gTable
-%   wave
-%   spd
-%   dpi
-%   psf
-%   viewing distance
-%   comment
+%   name               - display name
+%   gTable             - gamma table
+%   wave               - sample wavelength
+%   spd                - spectral power distribution (average, not peak)
+%   dpi                - dots per inch
+%   dixel              - subpixel structure
+%   viewing distance   - viewing distance
+%   comment            - comments for this display
 %
 % Examples:
 %
@@ -52,7 +52,7 @@ switch parm
         if ~isfield(d, 'wave')
             d.wave = val(:);
         elseif ~isequal(val(:),d.wave)
-            disp('Changing wave and interpolating SPD also, for consistency')
+            disp('Changing wave and interpolating SPD, for consistency')
             spd = displayGet(d,'spd');
             wave = displayGet(d,'wave');
             newSPD = interp1(wave, spd, val(:), 'linear');
@@ -71,43 +71,35 @@ switch parm
         % Dots per inch of the pixels (full pixel center-to-center)
         d.dpi = val;
     case {'viewingdistance'}
+        % displaySet(d, 'viewing distance', val);
         % viewing distance in meters
         d.dist = val;
     case {'refreshrate'}
         % refresh rate of the display in Hz
         d.refreshRate = val;
-    case {'psfs', 'point spread', 'psf'}
-        % subpixel image of the display (point spread)
-        assert(size(val,3)==displayGet(d, 'n primaries'), 'size mismatch');
-        d.psfs = val;
+    case {'dixel'}
+        % displaySet(d, 'dixel', val)
+        % dixel structure
+        assert(isstruct(val), 'dixel should be a structure');
+        d.dixel = val;
+    case {'dixelintensitymap', 'dixelimage'}
+        % dixel intensity map
+        if size(val, 3) ~= displayGet(d, 'nprimaries')
+            error('bad dixel intensity image size');
+        end
+        d.dixel.intensitymap = val;
+    case {'dixelcontrolmap'}
+        if size(val, 3) ~= displayGet(d, 'nprimaries')
+            error('bad dixel control image size');
+        end
+        d.dixel.controlmap = val;
+    case {'pixelsperdixel'}
+        d.dixel.nPixels = val;
+    case {'renderfunction'}
+        d.dixel.renderFunc = val;
     case {'comment'}
         % comment for the display
         d.comment = val;
-    case {'pixelsperpsfs'}
-        % number of pixels in one subpixel image
-        d.pixelsPerPSFs = val;
-    case {'renderfunction'}
-        % rendering function that converts input image to subpixel level
-        d.renderFunc = val;
-    case {'blackradiance', 'blackspectrum'}
-        % black radiance
-        nWave = displayGet(d, 'n wave');
-        if isscalar(val)
-            d.blackRadiance = val * ones(nWave, 1);
-        else
-            assert(length(val(:)) == nWave, 'bad black radiance length');
-            d.blackRadiance = val(:);
-        end
-    case {'blackmaskreflectance', 'maskreflectance', 'blackreflectance'}
-        % black mask reflectance
-        assert(all(val(:) >= 0 & val(:) <= 1), 'bad reflectance val');
-        nWave = displayGet(d, 'n wave');
-        if isscalar(val)
-            d.blackReflectance = val * ones(nWave, 1);
-        else
-            assert(length(val) == nWave, 'bad black reflectance length');
-            d.blackReflectance = val(:);
-        end
     otherwise
         error('Unknown parameter %s\n',parm);
 end

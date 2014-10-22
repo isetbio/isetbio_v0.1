@@ -90,12 +90,25 @@ switch param
             val = ieUncompressData(val, il.data.min, il.data.max, 16);
         end
         if isvector(val), val = val(:); end
+        
+        % interpolate for wave
+        if ~isempty(varargin)
+            wave = varargin{1};
+            il_wave = illuminantGet(il, 'wave');
+            if length(il_wave) ~= length(wave) || any(il_wave ~= wave)
+                val = interp1(il_wave, val, wave, 'linear');
+            end
+        end
 
     case 'energy'
         % This has to work for spatial spectral and pure spectral
-        
         % Get the illuminant as photons and convert to energy
-        p =  illuminantGet(il,'photons');
+        if ~isempty(varargin)
+            p =  illuminantGet(il,'photons', varargin{1});
+        else
+            p =  illuminantGet(il,'photons');
+        end
+        
         if ndims(p) == 3
             % We manage the spatial spectral case
             [p,r,c] = RGB2XWFormat(p);
