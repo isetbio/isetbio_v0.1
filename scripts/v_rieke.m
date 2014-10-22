@@ -22,8 +22,9 @@ volts = photons * sensorGet(sensor, 'conversion gain');
 sensor = sensorSet(sensor, 'volts', reshape(volts, [1 1 nSample]));
 
 % compute adaptation
+whichModel = 4;  % Rieke
 params.bgVolts = 0;
-[~, isetbioCur1] = coneAdapt(sensor, 4, params);
+[~, isetbioCur1] = coneAdapt(sensor, whichModel, params);
 
 % set photons of stimulus 2 (Impulse)
 photons = riekeStim2 * sensorGet(sensor, 'exp time');
@@ -31,7 +32,7 @@ volts = photons * sensorGet(sensor, 'conversion gain');
 sensor = sensorSet(sensor, 'volts', reshape(volts, [1 1 nSample]));
 
 % compute adaptation
-[~, isetbioCur2] = coneAdapt(sensor, 4, params);
+[~, isetbioCur2] = coneAdapt(sensor, whichModel, params);
 
 %% Plot and compare the results
 % new figure

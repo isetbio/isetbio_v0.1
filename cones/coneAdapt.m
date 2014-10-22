@@ -35,12 +35,13 @@ function [sensor, adaptedData] = coneAdapt(sensor, typeAdapt, params)
 %
 % Inputs:
 %  sensor     - ISETBio sensor with cone absorption computed and stored
-%  typeAdapt  -  The adaptation model, meaning of value are as below
+%  typeAdapt  - The adaptation model, meaning of value are as below
 %           0 = no adaptation
 %           1 = a single gain map for the whole cone array
 %           2 = one gain map computed for each cone class
 %           3 = non-linear adaptation
 %           4 = cone adaptation by physiological differential equation
+%               (Rieke)
 %  params     - Cone adaptation parameters, could include
 %    .bgVolts = background voltage
 %    .vSwing  = maximum volts response
@@ -60,10 +61,16 @@ function [sensor, adaptedData] = coneAdapt(sensor, typeAdapt, params)
 %   for adaptation.
 %
 % Examples:
+%   scene = sceneCreate; oi = oiCreate; oi = oiCompute(oi,scene);
+%   sensor = sensorCreate('human'); sensor = sensorCompute(sensor,oi);
+%
 %   sensor = coneAdapt(sensor, 1);
 %   adaptedData = sensorGet(sensor, 'adapted volts');
 %   gain = sensorGet(sensor, 'adaptation gain');
 %   offset = sensorGet(sensor, 'adaptation volts');
+%
+%   sensor = coneAdapt(sensor,4);  % Rieke model 
+%   v = sensorGet(sensor,'volts');
 %
 % (c) Stanford VISTA Lab, 2014
 
