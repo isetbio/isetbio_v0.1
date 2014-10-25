@@ -336,6 +336,22 @@ switch parm
         if isfield(dixel, 'intensitymap')
             val = dixel.intensitymap;
         end
+        
+        % adjust the size of the intensity map if required
+        if ~isempty(varargin)
+            sz = varargin{1};
+            if isscalar(sz), sz = [sz sz]; end
+            
+            % resize the intensity map
+            val = imresize(val, sz);
+            
+            % crop the intensity map and make it non-negative
+            val(val < 0) = 0;
+            
+            % scale the intensity map
+            scale = prod(sz) ./ sum(sum(val));
+            val = bsxfun(@times, val, scale);
+        end
     case {'dixelcontrolmap'}
         % dixel control map
         % This field specify which region in one dixel is individually
@@ -351,6 +367,13 @@ switch parm
             val = dixel.controlmap;
         end
         
+        % adjust the size of the control map if required
+        if ~isempty(varargin)
+            sz = varargin{1};
+            if isscalar(sz), sz = [sz sz]; end
+            % resize
+            val = imresize(val, sz, 'nearest');
+        end
     case {'renderfunction'}
         % render function
         % returns user defined subpixel render function handle. If user
