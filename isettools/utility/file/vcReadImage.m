@@ -75,9 +75,29 @@ switch lower(imageType)
         else dispCal = varargin{1};
         end
         
+        % doSub indicates whether or not to use subpixel rendering
+        % techniques
         if length(varargin) > 1, doSub = varargin{2};
         else doSub = false;
         end
+        
+        % if we do subpixle rendering, the user could specify how many
+        % samples per dixel to be used in scene generation
+        if length(varargin) > 2, sz = varargin{3};
+        else sz = [];
+        end
+        
+        % Programming Note (HJ):
+        %   scene rendered without subpixel (doSub=false) could be
+        %   different from the one rendered with subpixel of size [m n],
+        %   where m and n indicates the number of pixels per dixel in row
+        %   and columns. This kind of inconsistancy will occur especially
+        %   when pixels per dixel is not [1 1].
+        %   
+        %   To be more accurate, please turn off subpixel rendering if the
+        %   samples per dixel gets very small.
+        %
+        % (HJ)
         
         % Read the image data and convert them to double
         if ischar(fullname), inImg = double(imread(fullname));
@@ -121,7 +141,6 @@ switch lower(imageType)
             
             % Get the parameters from the display
             wave   = displayGet(d, 'wave');  % Primary wavelengths
-            spd    = displayGet(d, 'spd');   % Primary SPD in energy
             gTable = displayGet(d, 'gamma table');
             
             nprimaries = displayGet(d, 'n primaries');
@@ -150,7 +169,8 @@ switch lower(imageType)
                 % same range as the gTable.
                 s = size(gTable,1);
                 if s > 256
-                    fprintf('[%s] Assuming 8 bit RGB image and %d-bit LUT\n',mfilename,log2(s));
+                    fprintf('Assuming 8 bit RGB image and %d-bit LUT\n',...
+                            mfilename,log2(s));
                     inImg = round(inImg/255*(s-1));
                 end
             end
@@ -160,7 +180,12 @@ switch lower(imageType)
             inImg  = ieLUTDigital(inImg,gTable);
             
             % Subpixel rendering
-            if doSub, inImg = displayCompute(d, inImg); end
+            if doSub
+                inImg = displayCompute(d, inImg, sz);
+                spd = displayGet(d, 'subpixel spd');
+            else
+                spd = displayGet(d, 'spd');   % Primary SPD in energy
+            end
             
             [xwImg,r,c] = RGB2XWFormat(inImg);
             

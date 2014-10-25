@@ -90,9 +90,10 @@ switch lower(imType)
         
         % get additional parameter values
         if ~isempty(varargin), doSub = varargin{1}; else doSub = false; end
+        if length(varargin) > 2, sz = varargin{3};  else sz = []; end
         
         % read radiance / reflectance
-        photons = vcReadImage(I,imType,dispCal, doSub);
+        photons = vcReadImage(I,imType,dispCal, doSub, sz);
         
         % Match the display wavelength and the scene wavelength
         scene = sceneCreate('rgb');

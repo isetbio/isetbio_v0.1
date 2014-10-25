@@ -1,4 +1,4 @@
-function outImg = render_oled_samsung(inImg, d)
+function outImg = render_oled_samsung(inImg, d, sz)
 % render image for Samsung S-strip display
 %
 %     I = render_oled_samsung
@@ -34,9 +34,15 @@ if notDefined('d'), d = displayCreate('OLED-Samsung'); end
 %% Render
 % Get parameters from display structure 
 pixels_per_dixel = displayGet(d, 'pixels per dixel');
-controlMap = displayGet(d, 'dixel control map');
 nprimaries = size(inImg, 3);
-s = displayGet(d, 'over sample');
+
+if notDefined('sz')
+    s = displayGet(d, 'over sample');
+    controlMap = displayGet(d, 'dixel control map');
+else
+    s = round(sz ./ displayGet(d, 'pixels per dixel'));
+    controlMap = displayGet(d, 'dixel control map', sz);
+end
 
 % process by block
 outImg = zeros(size(inImg, 1)*s(1), size(inImg,2) * s(2), nprimaries);

@@ -1,4 +1,4 @@
-function [outImage, d] = displayCompute(d, I)
+function [outImage, d] = displayCompute(d, I, sz)
 % Computes the upsampled subpixel level image to use in creating a scene
 %
 %    [outImage,d] = displayCompute(d, I, varargin)
@@ -8,6 +8,7 @@ function [outImage, d] = displayCompute(d, I)
 %               displayCreate for detail
 %    I        - input image, should be M*N*k matrix. k should be equal to
 %               the number of primaries of display
+%    sz       - oversample size
 %
 %  Output:
 %    outImage - upsampled image, should be in Ms * Ns * k matrix. Default
@@ -40,15 +41,19 @@ if ischar(I), I = im2double(imread(I)); else I = double(I); end
 %% Upsampling
 nPrimary = displayGet(d, 'n primaries');
 
-dixelImg = displayGet(d, 'dixel image');
-if isempty(dixelImg), error('psf not defined for display'); end
-% vcNewGraphWin([],'tall');
-% for ii=1:3, subplot(3,1,ii), mesh(psfs(:,:,ii)); end
-
 % If no upsampling, then s is the size of the psf
-s = displayGet(d, 'over sample');
+if notDefined('sz')
+    s = displayGet(d, 'over sample');
+    dixelImg = displayGet(d, 'dixel image');
+    sz = displayGet(d, 'dixel size');
+else
+    s = round(sz ./ displayGet(d, 'pixels per dixel'));
+    dixelImg = displayGet(d, 'dixel image', sz);
+    assert(all(s>0), 'bad up-sampling sz');
+end
 
 % check psfs values to be no less than 0
+if isempty(dixelImg), error('psf not defined for display'); end
 assert(min(dixelImg(:)) >= 0, 'psfs values should be non-negative');
 
 % If a single matrix, assume it is gray scale
@@ -65,7 +70,7 @@ if any(ppd) > 1 && isempty(hRender)
 end
 
 if ~isempty(hRender)
-    outImage = hRender(I, d);
+    outImage = hRender(I, d, sz);
 else
     outImage = imresize(I, [s(1)*M s(2)*N], 'nearest');
 end
