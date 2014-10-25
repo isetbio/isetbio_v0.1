@@ -35,7 +35,6 @@ displayGet(d, 'rgb2xyz');
 
 d = displaySet(d, 'name', 'my display');
 d = displaySet(d, 'dpi', 150);
-d = displaySet(d,'render function',@render_oled_samsung);
 
 %% Plot for display basics
 %  plot for display primaries spd, gamma table, etc.
@@ -61,8 +60,16 @@ vcAddObject(scene); sceneWindow;
 %  subpixel rendering will up-sample the image. So the input image cannot
 %  be too large (no more than 100x100)
 I_small = imresize(I, [34 52]);
-subPixelRendering = true;
-scene = sceneFromFile(I_small, 'rgb', [], d, [], subPixelRendering);
+I_small(I_small < 0) = 0; I_small(I_small > 1) =1;
+doSub = true;
+waveList = []; meanLum = [];
+scene = sceneFromFile(I_small, 'rgb', meanLum, d, waveList, doSub);
+
+vcAddObject(scene); sceneWindow;
+
+%  change sampling rate
+il = []; sz = [20 20];
+scene = sceneFromFile(I_small, 'rgb', [], d, [], doSub, il, sz);
 
 vcAddObject(scene); sceneWindow;
 
