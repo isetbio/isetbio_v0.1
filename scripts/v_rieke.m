@@ -75,6 +75,6 @@ hold on; grid on;
 plot(1:nSample, riekeCurrent1/mean(riekeCurrent1(:)), 'r', 'lineWidth', 2);
 plot(1:nSample, isetbioCur1(:)/mean(isetbioCur1(:)), '--b', 'lineWidth', 2);
 xlabel('time (ms)'); ylabel('Adapted Current');
-legend('Rieke', 'ISETBIO');
+legend('Normalized Rieke', 'Normalized ISETBIO');
 
 %% END
