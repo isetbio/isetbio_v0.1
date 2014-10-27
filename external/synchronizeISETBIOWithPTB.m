@@ -3,12 +3,11 @@ function synchronizeISETBIOWithPTB
     dstDir = '/Users/Shared/Matlab/Toolboxes/isetbio/external/ptb';
     srcDir = '/Users/Shared/Matlab/Toolboxes/Psychtoolbox-3/Psychtoolbox';
     
-    % get contents of PTB tree in isetbio
+    % Get names of sub-directories of $isetbio/external/ptb
     fprintf('\nChecking contents of %s\n', dstDir);
     dirContents = dir(dstDir);
     ignoredDirs = {'+ptb', '', '.', '..'};
-    destDirs = {};
-    srcDirs = {};
+    destDirs = {}; srcDirs = {};
     for k = 1:numel(dirContents)
         if (dirContents(k).isdir)
             if ismember(dirContents(k).name, ignoredDirs)
@@ -23,33 +22,25 @@ function synchronizeISETBIOWithPTB
         end
     end
     
-    % Get all filenames
-    filesToSynchronize.src = {};
-    filesToSynchronize.dest = {};
+    % Recursively scan all directories of $isetbio/external/ptb and get all filenames
+    filesToSynchronize.src = {}; filesToSynchronize.dest = {};
     for k = 1:numel(destDirs)
         filesToSynchronize = updateFilesToSynchronize(destDirs{k}, srcDirs{k}, filesToSynchronize);
     end
     
     % Rest counters
-    MFiles.different= 0;
-    MFiles.same     = 0;
-    MATFiles.different = 0;
-    MATFiles.same   = 0;
-    TXTFiles.different = 0;
-    TXTFiles.same = 0;
-    DOCXFiles.different = 0;
-    DOCXFiles.same = 0;
-    UNKNOWNFORMATFiles.different = 0;
-    UNKNOWNFORMATFiles.same = 0;
+    MFiles.different= 0;     MFiles.same     = 0;
+    MATFiles.different = 0;  MATFiles.same   = 0;
+    TXTFiles.different = 0;  TXTFiles.same = 0;
+    DOCXFiles.different = 0; DOCXFiles.same = 0;
+    UNKNOWNFORMATFiles.different = 0; UNKNOWNFORMATFiles.same = 0;
 
-    
     % Do the synchronization
     fprintf('\nPlease wait. Diffing %d files ...', numel(filesToSynchronize.dest));
     report = {};
     for k = 1:numel(filesToSynchronize.dest)
         destinationFile = filesToSynchronize.dest{k};
         sourceFile      = filesToSynchronize.src{k};
-        
         if (exist(sourceFile, 'file') ~= 2) 
             error('%s does not exist !!', sourceFile);
         else 
@@ -101,21 +92,21 @@ function synchronizeISETBIOWithPTB
     fprintf(' Done !\n');
      
     fprintf('\nScaned %4d total files.', numel(filesToSynchronize.dest));
-    fprintf('\nOf     %4d M-files            %d needed to be updated.', MFiles.different    + MFiles.same,    MFiles.different);
-    fprintf('\nOf     %4d MAT-files          %d needed to be updated.', MATFiles.different  + MATFiles.same,  MATFiles.different);
-    fprintf('\nOf     %4d TXT-files          %d needed to be updated.', TXTFiles.different  + TXTFiles.same,  TXTFiles.different);
-    fprintf('\nOf     %4d DOCX-files         %d needed to be updated.', DOCXFiles.different + DOCXFiles.same, DOCXFiles.different);
-    fprintf('\nOf     %4d other-format-files %d needed to be updated.', UNKNOWNFORMATFiles.different + UNKNOWNFORMATFiles.same, UNKNOWNFORMATFiles.different);        
+    fprintf('\nOut of %4d M-files            %d needed to be updated.', MFiles.different    + MFiles.same,    MFiles.different);
+    fprintf('\nOut of %4d MAT-files          %d needed to be updated.', MATFiles.different  + MATFiles.same,  MATFiles.different);
+    fprintf('\nOut of %4d TXT-files          %d needed to be updated.', TXTFiles.different  + TXTFiles.same,  TXTFiles.different);
+    fprintf('\nOut of %4d DOCX-files         %d needed to be updated.', DOCXFiles.different + DOCXFiles.same, DOCXFiles.different);
+    fprintf('\nOut of %4d other-format-files %d needed to be updated.', UNKNOWNFORMATFiles.different + UNKNOWNFORMATFiles.same, UNKNOWNFORMATFiles.different);        
     fprintf('\n');
     
     fprintf('\nUpdated files:\n');
     for k = 1:numel(report)
         fprintf('%s', char(report{k}));
     end
-   
 end
 
     
+% Method to recursively scan directory destDirName and get all file names
 function filesToSynchronize = updateFilesToSynchronize(destDirName, srcDirName, filesToSynchronize)  
     % get contents of dir name
     dirContents = dir(destDirName);
@@ -136,5 +127,4 @@ function filesToSynchronize = updateFilesToSynchronize(destDirName, srcDirName, 
             filesToSynchronize.src{numel(filesToSynchronize.src)+1} = fullSrcFileName;
         end
     end
-    
 end
