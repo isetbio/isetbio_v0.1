@@ -41,7 +41,7 @@ function [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj)
         return;
     else
         % compare structs now
-        [diffs, criticalDiffs] = obj.compareDataSets();
+        [diffs, criticalDiffs, detectedProbeNotExistingInGroundTruthDataSet] = obj.compareDataSets();
     end
     
     if (isempty(diffs) && isempty(crificalDiffs))
@@ -59,6 +59,27 @@ function [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj)
             % Save current validation to ground truth history file only
             obj.saveValidationResults('Ground truth');
         end
+        
+        
+        if (detectedProbeNotExistingInGroundTruthDataSet) && (~obj.addResultsToGroundTruthHistory)
+            if (numel(obj.detectedNewProbeNames) == 1)
+                fprintf('\nThere was a new probe detected, not existing in the ground truth table:');
+            else
+                fprintf('\nThere were %d new probes detected, not existing in the ground truth table:', numel(obj.detectedNewProbeNames));
+            end
+            for k = 1:numel(obj.detectedNewProbeNames)
+                fprintf('\n[%2d]. ''%s''', k, obj.detectedNewProbeNames{k});
+            end
+            if  (obj.useRemoteGroundTruthDataSet)
+                updateGroundTruthDataSet = input('\nUpdate the *REMOTELY* kept Ground Truth Data Set history (1=YES): ');
+            else
+                updateGroundTruthDataSet = input('\nUpdate the *LOCALLY* kept Ground Truth Data Set history (1=YES): ');
+            end
+            if (~isempty(updateGroundTruthDataSet)) && (updateGroundTruthDataSet == 1)
+                obj.saveValidationResults('Ground truth');
+            end
+        end
+            
         
         if (obj.pushToGitHubOnSuccessfulValidation)
             % Push results to github
@@ -97,6 +118,28 @@ function [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj)
                     obj.saveValidationResults('Ground truth');
                 end
             end
+            
+            % Query regarding detectedProbeNotExistingInGroundTruthDataSet
+            if (detectedProbeNotExistingInGroundTruthDataSet)
+                if (numel(obj.detectedNewProbeNames) == 1)
+                    fprintf('\nThere was a new probe detected, not existing in the ground truth table:');
+                else
+                    fprintf('\nThere were %d new probes detected, not existing in the ground truth table:', numel(obj.detectedNewProbeNames));
+                end
+                for k = 1:numel(obj.detectedNewProbeNames)
+                    fprintf('\n[%2d]. ''%s''', k, obj.detectedNewProbeNames{k});
+                end
+                    
+                if  (obj.useRemoteGroundTruthDataSet) 
+                    updateGroundTruthDataSet = input('\nUpdate the *REMOTELY* kept Ground Truth Data Set history, despite the non-critical differences found ? (1=YES): ');
+                else
+                    updateGroundTruthDataSet = input('\nUpdate the *LOCALLY* kept Ground Truth Data Set history,  despite the non-critical differences found ? (1=YES): ');
+                end
+                if (~isempty(updateGroundTruthDataSet)) && (updateGroundTruthDataSet == 1)
+                    obj.saveValidationResults('Ground truth');
+                end
+            end
+            
             
             % Query regarding Validation history update
             if (obj.addResultsToValidationResultsHistory)

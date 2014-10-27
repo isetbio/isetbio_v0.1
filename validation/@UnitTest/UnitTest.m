@@ -87,6 +87,9 @@ classdef UnitTest < handle
         
         % Temporary directory to sync ground truth data set with remote SVN
         ISETBIO_DataSets_Local_SVN_DIR;
+        
+        % List with names of probes not existing in Ground-Truth data set
+        detectedNewProbeNames = {};
     end
     
     properties (Constant)
@@ -148,7 +151,7 @@ classdef UnitTest < handle
         groundTruthData = retrieveHistoricalGroundTruthDataToValidateAgaist(obj);
         
         % Method to compare the structs: obj.currentValidationRunDataSet and obj.groundTruthDataSet
-        diff = obj.compareDataSets();
+        [diffs, criticalDiffs, detectedProbeNotExistingInGroundTruthDataSet] = obj.compareDataSets(obj);
         
         % Method to update the validation results
         saveValidationResults(obj, dataType);

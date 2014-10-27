@@ -1,10 +1,11 @@
 % Method to compare the structs: obj.currentValidationRunDataSet and obj.groundTruthDataSet
-function [diffs, criticalDiffs] = compareDataSets(obj)
+function [diffs, criticalDiffs, detectedProbeNotExistingInGroundTruthDataSet] = compareDataSets(obj)
 
     % Initialize diffs
     diffs = [];
     criticalDiffs = [];
-     
+    detectedProbeNotExistingInGroundTruthDataSet = false;
+    
     % Get field names
     currentRunFieldNames = fieldnames(obj.currentValidationRunDataSet);
     
@@ -68,6 +69,8 @@ function [diffs, criticalDiffs] = compareDataSets(obj)
         if (isempty(correspondingProbeIndexInGroundTruthDataSet))
             mismatchesNum = numel(diffs) + 1;
             diffs{mismatchesNum} = sprintf('A probe named ''%s'' does not exist in the ground truth data set.\n', currentProbeName);
+            detectedProbeNotExistingInGroundTruthDataSet = true;
+            obj.detectedNewProbeNames{numel(obj.detectedNewProbeNames)+1} = currentProbeName;
             continue
         end
         
