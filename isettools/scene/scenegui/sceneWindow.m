@@ -197,6 +197,7 @@ return;
 
 % --- Executes on button press in btnInterpolate.
 function btnInterpolate_Callback(hObject, eventdata, handles)
+% Call back from the 'Interp' button
 %
 % Read the data in the row and col edit fields.  Re-sample the current data
 % in the photons field so that it has the desired number of rows and
@@ -573,6 +574,8 @@ return;
 
 % --- Executes on selection change in popupImScale.
 function popupImScale_Callback(hObject, eventdata, handles)
+% Call back for the Adjust scene popup that scales the scene size.
+%
 
 contents = get(hObject,'String');
 str = contents{get(hObject,'Value')};
@@ -590,6 +593,7 @@ switch lower(str)
     otherwise
         error('Unknown scale factor');
 end
+
 [val,scene] = vcGetSelectedObject('SCENE');
 scene = sceneInterpolate(scene,sFactor);
 vcReplaceObject(scene,val);
