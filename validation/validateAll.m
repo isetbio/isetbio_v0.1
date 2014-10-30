@@ -17,7 +17,7 @@ function validateAll()
     
     % 3. Whether to append the validation results to the history of ground truth data sets.
     % Defaults to false.
-    unitTestOBJ.addResultsToGroundTruthHistory = true;
+    unitTestOBJ.addResultsToGroundTruthHistory = false;
     
     % 4. Whether to push results to github upon a sucessful validation outcome. 
     % Defaults to true;
@@ -96,6 +96,17 @@ function validateAll()
     );
 
     unitTestOBJ.addProbe(...
+        'name',           'validation of human PTF vs pupil size', ...               % name to identify this probe
+        'functionSectionName', '2. Human eye computation validations', ...           % section to which validation script belong to
+        'functionName',   'validateOTFandPupilSize', ...                            % name of the validation script to run
+        'functionParams',  struct(), ...                                            % struct with input arguments expected by the validation script
+        'onErrorReaction', onErrorReaction, ...                                     % how to react on errors in the validation script. Options are 'CatchExcemption' or 'RethrowExcemption'
+        'showTheCode',     showCodeInPublishedReport, ...                                                % If set to true, the published report will include the MATLAB code that was run
+        'generatePlots',   generatePlots ...
+    );
+
+
+    unitTestOBJ.addProbe(...
         'name',           'scene re-illumination validation', ...                                  % name to identify this probe
         'functionSectionName', '3. Scene set/get operation validations', ...        % section to which validation script belong to
         'functionName',   'validateSceneReIllumination', ...                                   % name of the validation script to run
@@ -104,6 +115,18 @@ function validateAll()
         'showTheCode',     showCodeInPublishedReport, ...                                                % If set to true, the published report will include the MATLAB code that was run
         'generatePlots',   generatePlots ...
     );
+
+    if (1==2)
+    unitTestOBJ.addProbe(...
+        'name',           'diffuser validation', ...                                  % name to identify this probe
+        'functionSectionName', '4. Optical Image validations', ...        % section to which validation script belong to
+        'functionName',   'validateDiffuser', ...                                   % name of the validation script to run
+        'functionParams',  struct(), ...                                            % struct with input arguments expected by the validation script
+        'onErrorReaction', onErrorReaction, ...                                     % how to react on errors in the validation script. Options are 'CatchExcemption' or 'RethrowExcemption'
+        'showTheCode',     showCodeInPublishedReport, ...                                                % If set to true, the published report will include the MATLAB code that was run
+        'generatePlots',   generatePlots ...
+    );
+    end
 
    
     unitTestOBJ.addProbe(...
