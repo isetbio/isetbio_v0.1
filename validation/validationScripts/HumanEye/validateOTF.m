@@ -1,4 +1,4 @@
-function validateOTFandPupilSize(runParams)
+function validateOTF(runParams)
 %
 % Validate the OTF as a function of pupil size by comparing it to the OTFs
 % derived by Watson in  Watson JOV (2013) "A formula for the mean human
@@ -25,9 +25,8 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     s_initISET;
     
 
-    
     % Pupil diameters to test
-    examinedPupilDiametersInMillimeters = (2:0.5:6.0);
+    examinedPupilDiametersInMillimeters = (2:0.5:6.5);
     
     for pupilSizeIndex = 1:numel(examinedPupilDiametersInMillimeters)
         
@@ -53,6 +52,10 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         %% Compute optical image
         oi = oiCompute(scene,oi); 
         
+        %% Compute RGB rendition of optical image
+        opticalRGBImage = oiGet(oi, 'rgb image');
+        sceneRGBImage   = sceneGet(scene, 'rgb image');
+        compositeRGBimage = generateCompositeImage(sceneRGBImage, opticalRGBImage);
         
         %% Retrieve the full OTF
         optics = oiGet(oi, 'optics');
@@ -73,9 +76,8 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         otf_sfX = otf_sfXInCyclesPerMicron * micronsPerDegee;
         otf_sfY = otf_sfYInCyclesPerMicron * micronsPerDegee;
         
-        %% Get the 2D slice at target wavelength
-        targetWavelength = 580;
-        [~,waveIndex]   = min(abs(OTFwavelengths - targetWavelength));
+        %% Get the 2D slice at 550 nm
+        [~,waveIndex]   = min(abs(OTFwavelengths - 550));
         examinedWaveLength = OTFwavelengths(waveIndex);
         
         %% Shift (0,0) to origin
@@ -89,74 +91,95 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         %% Generate plots, if so specified
         if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
         
-            plotWidth  = 0.29;
-            plotHeight = 0.30;
-            margin     = 0.026;
-            
-            if (pupilSizeIndex == 1)
-                h = figure(1);
-                set(h, 'Position', [100 100 820 740]);
-                clf;
+            plotWidth = 0.3;
+            plotHeight = 0.85/(numel(examinedPupilDiametersInMillimeters)/2);
+            margin     = 0.021;
+            if (pupilSizeIndex <= numel(examinedPupilDiametersInMillimeters)/2)
+                if (pupilSizeIndex == 1)
+                    % start figure 1
+                    h1 = figure(1);
+                    set(h1, 'Position', [100 100 650 760]);
+                    clf;
+                end
+                figure(h1);
+                subplotRow = pupilSizeIndex;
+            else
+                if (pupilSizeIndex == numel(examinedPupilDiametersInMillimeters)/2+1)
+                    % Start figure 2
+                    h2 = figure(2);
+                    set(h2, 'Position', [200 200 650 760]);
+                    clf;
+                end
+                figure(h2);
+                subplotRow = pupilSizeIndex-numel(examinedPupilDiametersInMillimeters)/2;
             end
+
+            %% Plot the 2D OTF
+            subplot('Position', [0.03 1+margin/2-subplotRow*(plotHeight+margin) plotWidth plotHeight]);
+            imagesc(otf_sfX, otf_sfY, OTF550);
+            axis 'image'
+            axis 'xy'
+            if (pupilSizeIndex == numel(examinedPupilDiametersInMillimeters))
+               xlabel('cycles/deg');
+            else
+               xlabel(''); 
+            end
+            set(gca, 'XLim', [-60 60], 'YLim', [-60 60], 'XTick', [-60:60:60], 'YTick', [-60:60:60]);
+            colormap(gray(256));
+        
+            logPlotScaling = false;
             
-            subplotRow = floor((pupilSizeIndex-1)/3)+1;
-            subplotCol = mod(pupilSizeIndex-1,3)+1;
-            subplot('Position', [0.06+(subplotCol-1)*(plotWidth+margin) 1+margin/2-subplotRow*(plotHeight+margin) plotWidth plotHeight]);
+            %% Plot the 1D OTF slice
+            subplot('Position', [0.06+plotWidth 1+margin/2-subplotRow*(plotHeight+margin) plotWidth plotHeight]);
             
             indices = find(otf_sfX >= 0);
             OTFsfX = otf_sfX(indices);
             
-            logPlotScaling = false;
             if logPlotScaling
                 OTFsfX = OTFsfX+0.001;
             end
-            
-            % Plot the 1D OTF slice
             plot(OTFsfX, OTFslice(indices), 'ks-', 'MarkerSize', 6, 'MarkerFaceColor', [0.85 0.85 0.85]);
             hold on;
-            
             % plot the modelOTF from Watson's model
             modelOTF = WatsonOTFmodel(pupilDiameterInMillimeters, examinedWaveLength, OTFsfX);
 
             plot(OTFsfX, modelOTF, 'r-', 'LineWidth', 2.0);
             hold off;
-              
-            set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
+            
+            if (pupilSizeIndex == numel(examinedPupilDiametersInMillimeters)) || ...
+               (pupilSizeIndex == numel(examinedPupilDiametersInMillimeters)/2)
+               xlabel('cycles/deg');
+            else
+               xlabel(''); 
+            end
+            
             
             if logPlotScaling 
                 set(gca, 'XLim', [0.1 60], 'YLim', [0.001 1]);
                 set(gca, 'XScale', 'log', 'YScale', 'log', 'XTick', [0.1 1 2 5 10 20 50 100], 'YTick', [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
                 set(gca, 'XTickLabel', [0.1 1 2 5 10 20 50 100], 'YTickLabel',  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
-                text(0.12, 0.002, sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(pupilSizeIndex)), ...
-                    'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor',[.89 .99 .78], 'EdgeColor', [0 0 0]);
+                text(0.12, 0.002, sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(pupilSizeIndex)), 'FontSize', 12, 'FontWeight', 'bold');
+            
             else
                 set(gca, 'XLim', [0.0 60], 'YLim', [0.0 1]);
                 set(gca, 'XScale', 'linear', 'YScale', 'linear', 'XTick', [0:10:100], 'YTick', [0.0:0.1:1.0]);
                 set(gca, 'XTickLabel', [0:10:100], 'YTickLabel',  [0.0:0.1:1.0]);
-                text(38, 0.75, sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(pupilSizeIndex)), ...
-                    'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor',[.89 .99 .78], 'EdgeColor', [0 0 0]);
+                text(35, 0.5, sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(pupilSizeIndex)), 'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor',[.99 .99 .48], 'EdgeColor', [0 0 0]);
             end
             
-            if (subplotRow == 3)
-               xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-            else
-               xlabel(''); 
-               
-            end
-            
-            if (subplotCol == 1)
-               ylabel('gain', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-            else
-               ylabel(''); 
-               set(gca, 'YTickLabel', []);
-            end
-            
-            lgndHandle = legend({'ISETBIO', 'Watson (2013)'}, 'Location', 'NorthEast');
-            set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+            legend({'ISETBIO', 'Watson (2013)'}, 'Location', 'NorthEast');
             
             box on;
             grid on;
             colormap(gray(256));
+
+            %% Plot the RGB rendered optical image
+            subplot('Position', [0.09+2*plotWidth 1+margin/2-subplotRow*(plotHeight+margin) plotWidth plotHeight]);
+            halfRange = size(compositeRGBimage,1)/2-10;
+            rowRange = size(compositeRGBimage,1)/2 + [-halfRange:halfRange];
+            colRange = size(compositeRGBimage,2)/2 + [-halfRange:halfRange];
+            imshow(compositeRGBimage(rowRange, colRange, :));
+            axis 'image'
 
             drawnow; 
         end 
@@ -164,24 +187,17 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
         clear 'modelOTF'
-        
-        h = figure(2);
-        set(h, 'Position', [100 100 820 420]);
+        h = figure(3);
+        set(h, 'Position', [100 100 970 550]);
         clf;
         sf = 0:0.01:120;
-        
         examinedPupilDiametersInMillimeters = 2:0.5:6;
         for index = 1:numel(examinedPupilDiametersInMillimeters)
             modelOTF(index,:) = WatsonOTFmodel(examinedPupilDiametersInMillimeters(index), examinedWaveLength, sf);
         end
 
-%         examinedWaveLengths = [400:50:800];
-%         for index = 1:numel(examinedWaveLengths)
-%             examinedWaveLength = examinedWaveLengths(index);
-%             modelOTF(index,:) = WatsonOTFmodel(4, examinedWaveLength, sf);
-%         end
-        
         colors = hsv(size(modelOTF,1)+1);
+        %colors = colors(end:-1:1,:);
         
         subplot('Position', [0.06 0.11 0.44 0.80]); 
         hold on
@@ -189,9 +205,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
             plot(sf, modelOTF(index,:), 'k-', 'Color', squeeze(colors(index,:)), 'LineWidth', 2);
         end
         hold off;
-        lgndHandle = legend({'PD = 2.0mm', 'PD = 2.5mm', 'PD = 3.0mm', 'PD = 3.5mm', 'PD = 4.0mm', 'PD = 4.5mm', 'PD = 5.0mm', 'PD = 5.5mm', 'PD = 6.0mm'});
-        set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-            
+        legend({'PD = 2.0mm', 'PD = 2.5mm', 'PD = 3.0mm', 'PD = 3.5mm', 'PD = 4.0mm', 'PD = 4.5mm', 'PD = 5.0mm', 'PD = 5.5mm', 'PD = 6.0mm'});
         set(gca, 'XLim', [0 120], 'YLim', [0 1.02]);
         set(gca, 'XScale', 'linear', 'YScale', 'linear', 'XTick', [0:10:120], 'YTick', [0:0.1:1.0]);
         set(gca, 'XTickLabel', [0:10:120], 'YTickLabel',  [0:0.1:1.0]);
@@ -201,7 +215,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         
         box on;
         grid on;
-        title('Watson (2013) Model (linear coords)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+        title('Watson (2013) Model (linear coords)');
         
         subplot('Position', [0.54 0.11 0.44 0.80]); 
         hold on
@@ -209,10 +223,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
             plot(sf, modelOTF(index,:), 'k-', 'Color', squeeze(colors(index,:)),  'LineWidth', 2);
         end
         hold off;
-        
-        lgndHandle = legend({'PD = 2.0mm', 'PD = 2.5mm', 'PD = 3.0mm', 'PD = 3.5mm', 'PD = 4.0mm', 'PD = 4.5mm', 'PD = 5.0mm', 'PD = 5.5mm', 'PD = 6.0mm'}, 'Location', 'SouthWest');
-        set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-            
+        legend({'PD = 2.0mm', 'PD = 2.5mm', 'PD = 3.0mm', 'PD = 3.5mm', 'PD = 4.0mm', 'PD = 4.5mm', 'PD = 5.0mm', 'PD = 5.5mm', 'PD = 6.0mm'}, 'Location', 'SouthWest');
         set(gca, 'XLim', [0.1 120], 'YLim', [0.001 1.1]);
         set(gca, 'XScale', 'log', 'YScale', 'log', 'XTick', [0.1 1 2 5 10 20 50 100], 'YTick', [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
         set(gca, 'XTickLabel', [0.1 1 2 5 10 20 50 100], 'YTickLabel',  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
@@ -221,7 +232,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         
         box on;
         grid on;
-        title('Watson (2013) Model (log coords)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+        title('Watson (2013) Model (log coords)');
         drawnow;
     end
     
@@ -230,7 +241,6 @@ end
 % Method to compute Watson's OTF model as a function of pupil diameter (d, in mm)
 % wavelength (lambda), for a range of spatial frequencies (u, in cycles/deg)
 function modelOTF = WatsonOTFmodel(d, lambda, u)
-
     u1       = 21.95 - 5.512*d + 0.3922 * d^2;                                  % [Equation (4)]
     D        = DiffractionLimitedMTF(u,d, lambda);   
     modelOTF = ((1 + (u/u1).^2).^(-0.62)) .* sqrt(D);                           % [Equation (5)]
@@ -249,4 +259,17 @@ function modelOTF = WatsonOTFmodel(d, lambda, u)
             u0 = (d * pi * 10^6)/(lambda*180);                                  % [Equation (3)]
         end
     end
+end
+
+
+function compositeRGBimage = generateCompositeImage(sceneRGBImage, opticalRGBImage)
+    compositeRGBimage = opticalRGBImage;
+    dstRows = size(opticalRGBImage,1);
+    dstCols = size(opticalRGBImage,2);
+    srcRows = size(sceneRGBImage, 1);
+    srcCols = size(sceneRGBImage, 2);
+    rowMargin = (dstRows-srcRows)/2;
+    colMargin = (dstCols-srcCols)/2;
+    compositeRGBimage(1:dstRows/2,:,:) = 0;
+    compositeRGBimage(rowMargin+(1:srcRows/2), colMargin+(1:srcCols/2),:) = sceneRGBImage(1:srcRows/2,1:srcCols/2,:);
 end
