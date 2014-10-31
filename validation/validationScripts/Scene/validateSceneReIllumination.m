@@ -180,7 +180,7 @@ function plotRadianceMap(radianceMap, wavelengthSampling, wavelengthSubSamplingI
     ylabel('wavelength', 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold'); 
     zlabel('y','FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
     colormap(hot(256));
-    colorbarHandle = colorbar('horiz', 'Ticks', [min(radianceMap(:)) max(radianceMap(:))], 'TickLabels', [0 1.0]*(maxRadiance-minRadiance) + minRadiance);
+    colorbarHandle = colorbar('horiz', 'XTick', [min(radianceMap(:)) max(radianceMap(:))], 'XTickLabel', [0 1.0]*(maxRadiance-minRadiance) + minRadiance);
     xlabel(colorbarHandle, titleText, 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
     box on;
     grid off;

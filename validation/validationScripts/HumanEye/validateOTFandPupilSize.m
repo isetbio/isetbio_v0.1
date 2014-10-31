@@ -127,16 +127,23 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
             set(gca, 'XLim', [-60 60], 'YLim', [-60 60], 'XTick', [-60:60:60], 'YTick', [-60:60:60]);
             colormap(gray(256));
         
+            logPlotScaling = false;
+            
             %% Plot the 1D OTF slice
             subplot('Position', [0.06+plotWidth 1+margin/2-subplotRow*(plotHeight+margin) plotWidth plotHeight]);
+            
             indices = find(otf_sfX >= 0);
-            OTFsfX = otf_sfX(indices)+0.001;
-            plot(OTFsfX, OTFslice(indices), 'rs-', 'MarkerSize', 8, 'MarkerFaceColor', [1 0.8 0.8]);
+            OTFsfX = otf_sfX(indices);
+            
+            if logPlotScaling
+                OTFsfX = OTFsfX+0.001;
+            end
+            plot(OTFsfX, OTFslice(indices), 'ks-', 'MarkerSize', 6, 'MarkerFaceColor', [0.85 0.85 0.85]);
             hold on;
             % plot the modelOTF from Watson's model
             modelOTF = WatsonOTFmodel(pupilDiameterInMillimeters, examinedWaveLength, OTFsfX);
 
-            plot(OTFsfX, modelOTF, 'ko-', 'MarkerSize', 6, 'MarkerFaceColor', [0.5 0.5 0.5]);
+            plot(OTFsfX, modelOTF, 'r-', 'LineWidth', 2.0);
             hold off;
             
             if (pupilSizeIndex == numel(examinedPupilDiametersInMillimeters)) || ...
@@ -145,10 +152,23 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
             else
                xlabel(''); 
             end
-            text(0.12, 0.005, sprintf('Pupil:%2.1f mm', examinedPupilDiametersInMillimeters(pupilSizeIndex)), 'FontSize', 12, 'FontWeight', 'bold');
-            set(gca, 'XLim', [0.1 60], 'YLim', [0.001 1]);
-            set(gca, 'XScale', 'log', 'YScale', 'log', 'XTick', [0.1 1 2 5 10 20 50 100], 'YTick', [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
-            set(gca, 'XTickLabel', [0.1 1 2 5 10 20 50 100], 'YTickLabel',  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
+            
+            
+            if logPlotScaling 
+                set(gca, 'XLim', [0.1 60], 'YLim', [0.001 1]);
+                set(gca, 'XScale', 'log', 'YScale', 'log', 'XTick', [0.1 1 2 5 10 20 50 100], 'YTick', [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
+                set(gca, 'XTickLabel', [0.1 1 2 5 10 20 50 100], 'YTickLabel',  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
+                text(0.12, 0.002, sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(pupilSizeIndex)), 'FontSize', 12, 'FontWeight', 'bold');
+            
+            else
+                set(gca, 'XLim', [0.0 60], 'YLim', [0.0 1]);
+                set(gca, 'XScale', 'linear', 'YScale', 'linear', 'XTick', [0:10:100], 'YTick', [0.0:0.1:1.0]);
+                set(gca, 'XTickLabel', [0:10:100], 'YTickLabel',  [0.0:0.1:1.0]);
+                text(35, 0.5, sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(pupilSizeIndex)), 'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor',[.99 .99 .48], 'EdgeColor', [0 0 0]);
+            end
+            
+            legend({'ISETBIO', 'Watson (2013)'}, 'Location', 'NorthEast');
+            
             box on;
             grid on;
             colormap(gray(256));
@@ -168,51 +188,51 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
         clear 'modelOTF'
         h = figure(3);
-        set(h, 'Position', [100 100 940 300]);
+        set(h, 'Position', [100 100 970 550]);
         clf;
         sf = 0:0.01:120;
         examinedPupilDiametersInMillimeters = 2:0.5:6;
         for index = 1:numel(examinedPupilDiametersInMillimeters)
-            index
             modelOTF(index,:) = WatsonOTFmodel(examinedPupilDiametersInMillimeters(index), examinedWaveLength, sf);
         end
 
-        colors = jet(size(modelOTF,1));
-        colors = colors(end:-1:1,:);
+        colors = hsv(size(modelOTF,1)+1);
+        %colors = colors(end:-1:1,:);
         
-        subplot('Position', [0.03 0.1 0.48 0.90]); 
+        subplot('Position', [0.06 0.11 0.44 0.80]); 
         hold on
         for index = 1:size(modelOTF,1)
             plot(sf, modelOTF(index,:), 'k-', 'Color', squeeze(colors(index,:)), 'LineWidth', 2);
         end
         hold off;
         legend({'PD = 2.0mm', 'PD = 2.5mm', 'PD = 3.0mm', 'PD = 3.5mm', 'PD = 4.0mm', 'PD = 4.5mm', 'PD = 5.0mm', 'PD = 5.5mm', 'PD = 6.0mm'});
-        set(gca, 'XLim', [0 120], 'YLim', [0 1]);
-        set(gca, 'XScale', 'linear', 'YScale', 'linear', 'XTick', [0:10:100], 'YTick', [0:0.1:1.0]);
-        set(gca, 'XTickLabel', [0:10:100], 'YTickLabel',  [0:0.1:1.0]);
+        set(gca, 'XLim', [0 120], 'YLim', [0 1.02]);
+        set(gca, 'XScale', 'linear', 'YScale', 'linear', 'XTick', [0:10:120], 'YTick', [0:0.1:1.0]);
+        set(gca, 'XTickLabel', [0:10:120], 'YTickLabel',  [0:0.1:1.0]);
         set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
         xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
         ylabel('Gain', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-        axis 'square'
+        
         box on;
         grid on;
+        title('Watson (2013) Model (linear coords)');
         
-        subplot('Position', [0.51 0.1 0.48 0.90]); 
+        subplot('Position', [0.54 0.11 0.44 0.80]); 
         hold on
         for index = 1:size(modelOTF,1)
             plot(sf, modelOTF(index,:), 'k-', 'Color', squeeze(colors(index,:)),  'LineWidth', 2);
         end
         hold off;
         legend({'PD = 2.0mm', 'PD = 2.5mm', 'PD = 3.0mm', 'PD = 3.5mm', 'PD = 4.0mm', 'PD = 4.5mm', 'PD = 5.0mm', 'PD = 5.5mm', 'PD = 6.0mm'}, 'Location', 'SouthWest');
-        set(gca, 'XLim', [0.1 120], 'YLim', [0.001 1]);
+        set(gca, 'XLim', [0.1 120], 'YLim', [0.001 1.1]);
         set(gca, 'XScale', 'log', 'YScale', 'log', 'XTick', [0.1 1 2 5 10 20 50 100], 'YTick', [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
         set(gca, 'XTickLabel', [0.1 1 2 5 10 20 50 100], 'YTickLabel',  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
         set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
         xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-        ylabel('Gain', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-        axis 'square'
+        
         box on;
         grid on;
+        title('Watson (2013) Model (log coords)');
         drawnow;
     end
     
