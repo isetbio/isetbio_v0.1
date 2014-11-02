@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Validation script for OTF: contrasting to Watson's (2013) model.</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">Initialize ISETBIO</a></li><li><a href="#6">Set run parameters</a></li><li><a href="#8">Retrieve examined pupil radius</a></li><li><a href="#9">Create human optics with examined pupil radius</a></li><li><a href="#10">Initialize optical image with desired optics</a></li><li><a href="#11">Compute optical image for given scene</a></li><li><a href="#12">Set the scene's angular size = 1 deg and it's distance to the lens = 1.0 meter</a></li><li><a href="#13">Compute optical image</a></li><li><a href="#14">Retrieve the full OTF</a></li><li><a href="#15">Retrieve the wavelength axis</a></li><li><a href="#16">Retrieve the spatial frequency support in cycles/micron</a></li><li><a href="#17">Convert spatial frequency to cycles/deg.</a></li><li><a href="#18">Get 2D OTF slice at target wavelength</a></li><li><a href="#19">Unwrap spectrum</a></li><li><a href="#20">Get a 1D slice (sfY=0, sfX)</a></li><li><a href="#21">Generate modelOTF using Watson's (2013) model</a></li><li><a href="#23">Generate plots, if so specified</a></li><li><a href="#25">Plot of ISETBIO vs. Watson's OTF for different pupil sizes at the examined wavelength</a></li><li><a href="#26">Plot ISETBIO and Watson's OTFs slices at different pupil sizes and different wavelengths</a></li><li><a href="#29">Watson's model</a></li><li><a href="#30">Helper plotting funtions</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> validateOTFandPupilSize(runParams)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Validation script for OTF: contrasting to Watson's (2013) model.</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">Initialize ISETBIO</a></li><li><a href="#6">Set run parameters</a></li><li><a href="#7">Iterate over examined pupil sizes</a></li><li><a href="#9">Retrieve examined pupil radius</a></li><li><a href="#10">Create human optics with examined pupil radius</a></li><li><a href="#11">Initialize optical image with desired optics</a></li><li><a href="#12">Compute optical image for given scene</a></li><li><a href="#13">Set the scene's angular size = 1 deg and it's distance to the lens = 1.0 meter</a></li><li><a href="#14">Compute optical image</a></li><li><a href="#15">Retrieve the full OTF</a></li><li><a href="#16">Retrieve the wavelength axis</a></li><li><a href="#17">Retrieve the spatial frequency support in cycles/micron</a></li><li><a href="#18">Convert spatial frequency to cycles/deg.</a></li><li><a href="#19">Get 2D OTF slice at target wavelength</a></li><li><a href="#20">Unwrap spectrum</a></li><li><a href="#21">Get a 1D slice (sfY=0, sfX)</a></li><li><a href="#22">Generate modelOTF using Watson's (2013) model</a></li><li><a href="#24">Generate plots, if so specified</a></li><li><a href="#26">Plot of ISETBIO vs. Watson's OTF for different pupil sizes at the examined wavelength</a></li><li><a href="#27">Plot ISETBIO and Watson's OTFs slices at different pupil sizes and different wavelengths</a></li><li><a href="#30">Watson's model</a></li><li><a href="#31">Helper plotting funtions</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> validateOTFandPupilSize(runParams)
 <span class="comment">%</span>
 <span class="comment">% Validate the OTF as a function of pupil size by comparing it to the OTFs</span>
 <span class="comment">% derived by Watson in  Watson JOV (2013) "A formula for the mean human</span>
@@ -85,56 +85,57 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     validationFailedFlag = false;
     validationDataToSave = struct();
 </pre><h2>Initialize ISETBIO<a name="5"></a></h2><pre class="codeinput">    s_initISET;
-</pre><h2>Set run parameters<a name="6"></a></h2><p>Pupil diameters to test</p><pre class="codeinput">    examinedPupilDiametersInMillimeters = (2:0.5:6.0);
+</pre><h2>Set run parameters<a name="6"></a></h2><pre class="codeinput">    <span class="comment">% Pupil diameters to test</span>
+    examinedPupilDiametersInMillimeters = (2:0.5:6.0);
 
     <span class="comment">% Wavelength at which to slice the OTF</span>
     OTFsliceWavelength = 550;
 
     <span class="comment">% Spatial frequencies at which to evaluate the Watson (2013) model OTF</span>
     modelOTFsfX = 0:0.05:100;
-
-    <span class="keyword">for</span> pupilSizeIndex = 1:numel(examinedPupilDiametersInMillimeters)
-</pre><h2>Retrieve examined pupil radius<a name="8"></a></h2><pre class="codeinput">        pupilDiameterInMillimeters = examinedPupilDiametersInMillimeters(pupilSizeIndex);
+</pre><h2>Iterate over examined pupil sizes<a name="7"></a></h2><pre class="codeinput">    <span class="keyword">for</span> pupilSizeIndex = 1:numel(examinedPupilDiametersInMillimeters)
+</pre><h2>Retrieve examined pupil radius<a name="9"></a></h2><pre class="codeinput">        pupilDiameterInMillimeters = examinedPupilDiametersInMillimeters(pupilSizeIndex);
         pupilRadiusInMeters = pupilDiameterInMillimeters/2.0/1000.0;
-</pre><h2>Create human optics with examined pupil radius<a name="9"></a></h2><pre class="codeinput">        optics = opticsCreate(<span class="string">'human'</span>, pupilRadiusInMeters);
-</pre><h2>Initialize optical image with desired optics<a name="10"></a></h2><pre class="codeinput">        oi = oiCreate(<span class="string">'human'</span>);
+</pre><h2>Create human optics with examined pupil radius<a name="10"></a></h2><pre class="codeinput">        optics = opticsCreate(<span class="string">'human'</span>, pupilRadiusInMeters);
+</pre><h2>Initialize optical image with desired optics<a name="11"></a></h2><pre class="codeinput">        oi = oiCreate(<span class="string">'human'</span>);
         oi = oiSet(oi, <span class="string">'optics'</span>, optics);
-</pre><h2>Compute optical image for given scene<a name="11"></a></h2><pre class="codeinput">        scene = sceneCreate(<span class="string">'line d65'</span>);
-</pre><h2>Set the scene's angular size = 1 deg and it's distance to the lens = 1.0 meter<a name="12"></a></h2><pre class="codeinput">        sceneAngularSizeInDeg = 2.0;
+</pre><h2>Compute optical image for given scene<a name="12"></a></h2><pre class="codeinput">        scene = sceneCreate(<span class="string">'line d65'</span>);
+</pre><h2>Set the scene's angular size = 1 deg and it's distance to the lens = 1.0 meter<a name="13"></a></h2><pre class="codeinput">        sceneAngularSizeInDeg = 2.0;
         sceneDistanceInMeters = 1.0;
         scene = sceneSet(scene,<span class="string">'wangular'</span>, sceneAngularSizeInDeg);
         scene = sceneSet(scene,<span class="string">'distance'</span>, sceneDistanceInMeters);
-</pre><h2>Compute optical image<a name="13"></a></h2><pre class="codeinput">        oi = oiCompute(scene,oi);
-</pre><h2>Retrieve the full OTF<a name="14"></a></h2><pre class="codeinput">        optics = oiGet(oi, <span class="string">'optics'</span>);
+</pre><h2>Compute optical image<a name="14"></a></h2><pre class="codeinput">        oi = oiCompute(scene,oi);
+</pre><h2>Retrieve the full OTF<a name="15"></a></h2><pre class="codeinput">        optics = oiGet(oi, <span class="string">'optics'</span>);
         OTF3D(pupilSizeIndex,:,:,:) = abs(opticsGet(optics,<span class="string">'otf data'</span>));
-</pre><h2>Retrieve the wavelength axis<a name="15"></a></h2><pre class="codeinput">        OTFwavelengths = opticsGet(optics,<span class="string">'otf wave'</span>);
-</pre><h2>Retrieve the spatial frequency support in cycles/micron<a name="16"></a></h2><pre class="codeinput">        OTFsupport = opticsGet(optics,<span class="string">'otf support'</span>, <span class="string">'um'</span>);
+</pre><h2>Retrieve the wavelength axis<a name="16"></a></h2><pre class="codeinput">        OTFwavelengths = opticsGet(optics,<span class="string">'otf wave'</span>);
+</pre><h2>Retrieve the spatial frequency support in cycles/micron<a name="17"></a></h2><pre class="codeinput">        OTFsupport = opticsGet(optics,<span class="string">'otf support'</span>, <span class="string">'um'</span>);
         otf_sfXInCyclesPerMicron = OTFsupport{1};
         otf_sfYInCyclesPerMicron = OTFsupport{2};
-</pre><h2>Convert spatial frequency to cycles/deg.<a name="17"></a></h2><p>In human retina, 1 deg of visual angle is about 288 microns</p><pre class="codeinput">        micronsPerDegee = 288;
+</pre><h2>Convert spatial frequency to cycles/deg.<a name="18"></a></h2><p>In human retina, 1 deg of visual angle is about 288 microns</p><pre class="codeinput">        micronsPerDegee = 288;
         otf_sfX = otf_sfXInCyclesPerMicron * micronsPerDegee;
         otf_sfY = otf_sfYInCyclesPerMicron * micronsPerDegee;
-</pre><h2>Get 2D OTF slice at target wavelength<a name="18"></a></h2><pre class="codeinput">        [~,waveIndex] = min(abs(OTFwavelengths - OTFsliceWavelength));
+</pre><h2>Get 2D OTF slice at target wavelength<a name="19"></a></h2><pre class="codeinput">        [~,waveIndex] = min(abs(OTFwavelengths - OTFsliceWavelength));
         testWaveLength = OTFwavelengths(waveIndex);
-</pre><h2>Unwrap spectrum<a name="19"></a></h2><pre class="codeinput">        OTF2D = fftshift(squeeze(OTF3D(pupilSizeIndex,:,:,waveIndex)));
-</pre><h2>Get a 1D slice (sfY=0, sfX)<a name="20"></a></h2><pre class="codeinput">        OTFsliceSFY = 0.0;
+</pre><h2>Unwrap spectrum<a name="20"></a></h2><pre class="codeinput">        OTF2D = fftshift(squeeze(OTF3D(pupilSizeIndex,:,:,waveIndex)));
+</pre><h2>Get a 1D slice (sfY=0, sfX)<a name="21"></a></h2><pre class="codeinput">        OTFsliceSFY = 0.0;
         [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
         OTFslices{pupilSizeIndex}.isetbio = squeeze(OTF2D(sfIndex,:));
-</pre><h2>Generate modelOTF using Watson's (2013) model<a name="21"></a></h2><pre class="codeinput">        OTFslices{pupilSizeIndex}.model = WatsonOTFmodel(pupilDiameterInMillimeters, testWaveLength, modelOTFsfX);
+</pre><h2>Generate modelOTF using Watson's (2013) model<a name="22"></a></h2><pre class="codeinput">        OTFslices{pupilSizeIndex}.model = WatsonOTFmodel(pupilDiameterInMillimeters, testWaveLength, modelOTFsfX);
 </pre><pre class="codeinput">    <span class="keyword">end</span>
-</pre><h2>Generate plots, if so specified<a name="23"></a></h2><pre class="codeinput">   <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
-</pre><h2>Plot of ISETBIO vs. Watson's OTF for different pupil sizes at the examined wavelength<a name="25"></a></h2><pre class="codeinput">        logPlotScaling = false;
+</pre><h2>Generate plots, if so specified<a name="24"></a></h2><pre class="codeinput">   <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
+</pre><h2>Plot of ISETBIO vs. Watson's OTF for different pupil sizes at the examined wavelength<a name="26"></a></h2><pre class="codeinput">        logPlotScaling = false;
         plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, testWaveLength, logPlotScaling);
-</pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_01.png" alt=""> <h2>Plot ISETBIO and Watson's OTFs slices at different pupil sizes and different wavelengths<a name="26"></a></h2><pre class="codeinput">        testPupilDiameterInMillimeter = 4.0;
+</pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_01.png" alt=""> <h2>Plot ISETBIO and Watson's OTFs slices at different pupil sizes and different wavelengths<a name="27"></a></h2><pre class="codeinput">        testPupilDiameterInMillimeter = 4.0;
         examinedWavelengths = [400:50:800];
         visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, <span class="keyword">...</span>
             testWaveLength, examinedPupilDiametersInMillimeters, <span class="keyword">...</span>
             examinedWavelengths, testPupilDiameterInMillimeter);
-</pre><pre class="codeoutput">ISETBIO's OTF at different pupil sizes and a fixed wavelength
-Watson's OTF at different pupil sizes and a fixed wavelength
 </pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_02.png" alt=""> <img vspace="5" hspace="5" src="validateOTFandPupilSize_03.png" alt=""> <img vspace="5" hspace="5" src="validateOTFandPupilSize_04.png" alt=""> <pre class="codeinput">    <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
-</pre><h2>Watson's model<a name="29"></a></h2><p>Method to compute Watson's OTF model as a function of pupil diameter (d, in mm) wavelength (lambda), for a range of spatial frequencies (u, in cycles/deg)</p><pre class="codeinput"><span class="keyword">function</span> modelOTF = WatsonOTFmodel(d, lambda, u)
+</pre><h2>Watson's model<a name="30"></a></h2><p>Method to compute Watson's OTF model as a function of pupil diameter, and wavelength for a range of spatial frequencies.</p><pre class="codeinput"><span class="keyword">function</span> modelOTF = WatsonOTFmodel(d, lambda, u)
+    <span class="comment">% d:      pupil diameter in mm</span>
+    <span class="comment">% lambda: wavelength in nm</span>
+    <span class="comment">% u:      spatial frequency in cycles/deg</span>
 
     u1       = 21.95 - 5.512*d + 0.3922 * d^2;                                  <span class="comment">% [Equation (4)]</span>
     D        = DiffractionLimitedMTF(u,d, lambda);
@@ -155,9 +156,7 @@ Watson's OTF at different pupil sizes and a fixed wavelength
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">ISETBIO's OTF at different wavelengths and a fixed pupil size
-Watson's OTF at different wavelengths and a fixed pupil size
-</pre><h2>Helper plotting funtions<a name="30"></a></h2><pre class="codeinput"><span class="keyword">function</span> plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, examinedWaveLength, logPlotScaling)
+</pre><h2>Helper plotting funtions<a name="31"></a></h2><pre class="codeinput"><span class="keyword">function</span> plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, examinedWaveLength, logPlotScaling)
 
     plotWidth  = 0.29;
     plotHeight = 0.30;
@@ -229,7 +228,6 @@ Watson's OTF at different wavelengths and a fixed pupil size
     testWaveLength, examinedPupilDiametersInMillimeters, <span class="keyword">...</span>
     examinedWavelengths, testPupilDiameterInMillimeter)
 
-    disp(<span class="string">'ISETBIO''s OTF at different pupil sizes and a fixed wavelength'</span>);
     legendEntries = {};
     OTFslices = [];
     [~,waveIndex] = min(abs(OTFwavelengths - testWaveLength));
@@ -246,7 +244,6 @@ Watson's OTF at different wavelengths and a fixed pupil size
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
 
 
-    disp(<span class="string">'Watson''s OTF at different pupil sizes and a fixed wavelength'</span>);
     modelOTFsfX = 0:0.01:120;
     legendEntries = {};
     modelOTFslices = [];
@@ -259,8 +256,6 @@ Watson's OTF at different wavelengths and a fixed pupil size
     plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
 
 
-
-    disp(<span class="string">'ISETBIO''s OTF at different wavelengths and a fixed pupil size'</span>);
     legendEntries = {};
     OTFslices = [];
     [~,pupilSizeIndex] = min(abs(examinedPupilDiametersInMillimeters-testPupilDiameterInMillimeter));
@@ -279,7 +274,6 @@ Watson's OTF at different wavelengths and a fixed pupil size
     plotOTFslices(figNum, textLabel, legendEntries, otf_sfX, OTFslices);
 
 
-    disp(<span class="string">'Watson''s OTF at different wavelengths and a fixed pupil size'</span>);
     legendEntries = {};
     modelOTFslices = [];
     <span class="keyword">for</span> index = 1:numel(examinedWavelengths)
@@ -373,6 +367,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     s_initISET;
     
     %% Set run parameters
+    
     % Pupil diameters to test
     examinedPupilDiametersInMillimeters = (2:0.5:6.0);
     
@@ -382,6 +377,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     % Spatial frequencies at which to evaluate the Watson (2013) model OTF
     modelOTFsfX = 0:0.05:100;
     
+    %% Iterate over examined pupil sizes
     for pupilSizeIndex = 1:numel(examinedPupilDiametersInMillimeters)
         
         %% Retrieve examined pupil radius 
@@ -458,10 +454,13 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
 end
 
 %% Watson's model 
-% Method to compute Watson's OTF model as a function of pupil diameter (d, in mm)
-% wavelength (lambda), for a range of spatial frequencies (u, in cycles/deg)
+% Method to compute Watson's OTF model as a function of pupil diameter,
+% and wavelength for a range of spatial frequencies.
 function modelOTF = WatsonOTFmodel(d, lambda, u)
-
+    % d:      pupil diameter in mm
+    % lambda: wavelength in nm
+    % u:      spatial frequency in cycles/deg
+    
     u1       = 21.95 - 5.512*d + 0.3922 * d^2;                                  % [Equation (4)]
     D        = DiffractionLimitedMTF(u,d, lambda);   
     modelOTF = ((1 + (u/u1).^2).^(-0.62)) .* sqrt(D);                           % [Equation (5)]
@@ -557,7 +556,6 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
     testWaveLength, examinedPupilDiametersInMillimeters, ...
     examinedWavelengths, testPupilDiameterInMillimeter)
         
-    disp('ISETBIO''s OTF at different pupil sizes and a fixed wavelength');
     legendEntries = {};
     OTFslices = [];
     [~,waveIndex] = min(abs(OTFwavelengths - testWaveLength));
@@ -574,7 +572,6 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
 
 
-    disp('Watson''s OTF at different pupil sizes and a fixed wavelength');
     modelOTFsfX = 0:0.01:120;  
     legendEntries = {};
     modelOTFslices = [];
@@ -587,8 +584,6 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
     plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
 
 
-
-    disp('ISETBIO''s OTF at different wavelengths and a fixed pupil size');
     legendEntries = {};
     OTFslices = [];
     [~,pupilSizeIndex] = min(abs(examinedPupilDiametersInMillimeters-testPupilDiameterInMillimeter));
@@ -607,7 +602,6 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
     plotOTFslices(figNum, textLabel, legendEntries, otf_sfX, OTFslices);
 
 
-    disp('Watson''s OTF at different wavelengths and a fixed pupil size');
     legendEntries = {};
     modelOTFslices = [];
     for index = 1:numel(examinedWavelengths)
