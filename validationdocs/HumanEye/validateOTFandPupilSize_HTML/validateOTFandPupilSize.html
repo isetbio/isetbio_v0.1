@@ -244,8 +244,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     OTFslice = OTFslice(indices);
 
     <span class="keyword">if</span> logPlotScaling
-        OTFsfX = OTFsfX+0.001;
-        modelOTFsfX = modelOTFsfX + 0.001;
+        OTFsfX = OTFsfX+0.1;
+        modelOTFsfX = modelOTFsfX + 0.1;
     <span class="keyword">end</span>
 
     <span class="comment">% Plot the 1D OTF slice</span>
@@ -294,7 +294,6 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     grid <span class="string">on</span>;
     colormap(gray(256));
 
-    drawnow;
 <span class="keyword">end</span>
 
 
@@ -346,7 +345,6 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         box <span class="string">on</span>;
         grid <span class="string">on</span>;
         title(sprintf(<span class="string">'%s (log coords)'</span>,textString), <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
-        drawnow;
 <span class="keyword">end</span>
 </pre><pre class="codeoutput">
 [ 4.] Results for 'validateOTFandPupilSize' probe: PASSED</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
@@ -564,8 +562,8 @@ function plotOTFs(otf_sfX, OTFslice, modelOTFsfX, modelOTFslice, pupilSizeIndex,
     OTFslice = OTFslice(indices);
     
     if logPlotScaling
-        OTFsfX = OTFsfX+0.001;
-        modelOTFsfX = modelOTFsfX + 0.001;
+        OTFsfX = OTFsfX+0.1;
+        modelOTFsfX = modelOTFsfX + 0.1;
     end
 
     % Plot the 1D OTF slice
@@ -614,7 +612,6 @@ function plotOTFs(otf_sfX, OTFslice, modelOTFsfX, modelOTFslice, pupilSizeIndex,
     grid on;
     colormap(gray(256));
 
-    drawnow; 
 end
      
 
@@ -666,7 +663,6 @@ function plotOTFslices(figNum, textString, legendText, OTFsfX, OTFslices)
         box on;
         grid on;
         title(sprintf('%s (log coords)',textString), 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-        drawnow;
 end
 
 ##### SOURCE END #####
