@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>validateSceneReIllumination</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-13"><meta name="DC.source" content="validateSceneReIllumination.m"><style type="text/css">
+      --><title>validateSceneReIllumination</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-11-02"><meta name="DC.source" content="validateSceneReIllumination.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -215,13 +215,13 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     ylabel(<span class="string">'wavelength'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
     zlabel(<span class="string">'y'</span>,<span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
     colormap(hot(256));
-    colorbarHandle = colorbar(<span class="string">'horiz'</span>, <span class="string">'Ticks'</span>, [min(radianceMap(:)) max(radianceMap(:))], <span class="string">'TickLabels'</span>, [0 1.0]*(maxRadiance-minRadiance) + minRadiance);
+    colorbarHandle = colorbar(<span class="string">'horiz'</span>, <span class="string">'XTick'</span>, [min(radianceMap(:)) max(radianceMap(:))], <span class="string">'XTickLabel'</span>, [0 1.0]*(maxRadiance-minRadiance) + minRadiance);
     xlabel(colorbarHandle, titleText, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
     box <span class="string">on</span>;
     grid <span class="string">off</span>;
 <span class="keyword">end</span>
 </pre><pre class="codeoutput">
-[ 4.] Results for 'validateSceneReIllumination' probe: PASSED</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+[ 5.] Results for 'validateSceneReIllumination' probe: PASSED</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function validateSceneReIllumination(runParams)
 %
@@ -405,7 +405,7 @@ function plotRadianceMap(radianceMap, wavelengthSampling, wavelengthSubSamplingI
     ylabel('wavelength', 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold'); 
     zlabel('y','FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
     colormap(hot(256));
-    colorbarHandle = colorbar('horiz', 'Ticks', [min(radianceMap(:)) max(radianceMap(:))], 'TickLabels', [0 1.0]*(maxRadiance-minRadiance) + minRadiance);
+    colorbarHandle = colorbar('horiz', 'XTick', [min(radianceMap(:)) max(radianceMap(:))], 'XTickLabel', [0 1.0]*(maxRadiance-minRadiance) + minRadiance);
     xlabel(colorbarHandle, titleText, 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
     box on;
     grid off;
