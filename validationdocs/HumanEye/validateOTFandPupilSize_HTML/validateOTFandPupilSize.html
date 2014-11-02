@@ -117,84 +117,25 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         otf_sfX = otf_sfXInCyclesPerMicron * micronsPerDegee;
         otf_sfY = otf_sfYInCyclesPerMicron * micronsPerDegee;
 </pre><h2>Get the 2D slice at target wavelength<a name="17"></a></h2><pre class="codeinput">        [~,waveIndex] = min(abs(OTFwavelengths - OTFsliceWavelength));
-        examinedWaveLength = OTFwavelengths(waveIndex);
+        testWaveLength = OTFwavelengths(waveIndex);
 </pre><h2>Shift (0,0) to origin<a name="18"></a></h2><pre class="codeinput">        OTF2D = fftshift(squeeze(OTF3D(pupilSizeIndex,:,:,waveIndex)));
 </pre><h2>Get a 2D (sf,wavelength) slice through the origin (sfY = 0)<a name="19"></a></h2><pre class="codeinput">        OTFsliceSFY = 0.0;
         [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
         OTFslices{pupilSizeIndex}.isetbio = squeeze(OTF2D(sfIndex,:));
 
         <span class="comment">% generate modelOTF using Watson's (2013) model</span>
-        OTFslices{pupilSizeIndex}.model = WatsonOTFmodel(pupilDiameterInMillimeters, examinedWaveLength, modelOTFsfX);
+        OTFslices{pupilSizeIndex}.model = WatsonOTFmodel(pupilDiameterInMillimeters, testWaveLength, modelOTFsfX);
 </pre><pre class="codeinput">    <span class="keyword">end</span>
 </pre><h2>Generate plots, if so specified<a name="21"></a></h2><pre class="codeinput">   <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
         logPlotScaling = false;
-        plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, examinedWaveLength, logPlotScaling);
+        plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, testWaveLength, logPlotScaling);
 
-        <span class="comment">% Visualize ISETBIO's OTF: different pupil sizes at examined wavelength</span>
-        legendEntries = {};
-        OTFslices = [];
-        [~,waveIndex] = min(abs(OTFwavelengths - examinedWaveLength));
-        <span class="keyword">for</span> index = 1:numel(examinedPupilDiametersInMillimeters)
-            OTF2D = fftshift(squeeze(OTF3D(index,:,:,waveIndex)));
-            <span class="comment">% Get a 2D slice through origin</span>
-            OTFsliceSFY = 0.0;
-            [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
-            OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
-            legendEntries{index} = sprintf(<span class="string">'PD = %2.1f mm'</span>, examinedPupilDiametersInMillimeters(index));
-        <span class="keyword">end</span>
-        figNum = 2;
-        textLabel = sprintf(<span class="string">'ISETBIO: Lambda = %2.0f nm'</span>, examinedWaveLength);
-        plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
-
-
-        <span class="comment">% Visualize Watson's model OTF: different pupil sizes at examined wavelength</span>
-        modelOTFsfX = 0:0.01:120;
-        legendEntries = {};
-        modelOTFslices = [];
-        <span class="keyword">for</span> index = 1:numel(examinedPupilDiametersInMillimeters)
-            modelOTFslices(index,:) = WatsonOTFmodel(examinedPupilDiametersInMillimeters(index), examinedWaveLength, modelOTFsfX);
-            legendEntries{index} = sprintf(<span class="string">'PD = %2.1f mm'</span>, examinedPupilDiametersInMillimeters(index));
-        <span class="keyword">end</span>
-        figNum = 3;
-        textLabel = sprintf(<span class="string">'Watson (2013) model: Lambda = %2.0f nm'</span>, examinedWaveLength);
-        plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
-
-
-
-        <span class="comment">% Visualize ISETBIO's and Watson's OTF: different wavelengths at PD = 4.0 mm</span>
         testPupilDiameterInMillimeter = 4.0;
         examinedWavelengths = [400:50:800];
 
-        <span class="comment">% Visualize ISETBIO's OTF: different wavelengths at PD = 4.0 mm</span>
-        legendEntries = {};
-        OTFslices = [];
-        [~,pupilSizeIndex] = min(abs(examinedPupilDiametersInMillimeters-testPupilDiameterInMillimeter));
-
-        examinedPupilDiameterInMillimeter = 4.0;
-        <span class="keyword">for</span> index = 1:numel(examinedWavelengths)
-            [~,waveIndex] = min(abs(OTFwavelengths - examinedWavelengths(index)));
-            OTF2D = fftshift(squeeze(OTF3D(pupilSizeIndex,:,:,waveIndex)));
-            <span class="comment">% Get a 2D slice through origin</span>
-            OTFsliceSFY = 0.0;
-            [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
-            OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
-            legendEntries{index} = sprintf(<span class="string">'lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
-        <span class="keyword">end</span>
-        figNum = 4;
-        textLabel = sprintf(<span class="string">'ISETBIO OTF: PD = %2.0f mm'</span>, testPupilDiameterInMillimeter);
-        plotOTFslices(figNum, textLabel, legendEntries, otf_sfX, OTFslices);
-
-
-        <span class="comment">% Visualize Watson's model OTF: different wavelengths at PD = 4.0</span>
-        legendEntries = {};
-        modelOTFslices = [];
-        <span class="keyword">for</span> index = 1:numel(examinedWavelengths)
-            modelOTFslices(index,:) = WatsonOTFmodel(testPupilDiameterInMillimeter, examinedWavelengths(index), modelOTFsfX);
-            legendEntries{index} = sprintf(<span class="string">'lambda = %2.0f nm'</span>, examinedWavelengths(index));
-        <span class="keyword">end</span>
-        figNum = 5;
-        textLabel = sprintf(<span class="string">'Watson (2013) model: PD = %2.0f mm'</span>, testPupilDiameterInMillimeter);
-        plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
+        visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, <span class="keyword">...</span>
+            testWaveLength, examinedPupilDiametersInMillimeters, <span class="keyword">...</span>
+            examinedWavelengths, testPupilDiameterInMillimeter);
     <span class="keyword">end</span>
 </pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_01.png" alt=""> <img vspace="5" hspace="5" src="validateOTFandPupilSize_02.png" alt=""> <img vspace="5" hspace="5" src="validateOTFandPupilSize_03.png" alt=""> <img vspace="5" hspace="5" src="validateOTFandPupilSize_04.png" alt=""> <img vspace="5" hspace="5" src="validateOTFandPupilSize_05.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
 
@@ -290,14 +231,80 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 <span class="keyword">end</span>
 
+<span class="keyword">function</span> visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, <span class="keyword">...</span>
+    testWaveLength, examinedPupilDiametersInMillimeters, <span class="keyword">...</span>
+    examinedWavelengths, testPupilDiameterInMillimeter)
+
+        <span class="comment">% Visualize ISETBIO's OTF: different pupil sizes at examined wavelength</span>
+        legendEntries = {};
+        OTFslices = [];
+        [~,waveIndex] = min(abs(OTFwavelengths - testWaveLength));
+        <span class="keyword">for</span> index = 1:numel(examinedPupilDiametersInMillimeters)
+            OTF2D = fftshift(squeeze(OTF3D(index,:,:,waveIndex)));
+            <span class="comment">% Get a 2D slice through origin</span>
+            OTFsliceSFY = 0.0;
+            [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
+            OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
+            legendEntries{index} = sprintf(<span class="string">'PD = %2.1f mm'</span>, examinedPupilDiametersInMillimeters(index));
+        <span class="keyword">end</span>
+        figNum = 2;
+        textLabel = sprintf(<span class="string">'ISETBIO: Lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
+        plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
+
+
+        <span class="comment">% Visualize Watson's model OTF: different pupil sizes at examined wavelength</span>
+        modelOTFsfX = 0:0.01:120;
+        legendEntries = {};
+        modelOTFslices = [];
+        <span class="keyword">for</span> index = 1:numel(examinedPupilDiametersInMillimeters)
+            modelOTFslices(index,:) = WatsonOTFmodel(examinedPupilDiametersInMillimeters(index), testWaveLength, modelOTFsfX);
+            legendEntries{index} = sprintf(<span class="string">'PD = %2.1f mm'</span>, examinedPupilDiametersInMillimeters(index));
+        <span class="keyword">end</span>
+        figNum = 3;
+        textLabel = sprintf(<span class="string">'Watson (2013) model: Lambda = %2.0f nm'</span>, testWaveLength);
+        plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
+
+
+        <span class="comment">% Visualize ISETBIO's OTF: different wavelengths at PD = 4.0 mm</span>
+        legendEntries = {};
+        OTFslices = [];
+        [~,pupilSizeIndex] = min(abs(examinedPupilDiametersInMillimeters-testPupilDiameterInMillimeter));
+
+        <span class="keyword">for</span> index = 1:numel(examinedWavelengths)
+            [~,waveIndex] = min(abs(OTFwavelengths - examinedWavelengths(index)));
+            OTF2D = fftshift(squeeze(OTF3D(pupilSizeIndex,:,:,waveIndex)));
+            <span class="comment">% Get a 2D slice through origin</span>
+            OTFsliceSFY = 0.0;
+            [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
+            OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
+            legendEntries{index} = sprintf(<span class="string">'lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
+        <span class="keyword">end</span>
+        figNum = 4;
+        textLabel = sprintf(<span class="string">'ISETBIO OTF: PD = %2.0f mm'</span>, testPupilDiameterInMillimeter);
+        plotOTFslices(figNum, textLabel, legendEntries, otf_sfX, OTFslices);
+
+
+        <span class="comment">% Visualize Watson's model OTF: different wavelengths at PD = 4.0</span>
+        legendEntries = {};
+        modelOTFslices = [];
+        <span class="keyword">for</span> index = 1:numel(examinedWavelengths)
+            modelOTFslices(index,:) = WatsonOTFmodel(testPupilDiameterInMillimeter, examinedWavelengths(index), modelOTFsfX);
+            legendEntries{index} = sprintf(<span class="string">'lambda = %2.0f nm'</span>, examinedWavelengths(index));
+        <span class="keyword">end</span>
+        figNum = 5;
+        textLabel = sprintf(<span class="string">'Watson (2013) model: PD = %2.0f mm'</span>, testPupilDiameterInMillimeter);
+        plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
+<span class="keyword">end</span>
+
 
 <span class="keyword">function</span> plotOTFslices(figNum, textString, legendText, OTFsfX, OTFslices)
-
-        colors = hsv(size(OTFslices,1)+1);
 
         h = figure(figNum);
         set(h, <span class="string">'Position'</span>, [100 100 820 420]);
         clf;
+
+        <span class="comment">% Use HSV color-coding</span>
+        colors = hsv(size(OTFslices,1)+1);
 
         subplot(<span class="string">'Position'</span>, [0.06 0.11 0.44 0.80]);
         hold <span class="string">on</span>
@@ -322,6 +329,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="comment">% Now in log-coords</span>
         subplot(<span class="string">'Position'</span>, [0.54 0.11 0.44 0.80]);
         hold <span class="string">on</span>
+        OTFsfX = OTFsfX+0.1;
         <span class="keyword">for</span> index = 1:size(OTFslices,1)
             plot(OTFsfX, OTFslices(index,:), <span class="string">'k-'</span>, <span class="string">'Color'</span>, squeeze(colors(index,:)),  <span class="string">'LineWidth'</span>, 2);
         <span class="keyword">end</span>
@@ -423,7 +431,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         
         %% Get the 2D slice at target wavelength
         [~,waveIndex] = min(abs(OTFwavelengths - OTFsliceWavelength));
-        examinedWaveLength = OTFwavelengths(waveIndex);
+        testWaveLength = OTFwavelengths(waveIndex);
         
         %% Shift (0,0) to origin
         OTF2D = fftshift(squeeze(OTF3D(pupilSizeIndex,:,:,waveIndex)));
@@ -434,79 +442,20 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         OTFslices{pupilSizeIndex}.isetbio = squeeze(OTF2D(sfIndex,:));
         
         % generate modelOTF using Watson's (2013) model
-        OTFslices{pupilSizeIndex}.model = WatsonOTFmodel(pupilDiameterInMillimeters, examinedWaveLength, modelOTFsfX);
+        OTFslices{pupilSizeIndex}.model = WatsonOTFmodel(pupilDiameterInMillimeters, testWaveLength, modelOTFsfX);
     end
     
     %% Generate plots, if so specified
    if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
         logPlotScaling = false;
-        plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, examinedWaveLength, logPlotScaling);
+        plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, testWaveLength, logPlotScaling);
         
-        % Visualize ISETBIO's OTF: different pupil sizes at examined wavelength
-        legendEntries = {};
-        OTFslices = [];
-        [~,waveIndex] = min(abs(OTFwavelengths - examinedWaveLength));
-        for index = 1:numel(examinedPupilDiametersInMillimeters)
-            OTF2D = fftshift(squeeze(OTF3D(index,:,:,waveIndex)));
-            % Get a 2D slice through origin
-            OTFsliceSFY = 0.0;
-            [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
-            OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
-            legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
-        end
-        figNum = 2;
-        textLabel = sprintf('ISETBIO: Lambda = %2.0f nm', examinedWaveLength);
-        plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
-        
-        
-        % Visualize Watson's model OTF: different pupil sizes at examined wavelength
-        modelOTFsfX = 0:0.01:120;  
-        legendEntries = {};
-        modelOTFslices = [];
-        for index = 1:numel(examinedPupilDiametersInMillimeters)
-            modelOTFslices(index,:) = WatsonOTFmodel(examinedPupilDiametersInMillimeters(index), examinedWaveLength, modelOTFsfX);
-            legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
-        end
-        figNum = 3;
-        textLabel = sprintf('Watson (2013) model: Lambda = %2.0f nm', examinedWaveLength);
-        plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
-        
-        
-        
-        % Visualize ISETBIO's and Watson's OTF: different wavelengths at PD = 4.0 mm
         testPupilDiameterInMillimeter = 4.0;
         examinedWavelengths = [400:50:800];
         
-        % Visualize ISETBIO's OTF: different wavelengths at PD = 4.0 mm
-        legendEntries = {};
-        OTFslices = [];
-        [~,pupilSizeIndex] = min(abs(examinedPupilDiametersInMillimeters-testPupilDiameterInMillimeter));
-        
-        examinedPupilDiameterInMillimeter = 4.0;
-        for index = 1:numel(examinedWavelengths)
-            [~,waveIndex] = min(abs(OTFwavelengths - examinedWavelengths(index)));
-            OTF2D = fftshift(squeeze(OTF3D(pupilSizeIndex,:,:,waveIndex)));
-            % Get a 2D slice through origin
-            OTFsliceSFY = 0.0;
-            [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
-            OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
-            legendEntries{index} = sprintf('lambda = %2.0f nm', OTFwavelengths(waveIndex));
-        end
-        figNum = 4;
-        textLabel = sprintf('ISETBIO OTF: PD = %2.0f mm', testPupilDiameterInMillimeter);
-        plotOTFslices(figNum, textLabel, legendEntries, otf_sfX, OTFslices);
-        
-        
-        % Visualize Watson's model OTF: different wavelengths at PD = 4.0
-        legendEntries = {};
-        modelOTFslices = [];
-        for index = 1:numel(examinedWavelengths)
-            modelOTFslices(index,:) = WatsonOTFmodel(testPupilDiameterInMillimeter, examinedWavelengths(index), modelOTFsfX);
-            legendEntries{index} = sprintf('lambda = %2.0f nm', examinedWavelengths(index));
-        end
-        figNum = 5;
-        textLabel = sprintf('Watson (2013) model: PD = %2.0f mm', testPupilDiameterInMillimeter);
-        plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
+        visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, ...
+            testWaveLength, examinedPupilDiametersInMillimeters, ...
+            examinedWavelengths, testPupilDiameterInMillimeter);
     end
 end
 
@@ -602,14 +551,80 @@ function plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedP
 
 end
      
+function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, ...
+    testWaveLength, examinedPupilDiametersInMillimeters, ...
+    examinedWavelengths, testPupilDiameterInMillimeter)
+        
+        % Visualize ISETBIO's OTF: different pupil sizes at examined wavelength
+        legendEntries = {};
+        OTFslices = [];
+        [~,waveIndex] = min(abs(OTFwavelengths - testWaveLength));
+        for index = 1:numel(examinedPupilDiametersInMillimeters)
+            OTF2D = fftshift(squeeze(OTF3D(index,:,:,waveIndex)));
+            % Get a 2D slice through origin
+            OTFsliceSFY = 0.0;
+            [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
+            OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
+            legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
+        end
+        figNum = 2;
+        textLabel = sprintf('ISETBIO: Lambda = %2.0f nm', OTFwavelengths(waveIndex));
+        plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
+        
+        
+        % Visualize Watson's model OTF: different pupil sizes at examined wavelength
+        modelOTFsfX = 0:0.01:120;  
+        legendEntries = {};
+        modelOTFslices = [];
+        for index = 1:numel(examinedPupilDiametersInMillimeters)
+            modelOTFslices(index,:) = WatsonOTFmodel(examinedPupilDiametersInMillimeters(index), testWaveLength, modelOTFsfX);
+            legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
+        end
+        figNum = 3;
+        textLabel = sprintf('Watson (2013) model: Lambda = %2.0f nm', testWaveLength);
+        plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
+        
+        
+        % Visualize ISETBIO's OTF: different wavelengths at PD = 4.0 mm
+        legendEntries = {};
+        OTFslices = [];
+        [~,pupilSizeIndex] = min(abs(examinedPupilDiametersInMillimeters-testPupilDiameterInMillimeter));
+        
+        for index = 1:numel(examinedWavelengths)
+            [~,waveIndex] = min(abs(OTFwavelengths - examinedWavelengths(index)));
+            OTF2D = fftshift(squeeze(OTF3D(pupilSizeIndex,:,:,waveIndex)));
+            % Get a 2D slice through origin
+            OTFsliceSFY = 0.0;
+            [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
+            OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
+            legendEntries{index} = sprintf('lambda = %2.0f nm', OTFwavelengths(waveIndex));
+        end
+        figNum = 4;
+        textLabel = sprintf('ISETBIO OTF: PD = %2.0f mm', testPupilDiameterInMillimeter);
+        plotOTFslices(figNum, textLabel, legendEntries, otf_sfX, OTFslices);
+        
+        
+        % Visualize Watson's model OTF: different wavelengths at PD = 4.0
+        legendEntries = {};
+        modelOTFslices = [];
+        for index = 1:numel(examinedWavelengths)
+            modelOTFslices(index,:) = WatsonOTFmodel(testPupilDiameterInMillimeter, examinedWavelengths(index), modelOTFsfX);
+            legendEntries{index} = sprintf('lambda = %2.0f nm', examinedWavelengths(index));
+        end
+        figNum = 5;
+        textLabel = sprintf('Watson (2013) model: PD = %2.0f mm', testPupilDiameterInMillimeter);
+        plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
+end
+
 
 function plotOTFslices(figNum, textString, legendText, OTFsfX, OTFslices)
-        
-        colors = hsv(size(OTFslices,1)+1);
-        
+   
         h = figure(figNum);
         set(h, 'Position', [100 100 820 420]);
         clf;
+        
+        % Use HSV color-coding
+        colors = hsv(size(OTFslices,1)+1);
         
         subplot('Position', [0.06 0.11 0.44 0.80]); 
         hold on
@@ -634,6 +649,7 @@ function plotOTFslices(figNum, textString, legendText, OTFsfX, OTFslices)
         % Now in log-coords
         subplot('Position', [0.54 0.11 0.44 0.80]); 
         hold on
+        OTFsfX = OTFsfX+0.1;
         for index = 1:size(OTFslices,1)
             plot(OTFsfX, OTFslices(index,:), 'k-', 'Color', squeeze(colors(index,:)),  'LineWidth', 2);
         end
