@@ -28,6 +28,9 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     % Pupil diameters to test
     examinedPupilDiametersInMillimeters = (2:0.5:6.5);
     
+    % Wavelength at which to slice the OTF
+    OTFsliceWavelength = 580;
+    
     for pupilSizeIndex = 1:numel(examinedPupilDiametersInMillimeters)
         
         %% Retrieve examined pupil radius 
@@ -76,16 +79,17 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         otf_sfX = otf_sfXInCyclesPerMicron * micronsPerDegee;
         otf_sfY = otf_sfYInCyclesPerMicron * micronsPerDegee;
         
-        %% Get the 2D slice at 550 nm
-        [~,waveIndex]   = min(abs(OTFwavelengths - 550));
+        %% Get the 2D slice at desired wavelength
+        [~,waveIndex]   = min(abs(OTFwavelengths - OTFsliceWavelength));
         examinedWaveLength = OTFwavelengths(waveIndex);
         
         %% Shift (0,0) to origin
-        OTF550 = fftshift(squeeze(OTF(:,:,waveIndex)));
+        OTF2D = fftshift(squeeze(OTF(:,:,waveIndex)));
         
         %% Get a 2D slice through origin
-        [~, sfIndex] = min(abs(otf_sfY - 0));
-        OTFslice = squeeze(OTF550(sfIndex,:));
+        OTFsliceSFY = 0.0;
+        [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
+        OTFslice = squeeze(OTF2D(sfIndex,:));
         
         
         %% Generate plots, if so specified
