@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>validateOTFandPupilSize</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-11-02"><meta name="DC.source" content="validateOTFandPupilSize.m"><style type="text/css">
+      --><title>validateOTFandPupilSize</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-11-03"><meta name="DC.source" content="validateOTFandPupilSize.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -68,9 +68,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
   </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Validation script for OTF: contrasting to Watson's (2013) model.</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">Initialize ISETBIO</a></li><li><a href="#6">Set run parameters</a></li><li><a href="#7">Iterate over examined pupil sizes</a></li><li><a href="#9">Retrieve examined pupil radius</a></li><li><a href="#10">Create human optics with examined pupil radius</a></li><li><a href="#11">Initialize optical image with desired optics</a></li><li><a href="#12">Compute optical image for given scene</a></li><li><a href="#13">Set the scene's angular size = 1 deg and it's distance to the lens = 1.0 meter</a></li><li><a href="#14">Compute optical image</a></li><li><a href="#15">Retrieve the full OTF</a></li><li><a href="#16">Retrieve the wavelength axis</a></li><li><a href="#17">Retrieve the spatial frequency support in cycles/micron</a></li><li><a href="#18">Convert spatial frequency to cycles/deg.</a></li><li><a href="#19">Get 2D OTF slice at target wavelength</a></li><li><a href="#20">Unwrap spectrum</a></li><li><a href="#21">Get a 1D slice (sfY=0, sfX)</a></li><li><a href="#22">Generate modelOTF using Watson's (2013) model</a></li><li><a href="#24">Generate plots, if so specified</a></li><li><a href="#26">Plot of ISETBIO vs. Watson's OTF for different pupil sizes at OTFsliceWavelength</a></li><li><a href="#27">ISETBIO's OTF slices at the examined pupil sizes</a></li><li><a href="#28">Watson's OTF slices at the examined pupil sizes</a></li><li><a href="#29">ISETBIO's OTF slices at different wavelengths and a 4 mm pupil</a></li><li><a href="#30">Watson's OTF slices at different wavelengths and a 4mm pupil</a></li><li><a href="#33">Watson's model</a></li><li><a href="#34">Helper plotting funtions</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> validateOTFandPupilSize(runParams)
 <span class="comment">%</span>
-<span class="comment">% Validate the OTF as a function of pupil size by comparing it to the OTFs</span>
-<span class="comment">% derived by Watson in  Watson JOV (2013) "A formula for the mean human</span>
-<span class="comment">% optical modulation transfer function as a function of pupil size".</span>
+<span class="comment">% Validate the ISETBIO's OTF as a function of pupil size by comparing it to the Watson (2013) OTF model.</span>
+<span class="comment">% "A formula for the mean human optical modulation transfer function as a function of pupil size".</span>
 <span class="comment">% http://www.journalofvision.org/content/13/6/18.short?related-urls=yes&amp;legid=jov;13/6/18)</span>
 <span class="comment">%</span>
 
@@ -243,7 +242,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         legendEntries{index} = sprintf(<span class="string">'PD = %2.1f mm'</span>, examinedPupilDiametersInMillimeters(index));
     <span class="keyword">end</span>
     figNum = 2;
-    textLabel = sprintf(<span class="string">'ISETBIO OTF: Lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
+    textLabel = sprintf(<span class="string">'ISETBIO OTF2: Lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
 <span class="keyword">end</span>
 
@@ -356,9 +355,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 ##### SOURCE BEGIN #####
 function validateOTFandPupilSize(runParams)
 %
-% Validate the OTF as a function of pupil size by comparing it to the OTFs
-% derived by Watson in  Watson JOV (2013) "A formula for the mean human
-% optical modulation transfer function as a function of pupil size".
+% Validate the ISETBIO's OTF as a function of pupil size by comparing it to the Watson (2013) OTF model.
+% "A formula for the mean human optical modulation transfer function as a function of pupil size".
 % http://www.journalofvision.org/content/13/6/18.short?related-urls=yes&legid=jov;13/6/18)
 %
 
@@ -591,7 +589,7 @@ function visualizeISETBIO1(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, ...
         legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
     end
     figNum = 2;
-    textLabel = sprintf('ISETBIO OTF: Lambda = %2.0f nm', OTFwavelengths(waveIndex));
+    textLabel = sprintf('ISETBIO OTF2: Lambda = %2.0f nm', OTFwavelengths(waveIndex));
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
 end
 
