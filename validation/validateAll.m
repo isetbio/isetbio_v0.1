@@ -17,11 +17,11 @@ function validateAll()
     
     % 3. Whether to append the validation results to the history of ground truth data sets.
     % Defaults to false.
-    unitTestOBJ.addResultsToGroundTruthHistory = false;
+    unitTestOBJ.addResultsToGroundTruthHistory = true;
     
     % 4. Whether to push results to github upon a sucessful validation outcome. 
     % Defaults to true;
-    unitTestOBJ.pushToGitHubOnSuccessfulValidation = false;
+    unitTestOBJ.pushToGitHubOnSuccessfulValidation = true;
     
     % 5. Whether @UnitTest will ask the user which ground truth data set to use in case there are
     % more than one in the history of saved ground truth data sets.
@@ -29,8 +29,10 @@ function validateAll()
     unitTestOBJ.queryUserIfMoreThanOneGroundTruthDataSetsExist = true;
     
     % 6. Set numeric tolerance below which two numeric values are to be
-    % considered equal. Defaults to 100*eps.
-    unitTestOBJ.numericTolerance = 100*eps;
+    % considered equal. Defaults to 100*eps. IN practice, we have
+    % found that computations on different (MAC) machines may differ by up to
+    % 400*eps.
+    unitTestOBJ.numericTolerance = 500*eps;
     
     % 7. Minimum level at which feedback messages will be emitted to the user via the command window.
     % For minimum output set this to UnitTest.MAXIMUM_IMPORTANCE
