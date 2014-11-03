@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">Initialize ISETBIO</a></li><li><a href="#6">Isetbio validation code goes here.</a></li><li><a href="#7">Update validation params:</a></li><li><a href="#8">Generate plots, if so specified</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> validateSkeleton(runParams)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Skeleton validation script</a></li><li><a href="#4">Initialize return params</a></li><li><a href="#5">Initialize ISETBIO</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> validateSkeleton(runParams)
 <span class="comment">%</span>
 <span class="comment">% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code.</span>
 <span class="comment">%</span>
@@ -82,12 +82,25 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     validationFailedFlag = false;
     validationDataToSave = struct();
 </pre><h2>Initialize ISETBIO<a name="5"></a></h2><pre class="codeinput">    s_initISET;
-</pre><h2>Isetbio validation code goes here.<a name="6"></a></h2><h2>Update validation params:<a name="7"></a></h2><p>- validationReport (string) This should contain a useful message about the result of the script.</p><p>- validationFailedFlag (boolean) This should be set to true if the results are not what you expect   (indicating a failed validation). Otherwise, if everything went OK, set it to false.</p><p>- validationDataToSave (struct) Use this struct to add data which you  would like to save and    which will be contrasted against a ground truth data set.</p><h2>Generate plots, if so specified<a name="8"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
-        <span class="comment">% Plotting code goes here.</span>
+
+    <span class="comment">% Your isetbio validation code goes here.</span>
+
+    <span class="comment">% At the end of the validation code update the following params:</span>
+    <span class="comment">% - validationReport (string) This should contain a useful message about the result of the script.</span>
+    <span class="comment">%</span>
+    <span class="comment">% - validationFailedFlag (boolean) This should be set to true if the results are not what you expect</span>
+    <span class="comment">%   (indicating a failed validation). Otherwise, if everything went OK, set it to false.</span>
+    <span class="comment">%</span>
+    <span class="comment">% - validationDataToSave (struct) Use this struct to add data which you  would like to save and</span>
+    <span class="comment">%    which will be contrasted against a ground truth data set.</span>
+
+    <span class="comment">% Generate plots, if so specified</span>
+    <span class="keyword">if</span> (nargin &gt;= 1) &amp;&amp; (isfield(runParams, <span class="string">'generatePlots'</span>)) &amp;&amp; (runParams.generatePlots == true)
+        <span class="comment">% Your plotting code goes here.</span>
     <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><pre class="codeoutput">
-[ 7.] Results for 'validateSkeleton' probe: PASSED</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+[ 6.] Results for 'validateSkeleton' probe: PASSED</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function validateSkeleton(runParams)
 %
@@ -112,9 +125,9 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     %% Initialize ISETBIO
     s_initISET;
     
-    %% Isetbio validation code goes here.  
+    % Your isetbio validation code goes here.  
     
-    %% Update validation params:
+    % At the end of the validation code update the following params:
     % - validationReport (string) This should contain a useful message about the result of the script. 
     %
     % - validationFailedFlag (boolean) This should be set to true if the results are not what you expect 
@@ -123,9 +136,9 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     % - validationDataToSave (struct) Use this struct to add data which you  would like to save and
     %    which will be contrasted against a ground truth data set.
     
-    %% Generate plots, if so specified
+    % Generate plots, if so specified
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
-        % Plotting code goes here.
+        % Your plotting code goes here.
     end
     
 end
