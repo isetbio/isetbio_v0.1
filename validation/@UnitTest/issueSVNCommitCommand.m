@@ -5,8 +5,8 @@ function issueSVNCommitCommand(obj, validationDataParamName, addNewFileFlag)
     svnBinDirectory = '/usr/bin/svn';
     
     % SVN name and password for users with read/write access
-    ISETBIO_SVN_Username = input('Enter svn username (in quotes) for platypus.psych.upenn.edu : '); 
-    ISETBIO_SVN_password = input('Enter svn password (in quotes) for platypus.psych.upenn.edu : '); 
+    ISETBIO_SVN_Username = input('Enter svn username for platypus.psych.upenn.edu : ', 's'); 
+    ISETBIO_SVN_password = input('Enter svn password for platypus.psych.upenn.edu : ', 's'); 
     
     % compose SVN checkout command
     resultsFile = 'svn_results.tmp';

@@ -76,4 +76,5 @@ function cleanUp(obj)
         end
     end % sectionIndex
     
+    cd(validationDocsDir);
 end
