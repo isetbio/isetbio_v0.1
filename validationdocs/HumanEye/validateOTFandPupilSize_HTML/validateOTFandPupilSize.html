@@ -148,7 +148,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         D           = u * 0;
         indices     = find(u_hat &lt; 1.0);
         u_hat       = u_hat(indices);
-        D(indices)  = (2/pi)*(acos(u_hat) - u_hat.*sqrt(1-u_hat.^2));    <span class="comment">% [Equation (1)]</span>
+        D(indices)  = (2/pi)*(acos(u_hat) - u_hat.*sqrt(1-u_hat.^2));           <span class="comment">% [Equation (1)]</span>
 
         <span class="keyword">function</span> u0 = IncoherentCutoffFrequency(d,lambda)
             <span class="comment">% units of u0 is cycles/deg</span>
@@ -472,7 +472,7 @@ function modelOTF = WatsonOTFmodel(d, lambda, u)
         D           = u * 0;
         indices     = find(u_hat < 1.0);
         u_hat       = u_hat(indices);
-        D(indices)  = (2/pi)*(acos(u_hat) - u_hat.*sqrt(1-u_hat.^2));    % [Equation (1)]
+        D(indices)  = (2/pi)*(acos(u_hat) - u_hat.*sqrt(1-u_hat.^2));           % [Equation (1)]
    
         function u0 = IncoherentCutoffFrequency(d,lambda)
             % units of u0 is cycles/deg
