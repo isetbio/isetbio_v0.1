@@ -243,7 +243,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         legendEntries{index} = sprintf(<span class="string">'PD = %2.1f mm'</span>, examinedPupilDiametersInMillimeters(index));
     <span class="keyword">end</span>
     figNum = 2;
-    textLabel = sprintf(<span class="string">'ISETBIO: Lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
+    textLabel = sprintf(<span class="string">'ISETBIO OTF: Lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
 <span class="keyword">end</span>
 
@@ -258,7 +258,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         legendEntries{index} = sprintf(<span class="string">'PD = %2.1f mm'</span>, examinedPupilDiametersInMillimeters(index));
     <span class="keyword">end</span>
     figNum = 3;
-    textLabel = sprintf(<span class="string">'Watson (2013) model: Lambda = %2.0f nm'</span>, testWaveLength);
+    textLabel = sprintf(<span class="string">'Watson (2013) OTF: Lambda = %2.0f nm'</span>, testWaveLength);
     plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
 
  <span class="keyword">end</span>
@@ -294,7 +294,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         legendEntries{index} = sprintf(<span class="string">'lambda = %2.0f nm'</span>, examinedWavelengths(index));
     <span class="keyword">end</span>
     figNum = 5;
-    textLabel = sprintf(<span class="string">'Watson (2013) model: PD = %2.0f mm'</span>, testPupilDiameterInMillimeter);
+    textLabel = sprintf(<span class="string">'Watson (2013) OTF: PD = %2.0f mm'</span>, testPupilDiameterInMillimeter);
     plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
 <span class="keyword">end</span>
 
@@ -591,7 +591,7 @@ function visualizeISETBIO1(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, ...
         legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
     end
     figNum = 2;
-    textLabel = sprintf('ISETBIO: Lambda = %2.0f nm', OTFwavelengths(waveIndex));
+    textLabel = sprintf('ISETBIO OTF: Lambda = %2.0f nm', OTFwavelengths(waveIndex));
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
 end
 
@@ -606,7 +606,7 @@ end
         legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
     end
     figNum = 3;
-    textLabel = sprintf('Watson (2013) model: Lambda = %2.0f nm', testWaveLength);
+    textLabel = sprintf('Watson (2013) OTF: Lambda = %2.0f nm', testWaveLength);
     plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
 
  end
@@ -642,7 +642,7 @@ function visualizeWatson2(examinedWavelengths, testPupilDiameterInMillimeter)
         legendEntries{index} = sprintf('lambda = %2.0f nm', examinedWavelengths(index));
     end
     figNum = 5;
-    textLabel = sprintf('Watson (2013) model: PD = %2.0f mm', testPupilDiameterInMillimeter);
+    textLabel = sprintf('Watson (2013) OTF: PD = %2.0f mm', testPupilDiameterInMillimeter);
     plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
 end
 
