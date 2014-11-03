@@ -49,11 +49,11 @@ function validateAll()
 
     % Parameters that can be set separately (if need be) for each probe.
     % If you want execution to continue on error use the following setting:
-    onErrorReaction = 'CatchExcemption'; 
+    onErrorReaction = 'CatchExemption'; 
 
     % Specify how to react if an excemption is raised
     % If you want execution to stop on error (so you can fix it) use:
-    onErrorReaction = 'RethrowExcemption';
+    onErrorReaction = 'RethrowExemption';
     
     % Flag indicating whether the published report will include the MATLAB 
     % code that was run
