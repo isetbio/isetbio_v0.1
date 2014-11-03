@@ -131,6 +131,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
             testWaveLength, examinedPupilDiametersInMillimeters, <span class="keyword">...</span>
             examinedWavelengths, testPupilDiameterInMillimeter);
 </pre><pre class="codeoutput">ISETBIO OTF: fixed wavelength, varying pupil diameters
+ISETBIO OTF: fixed wavelength, varying pupil diameters
 Watson's OTF: fixed wavelength, varying pupil diameters
 </pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_02.png" alt=""> <img vspace="5" hspace="5" src="validateOTFandPupilSize_03.png" alt=""> <img vspace="5" hspace="5" src="validateOTFandPupilSize_04.png" alt=""> <pre class="codeinput">    <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
@@ -244,9 +245,26 @@ Watson's OTF: pupil diameter, varying wavelength
         OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
         legendEntries{index} = sprintf(<span class="string">'PD = %2.1f mm'</span>, examinedPupilDiametersInMillimeters(index));
     <span class="keyword">end</span>
+    figNum = 20;
+    textLabel = sprintf(<span class="string">'ISETBIO: Lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
+    plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
+
+    disp(<span class="string">'ISETBIO OTF: fixed wavelength, varying pupil diameters'</span>);
+    legendEntries = {};
+    OTFslices = [];
+    [~,waveIndex] = min(abs(OTFwavelengths - testWaveLength));
+    <span class="keyword">for</span> index = 1:numel(examinedPupilDiametersInMillimeters)
+        OTF2D = fftshift(squeeze(OTF3D(index,:,:,waveIndex)));
+        <span class="comment">% Get a 2D slice through origin</span>
+        OTFsliceSFY = 0.0;
+        [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
+        OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
+        legendEntries{index} = sprintf(<span class="string">'PD = %2.1f mm'</span>, examinedPupilDiametersInMillimeters(index));
+    <span class="keyword">end</span>
     figNum = 2;
     textLabel = sprintf(<span class="string">'ISETBIO: Lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
+
 
     disp(<span class="string">'Watson''s OTF: fixed wavelength, varying pupil diameters'</span>);
     modelOTFsfX = 0:0.01:120;
@@ -442,7 +460,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         OTFslices{pupilSizeIndex}.model = WatsonOTFmodel(pupilDiameterInMillimeters, testWaveLength, modelOTFsfX);
     end
     
-    %% Generate plots, if so specified
+   %% Generate plots, if so specified
    if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
        
         %% Plot of ISETBIO vs. Watson's OTF for different pupil sizes at the examined wavelength
@@ -488,7 +506,6 @@ end
 
 
 %% Helper plotting funtions
-
 function plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, examinedWaveLength, logPlotScaling)
             
     plotWidth  = 0.29;
@@ -573,10 +590,27 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
         OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
         legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
     end
-    figNum = 2;
+    figNum = 20;
     textLabel = sprintf('ISETBIO: Lambda = %2.0f nm', OTFwavelengths(waveIndex));
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
 
+    disp('ISETBIO OTF: fixed wavelength, varying pupil diameters');
+    legendEntries = {};
+    OTFslices = [];
+    [~,waveIndex] = min(abs(OTFwavelengths - testWaveLength));
+    for index = 1:numel(examinedPupilDiametersInMillimeters)
+        OTF2D = fftshift(squeeze(OTF3D(index,:,:,waveIndex)));
+        % Get a 2D slice through origin
+        OTFsliceSFY = 0.0;
+        [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
+        OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
+        legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
+    end
+    figNum = 2;
+    textLabel = sprintf('ISETBIO: Lambda = %2.0f nm', OTFwavelengths(waveIndex));
+    plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
+    
+    
     disp('Watson''s OTF: fixed wavelength, varying pupil diameters');
     modelOTFsfX = 0:0.01:120;  
     legendEntries = {};
