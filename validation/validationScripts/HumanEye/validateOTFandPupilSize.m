@@ -13,7 +13,7 @@ function validateOTFandPupilSize(runParams)
     UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
 end
 
-%% Skeleton validation script
+%% Validation script for OTF: contrasting to Watson's (2013) model.
 function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
     %% Initialize return params
@@ -24,27 +24,35 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     %% Initialize ISETBIO
     s_initISET;
     
-
+    %% Set run parameters
     
     % Pupil diameters to test
     examinedPupilDiametersInMillimeters = (2:0.5:6.0);
     
+    % Wavelength at which to slice the OTF
+    testWaveLength = 560;
+    
+    % Spatial frequencies at which to evaluate the Watson (2013) model OTF
+    modelOTFsfX = 0:0.05:100;
+    
+    %% Iterate over examined pupil sizes
     for pupilSizeIndex = 1:numel(examinedPupilDiametersInMillimeters)
         
         %% Retrieve examined pupil radius 
         pupilDiameterInMillimeters = examinedPupilDiametersInMillimeters(pupilSizeIndex);
         pupilRadiusInMeters = pupilDiameterInMillimeters/2.0/1000.0;
         
-        %% Create human optics with given pupil radius
+        %% Create human optics with examined pupil radius
         optics = opticsCreate('human', pupilRadiusInMeters);
         
-        %% Initialize optical image with above optics
+        %% Initialize optical image with desired optics
         oi = oiCreate('human');
         oi = oiSet(oi, 'optics', optics);
         
         %% Compute optical image for given scene
         scene = sceneCreate('line d65');
-        %% Make the scene angular size = 1 deg and place it at a distance = 1.0 m
+        
+        %% Set the scene's angular size = 1 deg and it's distance to the lens = 1.0 meter
         sceneAngularSizeInDeg = 2.0;
         sceneDistanceInMeters = 1.0;
         scene = sceneSet(scene,'wangular', sceneAngularSizeInDeg);
@@ -53,184 +61,75 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         %% Compute optical image
         oi = oiCompute(scene,oi); 
         
-        
         %% Retrieve the full OTF
         optics = oiGet(oi, 'optics');
-        OTF    = abs(opticsGet(optics,'otf data'));
+        OTF3D(pupilSizeIndex,:,:,:) = abs(opticsGet(optics,'otf data'));
         
         %% Retrieve the wavelength axis
         OTFwavelengths = opticsGet(optics,'otf wave');
         
-        %% Retrieve the spatial frequency support. This is in cycles/micron
+        %% Retrieve the spatial frequency support in cycles/micron
         OTFsupport = opticsGet(optics,'otf support', 'um');
-        
         otf_sfXInCyclesPerMicron = OTFsupport{1};
         otf_sfYInCyclesPerMicron = OTFsupport{2};
         
-        %% Convert to cycles/deg.
+        %% Convert spatial frequency to cycles/deg.
         % In human retina, 1 deg of visual angle is about 288 microns
         micronsPerDegee = 288;
         otf_sfX = otf_sfXInCyclesPerMicron * micronsPerDegee;
         otf_sfY = otf_sfYInCyclesPerMicron * micronsPerDegee;
         
-        %% Get the 2D slice at target wavelength
-        targetWavelength = 580;
-        [~,waveIndex]   = min(abs(OTFwavelengths - targetWavelength));
-        examinedWaveLength = OTFwavelengths(waveIndex);
+        %% Get 2D OTF slice at target wavelength
+        [~,waveIndex] = min(abs(OTFwavelengths - testWaveLength));
+        testWaveLength = OTFwavelengths(waveIndex);
         
-        %% Shift (0,0) to origin
-        OTF550 = fftshift(squeeze(OTF(:,:,waveIndex)));
+        %% Unwrap spectrum
+        OTF2D = fftshift(squeeze(OTF3D(pupilSizeIndex,:,:,waveIndex)));
         
-        %% Get a 2D slice through origin
-        [~, sfIndex] = min(abs(otf_sfY - 0));
-        OTFslice = squeeze(OTF550(sfIndex,:));
+        %% Get a 1D slice (sfY=0, sfX)
+        OTFsliceSFY = 0.0;
+        [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
+        OTFslices{pupilSizeIndex}.isetbio = squeeze(OTF2D(sfIndex,:));
         
-        
-        %% Generate plots, if so specified
-        if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
-        
-            plotWidth  = 0.29;
-            plotHeight = 0.30;
-            margin     = 0.026;
-            
-            if (pupilSizeIndex == 1)
-                h = figure(1);
-                set(h, 'Position', [100 100 820 740]);
-                clf;
-            end
-            
-            subplotRow = floor((pupilSizeIndex-1)/3)+1;
-            subplotCol = mod(pupilSizeIndex-1,3)+1;
-            subplot('Position', [0.06+(subplotCol-1)*(plotWidth+margin) 1+margin/2-subplotRow*(plotHeight+margin) plotWidth plotHeight]);
-            
-            indices = find(otf_sfX >= 0);
-            OTFsfX = otf_sfX(indices);
-            
-            logPlotScaling = false;
-            if logPlotScaling
-                OTFsfX = OTFsfX+0.001;
-            end
-            
-            % Plot the 1D OTF slice
-            plot(OTFsfX, OTFslice(indices), 'ks-', 'MarkerSize', 6, 'MarkerFaceColor', [0.85 0.85 0.85]);
-            hold on;
-            
-            % plot the modelOTF from Watson's model
-            modelOTF = WatsonOTFmodel(pupilDiameterInMillimeters, examinedWaveLength, OTFsfX);
-
-            plot(OTFsfX, modelOTF, 'r-', 'LineWidth', 2.0);
-            hold off;
-              
-            set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
-            
-            if logPlotScaling 
-                set(gca, 'XLim', [0.1 60], 'YLim', [0.001 1]);
-                set(gca, 'XScale', 'log', 'YScale', 'log', 'XTick', [0.1 1 2 5 10 20 50 100], 'YTick', [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
-                set(gca, 'XTickLabel', [0.1 1 2 5 10 20 50 100], 'YTickLabel',  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
-                text(0.12, 0.002, sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(pupilSizeIndex)), ...
-                    'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor',[.89 .99 .78], 'EdgeColor', [0 0 0]);
-            else
-                set(gca, 'XLim', [0.0 60], 'YLim', [0.0 1]);
-                set(gca, 'XScale', 'linear', 'YScale', 'linear', 'XTick', [0:10:100], 'YTick', [0.0:0.1:1.0]);
-                set(gca, 'XTickLabel', [0:10:100], 'YTickLabel',  [0.0:0.1:1.0]);
-                text(38, 0.75, sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(pupilSizeIndex)), ...
-                    'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor',[.89 .99 .78], 'EdgeColor', [0 0 0]);
-            end
-            
-            if (subplotRow == 3)
-               xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-            else
-               xlabel(''); 
-               
-            end
-            
-            if (subplotCol == 1)
-               ylabel('gain', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-            else
-               ylabel(''); 
-               set(gca, 'YTickLabel', []);
-            end
-            
-            lgndHandle = legend({'ISETBIO', 'Watson (2013)'}, 'Location', 'NorthEast');
-            set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-            
-            box on;
-            grid on;
-            colormap(gray(256));
-
-            drawnow; 
-        end 
+        %% Generate modelOTF using Watson's (2013) model
+        OTFslices{pupilSizeIndex}.model = WatsonOTFmodel(pupilDiameterInMillimeters, testWaveLength, modelOTFsfX);
     end
     
-    if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
-        clear 'modelOTF'
+   %% Generate plots, if so specified
+   if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
+       
+        %% Plot of ISETBIO vs. Watson's OTF for different pupil sizes at OTFsliceWavelength
+        logPlotScaling = false;
+        plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, testWaveLength, logPlotScaling);
         
-        h = figure(2);
-        set(h, 'Position', [100 100 820 420]);
-        clf;
-        sf = 0:0.01:120;
         
-        examinedPupilDiametersInMillimeters = 2:0.5:6;
-        for index = 1:numel(examinedPupilDiametersInMillimeters)
-            modelOTF(index,:) = WatsonOTFmodel(examinedPupilDiametersInMillimeters(index), examinedWaveLength, sf);
-        end
-
-%         examinedWaveLengths = [400:50:800];
-%         for index = 1:numel(examinedWaveLengths)
-%             examinedWaveLength = examinedWaveLengths(index);
-%             modelOTF(index,:) = WatsonOTFmodel(4, examinedWaveLength, sf);
-%         end
+        %% ISETBIO's OTF slices at the examined pupil sizes
+        visualizeISETBIO1(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, ...
+            testWaveLength, examinedPupilDiametersInMillimeters);
         
-        colors = hsv(size(modelOTF,1)+1);
+        %% Watson's OTF slices at the examined pupil sizes
+        visualizeWatson1(testWaveLength, examinedPupilDiametersInMillimeters);
         
-        subplot('Position', [0.06 0.11 0.44 0.80]); 
-        hold on
-        for index = 1:size(modelOTF,1)
-            plot(sf, modelOTF(index,:), 'k-', 'Color', squeeze(colors(index,:)), 'LineWidth', 2);
-        end
-        hold off;
-        lgndHandle = legend({'PD = 2.0mm', 'PD = 2.5mm', 'PD = 3.0mm', 'PD = 3.5mm', 'PD = 4.0mm', 'PD = 4.5mm', 'PD = 5.0mm', 'PD = 5.5mm', 'PD = 6.0mm'});
-        set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-            
-        set(gca, 'XLim', [0 120], 'YLim', [0 1.02]);
-        set(gca, 'XScale', 'linear', 'YScale', 'linear', 'XTick', [0:10:120], 'YTick', [0:0.1:1.0]);
-        set(gca, 'XTickLabel', [0:10:120], 'YTickLabel',  [0:0.1:1.0]);
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
-        xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-        ylabel('Gain', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+        %% ISETBIO's OTF slices at different wavelengths and a 4 mm pupil
+        examinedWavelengths = 700:-20:400;
+        testPupilDiameterInMillimeter = 4.0;
+        visualizeISETBIO2(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, ...
+            examinedPupilDiametersInMillimeters, ...
+            examinedWavelengths, testPupilDiameterInMillimeter);
         
-        box on;
-        grid on;
-        title('Watson (2013) Model (linear coords)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-        
-        subplot('Position', [0.54 0.11 0.44 0.80]); 
-        hold on
-        for index = 1:size(modelOTF,1)
-            plot(sf, modelOTF(index,:), 'k-', 'Color', squeeze(colors(index,:)),  'LineWidth', 2);
-        end
-        hold off;
-        
-        lgndHandle = legend({'PD = 2.0mm', 'PD = 2.5mm', 'PD = 3.0mm', 'PD = 3.5mm', 'PD = 4.0mm', 'PD = 4.5mm', 'PD = 5.0mm', 'PD = 5.5mm', 'PD = 6.0mm'}, 'Location', 'SouthWest');
-        set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-            
-        set(gca, 'XLim', [0.1 120], 'YLim', [0.001 1.1]);
-        set(gca, 'XScale', 'log', 'YScale', 'log', 'XTick', [0.1 1 2 5 10 20 50 100], 'YTick', [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
-        set(gca, 'XTickLabel', [0.1 1 2 5 10 20 50 100], 'YTickLabel',  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
-        xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-        
-        box on;
-        grid on;
-        title('Watson (2013) Model (log coords)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-        drawnow;
+        %% Watson's OTF slices at different wavelengths and a 4mm pupil
+        visualizeWatson2(examinedWavelengths, testPupilDiameterInMillimeter);
     end
-    
 end
 
-% Method to compute Watson's OTF model as a function of pupil diameter (d, in mm)
-% wavelength (lambda), for a range of spatial frequencies (u, in cycles/deg)
+%% Watson's model 
+% Method to compute Watson's OTF model as a function of pupil diameter,
+% and wavelength for a range of spatial frequencies.
 function modelOTF = WatsonOTFmodel(d, lambda, u)
-
+    % d:      pupil diameter in mm
+    % lambda: wavelength in nm
+    % u:      spatial frequency in cycles/deg
+    
     u1       = 21.95 - 5.512*d + 0.3922 * d^2;                                  % [Equation (4)]
     D        = DiffractionLimitedMTF(u,d, lambda);   
     modelOTF = ((1 + (u/u1).^2).^(-0.62)) .* sqrt(D);                           % [Equation (5)]
@@ -242,11 +141,205 @@ function modelOTF = WatsonOTFmodel(d, lambda, u)
         D           = u * 0;
         indices     = find(u_hat < 1.0);
         u_hat       = u_hat(indices);
-        D(indices)  = (2/pi)*(acos(u_hat) - u_hat.*sqrt(1-u_hat.^2));    % [Equation (1)]
+        D(indices)  = (2/pi)*(acos(u_hat) - u_hat.*sqrt(1-u_hat.^2));           % [Equation (1)]
    
         function u0 = IncoherentCutoffFrequency(d,lambda)
             % units of u0 is cycles/deg
             u0 = (d * pi * 10^6)/(lambda*180);                                  % [Equation (3)]
         end
     end
+end
+
+
+%% Helper plotting funtions
+function plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, examinedWaveLength, logPlotScaling)
+            
+    plotWidth  = 0.29;
+    plotHeight = 0.30;
+    margin     = 0.026;
+
+    h = figure(1);
+    set(h, 'Position', [100 100 820 740]);
+    clf;
+        
+    for pupilSizeIndex = 1:numel(examinedPupilDiametersInMillimeters)
+        subplotRow = floor((pupilSizeIndex-1)/3)+1;
+        subplotCol = mod(pupilSizeIndex-1,3)+1;
+        subplot('Position', [0.06+(subplotCol-1)*(plotWidth+margin) 1+margin/2-subplotRow*(plotHeight+margin) plotWidth plotHeight]);
+
+        if logPlotScaling
+            OTFsfX = OTFsfX+0.1;
+            modelOTFsfX = modelOTFsfX + 0.1;
+        end
+
+        % Plot the 1D OTF slices
+        indices = find(otf_sfX >= 0);
+        plot(otf_sfX(indices), OTFslices{pupilSizeIndex}.isetbio(indices), 'ks-', 'MarkerSize', 6, 'MarkerFaceColor', [0.85 0.85 0.85]);
+        hold on;
+        plot(modelOTFsfX, OTFslices{pupilSizeIndex}.model, 'r-', 'LineWidth', 2.0);
+        hold off;
+
+        set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
+
+        textString = sprintf('PD = %2.1f mm\nlambda = %2.0f nm', examinedPupilDiametersInMillimeters(pupilSizeIndex), examinedWaveLength);
+        if logPlotScaling 
+            set(gca, 'XLim', [0.1 60], 'YLim', [0.001 1]);
+            set(gca, 'XScale', 'log', 'YScale', 'log', 'XTick', [0.1 1 2 5 10 20 50 100], 'YTick', [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
+            set(gca, 'XTickLabel', [0.1 1 2 5 10 20 50 100], 'YTickLabel',  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
+            text(0.14, 0.006, textString, 'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor',[.89 .99 .78], 'EdgeColor', [0 0 0]);
+        else
+            set(gca, 'XLim', [0.0 60], 'YLim', [0.0 1]);
+            set(gca, 'XScale', 'linear', 'YScale', 'linear', 'XTick', [0:10:100], 'YTick', [0.0:0.1:1.0]);
+            set(gca, 'XTickLabel', [0:10:100], 'YTickLabel',  [0.0:0.1:1.0]);
+            text(32.5, 0.75, textString, 'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor',[.89 .99 .78], 'EdgeColor', [0 0 0]);
+        end
+
+        if (subplotRow == 3)
+           xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+        else
+           xlabel(''); 
+        end
+
+        if (subplotCol == 1)
+           ylabel('gain', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+        else
+           ylabel(''); 
+           set(gca, 'YTickLabel', []);
+        end
+
+        if logPlotScaling 
+            lgndHandle = legend({'ISETBIO', 'Watson (2013)'}, 'Location', 'SouthWest');
+        else
+            lgndHandle = legend({'ISETBIO', 'Watson (2013)'}, 'Location', 'NorthEast');
+        end
+        set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+
+        box on;
+        grid on;
+    end
+
+end
+     
+function visualizeISETBIO1(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, ...
+    testWaveLength, examinedPupilDiametersInMillimeters)
+        
+    legendEntries = {};
+    OTFslices = [];
+    [~,waveIndex] = min(abs(OTFwavelengths - testWaveLength));
+    for index = 1:numel(examinedPupilDiametersInMillimeters)
+        OTF2D = fftshift(squeeze(OTF3D(index,:,:,waveIndex)));
+        % Get a 2D slice through origin
+        OTFsliceSFY = 0.0;
+        [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
+        OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
+        legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
+    end
+    figNum = 2;
+    textLabel = sprintf('ISETBIO OTF2: Lambda = %2.0f nm', OTFwavelengths(waveIndex));
+    plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
+end
+
+
+ function visualizeWatson1(testWaveLength, examinedPupilDiametersInMillimeters)
+
+    modelOTFsfX = 0:0.01:120;  
+    legendEntries = {};
+    modelOTFslices = [];
+    for index = 1:numel(examinedPupilDiametersInMillimeters)
+        modelOTFslices(index,:) = WatsonOTFmodel(examinedPupilDiametersInMillimeters(index), testWaveLength, modelOTFsfX);
+        legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
+    end
+    figNum = 3;
+    textLabel = sprintf('Watson (2013) OTF: Lambda = %2.0f nm', testWaveLength);
+    plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
+
+ end
+ 
+ function visualizeISETBIO2(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, ...
+    examinedPupilDiametersInMillimeters, examinedWavelengths, testPupilDiameterInMillimeter)
+
+    legendEntries = {};
+    OTFslices = [];
+    [~,pupilSizeIndex] = min(abs(examinedPupilDiametersInMillimeters-testPupilDiameterInMillimeter));
+    for index = 1:numel(examinedWavelengths)
+        [~,waveIndex] = min(abs(OTFwavelengths - examinedWavelengths(index)));
+        OTF2D = fftshift(squeeze(OTF3D(pupilSizeIndex,:,:,waveIndex)));
+        % Get a 2D slice through origin
+        OTFsliceSFY = 0.0;
+        [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
+        OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
+        legendEntries{index} = sprintf('lambda = %2.0f nm', OTFwavelengths(waveIndex));
+    end
+    figNum = 4;
+    textLabel = sprintf('ISETBIO OTF: PD = %2.0f mm', testPupilDiameterInMillimeter);
+    plotOTFslices(figNum, textLabel, legendEntries, otf_sfX, OTFslices);
+ end
+ 
+ 
+function visualizeWatson2(examinedWavelengths, testPupilDiameterInMillimeter)
+
+    modelOTFsfX = 0:0.01:120; 
+    legendEntries = {};
+    modelOTFslices = [];
+    for index = 1:numel(examinedWavelengths)
+        modelOTFslices(index,:) = WatsonOTFmodel(testPupilDiameterInMillimeter, examinedWavelengths(index), modelOTFsfX);
+        legendEntries{index} = sprintf('lambda = %2.0f nm', examinedWavelengths(index));
+    end
+    figNum = 5;
+    textLabel = sprintf('Watson (2013) OTF: PD = %2.0f mm', testPupilDiameterInMillimeter);
+    plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
+end
+
+
+function plotOTFslices(figNum, textString, legendText, OTFsfX, OTFslices)
+   
+    h = figure(figNum);
+    set(h, 'Position', [100 100 820 420]);
+    clf;
+
+    % Use HSV color-coding
+    colors = hsv(size(OTFslices,1)+2);
+
+    subplot('Position', [0.06 0.11 0.44 0.80]); 
+    hold on
+    for index = 1:size(OTFslices,1)
+        plot(OTFsfX, OTFslices(index,:), 'k-', 'Color', squeeze(colors(index,:)), 'LineWidth', 2);
+    end
+    hold off;
+    lgndHandle = legend(legendText);
+    set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+
+    set(gca, 'XLim', [0 60], 'YLim', [0 1.02]);
+    set(gca, 'XScale', 'linear', 'YScale', 'linear', 'XTick', [0:10:120], 'YTick', [0:0.1:1.0]);
+    set(gca, 'XTickLabel', [0:10:120], 'YTickLabel',  [0:0.1:1.0]);
+    set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
+    xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+    ylabel('Gain', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+
+    box on;
+    grid on;
+    title(sprintf('%s (linear coords)',textString), 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+
+    % Now in log-coords
+    subplot('Position', [0.54 0.11 0.44 0.80]); 
+    hold on
+    OTFsfX = OTFsfX+0.1;
+    for index = 1:size(OTFslices,1)
+        plot(OTFsfX, OTFslices(index,:), 'k-', 'Color', squeeze(colors(index,:)),  'LineWidth', 2);
+    end
+    hold off;
+
+    lgndHandle = legend(legendText, 'Location', 'SouthWest');
+    set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+
+    set(gca, 'XLim', [0.1 60], 'YLim', [0.01 1.1]);
+    set(gca, 'XScale', 'log', 'YScale', 'log', 'XTick', [0.1 1 2 5 10 20 50 100], 'YTick', [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
+    set(gca, 'XTickLabel', [0.1 1 2 5 10 20 50 100], 'YTickLabel',  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
+    set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
+    xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+
+    box on;
+    grid on;
+    title(sprintf('%s (log coords)',textString), 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+    drawnow;
 end
