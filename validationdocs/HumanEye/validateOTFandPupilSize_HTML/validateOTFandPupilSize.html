@@ -126,10 +126,12 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><h2>Plot of ISETBIO vs. Watson's OTF for different pupil sizes at the examined wavelength<a name="26"></a></h2><pre class="codeinput">        logPlotScaling = false;
         plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, testWaveLength, logPlotScaling);
 </pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_01.png" alt=""> <h2>Plot ISETBIO and Watson's OTFs slices at different pupil sizes and different wavelengths<a name="27"></a></h2><pre class="codeinput">        testPupilDiameterInMillimeter = 4.0;
-        examinedWavelengths = [400:50:800];
+        examinedWavelengths = 400:50:800;
         visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, <span class="keyword">...</span>
             testWaveLength, examinedPupilDiametersInMillimeters, <span class="keyword">...</span>
             examinedWavelengths, testPupilDiameterInMillimeter);
+</pre><pre class="codeoutput">ISETBIO OTF: fixed wavelength, varying pupil diameters
+Watson's OTF: fixed wavelength, varying pupil diameters
 </pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_02.png" alt=""> <img vspace="5" hspace="5" src="validateOTFandPupilSize_03.png" alt=""> <img vspace="5" hspace="5" src="validateOTFandPupilSize_04.png" alt=""> <pre class="codeinput">    <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><h2>Watson's model<a name="30"></a></h2><p>Method to compute Watson's OTF model as a function of pupil diameter, and wavelength for a range of spatial frequencies.</p><pre class="codeinput"><span class="keyword">function</span> modelOTF = WatsonOTFmodel(d, lambda, u)
@@ -156,6 +158,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 <span class="keyword">end</span>
+</pre><pre class="codeoutput">ISETBIO OTF: pupil diameter, varying wavelength
+Watson's OTF: pupil diameter, varying wavelength
 </pre><h2>Helper plotting funtions<a name="31"></a></h2><pre class="codeinput"><span class="keyword">function</span> plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, examinedWaveLength, logPlotScaling)
 
     plotWidth  = 0.29;
@@ -228,6 +232,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     testWaveLength, examinedPupilDiametersInMillimeters, <span class="keyword">...</span>
     examinedWavelengths, testPupilDiameterInMillimeter)
 
+    disp(<span class="string">'ISETBIO OTF: fixed wavelength, varying pupil diameters'</span>);
     legendEntries = {};
     OTFslices = [];
     [~,waveIndex] = min(abs(OTFwavelengths - testWaveLength));
@@ -243,7 +248,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     textLabel = sprintf(<span class="string">'ISETBIO: Lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
 
-
+    disp(<span class="string">'Watson''s OTF: fixed wavelength, varying pupil diameters'</span>);
     modelOTFsfX = 0:0.01:120;
     legendEntries = {};
     modelOTFslices = [];
@@ -255,11 +260,10 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     textLabel = sprintf(<span class="string">'Watson (2013) model: Lambda = %2.0f nm'</span>, testWaveLength);
     plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
 
-
+    disp(<span class="string">'ISETBIO OTF: pupil diameter, varying wavelength'</span>);
     legendEntries = {};
     OTFslices = [];
     [~,pupilSizeIndex] = min(abs(examinedPupilDiametersInMillimeters-testPupilDiameterInMillimeter));
-
     <span class="keyword">for</span> index = 1:numel(examinedWavelengths)
         [~,waveIndex] = min(abs(OTFwavelengths - examinedWavelengths(index)));
         OTF2D = fftshift(squeeze(OTF3D(pupilSizeIndex,:,:,waveIndex)));
@@ -273,7 +277,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     textLabel = sprintf(<span class="string">'ISETBIO OTF: PD = %2.0f mm'</span>, testPupilDiameterInMillimeter);
     plotOTFslices(figNum, textLabel, legendEntries, otf_sfX, OTFslices);
 
-
+    disp(<span class="string">'Watson''s OTF: pupil diameter, varying wavelength'</span>);
     legendEntries = {};
     modelOTFslices = [];
     <span class="keyword">for</span> index = 1:numel(examinedWavelengths)
@@ -336,6 +340,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         box <span class="string">on</span>;
         grid <span class="string">on</span>;
         title(sprintf(<span class="string">'%s (log coords)'</span>,textString), <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+        drawnow;
 <span class="keyword">end</span>
 </pre><pre class="codeoutput">
 [ 4.] Results for 'validateOTFandPupilSize' probe: PASSED</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
@@ -446,7 +451,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         
         %% Plot ISETBIO and Watson's OTFs slices at different pupil sizes and different wavelengths
         testPupilDiameterInMillimeter = 4.0;
-        examinedWavelengths = [400:50:800];
+        examinedWavelengths = 400:50:800;
         visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, ...
             testWaveLength, examinedPupilDiametersInMillimeters, ...
             examinedWavelengths, testPupilDiameterInMillimeter);
@@ -556,6 +561,7 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
     testWaveLength, examinedPupilDiametersInMillimeters, ...
     examinedWavelengths, testPupilDiameterInMillimeter)
         
+    disp('ISETBIO OTF: fixed wavelength, varying pupil diameters');
     legendEntries = {};
     OTFslices = [];
     [~,waveIndex] = min(abs(OTFwavelengths - testWaveLength));
@@ -571,7 +577,7 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
     textLabel = sprintf('ISETBIO: Lambda = %2.0f nm', OTFwavelengths(waveIndex));
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
 
-
+    disp('Watson''s OTF: fixed wavelength, varying pupil diameters');
     modelOTFsfX = 0:0.01:120;  
     legendEntries = {};
     modelOTFslices = [];
@@ -583,11 +589,10 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
     textLabel = sprintf('Watson (2013) model: Lambda = %2.0f nm', testWaveLength);
     plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
 
-
+    disp('ISETBIO OTF: pupil diameter, varying wavelength');
     legendEntries = {};
     OTFslices = [];
     [~,pupilSizeIndex] = min(abs(examinedPupilDiametersInMillimeters-testPupilDiameterInMillimeter));
-
     for index = 1:numel(examinedWavelengths)
         [~,waveIndex] = min(abs(OTFwavelengths - examinedWavelengths(index)));
         OTF2D = fftshift(squeeze(OTF3D(pupilSizeIndex,:,:,waveIndex)));
@@ -601,7 +606,7 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
     textLabel = sprintf('ISETBIO OTF: PD = %2.0f mm', testPupilDiameterInMillimeter);
     plotOTFslices(figNum, textLabel, legendEntries, otf_sfX, OTFslices);
 
-
+    disp('Watson''s OTF: pupil diameter, varying wavelength');
     legendEntries = {};
     modelOTFslices = [];
     for index = 1:numel(examinedWavelengths)
@@ -664,6 +669,7 @@ function plotOTFslices(figNum, textString, legendText, OTFsfX, OTFslices)
         box on;
         grid on;
         title(sprintf('%s (log coords)',textString), 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+        drawnow;
 end
 
 ##### SOURCE END #####
