@@ -1,8 +1,7 @@
 function validateOTFandPupilSize(runParams)
 %
-% Validate the OTF as a function of pupil size by comparing it to the OTFs
-% derived by Watson in  Watson JOV (2013) "A formula for the mean human
-% optical modulation transfer function as a function of pupil size".
+% Validate the ISETBIO's OTF as a function of pupil size by comparing it to the Watson (2013) OTF model.
+% "A formula for the mean human optical modulation transfer function as a function of pupil size".
 % http://www.journalofvision.org/content/13/6/18.short?related-urls=yes&legid=jov;13/6/18)
 %
 

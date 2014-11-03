@@ -21,9 +21,9 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     %% Initialize ISETBIO
     s_initISET;
     
-    % Your isetbio validation code goes here.  
+    %% Isetbio validation code goes here.  
     
-    % At the end of the validation code update the following params:
+    %% Update validation params:
     % - validationReport (string) This should contain a useful message about the result of the script. 
     %
     % - validationFailedFlag (boolean) This should be set to true if the results are not what you expect 
@@ -32,9 +32,9 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     % - validationDataToSave (struct) Use this struct to add data which you  would like to save and
     %    which will be contrasted against a ground truth data set.
     
-    % Generate plots, if so specified
+    %% Generate plots, if so specified
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
-        % Your plotting code goes here.
+        % Plotting code goes here.
     end
     
 end
