@@ -128,7 +128,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_01.png" alt=""> <h2>ISETBIO's OTF slices at the examined pupil sizes<a name="27"></a></h2><pre class="codeinput">        visualizeISETBIO1(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, <span class="keyword">...</span>
             testWaveLength, examinedPupilDiametersInMillimeters);
 </pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_02.png" alt=""> <h2>Watson's OTF slices at the examined pupil sizes<a name="28"></a></h2><pre class="codeinput">        visualizeWatson1(testWaveLength, examinedPupilDiametersInMillimeters);
-</pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_03.png" alt=""> <h2>ISETBIO's OTF slices at different wavelengths and a 4 mm pupil<a name="29"></a></h2><pre class="codeinput">        examinedWavelengths = 800:-50:400;
+</pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_03.png" alt=""> <h2>ISETBIO's OTF slices at different wavelengths and a 4 mm pupil<a name="29"></a></h2><pre class="codeinput">        examinedWavelengths = 700:-20:400;
         testPupilDiameterInMillimeter = 4.0;
         visualizeISETBIO2(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, <span class="keyword">...</span>
             examinedPupilDiametersInMillimeters, <span class="keyword">...</span>
@@ -306,7 +306,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     clf;
 
     <span class="comment">% Use HSV color-coding</span>
-    colors = hsv(size(OTFslices,1)+1);
+    colors = hsv(size(OTFslices,1)+2);
 
     subplot(<span class="string">'Position'</span>, [0.06 0.11 0.44 0.80]);
     hold <span class="string">on</span>
@@ -467,7 +467,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         visualizeWatson1(testWaveLength, examinedPupilDiametersInMillimeters);
         
         %% ISETBIO's OTF slices at different wavelengths and a 4 mm pupil
-        examinedWavelengths = 800:-50:400;
+        examinedWavelengths = 700:-20:400;
         testPupilDiameterInMillimeter = 4.0;
         visualizeISETBIO2(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, ...
             examinedPupilDiametersInMillimeters, ...
@@ -654,7 +654,7 @@ function plotOTFslices(figNum, textString, legendText, OTFsfX, OTFslices)
     clf;
 
     % Use HSV color-coding
-    colors = hsv(size(OTFslices,1)+1);
+    colors = hsv(size(OTFslices,1)+2);
 
     subplot('Position', [0.06 0.11 0.44 0.80]); 
     hold on
