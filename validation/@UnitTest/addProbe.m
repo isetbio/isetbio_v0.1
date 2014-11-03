@@ -19,6 +19,15 @@ function addProbe(obj, varargin)
     newProbe.onErrorReactBy = p.Results.onErrorReaction;
     newProbe.generatePlots  = p.Results.generatePlots;
     
+    % Before running check to make sure identifier name is not already used
+    if (obj.validationProbeIndex > 0)  
+        for pIndex = 1:obj.validationProbeIndex
+             if (strcmp(obj.allProbeData{pIndex}.name, newProbe.name))
+                 error('Probe identifier ''%s'' already in use. Please used a unique probe name for probe %d and re-rerun the validation', newProbe.name, obj.validationProbeIndex + 1);
+             end
+        end
+    end
+
     if (exist(newProbe.functionName, 'file') == 2)
         % File in path. We're good to go
         [functionDirectory, ~, ~] = fileparts(which(sprintf('%s.m',newProbe.functionName)));
@@ -94,7 +103,6 @@ function addProbe(obj, varargin)
     pIndex = obj.validationProbeIndex;
     obj.allProbeData{pIndex} = newProbe;
     
-    
     if (newProbe.result.excemptionRaised)
         % remove generated htmlDirectory so that it is not published to gitHub
         system(sprintf('rm -r -f %s',htmlDirectory));
@@ -111,7 +119,7 @@ function addProbe(obj, varargin)
         end
         
         obj.printReport();
-        fprintf(2,'\n\t ValidationReport\t:  Error (code raised an excemption which we caught). \n');
+        fprintf(2,'\n\t ValidationReport\t:  Error (code raised an exemption which we caught). \n');
         fprintf(2,'\t Excemption message\t:  %s\n', newProbe.result.message);
         return;
     end
