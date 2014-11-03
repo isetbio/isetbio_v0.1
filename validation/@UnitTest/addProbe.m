@@ -79,12 +79,12 @@ function addProbe(obj, varargin)
     end
         
     % form try-catch command string 
-    if (strcmp(newProbe.onErrorReactBy, 'CatchExcemption'))
+    if (strcmp(newProbe.onErrorReactBy, 'CatchExemption'))
         command = sprintf('try \n\t%s \n\t newProbe.result.validationReport = obj.validationReport; \n\t newProbe.result.validationData = obj.validationData; \n\t newProbe.result.validationFailedFlag = obj.validationFailedFlag; \n\t newProbe.result.excemptionRaised = false;  \ncatch err \n\t newProbe.result.excemptionRaised = true; \n\t obj.validationFailedFlag = true; \n\t newProbe.result.message = err.message; \nend', probeCommandString);
-    elseif (strcmp(newProbe.onErrorReactBy, 'RethrowExcemption'))
+    elseif (strcmp(newProbe.onErrorReactBy, 'RethrowExemption'))
         command = sprintf('try \n\t%s \n\t newProbe.result.validationReport = obj.validationReport; \n\t newProbe.result.validationData = obj.validationData; \n\t newProbe.result.validationFailedFlag = obj.validationFailedFlag; \n\t newProbe.result.excemptionRaised = false;  \ncatch err \n\t newProbe.result.excemptionRaised = true; \n\t obj.validationFailedFlag = true; \n\t newProbe.result.message = err.message; \n\t rethrow(err); \nend', probeCommandString);
     else
-        error('''onErrorReaction'':%s is an invalid mode. Choose either ''CatchingExcemption'' or ''RethrowingExcemption''.', newProbe.onErrorReactBy);
+        error('''onErrorReaction'':%s is an invalid mode. Choose either ''CatchingExemption'' or ''RethrowingExemption''.', newProbe.onErrorReactBy);
     end
     
     % Run the try-catch command
