@@ -131,9 +131,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
             testWaveLength, examinedPupilDiametersInMillimeters, <span class="keyword">...</span>
             examinedWavelengths, testPupilDiameterInMillimeter);
 </pre><pre class="codeoutput">ISETBIO OTF: fixed wavelength, varying pupil diameters
-ISETBIO OTF: fixed wavelength, varying pupil diameters
-Watson's OTF: fixed wavelength, varying pupil diameters
-</pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_02.png" alt=""> <img vspace="5" hspace="5" src="validateOTFandPupilSize_03.png" alt=""> <img vspace="5" hspace="5" src="validateOTFandPupilSize_04.png" alt=""> <pre class="codeinput">    <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_02.png" alt=""> <pre class="codeinput">    <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><h2>Watson's model<a name="30"></a></h2><p>Method to compute Watson's OTF model as a function of pupil diameter, and wavelength for a range of spatial frequencies.</p><pre class="codeinput"><span class="keyword">function</span> modelOTF = WatsonOTFmodel(d, lambda, u)
     <span class="comment">% d:      pupil diameter in mm</span>
@@ -159,8 +157,6 @@ Watson's OTF: fixed wavelength, varying pupil diameters
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">ISETBIO OTF: pupil diameter, varying wavelength
-Watson's OTF: pupil diameter, varying wavelength
 </pre><h2>Helper plotting funtions<a name="31"></a></h2><pre class="codeinput"><span class="keyword">function</span> plotISETBIOandModelOTFslices(otf_sfX, modelOTFsfX, OTFslices, examinedPupilDiametersInMillimeters, examinedWaveLength, logPlotScaling)
 
     plotWidth  = 0.29;
@@ -245,26 +241,11 @@ Watson's OTF: pupil diameter, varying wavelength
         OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
         legendEntries{index} = sprintf(<span class="string">'PD = %2.1f mm'</span>, examinedPupilDiametersInMillimeters(index));
     <span class="keyword">end</span>
-    figNum = 20;
-    textLabel = sprintf(<span class="string">'ISETBIO: Lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
-    plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
-
-    disp(<span class="string">'ISETBIO OTF: fixed wavelength, varying pupil diameters'</span>);
-    legendEntries = {};
-    OTFslices = [];
-    [~,waveIndex] = min(abs(OTFwavelengths - testWaveLength));
-    <span class="keyword">for</span> index = 1:numel(examinedPupilDiametersInMillimeters)
-        OTF2D = fftshift(squeeze(OTF3D(index,:,:,waveIndex)));
-        <span class="comment">% Get a 2D slice through origin</span>
-        OTFsliceSFY = 0.0;
-        [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
-        OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
-        legendEntries{index} = sprintf(<span class="string">'PD = %2.1f mm'</span>, examinedPupilDiametersInMillimeters(index));
-    <span class="keyword">end</span>
     figNum = 2;
     textLabel = sprintf(<span class="string">'ISETBIO: Lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
 
+    <span class="keyword">if</span> (1==2)
 
     disp(<span class="string">'Watson''s OTF: fixed wavelength, varying pupil diameters'</span>);
     modelOTFsfX = 0:0.01:120;
@@ -305,60 +286,61 @@ Watson's OTF: pupil diameter, varying wavelength
     figNum = 5;
     textLabel = sprintf(<span class="string">'Watson (2013) model: PD = %2.0f mm'</span>, testPupilDiameterInMillimeter);
     plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
+    <span class="keyword">end</span>
 <span class="keyword">end</span>
 
 
 <span class="keyword">function</span> plotOTFslices(figNum, textString, legendText, OTFsfX, OTFslices)
 
-        h = figure(figNum);
-        set(h, <span class="string">'Position'</span>, [100 100 820 420]);
-        clf;
+    h = figure(figNum);
+    set(h, <span class="string">'Position'</span>, [100 100 820 420]);
+    clf;
 
-        <span class="comment">% Use HSV color-coding</span>
-        colors = hsv(size(OTFslices,1)+1);
+    <span class="comment">% Use HSV color-coding</span>
+    colors = hsv(size(OTFslices,1)+1);
 
-        subplot(<span class="string">'Position'</span>, [0.06 0.11 0.44 0.80]);
-        hold <span class="string">on</span>
-        <span class="keyword">for</span> index = 1:size(OTFslices,1)
-            plot(OTFsfX, OTFslices(index,:), <span class="string">'k-'</span>, <span class="string">'Color'</span>, squeeze(colors(index,:)), <span class="string">'LineWidth'</span>, 2);
-        <span class="keyword">end</span>
-        hold <span class="string">off</span>;
-        lgndHandle = legend(legendText);
-        set(lgndHandle, <span class="string">'Color'</span>,[.99 .99 .88], <span class="string">'EdgeColor'</span>, [0 0 0], <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    subplot(<span class="string">'Position'</span>, [0.06 0.11 0.44 0.80]);
+    hold <span class="string">on</span>
+    <span class="keyword">for</span> index = 1:size(OTFslices,1)
+        plot(OTFsfX, OTFslices(index,:), <span class="string">'k-'</span>, <span class="string">'Color'</span>, squeeze(colors(index,:)), <span class="string">'LineWidth'</span>, 2);
+    <span class="keyword">end</span>
+    hold <span class="string">off</span>;
+    lgndHandle = legend(legendText);
+    set(lgndHandle, <span class="string">'Color'</span>,[.99 .99 .88], <span class="string">'EdgeColor'</span>, [0 0 0], <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
 
-        set(gca, <span class="string">'XLim'</span>, [0 60], <span class="string">'YLim'</span>, [0 1.02]);
-        set(gca, <span class="string">'XScale'</span>, <span class="string">'linear'</span>, <span class="string">'YScale'</span>, <span class="string">'linear'</span>, <span class="string">'XTick'</span>, [0:10:120], <span class="string">'YTick'</span>, [0:0.1:1.0]);
-        set(gca, <span class="string">'XTickLabel'</span>, [0:10:120], <span class="string">'YTickLabel'</span>,  [0:0.1:1.0]);
-        set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 10);
-        xlabel(<span class="string">'spatial frequency (c/deg)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
-        ylabel(<span class="string">'Gain'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    set(gca, <span class="string">'XLim'</span>, [0 60], <span class="string">'YLim'</span>, [0 1.02]);
+    set(gca, <span class="string">'XScale'</span>, <span class="string">'linear'</span>, <span class="string">'YScale'</span>, <span class="string">'linear'</span>, <span class="string">'XTick'</span>, [0:10:120], <span class="string">'YTick'</span>, [0:0.1:1.0]);
+    set(gca, <span class="string">'XTickLabel'</span>, [0:10:120], <span class="string">'YTickLabel'</span>,  [0:0.1:1.0]);
+    set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 10);
+    xlabel(<span class="string">'spatial frequency (c/deg)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    ylabel(<span class="string">'Gain'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
 
-        box <span class="string">on</span>;
-        grid <span class="string">on</span>;
-        title(sprintf(<span class="string">'%s (linear coords)'</span>,textString), <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    box <span class="string">on</span>;
+    grid <span class="string">on</span>;
+    title(sprintf(<span class="string">'%s (linear coords)'</span>,textString), <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
 
-        <span class="comment">% Now in log-coords</span>
-        subplot(<span class="string">'Position'</span>, [0.54 0.11 0.44 0.80]);
-        hold <span class="string">on</span>
-        OTFsfX = OTFsfX+0.1;
-        <span class="keyword">for</span> index = 1:size(OTFslices,1)
-            plot(OTFsfX, OTFslices(index,:), <span class="string">'k-'</span>, <span class="string">'Color'</span>, squeeze(colors(index,:)),  <span class="string">'LineWidth'</span>, 2);
-        <span class="keyword">end</span>
-        hold <span class="string">off</span>;
+    <span class="comment">% Now in log-coords</span>
+    subplot(<span class="string">'Position'</span>, [0.54 0.11 0.44 0.80]);
+    hold <span class="string">on</span>
+    OTFsfX = OTFsfX+0.1;
+    <span class="keyword">for</span> index = 1:size(OTFslices,1)
+        plot(OTFsfX, OTFslices(index,:), <span class="string">'k-'</span>, <span class="string">'Color'</span>, squeeze(colors(index,:)),  <span class="string">'LineWidth'</span>, 2);
+    <span class="keyword">end</span>
+    hold <span class="string">off</span>;
 
-        lgndHandle = legend(legendText, <span class="string">'Location'</span>, <span class="string">'SouthWest'</span>);
-        set(lgndHandle, <span class="string">'Color'</span>,[.99 .99 .88], <span class="string">'EdgeColor'</span>, [0 0 0], <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    lgndHandle = legend(legendText, <span class="string">'Location'</span>, <span class="string">'SouthWest'</span>);
+    set(lgndHandle, <span class="string">'Color'</span>,[.99 .99 .88], <span class="string">'EdgeColor'</span>, [0 0 0], <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
 
-        set(gca, <span class="string">'XLim'</span>, [0.1 60], <span class="string">'YLim'</span>, [0.01 1.1]);
-        set(gca, <span class="string">'XScale'</span>, <span class="string">'log'</span>, <span class="string">'YScale'</span>, <span class="string">'log'</span>, <span class="string">'XTick'</span>, [0.1 1 2 5 10 20 50 100], <span class="string">'YTick'</span>, [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
-        set(gca, <span class="string">'XTickLabel'</span>, [0.1 1 2 5 10 20 50 100], <span class="string">'YTickLabel'</span>,  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
-        set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 10);
-        xlabel(<span class="string">'spatial frequency (c/deg)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    set(gca, <span class="string">'XLim'</span>, [0.1 60], <span class="string">'YLim'</span>, [0.01 1.1]);
+    set(gca, <span class="string">'XScale'</span>, <span class="string">'log'</span>, <span class="string">'YScale'</span>, <span class="string">'log'</span>, <span class="string">'XTick'</span>, [0.1 1 2 5 10 20 50 100], <span class="string">'YTick'</span>, [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
+    set(gca, <span class="string">'XTickLabel'</span>, [0.1 1 2 5 10 20 50 100], <span class="string">'YTickLabel'</span>,  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
+    set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 10);
+    xlabel(<span class="string">'spatial frequency (c/deg)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 12, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
 
-        box <span class="string">on</span>;
-        grid <span class="string">on</span>;
-        title(sprintf(<span class="string">'%s (log coords)'</span>,textString), <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
-        drawnow;
+    box <span class="string">on</span>;
+    grid <span class="string">on</span>;
+    title(sprintf(<span class="string">'%s (log coords)'</span>,textString), <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+    drawnow;
 <span class="keyword">end</span>
 </pre><pre class="codeoutput">
 [ 4.] Results for 'validateOTFandPupilSize' probe: PASSED</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
@@ -590,26 +572,11 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
         OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
         legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
     end
-    figNum = 20;
-    textLabel = sprintf('ISETBIO: Lambda = %2.0f nm', OTFwavelengths(waveIndex));
-    plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
-
-    disp('ISETBIO OTF: fixed wavelength, varying pupil diameters');
-    legendEntries = {};
-    OTFslices = [];
-    [~,waveIndex] = min(abs(OTFwavelengths - testWaveLength));
-    for index = 1:numel(examinedPupilDiametersInMillimeters)
-        OTF2D = fftshift(squeeze(OTF3D(index,:,:,waveIndex)));
-        % Get a 2D slice through origin
-        OTFsliceSFY = 0.0;
-        [~, sfIndex] = min(abs(otf_sfY - OTFsliceSFY));
-        OTFslices(index,:) = squeeze(OTF2D(sfIndex,:));
-        legendEntries{index} = sprintf('PD = %2.1f mm', examinedPupilDiametersInMillimeters(index));
-    end
     figNum = 2;
     textLabel = sprintf('ISETBIO: Lambda = %2.0f nm', OTFwavelengths(waveIndex));
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
     
+    if (1==2)
     
     disp('Watson''s OTF: fixed wavelength, varying pupil diameters');
     modelOTFsfX = 0:0.01:120;  
@@ -650,60 +617,61 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
     figNum = 5;
     textLabel = sprintf('Watson (2013) model: PD = %2.0f mm', testPupilDiameterInMillimeter);
     plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
+    end
 end
 
 
 function plotOTFslices(figNum, textString, legendText, OTFsfX, OTFslices)
    
-        h = figure(figNum);
-        set(h, 'Position', [100 100 820 420]);
-        clf;
-        
-        % Use HSV color-coding
-        colors = hsv(size(OTFslices,1)+1);
-        
-        subplot('Position', [0.06 0.11 0.44 0.80]); 
-        hold on
-        for index = 1:size(OTFslices,1)
-            plot(OTFsfX, OTFslices(index,:), 'k-', 'Color', squeeze(colors(index,:)), 'LineWidth', 2);
-        end
-        hold off;
-        lgndHandle = legend(legendText);
-        set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-        
-        set(gca, 'XLim', [0 60], 'YLim', [0 1.02]);
-        set(gca, 'XScale', 'linear', 'YScale', 'linear', 'XTick', [0:10:120], 'YTick', [0:0.1:1.0]);
-        set(gca, 'XTickLabel', [0:10:120], 'YTickLabel',  [0:0.1:1.0]);
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
-        xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-        ylabel('Gain', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-        
-        box on;
-        grid on;
-        title(sprintf('%s (linear coords)',textString), 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-        
-        % Now in log-coords
-        subplot('Position', [0.54 0.11 0.44 0.80]); 
-        hold on
-        OTFsfX = OTFsfX+0.1;
-        for index = 1:size(OTFslices,1)
-            plot(OTFsfX, OTFslices(index,:), 'k-', 'Color', squeeze(colors(index,:)),  'LineWidth', 2);
-        end
-        hold off;
-        
-        lgndHandle = legend(legendText, 'Location', 'SouthWest');
-        set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-        
-        set(gca, 'XLim', [0.1 60], 'YLim', [0.01 1.1]);
-        set(gca, 'XScale', 'log', 'YScale', 'log', 'XTick', [0.1 1 2 5 10 20 50 100], 'YTick', [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
-        set(gca, 'XTickLabel', [0.1 1 2 5 10 20 50 100], 'YTickLabel',  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
-        xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
-        
-        box on;
-        grid on;
-        title(sprintf('%s (log coords)',textString), 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-        drawnow;
+    h = figure(figNum);
+    set(h, 'Position', [100 100 820 420]);
+    clf;
+
+    % Use HSV color-coding
+    colors = hsv(size(OTFslices,1)+1);
+
+    subplot('Position', [0.06 0.11 0.44 0.80]); 
+    hold on
+    for index = 1:size(OTFslices,1)
+        plot(OTFsfX, OTFslices(index,:), 'k-', 'Color', squeeze(colors(index,:)), 'LineWidth', 2);
+    end
+    hold off;
+    lgndHandle = legend(legendText);
+    set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+
+    set(gca, 'XLim', [0 60], 'YLim', [0 1.02]);
+    set(gca, 'XScale', 'linear', 'YScale', 'linear', 'XTick', [0:10:120], 'YTick', [0:0.1:1.0]);
+    set(gca, 'XTickLabel', [0:10:120], 'YTickLabel',  [0:0.1:1.0]);
+    set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
+    xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+    ylabel('Gain', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+
+    box on;
+    grid on;
+    title(sprintf('%s (linear coords)',textString), 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+
+    % Now in log-coords
+    subplot('Position', [0.54 0.11 0.44 0.80]); 
+    hold on
+    OTFsfX = OTFsfX+0.1;
+    for index = 1:size(OTFslices,1)
+        plot(OTFsfX, OTFslices(index,:), 'k-', 'Color', squeeze(colors(index,:)),  'LineWidth', 2);
+    end
+    hold off;
+
+    lgndHandle = legend(legendText, 'Location', 'SouthWest');
+    set(lgndHandle, 'Color',[.99 .99 .88], 'EdgeColor', [0 0 0], 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+
+    set(gca, 'XLim', [0.1 60], 'YLim', [0.01 1.1]);
+    set(gca, 'XScale', 'log', 'YScale', 'log', 'XTick', [0.1 1 2 5 10 20 50 100], 'YTick', [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
+    set(gca, 'XTickLabel', [0.1 1 2 5 10 20 50 100], 'YTickLabel',  [0.001 0.002 0.005 0.01 0.02 0.05 0.10 0.20 0.50 1.0]);
+    set(gca, 'FontName', 'Helvetica', 'FontSize', 10);
+    xlabel('spatial frequency (c/deg)', 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
+
+    box on;
+    grid on;
+    title(sprintf('%s (log coords)',textString), 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+    drawnow;
 end
 
 ##### SOURCE END #####
