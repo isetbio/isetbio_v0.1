@@ -131,6 +131,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
             testWaveLength, examinedPupilDiametersInMillimeters, <span class="keyword">...</span>
             examinedWavelengths, testPupilDiameterInMillimeter);
 </pre><pre class="codeoutput">ISETBIO OTF: fixed wavelength, varying pupil diameters
+Watson's OTF: fixed wavelength, varying pupil diameters
 </pre><img vspace="5" hspace="5" src="validateOTFandPupilSize_02.png" alt=""> <pre class="codeinput">    <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><h2>Watson's model<a name="30"></a></h2><p>Method to compute Watson's OTF model as a function of pupil diameter, and wavelength for a range of spatial frequencies.</p><pre class="codeinput"><span class="keyword">function</span> modelOTF = WatsonOTFmodel(d, lambda, u)
@@ -245,7 +246,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     textLabel = sprintf(<span class="string">'ISETBIO: Lambda = %2.0f nm'</span>, OTFwavelengths(waveIndex));
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
 
-    <span class="keyword">if</span> (1==2)
+
 
     disp(<span class="string">'Watson''s OTF: fixed wavelength, varying pupil diameters'</span>);
     modelOTFsfX = 0:0.01:120;
@@ -259,6 +260,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     textLabel = sprintf(<span class="string">'Watson (2013) model: Lambda = %2.0f nm'</span>, testWaveLength);
     plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
 
+    <span class="keyword">if</span> (1==2)
     disp(<span class="string">'ISETBIO OTF: pupil diameter, varying wavelength'</span>);
     legendEntries = {};
     OTFslices = [];
@@ -576,7 +578,7 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
     textLabel = sprintf('ISETBIO: Lambda = %2.0f nm', OTFwavelengths(waveIndex));
     plotOTFslices(figNum, textLabel, legendEntries,otf_sfX, OTFslices);
     
-    if (1==2)
+    
     
     disp('Watson''s OTF: fixed wavelength, varying pupil diameters');
     modelOTFsfX = 0:0.01:120;  
@@ -590,6 +592,7 @@ function visualizeISETBIOandModelOTFs(otf_sfX, otf_sfY, OTFwavelengths, OTF3D, .
     textLabel = sprintf('Watson (2013) model: Lambda = %2.0f nm', testWaveLength);
     plotOTFslices(figNum, textLabel, legendEntries, modelOTFsfX, modelOTFslices);
 
+    if (1==2)
     disp('ISETBIO OTF: pupil diameter, varying wavelength');
     legendEntries = {};
     OTFslices = [];
