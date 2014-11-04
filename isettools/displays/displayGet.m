@@ -186,10 +186,10 @@ switch parm
         
         % Scale the transform so that sum L and M values sum to Y-value of
         % white 
-        e = displayGet(d,'white spd',wave);
-        whiteXYZ = ieXYZFromEnergy(e',wave);
-        whiteLMS = sum(val);
-        val = val*(whiteXYZ(2)/(whiteLMS(1)+whiteLMS(2)));
+%         e = displayGet(d,'white spd',wave);
+%         whiteXYZ = ieXYZFromEnergy(e',wave);
+%         whiteLMS = sum(val);
+%         val = val*(whiteXYZ(2)/(whiteLMS(1)+whiteLMS(2)));
         
      case {'whitexyz','whitepoint'}
         % displayGet(dsp,'white xyz',wave)
