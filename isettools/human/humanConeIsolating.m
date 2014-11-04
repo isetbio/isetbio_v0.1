@@ -38,7 +38,11 @@ monitor2cones = cones'*spd;
 %    monitor2cones * col1 = (1,0,0)
 %
 % and so forth 
-coneIsolating = inv(monitor2cones);
-
-
+if nargout > 1
+    if size(monitor2cones,1) == size(monitor2cones, 2)
+        coneIsolating = inv(monitor2cones);
+    else
+        warning('monitor to cones not invertible, returning empty');
+        coneIsolating = [];
+    end
 end
