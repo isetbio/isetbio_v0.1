@@ -182,10 +182,8 @@ switch lower(imageType)
             % Subpixel rendering
             if doSub
                 inImg = displayCompute(d, inImg, sz);
-                spd = displayGet(d, 'subpixel spd');
-            else
-                spd = displayGet(d, 'spd');   % Primary SPD in energy
             end
+            spd = displayGet(d, 'spd');   % Primary SPD in energy
             
             [xwImg,r,c] = RGB2XWFormat(inImg);
             
