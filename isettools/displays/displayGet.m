@@ -178,7 +178,7 @@ switch parm
         %   imageLinearTransform(img,rgb2lms)
         %
         wave = displayGet(d,'wave');
-        coneFile = fullfile(isetRootPath,'data','human','Stockman');
+        coneFile = fullfile(isetRootPath,'data','human','stockman');
         cones = ieReadSpectra(coneFile,wave);     % plot(wave,spCones)
         spd = displayGet(d, 'spd', wave);         % plot(wave,displaySPD)
         val = cones'* spd;                  
