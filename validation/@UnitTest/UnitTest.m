@@ -29,6 +29,9 @@ classdef UnitTest < handle
         % If set to false, the last ground truth data set will be used.
         queryUserIfMoreThanOneGroundTruthDataSetsExist = false;
         
+        % Where svn is located
+        SVN_BIN_DIRECTORY = '/usr/bin/svn';
+        
         % Local directory where ISETBIO ghPages branch is cloned
         ISETBIO_gh_pages_CloneDir = '/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio';
         
@@ -121,6 +124,7 @@ classdef UnitTest < handle
             % full path to the file containing the ground truth data sets
             obj.groundTruthDataSetsFileName = fullfile(fileparts(which('validateAll')), 'ISETBIO_GroundTruthDataSetHistory.mat');
             
+            obj.cleanUp();
         end
         
         % Method to add and execute a new probe

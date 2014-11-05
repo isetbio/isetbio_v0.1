@@ -2,7 +2,7 @@
 function issueSVNCommitCommand(obj, validationDataParamName, addNewFileFlag)
   
     % where the svn binary is located
-    svnBinDirectory = '/usr/bin/svn';
+    svnBinDirectory = obj.SVN_BIN_DIRECTORY;
     
     % SVN name and password for users with read/write access
     ISETBIO_SVN_Username = input('Enter svn username for platypus.psych.upenn.edu : ', 's'); 

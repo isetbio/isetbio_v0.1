@@ -21,7 +21,7 @@ function validateAll()
     
     % 4. Whether to push results to github upon a sucessful validation outcome. 
     % Defaults to true;
-    unitTestOBJ.pushToGitHubOnSuccessfulValidation = true;
+    unitTestOBJ.pushToGitHubOnSuccessfulValidation = false;
     
     % 5. Whether @UnitTest will ask the user which ground truth data set to 
     % use in case there are more than one in the history of saved ground truth 
@@ -46,7 +46,10 @@ function validateAll()
     % These locations can be overriden here:
     % unitTestOBJ.ISETBIO_gh_pages_CloneDir = ...
     % unitTestOBJ.ISETBIO_wikiCloneDir = ...
-
+    
+    % 9. Location where svn is installed
+    % unitTestOBJ.SVN_BIN_DIRECTORY = '/usr/bin/svn';
+    
     % Parameters that can be set separately (if need be) for each probe.
     % If you want execution to continue on error use the following setting:
     onErrorReaction = 'CatchExemption'; 
@@ -60,7 +63,7 @@ function validateAll()
     showCodeInPublishedReport = true;
     
     % Flag indicating whether to generate plots when running validation scripts.
-    generatePlots = true;
+    generatePlots = false;
     
     % Add probes here. One probe per validation script.
     unitTestOBJ.addProbe(...

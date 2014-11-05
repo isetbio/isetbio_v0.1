@@ -1,7 +1,14 @@
 function cleanUp(obj)
-    % remove the SVN directory
-    if (isdir(obj.ISETBIO_DataSets_Local_SVN_DIR))
-        system(sprintf('rm -r -f %s', obj.ISETBIO_DataSets_Local_SVN_DIR));
+
+    % remove the local SVNDIR directory
+    if isempty( obj.ISETBIO_DataSets_Local_SVN_DIR)
+        % construct Local_SVNDIR name
+        fullPathDataSetFileName = obj.groundTruthDataSetsFileName;    
+        [pathstr,name,ext]  = fileparts(fullPathDataSetFileName);
+        obj.ISETBIO_DataSets_Local_SVN_DIR = sprintf('%s/SVNDIR',pathstr);
+        if (isdir(obj.ISETBIO_DataSets_Local_SVN_DIR))
+            system(sprintf('rm -r -f %s', obj.ISETBIO_DataSets_Local_SVN_DIR));
+        end
     end
     
     % Directory for ISETBIO - gh-pages branch 

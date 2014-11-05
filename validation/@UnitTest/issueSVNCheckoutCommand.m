@@ -1,7 +1,7 @@
 function issueSVNCheckoutCommand(obj)
     
     % where the svn binary is located
-    svnBinDirectory = '/usr/bin/svn';
+    svnBinDirectory = obj.SVN_BIN_DIRECTORY;
     
     % SVN name and password for read/only access
     ISETBIO_SVN_Username = sprintf('isetbio');
