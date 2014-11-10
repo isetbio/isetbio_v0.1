@@ -1,0 +1,344 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>riekeConeAdaptation</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-11-09"><meta name="DC.source" content="riekeConeAdaptation.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Programming Notes</a></li><li><a href="#4">Initialize parameters</a></li><li><a href="#5">First loop from s_fredConeModel script</a></li><li><a href="#6">This is the second loop ... not used in this function.</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [cur] = riekeConeAdaptation(stimulus)
+</pre><pre class="codeinput"><span class="comment">% Functional form of rieke cone adaptation model based on UW code.</span>
+<span class="comment">%</span>
+<span class="comment">% This function is temporary and for exploration ... See notes below</span>
+<span class="comment">%</span>
+<span class="comment">% Example:</span>
+<span class="comment">%  stimulus = zeros(1,1000); stimulus(100:105) = 70000;</span>
+<span class="comment">%  [cur] = riekeConeAdaptation(stimulus);</span>
+<span class="comment">%  vcNewGraphWin; plot(cur); grid on</span>
+<span class="comment">%</span>
+<span class="comment">% See Also:</span>
+<span class="comment">%</span>
+<span class="comment">% HJ/BW ISETBIO Team, Copyright 2014</span>
+</pre><h2>Programming Notes<a name="3"></a></h2><p>The initial m-file from UW (s_fredConeModel.m) had two sections that computed the current from the stimulus.  The formulae in the two sections differed at a key step - the computation of the current.</p><p>One group had computation as:</p><pre class="language-matlab">cur = -cgmp2cur * g.^h * 2 ./ (2 + cslow ./ cdark);
+</pre><p>The second had the computation as:</p><pre class="language-matlab">cur = -cgmp2cur * g.^h ./ (1 + cslow ./ cdark);
+</pre><p>There is a '2' that differs.  We don't know which is right.</p><p>Also, the second calculation in the original confounded the stimulus creation with the differential equations, making that form of the implementation highly specialized and not useful for general calculation.</p><p>Finally, the powerpoint description of the differential equations was not precisely the same as either of the calculations in s_fredConeModel.  So, that needs to be sorted out also.</p><p>The formulae on the slide look like this, and they are implemented in the riekeAdaptTemporal.  See the document uploaded by HJ for the derivation of the formula. There are a couple of differences.  In particular one difference is in how cur2ca is calculated (p.q). HJ says the slides resolve to this formula</p><pre class="language-matlab">q    = 2 * beta * cdark / (k * gdark^h);  <span class="comment">% This is cur2ca</span>
+</pre><p>but the s_fredConeModel has this formula</p><pre class="language-matlab">cur2ca = beta * cdark / (cgmp2cur * gdark^3);
+</pre><p>This function is intended to serve as a basis for discussion as we explore the calculations and resolve the differences.  In the end, we will use this to settle on the implementation in riekeAdaptTemporal.m.</p><h2>Initialize parameters<a name="4"></a></h2><pre class="codeinput">sigma = 100;			<span class="comment">% rhodopsin activity decay rate constant (1/sec)</span>
+phi = 50;				<span class="comment">% phosphodiesterase activity decay rate constant (1/sec)</span>
+eta = 100;				<span class="comment">% phosphodiesterase activation rate constant (1/sec)</span>
+r(1) = 0;				<span class="comment">% initial condition for r</span>
+p(1) = eta/phi;			<span class="comment">% initial condition for p</span>
+TimeStep = 0.001;		<span class="comment">% time step</span>
+gdark = 35;				<span class="comment">% concentration of cGMP in darkness</span>
+cgmp2cur = 10e-3;		<span class="comment">% constant relating cGMP to current</span>
+cdark = 0.5;			<span class="comment">% dark calcium concentration</span>
+beta = 50;				<span class="comment">% rate constant for calcium removal in 1/sec</span>
+betaSlow = 2;
+hillcoef = 4;			<span class="comment">% cooperativity</span>
+hillaffinity = 0.35;		<span class="comment">% affinity</span>
+NumPts = length(stimulus);
+
+clear <span class="string">g</span> <span class="string">s</span> <span class="string">c</span> <span class="string">p</span> <span class="string">cslow</span>;
+
+<span class="comment">% This differs from our calculation by a factor of 2, see riekeInit.m</span>
+<span class="comment">% q    = 2 * beta * cdark / (k * gdark^h);</span>
+cur2ca = beta * cdark / (cgmp2cur * gdark^3);				        <span class="comment">% get q using steady state</span>
+smax = eta/phi * gdark * (1 + (cdark / hillaffinity)^hillcoef);		<span class="comment">% get smax using steady state</span>
+
+<span class="comment">% initial conditions</span>
+g(1) = gdark;
+s(1) = gdark * eta/phi;
+c(1) = cdark;
+p(1) = eta/phi;
+cslow(1) = cdark;
+</pre><pre class="codeoutput">Error using riekeConeAdaptation (line 73)
+Not enough input arguments.
+</pre><h2>First loop from s_fredConeModel script<a name="5"></a></h2><pre class="codeinput"><span class="comment">% Should zero out but allocate space for all the p,c, ... and so forth</span>
+clear <span class="string">g</span> <span class="string">s</span> <span class="string">c</span> <span class="string">p</span> <span class="string">cslow</span>;
+
+g(1) = gdark;
+s(1) = gdark * eta/phi;
+c(1) = cdark;
+p(1) = eta/phi;
+cslow(1) = cdark;
+
+h = 3;   <span class="comment">% From the slide</span>
+
+<span class="comment">% Solve difference equations</span>
+<span class="keyword">for</span> pnt = 2:NumPts
+
+    r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1) + stimulus(pnt));
+    p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
+	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^h - beta * c(pnt-1));
+	cslow(pnt) = cslow(pnt-1) - TimeStep * (betaSlow * (cslow(pnt-1)-c(pnt-1)));
+	s(pnt) = smax / (1 + (c(pnt) / hillaffinity)^hillcoef);
+	g(pnt) = g(pnt-1) + TimeStep * (s(pnt-1) - p(pnt-1) * g(pnt-1));
+
+
+
+<span class="keyword">end</span>
+
+<span class="comment">% determine current change</span>
+cur = -cgmp2cur * g.^h * 2 ./ (2 + cslow ./ cdark);
+
+<span class="comment">% s_fredCOneModel has two different calculations for current.</span>
+<span class="comment">% Here is the second calculation.  We don't know why they differ.</span>
+<span class="comment">%</span>
+<span class="comment">% cur = -cgmp2cur * g.^h ./ (1 + cslow ./ cdark);</span>
+
+<span class="keyword">return</span>
+</pre><h2>This is the second loop ... not used in this function.<a name="6"></a></h2><pre class="codeinput">clear <span class="string">g</span> <span class="string">s</span> <span class="string">c</span> <span class="string">p</span> <span class="string">cslow</span>;
+g(1) = gdark;
+s(1) = gdark * eta/phi;
+c(1) = cdark;
+p(1) = eta/phi;
+cslow(1) = cdark;
+
+<span class="keyword">for</span> pnt = 2:NumPts
+	<span class="keyword">if</span> (pnt &lt;= NumPts/4)
+        r(pnt) = 0;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> ((pnt &gt; NumPts/4) &amp;&amp; (pnt &lt; (NumPts/4+StmPts)))
+        r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1) + StmAmp);
+
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> (pnt &gt;= (NumPts/4+StmPts))
+        r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1));
+    <span class="keyword">end</span>
+
+    p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
+	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 - beta * c(pnt-1));
+	cslow(pnt) = cslow(pnt-1) - TimeStep * (betaSlow * (cslow(pnt-1)-c(pnt-1)));
+	s(pnt) = smax / (1 + (c(pnt) / hillaffinity)^hillcoef);
+	g(pnt) = g(pnt-1) + TimeStep * (s(pnt-1) - p(pnt-1) * g(pnt-1));
+<span class="keyword">end</span>
+
+<span class="comment">% determine current change.</span>
+<span class="comment">% Notice that this formula differs from the formula in the previous cell.</span>
+<span class="comment">% We don't know why</span>
+cur2 = -cgmp2cur * g.^3 ./ (1 + cslow ./ cdark);
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [cur] = riekeConeAdaptation(stimulus)
+% Functional form of rieke cone adaptation model based on UW code.
+%
+% This function is temporary and for exploration ... See notes below
+%
+% Example:
+%  stimulus = zeros(1,1000); stimulus(100:105) = 70000;
+%  [cur] = riekeConeAdaptation(stimulus);
+%  vcNewGraphWin; plot(cur); grid on
+%
+% See Also:
+%
+% HJ/BW ISETBIO Team, Copyright 2014
+
+
+%% Programming Notes
+%
+% The initial m-file from UW (s_fredConeModel.m) had two sections that
+% computed the current from the stimulus.  The formulae in the two sections
+% differed at a key step - the computation of the current.  
+%
+% One group had computation as:
+%
+%   cur = -cgmp2cur * g.^h * 2 ./ (2 + cslow ./ cdark);
+%
+% The second had the computation as:
+%
+%   cur = -cgmp2cur * g.^h ./ (1 + cslow ./ cdark);
+%
+% There is a '2' that differs.  We don't know which is right.
+% 
+% Also, the second calculation in the original confounded the stimulus
+% creation with the differential equations, making that form of the
+% implementation highly specialized and not useful for general calculation.
+%
+% Finally, the powerpoint description of the differential equations was not
+% precisely the same as either of the calculations in s_fredConeModel.  So,
+% that needs to be sorted out also.
+%
+% The formulae on the slide look like this, and they are implemented in the
+% riekeAdaptTemporal.  See the document uploaded by HJ for the derivation
+% of the formula. There are a couple of differences.  In particular one
+% difference is in how cur2ca is calculated (p.q). HJ says the slides
+% resolve to this formula
+%
+%   q    = 2 * beta * cdark / (k * gdark^h);  % This is cur2ca
+%
+% but the s_fredConeModel has this formula
+%
+%   cur2ca = beta * cdark / (cgmp2cur * gdark^3);
+%
+%
+% This function is intended to serve as a basis for discussion as we
+% explore the calculations and resolve the differences.  In the end, we
+% will use this to settle on the implementation in riekeAdaptTemporal.m.
+
+
+%% Initialize parameters
+
+sigma = 100;			% rhodopsin activity decay rate constant (1/sec)
+phi = 50;				% phosphodiesterase activity decay rate constant (1/sec)
+eta = 100;				% phosphodiesterase activation rate constant (1/sec)
+r(1) = 0;				% initial condition for r
+p(1) = eta/phi;			% initial condition for p
+TimeStep = 0.001;		% time step 
+gdark = 35;				% concentration of cGMP in darkness
+cgmp2cur = 10e-3;		% constant relating cGMP to current
+cdark = 0.5;			% dark calcium concentration
+beta = 50;				% rate constant for calcium removal in 1/sec
+betaSlow = 2;
+hillcoef = 4;			% cooperativity
+hillaffinity = 0.35;		% affinity
+NumPts = length(stimulus);
+
+clear g s c p cslow;
+
+% This differs from our calculation by a factor of 2, see riekeInit.m
+% q    = 2 * beta * cdark / (k * gdark^h);
+cur2ca = beta * cdark / (cgmp2cur * gdark^3);				        % get q using steady state
+smax = eta/phi * gdark * (1 + (cdark / hillaffinity)^hillcoef);		% get smax using steady state
+
+% initial conditions
+g(1) = gdark;
+s(1) = gdark * eta/phi;		
+c(1) = cdark;
+p(1) = eta/phi;
+cslow(1) = cdark;
+
+
+%%  First loop from s_fredConeModel script
+
+% Should zero out but allocate space for all the p,c, ... and so forth
+clear g s c p cslow;
+
+g(1) = gdark;
+s(1) = gdark * eta/phi;		
+c(1) = cdark;
+p(1) = eta/phi;
+cslow(1) = cdark;
+
+h = 3;   % From the slide
+
+% Solve difference equations
+for pnt = 2:NumPts
+
+    r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1) + stimulus(pnt));
+    p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
+	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^h - beta * c(pnt-1));
+	cslow(pnt) = cslow(pnt-1) - TimeStep * (betaSlow * (cslow(pnt-1)-c(pnt-1)));
+	s(pnt) = smax / (1 + (c(pnt) / hillaffinity)^hillcoef);
+	g(pnt) = g(pnt-1) + TimeStep * (s(pnt-1) - p(pnt-1) * g(pnt-1));
+
+
+
+end
+
+% determine current change
+cur = -cgmp2cur * g.^h * 2 ./ (2 + cslow ./ cdark);
+
+% s_fredCOneModel has two different calculations for current.
+% Here is the second calculation.  We don't know why they differ.
+%
+% cur = -cgmp2cur * g.^h ./ (1 + cslow ./ cdark);
+
+return
+
+%% This is the second loop ... not used in this function.
+
+clear g s c p cslow;
+g(1) = gdark;
+s(1) = gdark * eta/phi;		
+c(1) = cdark;
+p(1) = eta/phi;
+cslow(1) = cdark;
+
+for pnt = 2:NumPts
+	if (pnt <= NumPts/4)
+        r(pnt) = 0; 
+    end
+    if ((pnt > NumPts/4) && (pnt < (NumPts/4+StmPts)))
+        r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1) + StmAmp);
+        
+    end
+    if (pnt >= (NumPts/4+StmPts))
+        r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1));
+    end
+    
+    p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
+	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 - beta * c(pnt-1));
+	cslow(pnt) = cslow(pnt-1) - TimeStep * (betaSlow * (cslow(pnt-1)-c(pnt-1)));
+	s(pnt) = smax / (1 + (c(pnt) / hillaffinity)^hillcoef);
+	g(pnt) = g(pnt-1) + TimeStep * (s(pnt-1) - p(pnt-1) * g(pnt-1));
+end
+
+% determine current change.
+% Notice that this formula differs from the formula in the previous cell.
+% We don't know why
+cur2 = -cgmp2cur * g.^3 ./ (1 + cslow ./ cdark);
+
+
+
+
+##### SOURCE END #####
+--></body></html>
