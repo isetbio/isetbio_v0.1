@@ -17,7 +17,7 @@ StmPts = 400;
 StmAmp = 1000;
 
 clear g s c p cslow;
-cur2ca = beta * cdark / (cgmp2cur * gdark^3);				% get q using steady state
+cur2ca = beta * cdark * 2 / (cgmp2cur * gdark^3);				% get q using steady state
 smax = eta/phi * gdark * (1 + (cdark / hillaffinity)^hillcoef);		% get smax using steady state
 tme = 1:NumPts;
 tme = tme * TimeStep;
@@ -77,13 +77,14 @@ cslow(1) = cdark;
 for pnt = 2:NumPts
     r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1) + Stm(pnt));
 	p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
-	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 - beta * c(pnt-1));
+	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 ./ (1 + cslow(pnt-1) ./ cdark) - beta * c(pnt-1));
 	cslow(pnt) = cslow(pnt-1) - TimeStep * (betaSlow * (cslow(pnt-1)-c(pnt-1)));
 	s(pnt) = smax / (1 + (c(pnt) / hillaffinity)^hillcoef);
 	g(pnt) = g(pnt-1) + TimeStep * (s(pnt-1) - p(pnt-1) * g(pnt-1));
 end
 % determine current change
-cur = -cgmp2cur * g.^3 * 2 ./ (2 + cslow ./ cdark);
+%cur = -cgmp2cur * g.^3 * 2 ./ (2 + cslow ./ cdark);
+cur = -cgmp2cur * g.^3 ./ (1 + cslow ./ cdark);
 riekeCurrent1 = cur;
 
 % % plot current, pde, synthesis, cGMP and calcium
@@ -164,7 +165,7 @@ for pnt = 2:NumPts
         Stm(pnt) = 0;
     end
 	p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
-	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 - beta * c(pnt-1));
+	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 ./ (1 + cslow(pnt-1) ./ cdark) - beta * c(pnt-1));
 	cslow(pnt) = cslow(pnt-1) - TimeStep * (betaSlow * (cslow(pnt-1)-c(pnt-1)));
 	s(pnt) = smax / (1 + (c(pnt) / hillaffinity)^hillcoef);
 	g(pnt) = g(pnt-1) + TimeStep * (s(pnt-1) - p(pnt-1) * g(pnt-1));
@@ -173,6 +174,8 @@ end
 cur = -cgmp2cur * g.^3 ./ (1 + cslow ./ cdark);
 riekeCurrent2 = cur;
 riekeStim2 = Stm;
+
+
 
 % plot current, pde, synthesis, cGMP and calcium
 % figure(1); clf;
