@@ -92,8 +92,10 @@ if isfield(params, 'bgVolts'),     bgVolts = params.bgVolts;
 else                               bgVolts = mean(volts(:));
 end
 
+if ischar(typeAdapt), typeAdapt = ieParamFormat(typeAdapt); end
+    
 switch typeAdapt
-    case 0 % no adaptation
+    case {0, 'noadapt', 'noadaptation'} % no adaptation
         gainMap = 1;
         bgVolts  = 0;
         
@@ -101,7 +103,7 @@ switch typeAdapt
         sensor = sensorSet(sensor, 'adaptation gain', gainMap);
         sensor = sensorSet(sensor, 'adaptation offset', bgVolts);
         
-    case 1
+    case {1, 'globalgain'}
         % Use same gain for all cone type
         
         % Adjust for bg volts as offset
@@ -114,7 +116,7 @@ switch typeAdapt
         sensor = sensorSet(sensor, 'adaptation gain', gainMap);
         sensor = sensorSet(sensor, 'adaptation offset', bgVolts);
         
-    case 2
+    case {2, 'adaptbyconetype'}
         % Use different gains for each cone type
         % For human, the cone types in sensor are 1~4 for K, L, M, S
         if isscalar(bgVolts), bgVolts = ones(4,1)*bgVolts; end
@@ -141,7 +143,7 @@ switch typeAdapt
         sensor = sensorSet(sensor, 'adaptation gain', gainMap);
         sensor = sensorSet(sensor, 'adaptation offset', bgVolts);
 
-    case 3
+    case {3, 'felice'}
         % In this case, we will do non-linear cone adaptation
         % Reference:
         %   Felice A. Dunn, et al. Light adaptation in cone vision involves
@@ -194,7 +196,7 @@ switch typeAdapt
         sensor = sensorSet(sensor, 'adaptation gain', gainMap);
         sensor = sensorSet(sensor, 'adaptation offset', bgVolts);
 
-    case 4
+    case {4, 'rieke'}
         % See rieke<TAB> for explanations.
         
         % sensor = sensorCreate('human');
