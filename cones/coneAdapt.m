@@ -89,7 +89,7 @@ else                             vSwing = sensorGet(sensor,'pixel voltageSwing')
 end
 
 if isfield(params, 'bgVolts'),     bgVolts = params.bgVolts;
-else                               bgVolts = median(volts(:));
+else                               bgVolts = mean(volts(:));
 end
 
 switch typeAdapt
@@ -222,7 +222,7 @@ switch typeAdapt
         % Compute background adaptation parameters
         bgR = bgVolts / (sensorGet(sensor,'conversion gain')*expTime);
         
-        initialState = riekeAdaptSteadyState(bgR,p,sz);
+        initialState = riekeAdaptSteadyState(bgR, p, sz);
         adaptedData  = riekeAdaptTemporal(pRate, initialState);
                        
     otherwise
