@@ -325,9 +325,22 @@ switch lower(param)
     case {'voltage','volts'}
         sensor.data.volts = val;
         %  We adjust the row and column size to match the data. The data
-        %  size is the factor that determines the sensor row and column values.
-        %  The row and col values are only included for those cases when
-        %  there are no data computed yet.
+        %  size is the factor that determines the sensor row and column
+        %  values. The row and col values are only included for those cases
+        %  when there are no data computed yet.
+    case {'photons'}
+        if ~sensorCheckHuman(sensor)
+            error('Set photon to sensor can be only used in human cases');
+        end
+        cg = sensorGet(sensor, 'conversion gain');
+        sensor = sensorSet(sensor, 'volts', val * cg);
+    case {'photonrate', 'isomerizationrate'}
+        if ~sensorCheckHuman(sensor)
+            error('Set photon to sensor can be only used in human cases');
+        end
+        cg = sensorGet(sensor, 'conversion gain');
+        expTime = sensorGet(sensor, 'exposure time');
+        sensor = sensorSet(sensor, 'volts', val * cg * expTime);
     case {'analoggain','ag'}
         sensor.analogGain = val;
     case {'analogoffset','ao'}
