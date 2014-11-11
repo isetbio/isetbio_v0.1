@@ -8,6 +8,7 @@
 
 %% The Rieke code
 % This produces riekeStim1, riekeStim2, riekeCur1, riekeCur2
+clear; s_initISET;
 s_fredConeModel;
 
 %% ISETBIO Implementation
@@ -15,24 +16,22 @@ s_fredConeModel;
 sensor = sensorCreate('human');
 
 % set photon absorptions
-sensor = sensorSet(sensor, 'size', [1 1]); % Just 1 cone
 nSample = length(riekeStim1);
-photons = riekeStim1 * sensorGet(sensor, 'exp time');
-volts = photons * sensorGet(sensor, 'conversion gain');
-sensor = sensorSet(sensor, 'volts', reshape(volts, [1 1 nSample]));
+
+sensor = sensorSet(sensor, 'size', [1 1]); % Just 1 cone
+sensor = sensorSet(sensor, 'photon rate', ...
+                   reshape(riekeStim1, [1 1 nSample]));
 
 % compute adaptation
-whichModel = 4;  % Rieke
 params.bgVolts = 0;
-[~, isetbioCur1] = coneAdapt(sensor, whichModel, params);
+[~, isetbioCur1] = coneAdapt(sensor, 'rieke', params);
 
 % set photons of stimulus 2 (Impulse)
-photons = riekeStim2 * sensorGet(sensor, 'exp time');
-volts = photons * sensorGet(sensor, 'conversion gain');
-sensor = sensorSet(sensor, 'volts', reshape(volts, [1 1 nSample]));
+sensor = sensorSet(sensor, 'photon rate', ...
+                   reshape(riekeStim2, [1 1 nSample]));
 
 % compute adaptation
-[~, isetbioCur2] = coneAdapt(sensor, whichModel, params);
+[~, isetbioCur2] = coneAdapt(sensor, 'rieke', params);
 
 %% Plot and compare the results
 % new figure
