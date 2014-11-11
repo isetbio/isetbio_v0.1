@@ -865,35 +865,56 @@ switch param
         if length(varargin) > 1, oi = varargin{2};
         else                     oi = vcGetObject('oi');
         end
+        
         % If no scene is sent in, assume the scene is infinitely far away.
         if isempty(scene), sDist = Inf;
-        else
-            % The user might have sent a scene struct or a scene distance
-            % in meters.
-            if isstruct(scene), sDist = sceneGet(scene,'distance');
-            else                sDist = scene;
-            end
+        elseif isstruct(scene), sDist = sceneGet(scene,'distance');
+        else   sDist = scene; % sDist is directly passed in (in meters)
         end
+        
         % If there is no oi, then use the default optics focal length. The
         % image distance depends on the scene distance and focal length via
         % the lensmaker's formula, (we assume the sensor is at the proper
         % focal distance).
-        if isempty(oi)
+        if ~isempty(oi) 
+            distance = oiGet(oi,'optics image distance', sDist);
+        elseif sensorCheckHuman(sensor)
+            distance = oiGet(oiCreate('human'), 'focal length');
+        else
             distance = opticsGet(opticsCreate,'focal length');
             fprintf('Fov estimated using focal length = %f m\n',distance);
-        else
-            distance = opticsGet(oiGet(oi,'optics'), ...
-                'focal plane distance',sDist);
         end
-        width = sensorGet(sensor,'arraywidth');
-        val = 2*atand(0.5*width/distance);
+        width = sensorGet(sensor, 'arraywidth');
+        val = 2 * atand(0.5 * width / distance);
     case {'fovvertical','vfov','fovv'}
         % This is  the vertical field of view
-        oi = vcGetObject('OI');
-        if isempty(oi), oi = oiCreate; end
-        distance = opticsGet(oiGet(oi,'optics'),'imageDistance');
-        height = sensorGet(sensor,'arrayheight');
-        val = 2*atand(0.5*height/distance);
+        if ~isempty(varargin), scene = varargin{1};
+        else                   scene = vcGetObject('scene');
+        end
+        if length(varargin) > 1, oi = varargin{2};
+        else                     oi = vcGetObject('oi');
+        end
+        
+        % If no scene is sent in, assume the scene is infinitely far away.
+        if isempty(scene), sDist = Inf;
+        elseif isstruct(scene), sDist = sceneGet(scene,'distance');
+        else   sDist = scene; % sDist is directly passed in (in meters)
+        end
+        
+        % If there is no oi, then use the default optics focal length. The
+        % image distance depends on the scene distance and focal length via
+        % the lensmaker's formula, (we assume the sensor is at the proper
+        % focal distance).
+        if ~isempty(oi) 
+            distance = oiGet(oi,'optics image distance', sDist);
+        elseif sensorCheckHuman(sensor)
+            distance = oiGet(oiCreate('human'), 'focal length');
+        else
+            distance = opticsGet(opticsCreate,'focal length');
+            fprintf('Fov estimated using focal length = %f m\n',distance);
+        end
+        height = sensorGet(sensor, 'arrayheight');
+        val = 2*atand(0.5 * height / distance);
     case {'hdegperpixel','degpersample','degreesperpixel'}
         % degPerPixel = sensorGet(sensor,'h deg per pixel',oi);
         % Horizontal field of view divided by number of pixels
