@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_rieke</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-11-09"><meta name="DC.source" content="v_rieke.m"><style type="text/css">
+      --><title>v_rieke</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-11-11"><meta name="DC.source" content="v_rieke.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -23,7 +23,7 @@ a:visited { color:#004aa0; text-decoration:none; }
 
 p { padding:0px; margin:0px 0px 20px; }
 img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
 
 ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
 ul li { padding:0px; margin:0px 0px 7px 0px; }
@@ -38,11 +38,12 @@ ol li ul li { list-style:square; }
 
 .content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre, tt, code { font-size:12px; }
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
 pre { margin:0px 0px 20px; }
-pre.error { color:red; }
 pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
 pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
 
 @media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
@@ -65,28 +66,27 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>v_rieke</h1><!--introduction--><p>Implement some tests comparing the s_fredXXX script with our implementation of that script using several functions</p><p>HJ/BW ISETBIO Team, Copyright 2014</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">The Rieke code</a></li><li><a href="#2">ISETBIO Implementation</a></li><li><a href="#3">Plot and compare the results</a></li><li><a href="#4">Plot the two currents against one another</a></li><li><a href="#5">END</a></li></ul></div><h2>The Rieke code<a name="1"></a></h2><p>This produces riekeStim1, riekeStim2, riekeCur1, riekeCur2</p><pre class="codeinput">s_fredConeModel;
+  </style></head><body><div class="content"><h1>v_rieke</h1><!--introduction--><p>Implement some tests comparing the s_fredXXX script with our implementation of that script using several functions</p><p>HJ/BW ISETBIO Team, Copyright 2014</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">The Rieke code</a></li><li><a href="#2">ISETBIO Implementation</a></li><li><a href="#3">Plot and compare the results</a></li><li><a href="#4">Plot the two currents against one another</a></li><li><a href="#5">END</a></li></ul></div><h2>The Rieke code<a name="1"></a></h2><p>This produces riekeStim1, riekeStim2, riekeCur1, riekeCur2</p><pre class="codeinput">clear; s_initISET;
+s_fredConeModel;
 </pre><h2>ISETBIO Implementation<a name="2"></a></h2><pre>create human sensor structure</pre><pre class="codeinput">sensor = sensorCreate(<span class="string">'human'</span>);
 
 <span class="comment">% set photon absorptions</span>
-sensor = sensorSet(sensor, <span class="string">'size'</span>, [1 1]); <span class="comment">% Just 1 cone</span>
 nSample = length(riekeStim1);
-photons = riekeStim1 * sensorGet(sensor, <span class="string">'exp time'</span>);
-volts = photons * sensorGet(sensor, <span class="string">'conversion gain'</span>);
-sensor = sensorSet(sensor, <span class="string">'volts'</span>, reshape(volts, [1 1 nSample]));
+
+sensor = sensorSet(sensor, <span class="string">'size'</span>, [1 1]); <span class="comment">% Just 1 cone</span>
+sensor = sensorSet(sensor, <span class="string">'photon rate'</span>, <span class="keyword">...</span>
+                   reshape(riekeStim1, [1 1 nSample]));
 
 <span class="comment">% compute adaptation</span>
-whichModel = 4;  <span class="comment">% Rieke</span>
 params.bgVolts = 0;
-[~, isetbioCur1] = coneAdapt(sensor, whichModel, params);
+[~, isetbioCur1] = coneAdapt(sensor, <span class="string">'rieke'</span>, params);
 
 <span class="comment">% set photons of stimulus 2 (Impulse)</span>
-photons = riekeStim2 * sensorGet(sensor, <span class="string">'exp time'</span>);
-volts = photons * sensorGet(sensor, <span class="string">'conversion gain'</span>);
-sensor = sensorSet(sensor, <span class="string">'volts'</span>, reshape(volts, [1 1 nSample]));
+sensor = sensorSet(sensor, <span class="string">'photon rate'</span>, <span class="keyword">...</span>
+                   reshape(riekeStim2, [1 1 nSample]));
 
 <span class="comment">% compute adaptation</span>
-[~, isetbioCur2] = coneAdapt(sensor, whichModel, params);
+[~, isetbioCur2] = coneAdapt(sensor, <span class="string">'rieke'</span>, params);
 </pre><h2>Plot and compare the results<a name="3"></a></h2><p>new figure</p><pre class="codeinput">vcNewGraphWin;
 
 <span class="comment">% plot stimulus</span>
@@ -127,11 +127,11 @@ legend(<span class="string">'Normalized Rieke'</span>, <span class="string">'Nor
 </pre><pre class="codeoutput">
 ans =
 
-    0.6860
+    1.0017
 
-    0.5000
+    1.0000
 
-</pre><img vspace="5" hspace="5" src="v_rieke_02.png" alt=""> <img vspace="5" hspace="5" src="v_rieke_03.png" alt=""> <h2>END<a name="5"></a></h2><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="v_rieke_02.png" alt=""> <img vspace="5" hspace="5" src="v_rieke_03.png" alt=""> <h2>END<a name="5"></a></h2><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% v_rieke
 %
@@ -143,6 +143,7 @@ ans =
 
 %% The Rieke code
 % This produces riekeStim1, riekeStim2, riekeCur1, riekeCur2
+clear; s_initISET;
 s_fredConeModel;
 
 %% ISETBIO Implementation
@@ -150,24 +151,22 @@ s_fredConeModel;
 sensor = sensorCreate('human');
 
 % set photon absorptions
-sensor = sensorSet(sensor, 'size', [1 1]); % Just 1 cone
 nSample = length(riekeStim1);
-photons = riekeStim1 * sensorGet(sensor, 'exp time');
-volts = photons * sensorGet(sensor, 'conversion gain');
-sensor = sensorSet(sensor, 'volts', reshape(volts, [1 1 nSample]));
+
+sensor = sensorSet(sensor, 'size', [1 1]); % Just 1 cone
+sensor = sensorSet(sensor, 'photon rate', ...
+                   reshape(riekeStim1, [1 1 nSample]));
 
 % compute adaptation
-whichModel = 4;  % Rieke
 params.bgVolts = 0;
-[~, isetbioCur1] = coneAdapt(sensor, whichModel, params);
+[~, isetbioCur1] = coneAdapt(sensor, 'rieke', params);
 
 % set photons of stimulus 2 (Impulse)
-photons = riekeStim2 * sensorGet(sensor, 'exp time');
-volts = photons * sensorGet(sensor, 'conversion gain');
-sensor = sensorSet(sensor, 'volts', reshape(volts, [1 1 nSample]));
+sensor = sensorSet(sensor, 'photon rate', ...
+                   reshape(riekeStim2, [1 1 nSample]));
 
 % compute adaptation
-[~, isetbioCur2] = coneAdapt(sensor, whichModel, params);
+[~, isetbioCur2] = coneAdapt(sensor, 'rieke', params);
 
 %% Plot and compare the results
 % new figure

@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>riekeConeAdaptation</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-11-09"><meta name="DC.source" content="riekeConeAdaptation.m"><style type="text/css">
+      --><title>s_fredConeModel</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-11-11"><meta name="DC.source" content="s_fredConeModel.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -23,7 +23,7 @@ a:visited { color:#004aa0; text-decoration:none; }
 
 p { padding:0px; margin:0px 0px 20px; }
 img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
 
 ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
 ul li { padding:0px; margin:0px 0px 7px 0px; }
@@ -38,11 +38,12 @@ ol li ul li { list-style:square; }
 
 .content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre, tt, code { font-size:12px; }
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
 pre { margin:0px 0px 20px; }
-pre.error { color:red; }
 pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
 pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
 
 @media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
@@ -65,24 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Programming Notes</a></li><li><a href="#4">Initialize parameters</a></li><li><a href="#5">First loop from s_fredConeModel script</a></li><li><a href="#6">This is the second loop ... not used in this function.</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [cur] = riekeConeAdaptation(stimulus)
-</pre><pre class="codeinput"><span class="comment">% Functional form of rieke cone adaptation model based on UW code.</span>
-<span class="comment">%</span>
-<span class="comment">% This function is temporary and for exploration ... See notes below</span>
-<span class="comment">%</span>
-<span class="comment">% Example:</span>
-<span class="comment">%  stimulus = zeros(1,1000); stimulus(100:105) = 70000;</span>
-<span class="comment">%  [cur] = riekeConeAdaptation(stimulus);</span>
-<span class="comment">%  vcNewGraphWin; plot(cur); grid on</span>
-<span class="comment">%</span>
-<span class="comment">% See Also:</span>
-<span class="comment">%</span>
-<span class="comment">% HJ/BW ISETBIO Team, Copyright 2014</span>
-</pre><h2>Programming Notes<a name="3"></a></h2><p>The initial m-file from UW (s_fredConeModel.m) had two sections that computed the current from the stimulus.  The formulae in the two sections differed at a key step - the computation of the current.</p><p>One group had computation as:</p><pre class="language-matlab">cur = -cgmp2cur * g.^h * 2 ./ (2 + cslow ./ cdark);
-</pre><p>The second had the computation as:</p><pre class="language-matlab">cur = -cgmp2cur * g.^h ./ (1 + cslow ./ cdark);
-</pre><p>There is a '2' that differs.  We don't know which is right.</p><p>Also, the second calculation in the original confounded the stimulus creation with the differential equations, making that form of the implementation highly specialized and not useful for general calculation.</p><p>Finally, the powerpoint description of the differential equations was not precisely the same as either of the calculations in s_fredConeModel.  So, that needs to be sorted out also.</p><p>The formulae on the slide look like this, and they are implemented in the riekeAdaptTemporal.  See the document uploaded by HJ for the derivation of the formula. There are a couple of differences.  In particular one difference is in how cur2ca is calculated (p.q). HJ says the slides resolve to this formula</p><pre class="language-matlab">q    = 2 * beta * cdark / (k * gdark^h);  <span class="comment">% This is cur2ca</span>
-</pre><p>but the s_fredConeModel has this formula</p><pre class="language-matlab">cur2ca = beta * cdark / (cgmp2cur * gdark^3);
-</pre><p>This function is intended to serve as a basis for discussion as we explore the calculations and resolve the differences.  In the end, we will use this to settle on the implementation in riekeAdaptTemporal.m.</p><h2>Initialize parameters<a name="4"></a></h2><pre class="codeinput">sigma = 100;			<span class="comment">% rhodopsin activity decay rate constant (1/sec)</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Create a stimulus ... think more about the choice here.</a></li></ul></div><pre class="codeinput">sigma = 100;			<span class="comment">% rhodopsin activity decay rate constant (1/sec)</span>
 phi = 50;				<span class="comment">% phosphodiesterase activity decay rate constant (1/sec)</span>
 eta = 100;				<span class="comment">% phosphodiesterase activation rate constant (1/sec)</span>
 r(1) = 0;				<span class="comment">% initial condition for r</span>
@@ -95,14 +79,15 @@ beta = 50;				<span class="comment">% rate constant for calcium removal in 1/sec
 betaSlow = 2;
 hillcoef = 4;			<span class="comment">% cooperativity</span>
 hillaffinity = 0.35;		<span class="comment">% affinity</span>
-NumPts = length(stimulus);
+NumPts = 800;
+StmPts = 400;
+StmAmp = 1000;
 
 clear <span class="string">g</span> <span class="string">s</span> <span class="string">c</span> <span class="string">p</span> <span class="string">cslow</span>;
-
-<span class="comment">% This differs from our calculation by a factor of 2, see riekeInit.m</span>
-<span class="comment">% q    = 2 * beta * cdark / (k * gdark^h);</span>
-cur2ca = beta * cdark / (cgmp2cur * gdark^3);				        <span class="comment">% get q using steady state</span>
+cur2ca = beta * cdark * 2 / (cgmp2cur * gdark^3);				<span class="comment">% get q using steady state</span>
 smax = eta/phi * gdark * (1 + (cdark / hillaffinity)^hillcoef);		<span class="comment">% get smax using steady state</span>
+tme = 1:NumPts;
+tme = tme * TimeStep;
 
 <span class="comment">% initial conditions</span>
 g(1) = gdark;
@@ -110,43 +95,112 @@ s(1) = gdark * eta/phi;
 c(1) = cdark;
 p(1) = eta/phi;
 cslow(1) = cdark;
-</pre><pre class="codeoutput">Error using riekeConeAdaptation (line 73)
-Not enough input arguments.
-</pre><h2>First loop from s_fredConeModel script<a name="5"></a></h2><pre class="codeinput"><span class="comment">% Should zero out but allocate space for all the p,c, ... and so forth</span>
-clear <span class="string">g</span> <span class="string">s</span> <span class="string">c</span> <span class="string">p</span> <span class="string">cslow</span>;
+</pre><p>adaptation kinetics</p><pre class="codeinput">clear <span class="string">Stm</span>;
+StepAmp = 30000;
+FlashAmp = 50000;
+NumPts = 3000;
+Stm(1:1000) = 0;
+Stm(1001:2000) = StepAmp;
+Stm(2001:3000) = 0;
+Stm(800) = FlashAmp;
+Stm(1200) = FlashAmp;
+Stm(1600) = FlashAmp;
+Stm(2200) = FlashAmp;
+Stm(2600) = FlashAmp;
+</pre><h2>Create a stimulus ... think more about the choice here.<a name="3"></a></h2><p>inc/dec asymmetry</p><pre class="codeinput">clear <span class="string">Stm</span>;
+MeanAmp = 30000;
+StepAmp = 30000;
+NumPts = 1000;    <span class="comment">% One millisecond per step, 1 sec stimulus</span>
+s = [250 500 750 1000];
+Stm(1:s(1)) = MeanAmp;
+Stm((s(1)+1):s(2)) = MeanAmp - StepAmp;
+Stm((s(2)+1):s(3)) = MeanAmp;
+Stm((s(3)+1):s(4)) = MeanAmp + StepAmp;
 
+<span class="comment">% vcNewGraphWin;</span>
+<span class="comment">% plot(Stm); grid on;</span>
+
+<span class="comment">% Save this out for comparison with ISETBIO</span>
+riekeStim1 = Stm;
+</pre><pre class="codeinput">tme = 1:NumPts;
+clear <span class="string">g</span> <span class="string">s</span> <span class="string">c</span> <span class="string">p</span> <span class="string">cslow</span>;
 g(1) = gdark;
 s(1) = gdark * eta/phi;
 c(1) = cdark;
 p(1) = eta/phi;
 cslow(1) = cdark;
 
-h = 3;   <span class="comment">% From the slide</span>
-
-<span class="comment">% Solve difference equations</span>
+<span class="comment">% solve difference equations</span>
 <span class="keyword">for</span> pnt = 2:NumPts
-
-    r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1) + stimulus(pnt));
-    p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
-	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^h - beta * c(pnt-1));
+    r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1) + Stm(pnt));
+	p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
+	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 ./ (1 + cslow(pnt-1) ./ cdark) - beta * c(pnt-1));
 	cslow(pnt) = cslow(pnt-1) - TimeStep * (betaSlow * (cslow(pnt-1)-c(pnt-1)));
 	s(pnt) = smax / (1 + (c(pnt) / hillaffinity)^hillcoef);
 	g(pnt) = g(pnt-1) + TimeStep * (s(pnt-1) - p(pnt-1) * g(pnt-1));
-
-
-
 <span class="keyword">end</span>
-
 <span class="comment">% determine current change</span>
-cur = -cgmp2cur * g.^h * 2 ./ (2 + cslow ./ cdark);
+<span class="comment">%cur = -cgmp2cur * g.^3 * 2 ./ (2 + cslow ./ cdark);</span>
+cur = -cgmp2cur * g.^3 ./ (1 + cslow ./ cdark);
+riekeCurrent1 = cur;
 
-<span class="comment">% s_fredCOneModel has two different calculations for current.</span>
-<span class="comment">% Here is the second calculation.  We don't know why they differ.</span>
+<span class="comment">% % plot current, pde, synthesis, cGMP and calcium</span>
+<span class="comment">% figure(1); clf;</span>
+<span class="comment">% subplot(6, 1, 1);</span>
+<span class="comment">% plot(tme, cur);</span>
+<span class="comment">% xlabel('time (sec)');</span>
+<span class="comment">% ylabel('current');</span>
+<span class="comment">% subplot(6, 1, 2);</span>
+<span class="comment">% plot(tme, p);</span>
+<span class="comment">% xlabel('time (sec)');</span>
+<span class="comment">% ylabel('pde activity');</span>
+<span class="comment">% subplot(6, 1, 3);</span>
+<span class="comment">% plot(tme, s);</span>
+<span class="comment">% xlabel('time (sec)');</span>
+<span class="comment">% ylabel('synthesis rate');</span>
+<span class="comment">% subplot(6, 1, 4);</span>
+<span class="comment">% plot(tme, g);</span>
+<span class="comment">% xlabel('time (sec)');</span>
+<span class="comment">% ylabel('[cGMP]');</span>
+<span class="comment">% subplot(6, 1, 5)</span>
+<span class="comment">% plot(tme, c)</span>
+<span class="comment">% xlabel('time (sec)');</span>
+<span class="comment">% ylabel('[calcium]');</span>
+<span class="comment">% subplot(6, 1, 6)</span>
+<span class="comment">% plot(tme, cslow)</span>
+<span class="comment">% xlabel('time (sec)');</span>
+<span class="comment">% ylabel('[calcium slow]');</span>
 <span class="comment">%</span>
-<span class="comment">% cur = -cgmp2cur * g.^h ./ (1 + cslow ./ cdark);</span>
+<span class="comment">% figure(2);clf</span>
+<span class="comment">% plot(cur(5000:length(cur)) - cur(1000)); hold on</span>
+<span class="comment">% plot(Resp - Resp(1000), 'r');</span>
 
-<span class="keyword">return</span>
-</pre><h2>This is the second loop ... not used in this function.<a name="6"></a></h2><pre class="codeinput">clear <span class="string">g</span> <span class="string">s</span> <span class="string">c</span> <span class="string">p</span> <span class="string">cslow</span>;
+<span class="comment">% plot(tme,BaselineSubtraction(cur,8000,9000),'r','LineWidth',2);</span>
+<span class="comment">% hold on</span>
+<span class="comment">% plot(tme,BaselineSubtraction(Resp,8000,9000),'k')</span>
+<span class="comment">% hold off</span>
+
+<span class="comment">% plot(tme,(cur))</span>
+<span class="comment">% hold on</span>
+<span class="comment">% plot(normalize(Resp))</span>
+<span class="comment">% hold off</span>
+<span class="comment">%</span>
+<span class="comment">% cur = cur - cur(NumPts/2);</span>
+<span class="comment">% plot(-cur(NumPts/2:NumPts/2+800)); hold on</span>
+<span class="comment">% cur = cur - cur(3*NumPts/4);</span>
+<span class="comment">% plot(cur(3*NumPts/4:3*NumPts/4+800), 'r');</span>
+
+
+<span class="comment">% figure(3)</span>
+<span class="comment">% plot(tme,Stm)</span>
+</pre><p>solve difference equations for step or pulse</p><pre class="codeinput">clear <span class="string">Stm</span>;
+
+StmPts = 5;
+StmAmp = 1000;
+NumPts = 1000;
+tme = 1:NumPts;
+
+clear <span class="string">g</span> <span class="string">s</span> <span class="string">c</span> <span class="string">p</span> <span class="string">cslow</span>;
 g(1) = gdark;
 s(1) = gdark * eta/phi;
 c(1) = cdark;
@@ -155,88 +209,57 @@ cslow(1) = cdark;
 
 <span class="keyword">for</span> pnt = 2:NumPts
 	<span class="keyword">if</span> (pnt &lt;= NumPts/4)
-        r(pnt) = 0;
+        r(pnt) = 0; Stm(pnt) = 0;
     <span class="keyword">end</span>
     <span class="keyword">if</span> ((pnt &gt; NumPts/4) &amp;&amp; (pnt &lt; (NumPts/4+StmPts)))
         r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1) + StmAmp);
-
+        Stm(pnt) = StmAmp;
     <span class="keyword">end</span>
     <span class="keyword">if</span> (pnt &gt;= (NumPts/4+StmPts))
         r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1));
+        Stm(pnt) = 0;
     <span class="keyword">end</span>
-
-    p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
-	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 - beta * c(pnt-1));
+	p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
+	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 ./ (1 + cslow(pnt-1) ./ cdark) - beta * c(pnt-1));
 	cslow(pnt) = cslow(pnt-1) - TimeStep * (betaSlow * (cslow(pnt-1)-c(pnt-1)));
 	s(pnt) = smax / (1 + (c(pnt) / hillaffinity)^hillcoef);
 	g(pnt) = g(pnt-1) + TimeStep * (s(pnt-1) - p(pnt-1) * g(pnt-1));
 <span class="keyword">end</span>
+<span class="comment">% determine current change</span>
+cur = -cgmp2cur * g.^3 ./ (1 + cslow ./ cdark);
+riekeCurrent2 = cur;
+riekeStim2 = Stm;
 
-<span class="comment">% determine current change.</span>
-<span class="comment">% Notice that this formula differs from the formula in the previous cell.</span>
-<span class="comment">% We don't know why</span>
-cur2 = -cgmp2cur * g.^3 ./ (1 + cslow ./ cdark);
-</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+
+
+<span class="comment">% plot current, pde, synthesis, cGMP and calcium</span>
+<span class="comment">% figure(1); clf;</span>
+<span class="comment">% subplot(5, 1, 1);</span>
+<span class="comment">% plot(tme, p);</span>
+<span class="comment">% xlabel('time (sec)');</span>
+<span class="comment">% ylabel('pde activity');</span>
+<span class="comment">% subplot(5, 1, 2);</span>
+<span class="comment">% plot(tme, s);</span>
+<span class="comment">% xlabel('time (sec)');</span>
+<span class="comment">% ylabel('synthesis rate');</span>
+<span class="comment">% subplot(5, 1, 3);</span>
+<span class="comment">% plot(tme, g);</span>
+<span class="comment">% xlabel('time (sec)');</span>
+<span class="comment">% ylabel('[cGMP]');</span>
+<span class="comment">% subplot(5, 1, 4)</span>
+<span class="comment">% plot(tme, c)</span>
+<span class="comment">% xlabel('time (sec)');</span>
+<span class="comment">% ylabel('[calcium]');</span>
+<span class="comment">% subplot(5, 1, 5)</span>
+<span class="comment">% plot(tme, cslow)</span>
+<span class="comment">% xlabel('time (sec)');</span>
+<span class="comment">% ylabel('[calcium slow]');</span>
+<span class="comment">%</span>
+<span class="comment">% figure(2); clf;</span>
+<span class="comment">% plot(cur);</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
-function [cur] = riekeConeAdaptation(stimulus)
-% Functional form of rieke cone adaptation model based on UW code.
-%
-% This function is temporary and for exploration ... See notes below
-%
-% Example:
-%  stimulus = zeros(1,1000); stimulus(100:105) = 70000;
-%  [cur] = riekeConeAdaptation(stimulus);
-%  vcNewGraphWin; plot(cur); grid on
-%
-% See Also:
-%
-% HJ/BW ISETBIO Team, Copyright 2014
-
-
-%% Programming Notes
-%
-% The initial m-file from UW (s_fredConeModel.m) had two sections that
-% computed the current from the stimulus.  The formulae in the two sections
-% differed at a key step - the computation of the current.  
-%
-% One group had computation as:
-%
-%   cur = -cgmp2cur * g.^h * 2 ./ (2 + cslow ./ cdark);
-%
-% The second had the computation as:
-%
-%   cur = -cgmp2cur * g.^h ./ (1 + cslow ./ cdark);
-%
-% There is a '2' that differs.  We don't know which is right.
-% 
-% Also, the second calculation in the original confounded the stimulus
-% creation with the differential equations, making that form of the
-% implementation highly specialized and not useful for general calculation.
-%
-% Finally, the powerpoint description of the differential equations was not
-% precisely the same as either of the calculations in s_fredConeModel.  So,
-% that needs to be sorted out also.
-%
-% The formulae on the slide look like this, and they are implemented in the
-% riekeAdaptTemporal.  See the document uploaded by HJ for the derivation
-% of the formula. There are a couple of differences.  In particular one
-% difference is in how cur2ca is calculated (p.q). HJ says the slides
-% resolve to this formula
-%
-%   q    = 2 * beta * cdark / (k * gdark^h);  % This is cur2ca
-%
-% but the s_fredConeModel has this formula
-%
-%   cur2ca = beta * cdark / (cgmp2cur * gdark^3);
-%
-%
-% This function is intended to serve as a basis for discussion as we
-% explore the calculations and resolve the differences.  In the end, we
-% will use this to settle on the implementation in riekeAdaptTemporal.m.
-
-
-%% Initialize parameters
-
+%%
 sigma = 100;			% rhodopsin activity decay rate constant (1/sec)
 phi = 50;				% phosphodiesterase activity decay rate constant (1/sec)
 eta = 100;				% phosphodiesterase activation rate constant (1/sec)
@@ -250,14 +273,15 @@ beta = 50;				% rate constant for calcium removal in 1/sec
 betaSlow = 2;
 hillcoef = 4;			% cooperativity
 hillaffinity = 0.35;		% affinity
-NumPts = length(stimulus);
+NumPts = 800;
+StmPts = 400;
+StmAmp = 1000;
 
 clear g s c p cslow;
-
-% This differs from our calculation by a factor of 2, see riekeInit.m
-% q    = 2 * beta * cdark / (k * gdark^h);
-cur2ca = beta * cdark / (cgmp2cur * gdark^3);				        % get q using steady state
+cur2ca = beta * cdark * 2 / (cgmp2cur * gdark^3);				% get q using steady state
 smax = eta/phi * gdark * (1 + (cdark / hillaffinity)^hillcoef);		% get smax using steady state
+tme = 1:NumPts;
+tme = tme * TimeStep;
 
 % initial conditions
 g(1) = gdark;
@@ -267,44 +291,120 @@ p(1) = eta/phi;
 cslow(1) = cdark;
 
 
-%%  First loop from s_fredConeModel script
+%%
+% adaptation kinetics
 
-% Should zero out but allocate space for all the p,c, ... and so forth
+clear Stm;
+StepAmp = 30000;
+FlashAmp = 50000;
+NumPts = 3000;
+Stm(1:1000) = 0;
+Stm(1001:2000) = StepAmp;
+Stm(2001:3000) = 0;
+Stm(800) = FlashAmp;
+Stm(1200) = FlashAmp;
+Stm(1600) = FlashAmp;
+Stm(2200) = FlashAmp;
+Stm(2600) = FlashAmp;
+
+%%  Create a stimulus ... think more about the choice here.
+% inc/dec asymmetry
+clear Stm;
+MeanAmp = 30000;
+StepAmp = 30000;
+NumPts = 1000;    % One millisecond per step, 1 sec stimulus
+s = [250 500 750 1000];
+Stm(1:s(1)) = MeanAmp;
+Stm((s(1)+1):s(2)) = MeanAmp - StepAmp;
+Stm((s(2)+1):s(3)) = MeanAmp;
+Stm((s(3)+1):s(4)) = MeanAmp + StepAmp;
+
+% vcNewGraphWin;
+% plot(Stm); grid on;
+
+% Save this out for comparison with ISETBIO
+riekeStim1 = Stm;
+
+%%
+tme = 1:NumPts;
 clear g s c p cslow;
-
 g(1) = gdark;
 s(1) = gdark * eta/phi;		
 c(1) = cdark;
 p(1) = eta/phi;
 cslow(1) = cdark;
 
-h = 3;   % From the slide
-
-% Solve difference equations
+% solve difference equations
 for pnt = 2:NumPts
-
-    r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1) + stimulus(pnt));
-    p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
-	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^h - beta * c(pnt-1));
+    r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1) + Stm(pnt));
+	p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
+	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 ./ (1 + cslow(pnt-1) ./ cdark) - beta * c(pnt-1));
 	cslow(pnt) = cslow(pnt-1) - TimeStep * (betaSlow * (cslow(pnt-1)-c(pnt-1)));
 	s(pnt) = smax / (1 + (c(pnt) / hillaffinity)^hillcoef);
 	g(pnt) = g(pnt-1) + TimeStep * (s(pnt-1) - p(pnt-1) * g(pnt-1));
-
-
-
 end
-
 % determine current change
-cur = -cgmp2cur * g.^h * 2 ./ (2 + cslow ./ cdark);
+%cur = -cgmp2cur * g.^3 * 2 ./ (2 + cslow ./ cdark);
+cur = -cgmp2cur * g.^3 ./ (1 + cslow ./ cdark);
+riekeCurrent1 = cur;
 
-% s_fredCOneModel has two different calculations for current.
-% Here is the second calculation.  We don't know why they differ.
-%
-% cur = -cgmp2cur * g.^h ./ (1 + cslow ./ cdark);
+% % plot current, pde, synthesis, cGMP and calcium
+% figure(1); clf;
+% subplot(6, 1, 1);
+% plot(tme, cur);
+% xlabel('time (sec)');
+% ylabel('current');
+% subplot(6, 1, 2);
+% plot(tme, p);
+% xlabel('time (sec)');
+% ylabel('pde activity');
+% subplot(6, 1, 3);
+% plot(tme, s);
+% xlabel('time (sec)');
+% ylabel('synthesis rate');
+% subplot(6, 1, 4);
+% plot(tme, g);
+% xlabel('time (sec)');
+% ylabel('[cGMP]');
+% subplot(6, 1, 5) 
+% plot(tme, c)
+% xlabel('time (sec)');
+% ylabel('[calcium]');
+% subplot(6, 1, 6) 
+% plot(tme, cslow)
+% xlabel('time (sec)');
+% ylabel('[calcium slow]');
+% 
+% figure(2);clf
+% plot(cur(5000:length(cur)) - cur(1000)); hold on
+% plot(Resp - Resp(1000), 'r');
 
-return
+% plot(tme,BaselineSubtraction(cur,8000,9000),'r','LineWidth',2);
+% hold on
+% plot(tme,BaselineSubtraction(Resp,8000,9000),'k')
+% hold off
 
-%% This is the second loop ... not used in this function.
+% plot(tme,(cur))
+% hold on
+% plot(normalize(Resp))
+% hold off
+% 
+% cur = cur - cur(NumPts/2);
+% plot(-cur(NumPts/2:NumPts/2+800)); hold on
+% cur = cur - cur(3*NumPts/4);
+% plot(cur(3*NumPts/4:3*NumPts/4+800), 'r');
+
+
+% figure(3)
+% plot(tme,Stm)
+%%
+% solve difference equations for step or pulse
+clear Stm;
+
+StmPts = 5;
+StmAmp = 1000;
+NumPts = 1000;
+tme = 1:NumPts;
 
 clear g s c p cslow;
 g(1) = gdark;
@@ -315,28 +415,54 @@ cslow(1) = cdark;
 
 for pnt = 2:NumPts
 	if (pnt <= NumPts/4)
-        r(pnt) = 0; 
+        r(pnt) = 0; Stm(pnt) = 0;
     end
     if ((pnt > NumPts/4) && (pnt < (NumPts/4+StmPts)))
         r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1) + StmAmp);
-        
+        Stm(pnt) = StmAmp;
     end
     if (pnt >= (NumPts/4+StmPts))
         r(pnt) = r(pnt-1) + TimeStep * (-sigma * r(pnt-1));
+        Stm(pnt) = 0;
     end
-    
-    p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
-	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 - beta * c(pnt-1));
+	p(pnt) = p(pnt-1) + TimeStep * (r(pnt-1) + eta - phi * p(pnt-1));
+	c(pnt) = c(pnt-1) + TimeStep * (cur2ca * cgmp2cur * g(pnt-1)^3 ./ (1 + cslow(pnt-1) ./ cdark) - beta * c(pnt-1));
 	cslow(pnt) = cslow(pnt-1) - TimeStep * (betaSlow * (cslow(pnt-1)-c(pnt-1)));
 	s(pnt) = smax / (1 + (c(pnt) / hillaffinity)^hillcoef);
 	g(pnt) = g(pnt-1) + TimeStep * (s(pnt-1) - p(pnt-1) * g(pnt-1));
 end
+% determine current change
+cur = -cgmp2cur * g.^3 ./ (1 + cslow ./ cdark);
+riekeCurrent2 = cur;
+riekeStim2 = Stm;
 
-% determine current change.
-% Notice that this formula differs from the formula in the previous cell.
-% We don't know why
-cur2 = -cgmp2cur * g.^3 ./ (1 + cslow ./ cdark);
 
+
+% plot current, pde, synthesis, cGMP and calcium
+% figure(1); clf;
+% subplot(5, 1, 1);
+% plot(tme, p);
+% xlabel('time (sec)');
+% ylabel('pde activity');
+% subplot(5, 1, 2);
+% plot(tme, s);
+% xlabel('time (sec)');
+% ylabel('synthesis rate');
+% subplot(5, 1, 3);
+% plot(tme, g);
+% xlabel('time (sec)');
+% ylabel('[cGMP]');
+% subplot(5, 1, 4) 
+% plot(tme, c)
+% xlabel('time (sec)');
+% ylabel('[calcium]');
+% subplot(5, 1, 5) 
+% plot(tme, cslow)
+% xlabel('time (sec)');
+% ylabel('[calcium slow]');
+% 
+% figure(2); clf;
+% plot(cur);
 
 
 
