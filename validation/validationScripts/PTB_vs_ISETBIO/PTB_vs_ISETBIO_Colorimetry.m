@@ -3,6 +3,11 @@ function PTB_vs_ISETBIO_Colorimetry(runParams)
 %  Validate ISETBIO-based colorimetric computations by comparing to PTB-based colorimetric computations.
 %
 
+    % Set runParams default
+    if (nargin < 1)
+        runParams = [];
+    end
+    
     % Call the validation script
     [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
 
@@ -13,7 +18,13 @@ end
 %% Skeleton validation script
 function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
-     % Use ISETBIO's version of lab2xyz.
+     %% Default reporting behavior
+     if (nargin < 1 || isempty(runParams))
+         runParams.generatePlots = true;
+         runParams.printValidationReport = true;
+     end
+     
+     %% Use ISETBIO's version of lab2xyz.
      lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');
      
     %% Initialize return params
@@ -27,7 +38,6 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     tolerance = 1e-10;
     
     %% XYZ-related colorimetry
-    %
     message = sprintf('\n\t\t***** Basic XYZ *****');
     validationReport = sprintf('%s %s', validationReport, message);
     
@@ -319,17 +329,15 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetQuanta = Energy2Quanta(wlsTest,spdEnergyTest);
     toleranceQuanta = (10^-testPlaces)*min(ptbQuanta);
     if (any(abs(ptbQuanta-isetQuanta) > toleranceQuanta))
-        message = sprintf('\n\t\tPTB-ISET DO NOT AGREE for energy to quanta conversion at %d significant places (tolerance: %g)',testPlaces, toleranceQuanta);
+        message = sprintf('\n\t\tPTB-ISET DO NOT AGREE for energy to quanta conversion at %d significant places (tolerance: %g quanta)',testPlaces, toleranceQuanta);
         validationFailedFlag = true;
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for energy to quanta conversion to %d significant places (tolerance: %g)',testPlaces,  toleranceQuanta);
+        message = sprintf('\n\t\tPTB-ISET AGREE for energy to quanta conversion to %d significant places (tolerance: %g quanta)',testPlaces,  toleranceQuanta);
     end
-    
     % update validation report and validationDataToSave struct
     validationReport = sprintf('%s %s', validationReport, message);
     validationDataToSave.ptbQuanta = ptbQuanta;
     validationDataToSave.isetQuanta = isetQuanta;
-    
     
     if (any(abs(QuantaToEnergy(wlsTest,ptbQuanta)-spdEnergyTest) > tolerance))
         message = sprintf('\n\t\tPTB FAILS energy to quanta to energy (tolerance: %g)', tolerance);
@@ -352,7 +360,6 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     validationReport = sprintf('%s %s', validationReport, message);
     validationDataToSave.isetEnergyFromQuanta = Quanta2Energy(wlsTest,isetQuanta')';
     
-
     %% CIE daylights
     % 
     % These routines are now running in ISET and everything agrees.
@@ -379,10 +386,14 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     validationDataToSave.isetDaySpd = isetDaySpd;
     validationDataToSave.ptbDaySpd  = ptbDaySpd;
     
-
     % Generate plots, if so specified
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
         % Your plotting code goes here.
+    end
+    
+    % Output report, if so desired
+    if (nargin >= 1) && (isfield(runParams,'printValidationReport')) && (runParams.printValidationReport == true)
+        disp(validationReport);
     end
     
 end
