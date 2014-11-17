@@ -1,6 +1,6 @@
 function PTB_vs_ISETBIO_Irradiance(runParams)
 %
-%   Validate ISETBIO-based irradiance computations by comparing to PTB-based irradiance computations.
+%   Validate ISETBIO-based irradiance/isomerization computations by comparing to PTB-based irradiance/isomerization computations.
 % 
 
      %% Default reporting behavior
@@ -17,7 +17,6 @@ function PTB_vs_ISETBIO_Irradiance(runParams)
 end
 
 
-
 %% Validation script for PTB_vs_ISETBIO_Irradiance test
 function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
@@ -26,21 +25,17 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     validationFailedFlag = true; 
     validationDataToSave = struct();
     
-    
     %% Initialize ISETBIO
     s_initISET;
-    
-    
+       
     %% Set computation params
     fov     = 20;  % need large field
     roiSize = 5;
-    
-    
+        
     %% Create a radiance image in ISETBIO
     scene = sceneCreate('uniform ee');    % Equal energy
     scene = sceneSet(scene,'name','Equal energy uniform field');
     scene = sceneSet(scene,'fov', fov);
-
     
     %% Compute the irradiance in ISETBIO
     %
@@ -105,12 +100,9 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     %% Numerical check to decide whether we passed.
     % We are checking against a 1% error.
     tolerance = 0.01;
-    
     ptbMagCorrectIrradiance = ptbMagCorrectIrradiance(:);
     isetbioIrradianceEnergy = isetbioIrradianceEnergy(:);
     difference = ptbMagCorrectIrradiance-isetbioIrradianceEnergy;
-   
-    %% Set validationReport, validationFailedFlag and validationData
     if (max(abs(difference./isetbioIrradianceEnergy)) > tolerance)
         validationReport     = sprintf('Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance of %0.1f%% !!!', 100*tolerance);
         validationFailedFlag = true;
@@ -118,7 +110,6 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         validationReport     = sprintf('Validation PASSED. PTB and isetbio agree about irradiance to %0.1f%%',100*tolerance);
         validationFailedFlag = false;
     end
-
     validationDataToSave.fov        = fov;
     validationDataToSave.roiSize    = roiSize;
     validationDataToSave.tolerance  = tolerance;
@@ -127,6 +118,41 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     validationDataToSave.ptbMagCorrectIrradiance = ptbMagCorrectIrradiance;
     validationDataToSave.isetbioIrradianceEnergy = isetbioIrradianceEnergy;
     
+    %% Compare spectral sensitivities used by ISETBIO and PTB.
+    %
+    % THe PTB routine above uses the CIE 2-deg standard, which is the
+    % Stockman-Sharpe 2-degree fundamentals.  Apparently, so does ISETBIO.
+    coneTolerance = 1e-3;
+    ptbCones = ptbPhotoreceptors.isomerizationAbsorptance';
+    sensor    = sensorCreate('human');
+    isetCones = sensorGet(sensor,'spectral qe');
+    isetCones = isetCones(:,2:4);
+    coneDifference = ptbCones-isetCones;
+    if (max(abs(coneDifference)) > coneTolerance)
+        message = sprintf('Validation FAILED. Difference between PTB and isetbio cone quantal efficiencies %0.1g !!!', coneTolerance);
+        validationFailedFlag = true;
+    else
+        message = sprintf('Validation PASSED. PTB and isetbio agree about cone quantal efficiencies to %0.1g',coneTolerance);
+        validationFailedFlag = false;
+    end
+    validationReport = sprintf('%s\n%s', validationReport, message);
+    validationDataToSave.isetCones  = isetCones;
+    validationDataToSave.ptbCones   = ptbCones;
+    validationDataToSave.coneTolerance  = coneTolerance;
+    validationDataToSave.sensor      = sensor;
+   
+    %% Compute quantal absorptions
+    %
+    % Put this in as a placeholder.
+    % Need to:
+    %  Get our L, M, S absorptions from the RO1 where we get the spectrum
+    %  Do PTB computation
+    %  Compare
+    %  Work through parameters that might lead to differences
+    %    e.g., cone aperture, integration time, ...
+    sensor = coneAbsorptions(sensor, oi);
+    volts  = sensorGet(sensor,'volts');
+
     %% Generate plots, if so specified
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
         h = figure(500);
@@ -153,36 +179,33 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         xlabel('Wave (nm)', 'FontName', 'Helvetica', 'FontSize', 14); ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 14)
         legend({'PTB','ISETBIO'}, 'Location','SouthEast','FontSize',12)
         title('Magnification-corrected comparison', 'FontName', 'Helvetica', 'FontSize', 18, 'FontWeight', 'bold');
+        
+        % Compare PTB sensor spectral responses with ISETBIO
+        vcNewGraphWin; hold on; 
+        set(gca, 'FontName', 'Helvetica', 'FontSize', 14,  'FontWeight', 'bold');
+        plot(wave, isetCones(:,1),'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
+        plot(wave, ptbCones(:,1), 'r-');
+        plot(wave, isetCones(:,2),'go', 'MarkerFaceColor', [0.8 1.0 0.8], 'MarkerSize', 10);
+        plot(wave, ptbCones(:,2), 'g-');
+        plot(wave, isetCones(:,3),'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
+        plot(wave, ptbCones(:,3), 'b-');
+        legend({'ISETBIO','PTB'},'Location','NorthWest','FontSize',12);
+        xlabel('Wavelength');
+        ylabel('Quantal Efficiency')
+
+        vcNewGraphWin; hold on
+        set(gca, 'FontName', 'Helvetica', 'FontSize', 14,  'FontWeight', 'bold');
+        plot(ptbCones(:),isetCones(:),'o','MarkerSize', 10);
+        plot([0 0.5],[0 0.5], '--');
+        xlabel('PTB cones');
+        ylabel('ISET cones');
+        axis('square');
     end 
     
-     % Output report, if so desired
+    %% Output report, if so desired
     if (nargin >= 1) && (isfield(runParams,'printValidationReport')) && (runParams.printValidationReport == true)
         disp(validationReport);
         fprintf('\n');
     end
     
 end
-
-
-
-
-% % ptb effective absorbtance
-% ptbCones = ptbPhotoreceptors.isomerizationAbsorptance'; % Appropriate for quanta
-% 
-% %%  ISETBIO sensor absorptions
-% %
-% sensor    = sensorCreate('human');
-% sensor    = sensorSet(sensor,'macular density',0.35);
-% isetCones = sensorGet(sensor,'spectral qe');
-% isetCones = isetCones(:,2:4);
-% 
-% %% Compare PTB sensor spectral responses with ISETBIO
-% vcNewGraphWin; plot(wave, isetCones);
-% hold on; plot(wave, ptbCones, '--');
-% 
-% vcNewGraphWin; plot(wave,ptbCones);
-% plot(ptbCones(:),isetCones(:),'o');
-% hold on; plot([0 1],[0 1], '--');
-% xlabel('PTB cones');
-% ylabel('ISET cones');
-
