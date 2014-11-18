@@ -2,7 +2,6 @@
 /isettools/scripts/scene/s_Scene2ImageData.m
 /isettools/scripts/scene/s_scene2Lab.m
 /isettools/scripts/scene/s_Scene2SampledScene.m
-
 .DS_Store
 /external/liblinear-1.93/matlab/libsvmread.mexa64
 /external/liblinear-1.93/matlab/libsvmwrite.mexa64
@@ -12,3 +11,4 @@
 /external/libsvm-3.17/matlab/libsvmwrite.mexa64
 /external/libsvm-3.17/matlab/svmpredict.mexa64
 /external/libsvm-3.17/matlab/svmtrain.mexa64
+validation/InDevelopment/@UnitTest/.DS_Store
