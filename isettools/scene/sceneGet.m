@@ -716,13 +716,16 @@ switch parm
         end
         
         % Render the rgb image
-        photons = sceneGet(scene,'photons');
+        % photons = sceneGet(scene, 'photons');
+        % Reference it directly could save great amount of memory and time
+        % when 'photons' are large. This is because Matlab is using copy
+        % when change strategy.
+        photons = double(scene.data.photons);
         wList   = sceneGet(scene,'wave');
-        [row,col,nil] = size(photons); %#ok<NASGU>
-        %         photons = RGB2XWFormat(photons);
-        %         val     = imageSPD2RGB(photons,wList,gam);
-        %         val     = XW2RGBFormat(val,row,col);
+        [row, col, ~] = size(photons);
+
         displayFlag = -1;  % Compute rgb, but do not display
+        if length(varargin) > 1, displayFlag = varargin{2}; end
         val = imageSPD(photons,wList,gam,row,col,displayFlag);
         
     otherwise
