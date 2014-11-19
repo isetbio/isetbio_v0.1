@@ -1,4 +1,4 @@
-function val = displayGet(d,parm,varargin)
+function val = displayGet(d, parm, varargin)
 %Get display parameters and derived properties
 %
 %     val = displayGet(d,parm,varargin)

@@ -158,6 +158,12 @@ switch param
 %             vcSESSION.GPUCOMPUTE = val;
 %         end
         val = false;
+    case {'imagesizethreshold'}
+        if isfield(vcSESSION, 'imagesizethreshold')
+            val = vcSESSION.imagesizethreshold;
+        else
+            val = inf;
+        end
     case {'graphwinstructure'}
         val = vcSESSION.GRAPHWIN;
     case {'graphwinfigure'}

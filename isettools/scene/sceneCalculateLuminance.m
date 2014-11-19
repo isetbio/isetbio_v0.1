@@ -28,10 +28,10 @@ binWidth = sceneGet(scene, 'binwidth');
 fName = fullfile(isetRootPath,'data','human','luminosity.mat');
 V = ieReadSpectra(fName,wave);
 
-if showBar, h = waitbar(0,'Calculating luminance from photons'); end
+if showBar, h = waitbar(0, 'Calculating luminance from photons'); end
 
 % Calculate the luminance from energy
-try
+if nRows * nCols < ieSessionGet('image size threshold')
     % If the image is small enough, we calculate luminance using a single
     % matrix multiplication.  We don't set a particular criterion size
     % because that may differ depending on memory in that user's computer.
@@ -48,21 +48,20 @@ try
     
     % Convert into luminance using the photopic luminosity curve in V.
     luminance = 683*(xwData*V) * binWidth;
-    luminance = XW2RGBFormat(luminance, rows, cols);    
-catch
+    luminance = XW2RGBFormat(luminance, rows, cols);
+else
     % We think we are in this condition because the image is big.  So we
     % convert to energy one waveband at a time and sum  the wavelengths
     % weighted by the luminance efficiency function.  When the photon image
     % is really big, should we figure that there is no stored energy?
     % energy = sceneGet(scene,'energy');
-    wave = sceneGet(scene,'wave');
-    lumWaves = find(wave <= 780,1,'last');  % Luminance wavelength range
-    if showBar, waitbar(0.3,h); end
+    wave = sceneGet(scene, 'wave');
+    lumWaves = find(wave <= 780, 1, 'last');  % Luminance wavelength range
     luminance = zeros(nRows,nCols);
-    for ii=1:lumWaves
-        if showBar, waitbar(0.3 + 0.7*(ii/lumWaves),h); end
-        energy = sceneGet(scene,'energy',wave(ii));
-        luminance = luminance + (683*energy*V(ii)*binWidth);
+    for ii = 1 : lumWaves
+        if showBar, waitbar(ii/lumWaves, h); end
+        energy = sceneGet(scene, 'energy', wave(ii));
+        luminance = luminance + 683 * energy * V(ii) * binWidth;
     end
 end
 

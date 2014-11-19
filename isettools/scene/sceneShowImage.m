@@ -23,12 +23,12 @@ if notDefined('gam'), gam = 1; end
 if notDefined('displayFlag'), displayFlag = 1; end
 
 % Force to lower case and no spaces
-wList = sceneGet(scene,'wavelength');
-img   = sceneGet(scene,'photons');
-row   = sceneGet(scene,'row'); 
-col = sceneGet(scene,'col');
+wList     = sceneGet(scene,'wavelength');
+photons   = sceneGet(scene,'photons');
+row       = sceneGet(scene,'row'); 
+col       = sceneGet(scene,'col');
 
-if isempty(img)
+if isempty(photons)
     cla
     sprintf('ISET Warning:  Data are not available');
     return;
@@ -37,7 +37,7 @@ end
 % This displays the image in the GUI.  The displayFlag flag determines how
 % imageSPD converts the data into a displayed image.  It is set from the
 % GUI in the function sceneShowImage.
-rgb = imageSPD(img,wList,gam,row,col,displayFlag);
+rgb = imageSPD(photons,wList,gam,row,col,displayFlag);
 axis image; axis off
 
 end

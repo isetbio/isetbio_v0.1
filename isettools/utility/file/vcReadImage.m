@@ -188,7 +188,24 @@ switch lower(imageType)
             [xwImg,r,c] = RGB2XWFormat(inImg);
             
             % Convert energy units to quanta
-            photons = Energy2Quanta(wave,(xwImg*spd')')';
+            % This step could be slow, espetially when we use sub-pixel
+            % sampling
+            if numel(xwImg) < ieSessionGet('image size threshold') ...
+                    || ~ieSessionGet('waitBar') % small image
+                % compute directly
+                photons = Energy2Quanta(wave,(xwImg * spd')')';
+            else
+                % now we have too many pixels, loop over wavelength and
+                % print the progress
+                wBar = waitbar(0, 'Computing radiance of scene');
+                photons = zeros(size(xwImg, 1), length(wave));
+                for ii = 1 : length(wave)
+                    photons(:, ii) = Energy2Quanta(wave(ii), ...
+                                     (xwImg * spd(ii,:)')')';
+                    waitbar(ii/length(wave), wBar);
+                end
+                delete(wBar);
+            end
         end
         photons = XW2RGBFormat(photons,r,c);
         
