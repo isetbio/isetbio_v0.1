@@ -174,15 +174,31 @@ else
     return;
 end
 
+% Get scene info
+overSample = displayGet(d, 'over sample');
+answer = inputdlg({'Scene name', 'Up sample (col)', 'Up sample (row)'}, ...
+                   'Scene Info', 1, ...
+                   {sprintf('scene-%s', displayGet(d, 'name')), ...
+                    num2str(overSample(1)), ...
+                    num2str(overSample(2))});
+if isempty(answer)
+    return;
+else
+    name = answer{1};
+    overSample = [str2double(answer{2}) str2double(answer{3})];
+end
+
 % Generate scene
 if isempty(I), disp('No image set'); return; end
-scene = sceneFromFile(I, 'rgb', [], d, [], 1);
+scene = sceneFromFile(I, 'rgb', [], d, [], 1, [], overSample);
+scene = sceneSet(scene, 'name', name);
 
 % Compute scene size
 [r,c,~] = size(I);
 vDist = sceneGet(scene, 'distance');
 fov   = atand(max(r,c) * displayGet(d, 'metersperdot')/vDist);
 scene = sceneSet(scene, 'fov', fov);
+
 
 % Show scene window
 vcAddAndSelectObject('scene', scene);
@@ -205,9 +221,15 @@ else
     return;
 end
 
+% Get scene info
+name = inputdlg({'Scene name'}, 'Scene Info', 1, ...
+            {sprintf('scene-%s', displayGet(d, 'name'))});
+if isempty(name), return; end
+
 % Generate scene
 if isempty(I),  warning('No image set'); return; end
 scene = sceneFromFile(I, 'rgb', [], d, [], 0);
+scene = sceneSet(scene, 'name', name{1});
 
 % Compute scene size
 [r,c,~] = size(I);
