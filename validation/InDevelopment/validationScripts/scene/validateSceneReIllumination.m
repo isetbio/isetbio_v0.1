@@ -1,21 +1,24 @@
 function [validationReport, validationFailedFlag, validationData] = validateSceneReIllumination(varargin)
-    
-    % Initialize return variables to failed status
+%
+% Skeleton validation script containing the minimally required code. Copy and add your ISETBIO validation code. 
+%
+
+    % Initialize return variables
     [validationReport, validationFailedFlag, validationData] = initializeReturnParams();
     
     % Initialize run params
     runParams = initializeRunParams(varargin{:});
     
-    
+    % ---------------------------------------------------------------------
     % Validation code
     % ...
-    %
-    
+    % End of validation code
+    % ---------------------------------------------------------------------
     
     % Update return parameters
-    validationReport     = 'All OK';
+    validationReport     = 'Nothing to report';
     validationFailedFlag = false;
-    validationData.dummyMatrix = randn(100,100);
+    validationData.dummyMatrix = ones(100,100);
     
     % Plotting
     if (runParams.generatePlots)

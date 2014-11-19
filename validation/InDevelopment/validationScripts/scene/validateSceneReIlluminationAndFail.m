@@ -1,23 +1,26 @@
 function [validationReport, validationFailedFlag, validationData] = validateSceneReIlluminationAndFail(varargin)
-    
-    % Initialize return variables to failed status
+%
+% Skeleton validation script that raises a run-time excemption for testing. 
+%
+
+    % Initialize return variables
     [validationReport, validationFailedFlag, validationData] = initializeReturnParams();
     
     % Initialize run params
     runParams = initializeRunParams(varargin{:});
     
-    
+    % ---------------------------------------------------------------------
     % Validation code
     % ...
-    %
-    % simulate code crash
-    error('Simulating error in validation code');
-    
+    error('Simulating runtime error');
+    % ...
+    % End of validation code
+    % ---------------------------------------------------------------------
     
     % Update return parameters
-    validationReport     = 'All OK';
+    validationReport     = 'Nothing to report';
     validationFailedFlag = false;
-    validationData.dummyMatrix = randn(100,100);
+    validationData.dummyMatrix = ones(100,100);
     
     % Plotting
     if (runParams.generatePlots)
@@ -31,5 +34,5 @@ function [validationReport, validationFailedFlag, validationData] = validateScen
     if (runParams.printValidationReport)
         fprintf('Validation Report:\n\t%s\n\n', validationReport);
     end
-     
+   
 end
