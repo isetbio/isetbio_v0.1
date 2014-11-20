@@ -4,10 +4,10 @@ function [validationReport, validationFailedFlag, validationData] = validateScen
 %
 
     % Initialize return variables
-    [validationReport, validationFailedFlag, validationData] = initializeReturnParams();
+    [validationReport, validationFailedFlag, validationData] = UnitTest.initializeReturnParams();
     
-    % Initialize run params
-    runParams = initializeRunParams(varargin{:});
+    % Initialize run params struct
+    runTimeParams = UnitTest.initializeRunTimeParams(varargin{:});
     
     % ---------------------------------------------------------------------
     % Validation code
@@ -23,7 +23,7 @@ function [validationReport, validationFailedFlag, validationData] = validateScen
     validationData.dummyMatrix = ones(100,100);
     
     % Plotting
-    if (runParams.generatePlots)
+    if (runTimeParams.generatePlots)
        figure(1);
        plot(1:10, 1:10, 'r-');
        axis 'square'
@@ -31,7 +31,7 @@ function [validationReport, validationFailedFlag, validationData] = validateScen
     end
     
     % Validation report printing
-    if (runParams.printValidationReport)
+    if (runTimeParams.printValidationReport)
         fprintf('Validation Report:\n\t%s\n\n', validationReport);
     end
    
