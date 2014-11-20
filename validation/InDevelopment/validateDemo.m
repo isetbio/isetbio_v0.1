@@ -143,60 +143,108 @@ function validate(varargin)
         end
         
         
+        % Now begin validation against ground truth
         
-        % Generate SHA256 key if in 'FAST' mode
+        groundTruthFastValidationFailed = false;
+        groundTruthFullValidationFailed = false;
+        
+        % 'FAST' mode validation
         if ( (strcmp(validationParams.type, 'FAST'))  && ...
              (~validationFailedFlag) && (~exemptionRaisedFlag) )
             
             % Generate SHA256 hash from the validationData
             hashSHA25 = GenerateSHA256Hash(validationData);
             
-            % save/append to LocalValidationHistoryDataFile
-            dataFileName = fastLocalValidationHistoryDataFile;
-            if (exist(dataFileName, 'file') == 2)
-                fprintf('\tSHA-256 hash key     : %s, appended to ''%s''\n', hashSHA25, dataFileName);
-            else
-                fprintf('\tSHA-256 hash key     : %s, written to ''%s''\n', hashSHA25, dataFileName);
-            end
-            ExportData(dataFileName, hashSHA25);
+            % Load and check value stored in LocalGroundTruthHistoryDataFile 
+            dataFileName = fastLocalGroundTruthHistoryDataFile;
+            forceUpdateGroundTruth = false;
             
-            % save/append to LocalGroundTruthHistoryDataFile 
-            if (validationParams.updateGroundTruth)
-                dataFileName = fastLocalGroundTruthHistoryDataFile;
+            if (exist(dataFileName, 'file') == 2)
+                [groundTruthData, groundTruthTime] = ImportGroundTruthData(dataFileName);
+                if (strcmp(groundTruthData, hashSHA25))
+                    fprintf('\tFast validation      : PASSED against ground truth data of %s\n', groundTruthTime);
+                    groundTruthFastValidationFailed = false;
+                else
+                    fprintf(2,'\tFast validation      : FAILED against ground truth data of %s\n', groundTruthTime);
+                    groundTruthFastValidationFailed = true;
+                end
+            else
+                forceUpdateGroundTruth = true;
+                fprintf('\tFast validation      : no ground truth dataset exists. Generating one. \n');
+            end
+            
+            if (~groundTruthFastValidationFailed)
+                % save/append to LocalValidationHistoryDataFile
+                dataFileName = fastLocalValidationHistoryDataFile;
                 if (exist(dataFileName, 'file') == 2)
                     fprintf('\tSHA-256 hash key     : %s, appended to ''%s''\n', hashSHA25, dataFileName);
                 else
                     fprintf('\tSHA-256 hash key     : %s, written to ''%s''\n', hashSHA25, dataFileName);
                 end
                 ExportData(dataFileName, hashSHA25);
+
+                % save/append to LocalGroundTruthHistoryDataFile 
+                if (validationParams.updateGroundTruth) || (forceUpdateGroundTruth)
+                    dataFileName = fastLocalGroundTruthHistoryDataFile;
+                    if (exist(dataFileName, 'file') == 2)
+                        fprintf('\tSHA-256 hash key     : %s, appended to ''%s''\n', hashSHA25, dataFileName);
+                    else
+                        fprintf('\tSHA-256 hash key     : %s, written to ''%s''\n', hashSHA25, dataFileName);
+                    end
+                    ExportData(dataFileName, hashSHA25);
+                end
             end
         end
         
         
-        % Write validation data if in 'FULL' mode
+        
+       % 'FULL' mode validation
         if ( (strcmp(validationParams.type, 'FULL'))  && ...
              (~validationFailedFlag) && (~exemptionRaisedFlag) )
             
-            % save/append to LocalValidationHistoryDataFile
-            dataFileName = fullLocalValidationHistoryDataFile;
-            if (exist(dataFileName, 'file') == 2)
-                fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
-            else
-                fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
-            end
-            ExportData(dataFileName, validationData);
+            % Load and check value stored in LocalGroundTruthHistoryDataFile 
+            dataFileName = fullLocalGroundTruthHistoryDataFile;
+            forceUpdateGroundTruth = false;
             
-            % save/append to LocalGroundTruthHistoryDataFile
-            if (validationParams.updateGroundTruth)
-                dataFileName = fullLocalGroundTruthHistoryDataFile;
+            if (exist(dataFileName, 'file') == 2)
+                [groundTruthData, groundTruthTime] = ImportGroundTruthData(dataFileName);
+                if (StructsAreSimilar(groundTruthData, validationData))
+                    fprintf('\tFull validation      : PASSED against ground truth data of %s\n', groundTruthTime);
+                    groundTruthFullValidationFailed = false;
+                else
+                    fprintf(2,'\tFull validation      : FAILED against ground truth data of %s\n', groundTruthTime);
+                    groundTruthFullValidationFailed = true;
+                end
+            else
+                forceUpdateGroundTruth = true;
+                fprintf('\tFull validation      : no ground truth dataset exists. Generating one. \n');
+            end
+            
+    
+            
+            if (~groundTruthFullValidationFailed)
+                % save/append to LocalValidationHistoryDataFile
+                dataFileName = fullLocalValidationHistoryDataFile;
                 if (exist(dataFileName, 'file') == 2)
                     fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
                 else
                     fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
                 end
                 ExportData(dataFileName, validationData);
-            
+
+                % save/append to LocalGroundTruthHistoryDataFile
+                if (validationParams.updateGroundTruth) || (forceUpdateGroundTruth)
+                    dataFileName = fullLocalGroundTruthHistoryDataFile;
+                    if (exist(dataFileName, 'file') == 2)
+                        fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
+                    else
+                        fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
+                    end
+                    ExportData(dataFileName, validationData);
+
+                end
             end
+            
         end
         
         
@@ -206,12 +254,34 @@ function validate(varargin)
     
 end
 
+function result = StructsAreSimilar(groundTruthData, validationData)
+        disp('Need to implement ''StructsAreSimilar(groundTruthData, validationData)'' ');
+        result = true;
+end
+
+
+function [validationData, validationTime] = ImportGroundTruthData(dataFileName)
+    % create a MAT-file object for read access
+    matOBJ = matfile(dataFileName);
+    
+    % get current variables
+    varList = who(matOBJ);
+    
+    % get latest validation data entry
+    validationDataParamName = sprintf('run%05d', length(varList));
+    eval(sprintf('runData = matOBJ.%s;', validationDataParamName));
+    
+    % return the validationData and time
+    validationData = runData.validationData;
+    validationTime = runData.validationTime;
+end
+
 
 function ExportData(dataFileName, validationData)
     runData.validationData = validationData;
     runData.validationTime = datestr(now);
     
-    % create a MAT-file object
+    % create a MAT-file object for write access
     matOBJ = matfile(dataFileName, 'Writable', true);
     
     % get current variables
@@ -230,7 +300,7 @@ function validationParams = parseInput(varargin)
     validationParams.scriptsList        = {};
     validationParams.type               = 'fast';
     validationParams.onRunTimeError     = 'rethrowExemptionAndAbort';
-    validationParams.updateGroundTruth  = 'false';
+    validationParams.updateGroundTruth  = false;
     
     % parse inputs
     parser = inputParser;
@@ -253,10 +323,4 @@ function hashSHA25 = GenerateSHA256Hash(validationData)
     Opt.Method = 'SHA-256';
     Opt.Input = 'array';
     hashSHA25 = DataHash(validationData, Opt);
-end
-
-
-function coloredString = ColorizeString(color, stringtocolorize)
-    %colorizestring wraps the given string in html that colors that text.
-    coloredString = ['<font color="', color, '">', stringtocolorize, '</font>'];
 end
