@@ -1,23 +1,36 @@
 % Main validation engine
 function validate(obj, vScriptsToRunList)
     
-    fprintf('\n----------------------------------------------------------------------------------\n');
+    fprintf('\n--------------------------------------------------------------------------------------------------\n');
     fprintf('Running in ''%s'' validation mode with ''%s'' runtime hehavior.', obj.validationParams.type, obj.validationParams.onRunTimeError);
-    fprintf('\n----------------------------------------------------------------------------------\n');
+    fprintf('\n--------------------------------------------------------------------------------------------------\n');
     
-    obj.vScriptsList = vScriptsToRunList;
+    
+    % Parse the scripts list to ensure it is valid
+    obj.vScriptsList = obj.parseScriptsList(vScriptsToRunList);
+    
+    % get validation params
     validationParams = obj.validationParams;
+    
+    %Ensure that needed directories exist, and generates them if they do not
+    obj.checkDirectories();
     
     % Go through each entry
     for scriptIndex = 1:numel(obj.vScriptsList) 
+        
+        % get the current entry
         scriptListEntry = obj.vScriptsList{scriptIndex};
         
-        % scriptName
+        % get the scriptName
         scriptName = scriptListEntry{1};
+        
+        % form a URL for it
         urlToScript =  sprintf('<a href="matlab: matlab.desktop.editor.openAndGoToFunction(which(''%s.m''),'''')">''%s.m''</a>', scriptName, scriptName);
+        
+        % print it in the command line
         fprintf('\n[%3d] %s\n ', scriptIndex, urlToScript);
         
-        % scripRunParams
+        % get the scripRunParams
         if (numel(scriptListEntry) == 2)
             scriptRunParams = scriptListEntry{2};
         else
@@ -26,30 +39,46 @@ function validate(obj, vScriptsToRunList)
         
         % Make sure script exists in the path
         if (exist(scriptName, 'file') == 2)
-            % File in path. We're good to go
+            % Determine function sub-directory
             [functionDirectory, ~, ~] = fileparts(which(sprintf('%s.m',scriptName)));
-            htmlDirectory = sprintf('%s/%s_HTML', functionDirectory,scriptName);
-            fullLocalValidationHistoryDataFile = sprintf('%s/%s_FullValidationDataHistory.mat', functionDirectory,scriptName);
-            fastLocalValidationHistoryDataFile = sprintf('%s/%s_FastValidationDataHistory.mat', functionDirectory,scriptName);
-            fullLocalGroundTruthHistoryDataFile = sprintf('%s/%s_FullGroundTruthDataHistory.mat', functionDirectory,scriptName);
-            fastLocalGroundTruthHistoryDataFile = sprintf('%s/%s_FastGroundTruthDataHistory.mat', functionDirectory,scriptName);
+            indices              = strfind(functionDirectory, '/');
+            functionSubDirectory = functionDirectory(indices(end)+1:end);
+            % Construct path strings
+            htmlDirectory                       = sprintf('%s/%s/%s_HTML',                           obj.htmlDir,           functionSubDirectory, scriptName);
+            fullLocalValidationHistoryDataFile  = sprintf('%s/%s/%s_FullValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
+            fastLocalValidationHistoryDataFile  = sprintf('%s/%s/%s_FastValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
+            fullLocalGroundTruthHistoryDataFile = sprintf('%s/%s/%s_FullGroundTruthDataHistory.mat', obj.validationDataDir, functionSubDirectory, scriptName);
+            fastLocalGroundTruthHistoryDataFile = sprintf('%s/%s/%s_FastGroundTruthDataHistory.mat', obj.validationDataDir, functionSubDirectory, scriptName);
         else
             error('File ''%s'' not found in Matlab''s path.', scriptName);
         end
-    
-        % Initialize flags and reports, data
+   
+        
+        % Initialize flags, reports, and validation data
         validationReport        = '';
         validationFailedFlag    = true;
         exemptionRaisedFlag     = true;
         validationData          = [];
         
-        if strcmp(validationParams.type, 'FAST')
+        if strcmp(validationParams.type, 'RUNTIME_ERRORS_ONLY')
             % Run script the regular way
             commandString = sprintf(' [validationReport, validationFailedFlag, validationData] = %s(scriptRunParams);', scriptName);
+            
+        elseif strcmp(validationParams.type, 'FAST')
+            % Create validationData sub directory if it does not exist;
+            obj.generateDirectory(obj.validationDataDir, functionSubDirectory);
+            % Run script the regular way
+            commandString = sprintf(' [validationReport, validationFailedFlag, validationData] = %s(scriptRunParams);', scriptName);
+            
         elseif strcmp(validationParams.type, 'FULL')
+            % Create validationData sub directory if it does not exist;
+            obj.generateDirectory(obj.validationDataDir, functionSubDirectory);
             % Run script the regular way
             commandString = sprintf(' [validationReport, validationFailedFlag, validationData] = %s(scriptRunParams);', scriptName);
+            
         elseif strcmp(validationParams.type, 'PUBLISH')
+            % Create HTML sub directory if it does not exist;
+            obj.generateDirectory(obj.htmlDir, functionSubDirectory)
             % Critical: Assign the params variable to the base workstation
             assignin('base', 'scriptRunParams', scriptRunParams);
             % Form publish options struct
@@ -95,112 +124,121 @@ function validate(obj, vScriptsToRunList)
         end
         
         
-        % Now begin validation against ground truth
+        if (~strcmp(validationParams.type, 'RUNTIME_ERRORS_ONLY'))
+            
+            % Begin validation against ground truth
+            groundTruthFastValidationFailed = false;
+            groundTruthFullValidationFailed = false;
         
-        groundTruthFastValidationFailed = false;
-        groundTruthFullValidationFailed = false;
-        
-        % 'FAST' mode validation
-        if ( (strcmp(validationParams.type, 'FAST'))  && ...
-             (~validationFailedFlag) && (~exemptionRaisedFlag) )
-            
-            % Generate SHA256 hash from the validationData
-            hashSHA25 = obj.generateSHA256Hash(validationData);
-            
-            % Load and check value stored in LocalGroundTruthHistoryDataFile 
-            dataFileName = fastLocalGroundTruthHistoryDataFile;
-            forceUpdateGroundTruth = false;
-            
-            if (exist(dataFileName, 'file') == 2)
-                [groundTruthData, groundTruthTime] = obj.importGroundTruthData(dataFileName);
-                if (strcmp(groundTruthData, hashSHA25))
-                    fprintf('\tFast validation      : PASSED against ground truth data of %s\n', groundTruthTime);
-                    groundTruthFastValidationFailed = false;
-                else
-                    fprintf(2,'\tFast validation      : FAILED against ground truth data of %s\n', groundTruthTime);
-                    groundTruthFastValidationFailed = true;
-                end
-            else
-                forceUpdateGroundTruth = true;
-                fprintf('\tFast validation      : no ground truth dataset exists. Generating one. \n');
-            end
-            
-            if (~groundTruthFastValidationFailed)
-                % save/append to LocalValidationHistoryDataFile
-                dataFileName = fastLocalValidationHistoryDataFile;
-                if (exist(dataFileName, 'file') == 2)
-                    fprintf('\tSHA-256 hash key     : %s, appended to ''%s''\n', hashSHA25, dataFileName);
-                else
-                    fprintf('\tSHA-256 hash key     : %s, written to ''%s''\n', hashSHA25, dataFileName);
-                end
-                obj.exportData(dataFileName, hashSHA25);
+            % 'FAST' mode validation
+            if ( (strcmp(validationParams.type, 'FAST'))  && ...
+                 (~validationFailedFlag) && (~exemptionRaisedFlag) )
 
-                % save/append to LocalGroundTruthHistoryDataFile 
-                if (validationParams.updateGroundTruth) || (forceUpdateGroundTruth)
-                    dataFileName = fastLocalGroundTruthHistoryDataFile;
-                    if (exist(dataFileName, 'file') == 2)
-                        fprintf('\tSHA-256 hash key     : %s, appended to ''%s''\n', hashSHA25, dataFileName);
-                    else
-                        fprintf('\tSHA-256 hash key     : %s, written to ''%s''\n', hashSHA25, dataFileName);
-                    end
-                    obj.exportData(dataFileName, hashSHA25);
-                end
-            end
-        end
-        
-        
-        
-       % 'FULL' mode validation
-        if ( (strcmp(validationParams.type, 'FULL'))  && ...
-             (~validationFailedFlag) && (~exemptionRaisedFlag) )
-            
-            % Load and check value stored in LocalGroundTruthHistoryDataFile 
-            dataFileName = fullLocalGroundTruthHistoryDataFile;
-            forceUpdateGroundTruth = false;
-            
-            if (exist(dataFileName, 'file') == 2)
-                [groundTruthData, groundTruthTime] = obj.importGroundTruthData(dataFileName);
-                if (obj.structsAreSimilar(groundTruthData, validationData))
-                    fprintf('\tFull validation      : PASSED against ground truth data of %s\n', groundTruthTime);
-                    groundTruthFullValidationFailed = false;
-                else
-                    fprintf(2,'\tFull validation      : FAILED against ground truth data of %s\n', groundTruthTime);
-                    groundTruthFullValidationFailed = true;
-                end
-            else
-                forceUpdateGroundTruth = true;
-                fprintf('\tFull validation      : no ground truth dataset exists. Generating one. \n');
-            end
-            
-    
-            
-            if (~groundTruthFullValidationFailed)
-                % save/append to LocalValidationHistoryDataFile
-                dataFileName = fullLocalValidationHistoryDataFile;
-                if (exist(dataFileName, 'file') == 2)
-                    fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
-                else
-                    fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
-                end
-                obj.exportData(dataFileName, validationData);
+                % Generate SHA256 hash from the validationData
+                hashSHA25 = obj.generateSHA256Hash(validationData);
 
-                % save/append to LocalGroundTruthHistoryDataFile
-                if (validationParams.updateGroundTruth) || (forceUpdateGroundTruth)
-                    dataFileName = fullLocalGroundTruthHistoryDataFile;
-                    if (exist(dataFileName, 'file') == 2)
-                        fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
+                % Load and check value stored in LocalGroundTruthHistoryDataFile 
+                dataFileName = fastLocalGroundTruthHistoryDataFile;
+                forceUpdateGroundTruth = false;
+
+                if (exist(dataFileName, 'file') == 2)
+                    [groundTruthData, groundTruthTime] = obj.importGroundTruthData(dataFileName);
+                    if (strcmp(groundTruthData, hashSHA25))
+                        fprintf('\tFast validation      : PASSED against ground truth data of %s\n', groundTruthTime);
+                        groundTruthFastValidationFailed = false;
                     else
-                        fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
+                        fprintf(2,'\tFast validation      : FAILED against ground truth data of %s\n', groundTruthTime);
+                        groundTruthFastValidationFailed = true;
                     end
-                    obj.exportData(dataFileName, validationData);
+                else
+                    forceUpdateGroundTruth = true;
+                    fprintf('\tFast validation      : no ground truth dataset exists. Generating one. \n');
                 end
-            end
-            
-        end
+
+                if (~groundTruthFastValidationFailed)
+                    
+                    if (validationParams.updateValidationHistory)
+                        % save/append to LocalValidationHistoryDataFile
+                        dataFileName = fastLocalValidationHistoryDataFile;
+                        if (exist(dataFileName, 'file') == 2)
+                            fprintf('\tSHA-256 hash key     : %s, appended to ''%s''\n', hashSHA25, dataFileName);
+                        else
+                            fprintf('\tSHA-256 hash key     : %s, written to ''%s''\n', hashSHA25, dataFileName);
+                        end
+                        obj.exportData(dataFileName, hashSHA25);
+                    end
+
+                    % save/append to LocalGroundTruthHistoryDataFile 
+                    if (validationParams.updateGroundTruth) || (forceUpdateGroundTruth)
+                        dataFileName = fastLocalGroundTruthHistoryDataFile;
+                        if (exist(dataFileName, 'file') == 2)
+                            fprintf('\tSHA-256 hash key     : %s, appended to ''%s''\n', hashSHA25, dataFileName);
+                        else
+                            fprintf('\tSHA-256 hash key     : %s, written to ''%s''\n', hashSHA25, dataFileName);
+                        end
+                        obj.exportData(dataFileName, hashSHA25);
+                    end
+                    
+                end % (~groundTruthFastValidationFailed)  
+            end  % FAST validation mode
         
+
+            % 'FULL' mode validation
+            if ( (strcmp(validationParams.type, 'FULL'))  && ...
+                 (~validationFailedFlag) && (~exemptionRaisedFlag) )
+
+                % Load and check value stored in LocalGroundTruthHistoryDataFile 
+                dataFileName = fullLocalGroundTruthHistoryDataFile;
+                forceUpdateGroundTruth = false;
+
+                if (exist(dataFileName, 'file') == 2)
+                    [groundTruthData, groundTruthTime] = obj.importGroundTruthData(dataFileName);
+                    if (obj.structsAreSimilar(groundTruthData, validationData))
+                        fprintf('\tFull validation      : PASSED against ground truth data of %s\n', groundTruthTime);
+                        groundTruthFullValidationFailed = false;
+                    else
+                        fprintf(2,'\tFull validation      : FAILED against ground truth data of %s\n', groundTruthTime);
+                        groundTruthFullValidationFailed = true;
+                    end
+                else
+                    forceUpdateGroundTruth = true;
+                    fprintf('\tFull validation      : no ground truth dataset exists. Generating one. \n');
+                end
+            
+
+                if (~groundTruthFullValidationFailed)
+                    
+                     if (validationParams.updateValidationHistory)
+                        % save/append to LocalValidationHistoryDataFile
+                        dataFileName = fullLocalValidationHistoryDataFile;
+                        if (exist(dataFileName, 'file') == 2)
+                            fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
+                        else
+                            fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
+                        end
+                        obj.exportData(dataFileName, validationData);
+                     end
+
+                    % save/append to LocalGroundTruthHistoryDataFile
+                    if (validationParams.updateGroundTruth) || (forceUpdateGroundTruth)
+                        dataFileName = fullLocalGroundTruthHistoryDataFile;
+                        if (exist(dataFileName, 'file') == 2)
+                            fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
+                        else
+                            fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
+                        end
+                        obj.exportData(dataFileName, validationData);
+                    end
+                    
+                end % (~groundTruthFullValidationFailed)
+
+            end  % FULL validation mode
+        end  % validationParams.type, 'RUNTIME_ERRORS_ONLY'      
         
         fprintf('\tValidation report    : ''%s''\n', validationReport);
         
     end % scriptIndex
-    
 end
+
+
+

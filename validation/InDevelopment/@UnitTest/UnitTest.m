@@ -3,12 +3,19 @@ classdef UnitTest < handle
     
     % Public properties (Read/write by all)
     properties
-        
     end
     
     % Read-only public properties
     properties (SetAccess = private) 
+        % Path to directory containing the @UnitTest class
+        rootDir;
         
+        % Path to directory where all HTML 'published' output will be
+        % directed
+        htmlDir;
+        
+        % Path to directory where all validation data will be stored
+        validationDataDir;
     end
     
     % Private properties
@@ -30,25 +37,23 @@ classdef UnitTest < handle
         runTimeOptionNames              = {'generatePlots', 'printValidationReport'};
         runTimeOptionDefaultValues      = {false false};
         
-        validationOptionNames           = {'type', 'onRunTimeError', 'updateGroundTruth'}
-        validationOptionDefaultValues   = {'FAST', 'rethrowExemptionAndAbort', false};
+        validationOptionNames           = {'type', 'onRunTimeError', 'updateGroundTruth', 'updateValidationHistory'}
+        validationOptionDefaultValues   = {'RUNTIME_ERRORS_ONLY', 'rethrowExemptionAndAbort', false, false};
         
-        validValidationTypes            = {'FAST', 'FULL', 'PUBLISH'};
+        validValidationTypes            = {'RUNTIME_ERRORS_ONLY', 'FAST', 'FULL', 'PUBLISH'};
         validOnRunTimeErrorValues       = {'rethrowExemptionAndAbort', 'catchExemptionAndContinue'};
     end
     
     % Public methods (This is the API)
     methods
         % Constructor
-        function obj = UnitTest()      
-            % setup default validation params
-            for k = 1:numel(UnitTest.validationOptionNames)
-                eval(sprintf('obj.defaultValidationParams.%s = UnitTest.validationOptionDefaultValues{k};', UnitTest.validationOptionNames{k}));
-            end
-            
-            % initialize validation params to default params
-            obj.validationParams = obj.defaultValidationParams;
+        function obj = UnitTest()           
+            % Initialize the instantiated @UnitTest object
+            obj.initializeUnitTest();
         end
+        
+        % Method to cleanup all generated HTML directories and files
+        cleanUp(obj);
         
         % Method to set certain validation options
         setValidationOptions(obj,varargin);
@@ -61,7 +66,23 @@ classdef UnitTest < handle
     end % public methods
     
     % On the object itself can call these methods
-    methods (Access = private)    
+    methods (Access = private)   
+        
+        % Method to generate the directory path/subDir, if this directory does not exist
+        generateDirectory(obj, path, subDir);
+
+        % Method ensuring that directories exist, and generates them if they do not
+        checkDirectories(obj);
+        
+        % Method to remove the root validationData directory
+        removeValidationDataDir(obj);
+        
+        % Method to remove the root HTML directory
+        removeHTMLDir(obj);
+        
+        % Method to parse the scripts list to ensure it is valid
+        vScriptsList = parseScriptsList(obj, vScriptsToRunList);
+    
         % Method to recursively compare two struct for equality
         result = structsAreSimilar(obj, groundTruthData, validationData);
         
@@ -79,6 +100,9 @@ classdef UnitTest < handle
     % These methods can be called without instantiating an object first,
     % like so: UnitTest.methodName()
     methods (Static)
+        % Executive method to run a validation session
+        runValidationSession(vScriptsList, desiredMode)
+        
         % Method to initialize the return params. Every validation script
         % mustcall this method first thing.
         [validationReport, validationFailedFlag, validationData] = initializeReturnParams();

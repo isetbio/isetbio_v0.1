@@ -24,7 +24,8 @@ function runParams = initializeRunTimeParams(varargin)
             end
         end
     else
-       error('Expected one input argument. There were 0.'); 
+       runParams = defaultParams; 
+       runParams.generatePlots = true;
     end
     
 end
