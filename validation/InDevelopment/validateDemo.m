@@ -1,14 +1,16 @@
 function validateDemo
-    clc
     
     % Uncomment to see the available runtime options and their default values
     % UnitTest.describeRunTimeOptions();
+    
+    % Uncomment to cleanup generated HTML and validationData directories
+    UnitTest.cleanUp();
     
     % Example1. Here we pass a list of scripts to validate. Each entry contains a cell array with a
     % script name and an optional struct with runtime options.
     vScriptsList = {...
         {'validateSceneReIllumination'} ...          % use default run-time options
-        {'validateSceneReIllumination'  struct('generatePlots', true)       } ...          % specify the generatePlots runtime option
+        {'validateSceneReIllumination',  struct('generatePlots', true) } ...          % specify the generatePlots runtime option
         {'validateSceneReIlluminationAndFail'} ...   
     };
 

@@ -1,6 +1,14 @@
- % Method to cleanup all generated HTML directories and files
- function cleanUp(obj)
-    obj.removeHTMLDir();
+ % Method to cleanup all generated directories
+ function cleanUp()
     
-    % Remove any other files that may be generated here
+    % Instantiate an object just for cleaning up
+    UnitTestOBJ = UnitTest();
+    
+    % remove HTML dir
+    UnitTestOBJ.removeHTMLDir();
+    
+    % Remove validation data dir
+    UnitTestOBJ.removeValidationDataDir();
+    
+    clear 'UnitTestOBJ';
  end

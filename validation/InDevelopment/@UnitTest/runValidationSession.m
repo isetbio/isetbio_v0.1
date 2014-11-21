@@ -42,8 +42,10 @@ function validateRunTimeErrors(vScriptsList)
      % Instantiate a @UnitTest object
     UnitTestOBJ = UnitTest();
     
-    % Cleanup any temporary directories and files left over
-    UnitTestOBJ.cleanUp();
+    % Cleanup HTML directory if it exists
+    UnitTestOBJ.removeHTMLDir();
+    
+    % Remove any other files that may be generated here
     
     % Print the available validation options and their default values
     % UnitTest.describeValidationOptions();
@@ -67,8 +69,8 @@ function validateFast(vScriptsList)
     % Instantiate a @UnitTest object
     UnitTestOBJ = UnitTest();
     
-    % Cleanup any temporary directories and files left over
-    UnitTestOBJ.cleanUp();
+    % Cleanup HTML directory if it exists
+    UnitTestOBJ.removeHTMLDir();
     
     % Print the available validation options and their default values
     % UnitTest.describeValidationOptions();
@@ -92,8 +94,8 @@ function validateFull(vScriptsList)
     % Instantiate a @UnitTest object
     UnitTestOBJ = UnitTest();
     
-    % Cleanup any temporary directories and files left over
-    UnitTestOBJ.cleanUp();
+    % Cleanup HTML directory if it exists
+    UnitTestOBJ.removeHTMLDir();
     
     % Print the available validation options and their default values
     % UnitTest.describeValidationOptions();

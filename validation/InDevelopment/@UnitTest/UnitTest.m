@@ -52,9 +52,6 @@ classdef UnitTest < handle
             obj.initializeUnitTest();
         end
         
-        % Method to cleanup all generated HTML directories and files
-        cleanUp(obj);
-        
         % Method to set certain validation options
         setValidationOptions(obj,varargin);
         
@@ -100,6 +97,9 @@ classdef UnitTest < handle
     % These methods can be called without instantiating an object first,
     % like so: UnitTest.methodName()
     methods (Static)
+        % Method to remove all generated directories and files
+        cleanUp();
+        
         % Executive method to run a validation session
         runValidationSession(vScriptsList, desiredMode)
         
