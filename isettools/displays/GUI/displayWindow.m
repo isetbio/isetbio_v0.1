@@ -174,6 +174,13 @@ else
     return;
 end
 
+% select region
+rect = floor(getrect);
+% round width and height to multiple of pixelsperdixel
+ppd = displayGet(d, 'pixels per dixel');
+rect(3:4) = ppd .* ceil(rect(3:4) ./ ppd);
+I = I(rect(2): rect(2)+rect(4)-1, rect(1) : rect(1) + rect(3)-1, :);
+
 % Get scene info
 overSample = displayGet(d, 'over sample');
 answer = inputdlg({'Scene name', 'Up sample (col)', 'Up sample (row)'}, ...
@@ -316,7 +323,7 @@ d = vcGetObject('display', ind);
 displayPlot(d, 'gamma');
 
 % --------------------------------------------------------------------
-function menuLCDHorizontalStripesRGB_Callback(hObject, eventdata, handles)
+function menuLCDHorizontalStripesRGB_Callback(~, ~, ~)
 % displayGD   = ctGetObject('display');
 % dpi = 72;
 % dSpacing = 0.001; % sample spacing in mm
@@ -334,7 +341,7 @@ vcAddAndSelectObject('display', d);
 displayRefresh(hObject, eventdata, handles);
 
 % --------------------------------------------------------------------
-function menuLCDVerticalStripesBGR_Callback(hObject, eventdata, handles)
+function menuLCDVerticalStripesBGR_Callback(~, ~, ~)
 % Display | LCD | Vertical BGR
 % displayGD  = ctGetObject('display');
 % 
@@ -348,7 +355,7 @@ function menuLCDVerticalStripesBGR_Callback(hObject, eventdata, handles)
 warning('NYI');
 
 % --------------------------------------------------------------------
-function menuLCDHorizontalStripesBGR_Callback(hObject, eventdata, handles)
+function menuLCDHorizontalStripesBGR_Callback(~, ~, ~)
 % Display | LCD | Vertical BGR
 % displayGD   = ctGetObject('display');
 % 
@@ -418,7 +425,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), ...
 end
 return;
 
-function editVar_Callback(hObject, eventdata, handles)
+function editVar_Callback(~, ~, ~)
 disp('Not yet implemented')
 
 function editVar_CreateFcn(hObject, ~, ~)
