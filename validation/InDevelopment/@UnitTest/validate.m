@@ -37,6 +37,9 @@ function validate(obj, vScriptsToRunList)
             scriptRunParams = [];
         end
         
+        % add the @UnitTestOBJ to scriptRunParams
+        scriptRunParams.unitTestOBJ = obj;
+         
         % Make sure script exists in the path
         if (exist(scriptName, 'file') == 2)
             % Determine function sub-directory
@@ -235,8 +238,8 @@ function validate(obj, vScriptsToRunList)
             end  % FULL validation mode
         end  % validationParams.type, 'RUNTIME_ERRORS_ONLY'      
         
-        fprintf('\tValidation report    : ''%s''\n', validationReport);
-        
+        UnitTest.printValidationReport(validationReport); 
+
     end % scriptIndex
 end
 

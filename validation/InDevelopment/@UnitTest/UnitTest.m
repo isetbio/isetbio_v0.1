@@ -34,8 +34,8 @@ classdef UnitTest < handle
     % Constant properties. These are the only properties that can be
     % accessed by the Static mehtods below
     properties (Constant) 
-        runTimeOptionNames              = {'generatePlots', 'printValidationReport'};
-        runTimeOptionDefaultValues      = {false false};
+        runTimeOptionNames              = {'generatePlots', 'printValidationReport', 'unitTestOBJ' };
+        runTimeOptionDefaultValues      = {false false []};
         
         validationOptionNames           = {'type', 'onRunTimeError', 'updateGroundTruth', 'updateValidationHistory'}
         validationOptionDefaultValues   = {'RUNTIME_ERRORS_ONLY', 'rethrowExemptionAndAbort', false, false};
@@ -116,5 +116,13 @@ classdef UnitTest < handle
         
         % Method to print what validation options are available and their default values
         describeValidationOptions();
+        
+        % Method to append messages to the validationReport
+        report = validationRecord(varargin);
+        
+        data = validationData(varargin);
+        
+        % Method to print the validationReport
+        printValidationReport(validationReport);
     end
 end

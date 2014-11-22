@@ -52,7 +52,7 @@ function validateRunTimeErrors(vScriptsList)
     
     % Choose runtime error behavior
      onRunTimeErrorBehavior= 'catchExemptionAndContinue';         % do not abort validation run if one script fails
-    % onRunTimeErrorBehavior = 'rethrowExemptionAndAbort';        % abort validation run if one script fails
+     onRunTimeErrorBehavior = 'rethrowExemptionAndAbort';        % abort validation run if one script fails
     
     % Set options for fast validation
     UnitTestOBJ.setValidationOptions(...
@@ -77,7 +77,7 @@ function validateFast(vScriptsList)
     
     % Choose runtime error behavior
     onRunTimeErrorBehavior= 'catchExemptionAndContinue';       % do not abort validation run if one script fails
-    % onRunTimeErrorBehavior = 'rethrowExemptionAndAbort';        % abort validation run if one script fails
+     onRunTimeErrorBehavior = 'rethrowExemptionAndAbort';        % abort validation run if one script fails
     
     % Set options for fast validation
     UnitTestOBJ.setValidationOptions(...
@@ -102,7 +102,7 @@ function validateFull(vScriptsList)
     
     % Choose runtime error behavior
     onRunTimeErrorBehavior = 'catchExemptionAndContinue';        % do not abort validation run if one script fails
-    %onRunTimeErrorBehavior = 'rethrowExemptionAndAbort';        % abort validation run if one script fails
+    onRunTimeErrorBehavior = 'rethrowExemptionAndAbort';        % abort validation run if one script fails
     
     % Set validation options
     UnitTestOBJ.setValidationOptions(...

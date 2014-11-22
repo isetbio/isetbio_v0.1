@@ -1,5 +1,5 @@
 function [validationReport, validationFailedFlag, validationData] = initializeReturnParams()
-    validationReport     = 'FAILED';
-    validationFailedFlag = true;
+    validationReport     = '';
+    validationFailedFlag = false;
     validationData       = [];
 end
