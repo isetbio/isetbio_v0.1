@@ -9,16 +9,26 @@ function [validationReport, validationFailedFlag, validationData] = validateScen
     % Initialize run params
     runTimeParams = UnitTest.initializeRunTimeParams(varargin{:});
     
+    % Initialize validation record
+    UnitTest.validationRecord('command', 'init');  
+   
+    % Initialize validationData
+    UnitTest.validationData('command', 'init');
+    
     % ---------------------------------------------------------------------
     % Validation code
     % ...
+    UnitTest.validationRecord('appendMessage', 'all right to here');
+    UnitTest.validationData('dummyMatrix', ones(100,10));
+    validationFailedFlag = false;
+    
     % End of validation code
     % ---------------------------------------------------------------------
     
-    % Update return parameters
-    validationReport     = 'Nothing to report';
-    validationFailedFlag = false;
-    validationData.dummyMatrix = ones(100,100);
+    %% Gather data on record
+    validationReport = UnitTest.validationRecord('command', 'return');
+    validationData   = UnitTest.validationData('command', 'return');
+    
     
     % Plotting
     if (runTimeParams.generatePlots)
@@ -30,6 +40,6 @@ function [validationReport, validationFailedFlag, validationData] = validateScen
     
     % Validation report printing
     if (runTimeParams.printValidationReport)
-        fprintf('Validation Report:\n\t%s\n\n', validationReport);
+        UnitTest.printValidationReport(validationReport); 
     end
 end
