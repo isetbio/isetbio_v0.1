@@ -103,13 +103,9 @@ classdef UnitTest < handle
         % Executive method to run a validation session
         runValidationSession(vScriptsList, desiredMode)
         
-        % Method to initialize the return params. Every validation script
-        % mustcall this method first thing.
-        [validationReport, validationFailedFlag, validationData] = initializeReturnParams();
-        
-        % Method to initialize the runtimeParams. Every validation script
-        % must call this method right after the method above
-        runParams = initializeRunTimeParams(varargin);
+        % Method to initalize a validation run.
+        % Every validation script must call this method first thing.
+        runTimeParams = initializeValidationRun(varargin);
         
         % Method to print what runtime options are available and their default values
         describeRunTimeOptions();
@@ -120,6 +116,7 @@ classdef UnitTest < handle
         % Method to append messages to the validationReport
         report = validationRecord(varargin);
         
+        % Method to add validation data
         data = validationData(varargin);
         
         % Method to print the validationReport

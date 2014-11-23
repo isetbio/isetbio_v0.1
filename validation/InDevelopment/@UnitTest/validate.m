@@ -36,10 +36,7 @@ function validate(obj, vScriptsToRunList)
         else
             scriptRunParams = [];
         end
-        
-        % add the @UnitTestOBJ to scriptRunParams
-        scriptRunParams.unitTestOBJ = obj;
-         
+               
         % Make sure script exists in the path
         if (exist(scriptName, 'file') == 2)
             % Determine function sub-directory

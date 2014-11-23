@@ -3,24 +3,28 @@ function [validationReport, validationFailedFlag, validationData] = validateScen
 % Skeleton validation script that raises a run-time excemption for testing. 
 %
 
+    %% Initialization
     % Initialize return variables
-    [validationReport, validationFailedFlag, validationData] = UnitTest.initializeReturnParams();
-    
-    % Initialize run params struct
-    runTimeParams = UnitTest.initializeRunTimeParams(varargin{:});
+    validationReport = ''; validationFailedFlag = false; validationData = [];
+    % Initialize validation run
+    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
     
     % ---------------------------------------------------------------------
     % Validation code
     % ...
     error('Simulating runtime error');
-    % ...
+     
+    UnitTest.validationRecord('appendMessage', 'all right to here');
+    UnitTest.validationData('dummyMatrix', ones(100,10));
+    validationFailedFlag = false;
+    
     % End of validation code
     % ---------------------------------------------------------------------
     
-    % Update return parameters
-    validationReport     = 'Nothing to report';
-    validationFailedFlag = false;
-    validationData.dummyMatrix = ones(100,100);
+    %% Gather data on record
+    validationReport = UnitTest.validationRecord('command', 'return');
+    validationData   = UnitTest.validationData('command', 'return');
+    
     
     % Plotting
     if (runTimeParams.generatePlots)
@@ -32,7 +36,7 @@ function [validationReport, validationFailedFlag, validationData] = validateScen
     
     % Validation report printing
     if (runTimeParams.printValidationReport)
-        fprintf('Validation Report:\n\t%s\n\n', validationReport);
+         UnitTest.printValidationReport(validationReport); 
     end
    
 end

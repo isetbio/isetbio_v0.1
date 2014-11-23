@@ -13,7 +13,6 @@ function data = validationData(varargin)
         return;
     end
     
-    
     % Parse inputs
     for k = 1:2:numel(varargin)
         fieldName = varargin{k};

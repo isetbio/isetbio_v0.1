@@ -9,7 +9,7 @@ function report = validationRecord(varargin)
     self.command  = '';
     
     parser = inputParser;
-    parser.addParamValue('command',         self.command,     @ischar);
+    parser.addParamValue('command',         self.command,        @ischar);
     parser.addParamValue('appendMessage',   self.appendMessage,  @ischar);
 
     % Execute the parser to make sure input is good

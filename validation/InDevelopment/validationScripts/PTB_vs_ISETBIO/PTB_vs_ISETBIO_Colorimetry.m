@@ -5,17 +5,9 @@ function [validationReport, validationFailedFlag, validationData] = PTB_vs_ISETB
     
     %% Initialization
     % Initialize return variables
-    [validationReport, validationFailedFlag, validationData] = UnitTest.initializeReturnParams();
-    
-    % Initialize run params
-    runTimeParams = UnitTest.initializeRunTimeParams(varargin{:});
-    
-    % Initialize validation record
-    UnitTest.validationRecord('command', 'init');  
-   
-    % Initialize validationData
-    UnitTest.validationData('command', 'init');
-    
+    validationReport = ''; validationFailedFlag = false; validationData = [];
+    % Initialize validation run
+    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
     
     %% Validation code
     

@@ -3,17 +3,11 @@ function [validationReport, validationFailedFlag, validationData] = validateScen
 % Skeleton validation script containing the minimally required code. Copy and add your ISETBIO validation code. 
 %
 
+    %% Initialization
     % Initialize return variables
-    [validationReport, validationFailedFlag, validationData] = UnitTest.initializeReturnParams();
-    
-    % Initialize run params
-    runTimeParams = UnitTest.initializeRunTimeParams(varargin{:});
-    
-    % Initialize validation record
-    UnitTest.validationRecord('command', 'init');  
-   
-    % Initialize validationData
-    UnitTest.validationData('command', 'init');
+    validationReport = ''; validationFailedFlag = false; validationData = [];
+    % Initialize validation run
+    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
     
     % ---------------------------------------------------------------------
     % Validation code
