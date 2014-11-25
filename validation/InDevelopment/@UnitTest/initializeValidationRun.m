@@ -21,8 +21,10 @@ function runParams = initializeRunTimeParams(varargin)
         
         runParamsPassed = varargin{1};
         
+        % If the passed argument is an empty array, use the isetbio prefs
         if (isempty(runParamsPassed))
             runParams = defaultParams;
+            runParams.generatePlots = getpref('isetbioValidation', 'generatePlots');
             return;
         end
         
@@ -46,7 +48,7 @@ function runParams = initializeRunTimeParams(varargin)
         end
     else
        % This is the case where the script is called directly, not from a
-       % UnitTest validation
+       % UnitTest validation session, or when no argument is passed
        runParams = defaultParams; 
        runParams.printValidationReport = true;
        runParams.generatePlots = true;

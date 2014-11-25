@@ -32,10 +32,10 @@ classdef UnitTest < handle
     end
     
     % Constant properties. These are the only properties that can be
-    % accessed by the Static mehtods below
+    % accessed by Static methods
     properties (Constant) 
-        runTimeOptionNames              = {'generatePlots', 'printValidationReport', 'unitTestOBJ' };
-        runTimeOptionDefaultValues      = {false false []};
+        runTimeOptionNames              = {'generatePlots', 'printValidationReport'};
+        runTimeOptionDefaultValues      = {false false};
         
         validationOptionNames           = {'type', 'onRunTimeError', 'updateGroundTruth', 'updateValidationHistory'}
         validationOptionDefaultValues   = {'RUNTIME_ERRORS_ONLY', 'rethrowExemptionAndAbort', false, false};
@@ -103,6 +103,9 @@ classdef UnitTest < handle
         % Executive method to run a validation session
         runValidationSession(vScriptsList, desiredMode)
         
+        % Method to initalize prefs for a ISETBIO
+        InitializeISETBIOprefs();
+        
         % Method to initalize a validation run.
         % Every validation script must call this method first thing.
         runTimeParams = initializeValidationRun(varargin);
@@ -114,7 +117,7 @@ classdef UnitTest < handle
         describeValidationOptions();
         
         % Method to append messages to the validationReport
-        report = validationRecord(varargin);
+        [report, validationFailedFlag] = validationRecord(varargin);
         
         % Method to add validation data
         data = validationData(varargin);

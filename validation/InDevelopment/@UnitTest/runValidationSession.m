@@ -50,15 +50,14 @@ function validateRunTimeErrors(vScriptsList)
     % Print the available validation options and their default values
     % UnitTest.describeValidationOptions();
     
-    % Choose runtime error behavior
-     onRunTimeErrorBehavior= 'catchExemptionAndContinue';         % do not abort validation run if one script fails
-     onRunTimeErrorBehavior = 'rethrowExemptionAndAbort';        % abort validation run if one script fails
-    
-    % Set options for fast validation
+    % Set options for RUNTIME_ERRORS_ONLY validation
     UnitTestOBJ.setValidationOptions(...
-                'type',             'RUNTIME_ERRORS_ONLY', ...
-                'onRunTimeError',    onRunTimeErrorBehavior);
-       
+                'type',                     'RUNTIME_ERRORS_ONLY', ...
+                'onRunTimeError',           getpref('isetbioValidation', 'onRunTimeErrorBehavior'), ...
+                'updateGroundTruth',        false, ...
+                'updateValidationHistory',  false ...
+                );
+            
     % ... and Go ! 
     UnitTestOBJ.validate(vScriptsList);
 end
@@ -75,16 +74,15 @@ function validateFast(vScriptsList)
     % Print the available validation options and their default values
     % UnitTest.describeValidationOptions();
     
-    % Choose runtime error behavior
-    onRunTimeErrorBehavior= 'catchExemptionAndContinue';       % do not abort validation run if one script fails
-     onRunTimeErrorBehavior = 'rethrowExemptionAndAbort';        % abort validation run if one script fails
-    
-    % Set options for fast validation
+
+    % Set options for FAST validation
     UnitTestOBJ.setValidationOptions(...
-                'type',             'FAST', ...
-                'onRunTimeError',    onRunTimeErrorBehavior, ...
-                'updateGroundTruth', false);
-       
+                'type',                     'FAST', ...
+                'onRunTimeError',           getpref('isetbioValidation', 'onRunTimeErrorBehavior'), ...
+                'updateGroundTruth',        false, ...
+                'updateValidationHistory',  false ...
+                );
+            
     % ... and Go ! 
     UnitTestOBJ.validate(vScriptsList);
 end
@@ -100,17 +98,14 @@ function validateFull(vScriptsList)
     % Print the available validation options and their default values
     % UnitTest.describeValidationOptions();
     
-    % Choose runtime error behavior
-    onRunTimeErrorBehavior = 'catchExemptionAndContinue';        % do not abort validation run if one script fails
-    onRunTimeErrorBehavior = 'rethrowExemptionAndAbort';        % abort validation run if one script fails
-    
-    % Set validation options
+    % Set options for FULL validation
     UnitTestOBJ.setValidationOptions(...
-                'type',             'FULL', ...
-                'onRunTimeError',    onRunTimeErrorBehavior , ...
-                'updateGroundTruth', true, ...
-                'updateValidationHistory', true);
-       
+                'type',                     'FULL', ...
+                'onRunTimeError',           getpref('isetbioValidation', 'onRunTimeErrorBehavior'), ...
+                'updateGroundTruth',        getpref('isetbioValidation', 'updateGroundTruth'), ...
+                'updateValidationHistory',  getpref('isetbioValidation', 'updateValidationHistory') ...
+                );
+    
     % ... and Go ! 
     UnitTestOBJ.validate(vScriptsList);    
 end
@@ -127,18 +122,14 @@ function validatePublish(vScriptsList)
     % Print the available validation options and their default values
     % UnitTest.describeValidationOptions();
     
-    % Choose runtime error behavior
-    % In publish mode we want to abort if an exemption is raised
-    %onRunTimeErrorBehavior= 'catchExemptionAndContinue';       % do not abort validation run if one script fails
-    onRunTimeErrorBehavior = 'rethrowExemptionAndAbort';        % abort validation run if one script fails
-    
-    
-    % Set validation options: 
+    % Set options for PUBLISH validation
     UnitTestOBJ.setValidationOptions(...
-                'type',             'PUBLISH', ...
-                'onRunTimeError',    onRunTimeErrorBehavior, ...
-                'updateGroundTruth', false);
-       
+                'type',                     'PUBLISH', ...
+                'onRunTimeError',           getpref('isetbioValidation', 'onRunTimeErrorBehavior'), ...
+                'updateGroundTruth',        getpref('isetbioValidation', 'updateGroundTruth'), ...
+                'updateValidationHistory',  getpref('isetbioValidation', 'updateValidationHistory') ...
+                );
+            
     % ... and Go ! 
     UnitTestOBJ.validate(vScriptsList);       
 end

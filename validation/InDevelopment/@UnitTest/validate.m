@@ -33,7 +33,7 @@ function validate(obj, vScriptsToRunList)
         % get the scripRunParams
         if (numel(scriptListEntry) == 2)
             scriptRunParams = scriptListEntry{2};
-        else
+        else % Use IOSETBIO prefs
             scriptRunParams = [];
         end
                
@@ -96,9 +96,9 @@ function validate(obj, vScriptsToRunList)
         
         % Form the try-catch command 
         if (strcmp(validationParams.onRunTimeError, 'catchExemptionAndContinue'))
-            command = sprintf('try \n\t%s \n\t exemptionRaisedFlag = false;  \ncatch err \n\t exemptionRaisedFlag = true; validationReport = sprintf(''FAILED - exemption raised (and caught): %%s'', err.message); \nend', commandString);
+            command = sprintf('try \n\t%s \n\t exemptionRaisedFlag = false;  \ncatch err \n\t exemptionRaisedFlag = true; validationReport{1} = {sprintf(''Exemption raised (and caught). Exemption Message: %%s'', err.message), true}; \nend', commandString);
         else
-            command = sprintf('try \n\t%s  \n\t  exemptionRaisedFlag = false; \ncatch err \n\t exemptionRaisedFlag = true; validationReport = sprintf(''FAILED - exemption raised: %%s'', err.message); \n\t rethrow(err); \nend', commandString);
+            command = sprintf('try \n\t%s  \n\t  exemptionRaisedFlag = false; \ncatch err \n\t exemptionRaisedFlag = true; validationReport{1} = {sprintf(''Exemption raised. Exemption Message: %%s'', err.message); \n\t rethrow(err), true}; \nend', commandString);
         end
         
         % Run the try-catch command
@@ -233,6 +233,12 @@ function validate(obj, vScriptsToRunList)
                 end % (~groundTruthFullValidationFailed)
 
             end  % FULL validation mode
+            
+            
+            if (strcmp(validationParams.type, 'PUBLISH'))
+                fprintf('\tReport published in  : ''%s''\n', htmlDirectory);
+            end  % PUBLISH MODE
+            
         end  % validationParams.type, 'RUNTIME_ERRORS_ONLY'      
         
         UnitTest.printValidationReport(validationReport); 
