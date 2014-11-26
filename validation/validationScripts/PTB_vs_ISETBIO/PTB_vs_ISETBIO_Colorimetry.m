@@ -34,7 +34,7 @@ function ValidationScript(runTimeParams)
     %% SETUP
     isetbioPath = fileparts(which('colorTransformMatrix'));
     curDir = pwd; 
-    tolerance = 1e-14;
+    tolerance = 1e-12;
     
     %% XYZ-related colorimetry
     UnitTest.validationRecord('message', '***** Basic XYZ *****');
@@ -212,8 +212,8 @@ function ValidationScript(runTimeParams)
         UnitTest.validationRecord('PASSED', message);
     end
     % append to validationData
-    UnitTest.validationData('isetXYZs', isetXYZs);
-    UnitTest.validationData('ptbXYZs', ptbXYZs);
+    UnitTest.validationData('isetXYZs_2', isetXYZs);
+    UnitTest.validationData('ptbXYZs_2', ptbXYZs);
     
     % PTB testing of inversion
     if (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) > tolerance))
@@ -275,8 +275,8 @@ function ValidationScript(runTimeParams)
         UnitTest.validationRecord('PASSED', message);
     end
     % append to validationData
-    UnitTest.validationData('ptbSRGBPrimary', ptbSRGBPrimary);
-    UnitTest.validationData('isetSRGBPrimary', isetSRGBPrimary);
+    UnitTest.validationData('ptbSRGBPrimary_2', ptbSRGBPrimary);
+    UnitTest.validationData('isetSRGBPrimary_2', isetSRGBPrimary);
     
     
     % ISET/PTB sRGB comparison in integer gamma corrected space
@@ -289,7 +289,7 @@ function ValidationScript(runTimeParams)
     end
     % append to validationData
     UnitTest.validationData('isetSRGBs', isetSRGBs*255);
-    UnitTest.validationData('ptbSRGBs', ptbSRGBs);
+    UnitTest.validationData('ptbSRGBs_2', ptbSRGBs);
     
     
     % lrgb -> srgb -> lrgb in ISET
@@ -321,10 +321,10 @@ function ValidationScript(runTimeParams)
     isetQuanta = Energy2Quanta(wlsTest,spdEnergyTest);
     toleranceQuanta = (10^-testPlaces)*min(ptbQuanta);
     if (any(abs(ptbQuanta-isetQuanta) > toleranceQuanta))
-        message = sprintf('PTB-ISET DO NOT AGREE for energy to quanta conversion at %d significant places (tolerance: %g quanta)',testPlaces, toleranceQuanta);
+        message = sprintf('PTB-ISET DO NOT AGREE for energy to quanta conversion at %d significant places (tolerance: %0.1g quanta)',testPlaces, toleranceQuanta);
         UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('PTB-ISET AGREE for energy to quanta conversion to %d significant places (tolerance: %g quanta)',testPlaces,  toleranceQuanta);
+        message = sprintf('PTB-ISET AGREE for energy to quanta conversion to %d significant places (tolerance: %0.1g quanta)',testPlaces,  toleranceQuanta);
         UnitTest.validationRecord('PASSED', message);
     end
     % append to validationData

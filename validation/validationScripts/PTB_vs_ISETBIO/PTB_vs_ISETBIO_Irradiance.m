@@ -99,7 +99,6 @@ function ValidationScript(runTimeParams)
     m = opticsGet(optics,'magnification',sceneGet(scene,'distance'));
     ptbMagCorrectIrradiance = ptbIrradiance(:)/(1+abs(m))^2;
     
-     
     %% Numerical check to decide whether we passed.
     % We are checking against a 1% error.
     tolerance = 0.01;
@@ -150,7 +149,7 @@ function ValidationScript(runTimeParams)
     %
     % Put this in as a placeholder.
     % Need to:
-    %  Get our L, M, S absorptions from the RO1 where we get the spectrum
+    %  Get our L, M, S absorptions from the ROI where we get the spectrum
     %  Do PTB computation
     %  Compare
     %  Work through parameters that might lead to differences
