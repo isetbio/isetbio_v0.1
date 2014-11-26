@@ -12,7 +12,7 @@ function varargout =  validateOTFandPupilSize(varargin)
     if (nargout > 0) varargout = {'', false, []}; end
     
     %% Validation - Call validation script
-    ValidationScricpt(runTimeParams);
+    ValidationScript(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -28,7 +28,7 @@ function varargout =  validateOTFandPupilSize(varargin)
 end
 
 %% Validation script for OTF: contrasting to Watson's (2013) model.
-function ValidationScricpt(runTimeParams)
+function ValidationScript(runTimeParams)
     
     %% Initialize ISETBIO
     s_initISET;
