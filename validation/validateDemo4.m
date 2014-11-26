@@ -1,5 +1,9 @@
 function validateDemo4
-    
+%
+% Validation demo illustrating how to 
+% - validate a list of script directories. 
+% - conduct a validationSession in 'RUN_TIME_ERRORS_ONLY' mode. 
+
     % Initialize ISETBIO preferences
     UnitTest.initializeISETBIOprefs();
     % or to reset to the default prefs
@@ -22,11 +26,14 @@ function validateDemo4
     %setpref('isetbioValidation', 'verbosity', 'high');
     %setpref('isetbioValidation', 'verbosity', 'max');
     
-    % Example2. Here we pass a list of directories to validate. Each entry contains a cell array with a
-    % script name and an optional struct with runtime options.
+    % Pass a list of directories to validate.  Each entry contains a cell array with 
+    % with a directory of validation scripts and an optional struct with
+    % prefs that override the corresponding isetbioValidation prefs.
+    % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
         {'validationScripts/PTB_vs_ISETBIO'} ...                % use ISETBIO prefs
         {'validationScripts/Scene'} ...                         % use ISETBIO prefs
+        {'validationScripts/HumanEye'} ...                      % use ISETBIO prefs
     };
     
     % Run a RUN_TIME_ERRORS_ONLY validation session

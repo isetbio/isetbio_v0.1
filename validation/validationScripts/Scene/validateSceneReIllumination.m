@@ -13,7 +13,7 @@ function varargout = validateSceneReIllumination(varargin)
     if (nargout > 0) varargout = {'', false, []}; end
     
     %% Validation - Call validation script
-    ValidationStricpt(runTimeParams);
+    ValidationScript(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -29,7 +29,7 @@ function varargout = validateSceneReIllumination(varargin)
 end
 
 
-function ValidationStricpt(runTimeParams)
+function ValidationScript(runTimeParams)
 
     %% Initialize ISETBIO
     s_initISET;
@@ -86,7 +86,7 @@ function ValidationStricpt(runTimeParams)
     end
     
     
-    %% Set validationReport, validationFailedFlag and validationData
+    %% Internal validation
     % Reflectance range is [0 .. 1]. Specify tolerance as 0.1%
     tolerance = 1E-6;
     maxDiff = max(abs(reflectanceMap2(:)-reflectanceMap(:)));

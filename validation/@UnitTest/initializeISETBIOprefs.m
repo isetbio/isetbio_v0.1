@@ -25,5 +25,5 @@ function initializeISETBIOprefs(initMode)
         setpref('isetbioValidation', 'verbosity',  'low'); 
     end
     
-    isetbioValidationPrefs = getpref('isetbioValidation')
+    % isetbioValidationPrefs = getpref('isetbioValidation')
 end

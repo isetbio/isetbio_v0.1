@@ -1,5 +1,10 @@
 function validateDemo6
-    
+%
+% Validation demo illustrating how to 
+% - validate a list of script directories. 
+% - conduct a validationSession in 'PUBLISH' mode. 
+% - run in a 'rethrowExemptionAndAbort' mode
+
     % Initialize ISETBIO preferences
     UnitTest.initializeISETBIOprefs();
     % or to reset to the default prefs
@@ -22,9 +27,13 @@ function validateDemo6
     %setpref('isetbioValidation', 'verbosity', 'high');
     %setpref('isetbioValidation', 'verbosity', 'max');
     
-    % Example6. Here we pass a list of script directories to validate and PUBLISH.
+    % Pass a list of directories to validate.  Each entry contains a cell array with 
+    % with a directory of validation scripts and an optional struct with
+    % prefs that override the corresponding isetbioValidation prefs.
+    % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
         {'validationScripts/PTB_vs_ISETBIO'} ...                % use ISETBIO prefs
+        {'validationScripts/HumanEye'} ...                      % use ISETBIO prefs
         {'validationScripts/Scene'} ...                         % use ISETBIO prefs
     };
     

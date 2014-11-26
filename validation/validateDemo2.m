@@ -1,4 +1,12 @@
 function validateDemo2
+%
+% Validation demo illustrating how to 
+% - validate a list of script directories. 
+% - override the generatePlots isetbioValidation pref
+% - conduct a validationSession in 'FULL' mode. 
+
+    close all
+    clc
     
     % Initialize ISETBIO preferences
     UnitTest.initializeISETBIOprefs();
@@ -23,11 +31,14 @@ function validateDemo2
     %setpref('isetbioValidation', 'verbosity', 'max'); 
     
     
-    % Example2. Here we pass a list of directories to validate. Each entry contains a cell array with a
-    % script name and an optional struct with runtime options.
+    % Pass a list of directories to validate.  Each entry contains a cell array with 
+    % with a directory of validation scripts and an optional struct with
+    % prefs that override the corresponding isetbioValidation prefs.
+    % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
         {'validationScripts/PTB_vs_ISETBIO', struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots 
         {'validationScripts/Scene'} ...                                            % use ISETBIO prefs
+        {'validationScripts/HumanEye'} ...                                         % use ISETBIO prefs
     };
     
     % Run a FULL validation session

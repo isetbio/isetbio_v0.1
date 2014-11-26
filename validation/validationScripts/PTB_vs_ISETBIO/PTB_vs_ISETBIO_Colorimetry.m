@@ -10,7 +10,7 @@ function varargout = PTB_vs_ISETBIO_Colorimetry(varargin)
     if (nargout > 0) varargout = {'', false, []}; end
     
     %% Validation - Call validation script
-    ValidationStricpt(runTimeParams);
+    ValidationScript(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -26,7 +26,7 @@ function varargout = PTB_vs_ISETBIO_Colorimetry(varargin)
 end
 
 
-function ValidationStricpt(runTimeParams)
+function ValidationScript(runTimeParams)
     
     % Use ISETBIO's version of lab2xyz.
     lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');

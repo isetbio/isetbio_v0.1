@@ -10,7 +10,7 @@ function varargout = PTB_vs_ISETBIO_Irradiance(varargin)
     if (nargout > 0) varargout = {'', false, []}; end
     
     %% Validation - Call validation script
-    ValidationStricpt(runTimeParams);
+    ValidationScript(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -26,7 +26,7 @@ function varargout = PTB_vs_ISETBIO_Irradiance(varargin)
 end
 
     
-function ValidationStricpt(runTimeParams)
+function ValidationScript(runTimeParams)
     
     %% Initialize ISETBIO
     s_initISET;

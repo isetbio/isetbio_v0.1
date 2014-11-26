@@ -252,7 +252,7 @@ function validate(obj, vScriptsToRunList)
             
         end  % validationParams.type, 'RUNTIME_ERRORS_ONLY'      
         
-        if (obj.verbosity > 1)
+        if (obj.verbosity > 1) && (~strcmp(validationParams.type, 'RUNTIME_ERRORS_ONLY'))
             UnitTest.printValidationReport(validationReport); 
         end
         

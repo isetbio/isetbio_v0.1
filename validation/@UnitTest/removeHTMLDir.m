@@ -2,9 +2,7 @@
 function removeHTMLDir(obj)
     
     if (exist(obj.htmlDir, 'dir'))
-        if (obj.verbosity > 4)
-            fprintf('\nRemoving HTML directory ''%s''.\n', obj.htmlDir); 
-        end
+        fprintf('\nRemoving HTML directory ''%s''.\n', obj.htmlDir); 
         rmpath(obj.htmlDir);
         system(sprintf('rm -r -f %s', obj.htmlDir));
     end

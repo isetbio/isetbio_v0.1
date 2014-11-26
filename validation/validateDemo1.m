@@ -1,4 +1,13 @@
 function validateDemo1
+%
+% Validation demo illustrating how to 
+% - validate a list of scripts. 
+% - override the generatePlots isetbioValidation pref
+% - conduct a validationSession with unspecified mode, which results in
+%   a listing of all available modes.
+
+    close all
+    clc
     
     % Initialize ISETBIO preferences
     UnitTest.initializeISETBIOprefs();
@@ -14,7 +23,7 @@ function validateDemo1
     %setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
     %setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'catchExemptionAndContinue');
     %setpref('isetbioValidation', 'generatePlots',  true); 
-    %setpref('isetbioValidation', 'generatePlots',  false); 
+    setpref('isetbioValidation', 'generatePlots',  false); 
     
     %setpref('isetbioValidation', 'verbosity', 'min');
     setpref('isetbioValidation', 'verbosity', 'low');
@@ -23,10 +32,13 @@ function validateDemo1
     %setpref('isetbioValidation', 'verbosity', 'max');
     
     
-    % Example1. Here we pass a list of scripts to validate. Each entry contains a cell array with a
-    % script name and an optional struct with runtime options.
+    % List of scripts to validate. Each entry contains a cell array with 
+    % with a script name and an optional struct with
+    % prefs that override the corresponding isetbioValidation prefs.
+    % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
         {'validateSceneReIllumination'} ...                                  % use ISETBIO prefs
+        {'validateOTFandPupilSize',  struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots
         {'PTB_vs_ISETBIO_Irradiance',  struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots 
     };
 
