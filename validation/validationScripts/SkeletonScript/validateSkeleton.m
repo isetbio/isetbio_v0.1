@@ -45,6 +45,9 @@ function ValidationScript(runTimeParams)
         UnitTest.validationRecord('PASSED', message);
     end
     
+    % append to validationData
+    UnitTest.validationData('dummyData', ones(100,10));
+    
     %% Plotting
     if (runTimeParams.generatePlots)
         figure(1);

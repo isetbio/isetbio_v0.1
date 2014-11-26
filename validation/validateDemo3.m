@@ -39,7 +39,7 @@ function validateDemo3
     vScriptsList = {...
         {'validationScripts/PTB_vs_ISETBIO', struct('generatePlots', true) } ...    % override the ISETBIO pref for 'generatePlots'
         {'validationScripts/Scene', struct('generatePlots', false)} ...             % use ISETBIO prefs
-        {'validationScripts/HumanEye'} ...                                          % use ISETBIO prefs
+        {'validationScripts/HumanEye', struct('generatePlots', true) } ...                                          % use ISETBIO prefs
     };
 
     % Run a FULL validation session
