@@ -28,7 +28,7 @@ function validate(obj, vScriptsToRunList)
         urlToScript =  sprintf('<a href="matlab: matlab.desktop.editor.openAndGoToFunction(which(''%s.m''),'''')">''%s.m''</a>', scriptName, scriptName);
         
         % print it in the command line
-        fprintf('\n[%3d] %s\n ', scriptIndex, urlToScript);
+        fprintf('\n[%3d] %s\n', scriptIndex, urlToScript);
         
         % get the scripRunParams
         if (numel(scriptListEntry) == 2)

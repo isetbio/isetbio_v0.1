@@ -10,7 +10,7 @@ function varargout = validateSceneReIlluminationAndFail(varargin)
     if (nargout > 0) varargout = {'', false, []}; end
     
     %% Validation - Call validation script
-    ValidationStricpt(runTimeParams);
+    ValidationScript(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -25,7 +25,7 @@ function varargout = validateSceneReIlluminationAndFail(varargin)
     end
 end
 
-function ValidationStricpt(runTimeParams)
+function ValidationScript(runTimeParams)
     
     error('Simulating runtime error');
     

@@ -9,7 +9,7 @@ function validateDemo6
     %setpref('isetbioValidation', 'updateGroundTruth', true);
     %setpref('isetbioValidation', 'updateGroundTruth', false);
     
-    %setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
+    setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
     %setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'catchExemptionAndContinue');
     setpref('isetbioValidation', 'generatePlots',  true); 
     %setpref('isetbioValidation', 'generatePlots',  false); 
