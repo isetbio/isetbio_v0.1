@@ -1,45 +1,43 @@
-function PTB_vs_ISETBIO_Colorimetry(runParams)
+function varargout = PTB_vs_ISETBIO_Colorimetry(varargin)
 %
 %  Validate ISETBIO-based colorimetric computations by comparing to PTB-based colorimetric computations.
 %
 
-    % Set runParams default
-    if (nargin < 1)
-        runParams = [];
-    end
+    %% Initialization
+    % Initialize validation run
+    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
+    % Initialize return params
+    if (nargout > 0) varargout = {'', false, []}; end
     
-    % Call the validation script
-    [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
-
-    % Update the parent @UnitTest object
-    UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
+    %% Validation - Call validation script
+    ValidationStricpt(runTimeParams);
+    
+    %% Reporting and return params
+    if (nargout > 0)
+        [validationReport, validationFailedFlag] = UnitTest.validationRecord('command', 'return');
+        validationData = UnitTest.validationData('command', 'return');
+        varargout = {validationReport, validationFailedFlag, validationData};
+    else
+        if (runTimeParams.printValidationReport)
+            [validationReport, ~] = UnitTest.validationRecord('command', 'return');
+            UnitTest.printValidationReport(validationReport);
+        end 
+    end
 end
 
-%% Skeleton validation script
-function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
-     %% Default reporting behavior
-     if (nargin < 1 || isempty(runParams))
-         runParams.generatePlots = true;
-         runParams.printValidationReport = true;
-     end
-     
-     %% Use ISETBIO's version of lab2xyz.
-     lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');
-     
-    %% Initialize return params
-    validationReport = ''; 
-    validationFailedFlag = false; 
-    validationDataToSave = struct();
+function ValidationStricpt(runTimeParams)
+    
+    % Use ISETBIO's version of lab2xyz.
+    lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');
     
     %% SETUP
     isetbioPath = fileparts(which('colorTransformMatrix'));
     curDir = pwd; 
-    tolerance = 1e-10;
+    tolerance = 1e-14;
     
     %% XYZ-related colorimetry
-    message = sprintf('\n\t\t***** Basic XYZ *****');
-    validationReport = sprintf('%s %s', validationReport, message);
+    UnitTest.validationRecord('message', '***** Basic XYZ *****');
     
     testXYZs = [[1 2 1]' [2 1 0.5]' [1 1 1]' [0.6 2.3 4]'];
     ptbxyYs = XYZToxyY(testXYZs);
@@ -47,42 +45,41 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetxys = chromaticity(testXYZs')';
     
     if (any(abs(ptbxys-isetxys) > tolerance))
-        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to xy (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('PTB-ISET DIFFERENCE for XYZ to xy (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to xy (tolerance: %g)', tolerance);
+        message = sprintf('PTB-ISET AGREE for XYZ to xy (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
     
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.testXYZs = testXYZs;
-    validationDataToSave.ptbxys = ptbxys;
-    validationDataToSave.isetxys = isetxys;
+    % append to validationData 
+    UnitTest.validationData('testXYZs', testXYZs);
+    UnitTest.validationData('ptbxys', ptbxys);
+    UnitTest.validationData('isetxys',isetxys);
     
     %% xyY
     ptbXYZs = xyYToXYZ(ptbxyYs);
     if (any(abs(testXYZs-ptbXYZs) > tolerance))
-        message = sprintf('\n\t\tPTB FAILS XYZ to xyY to XYZ (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('PTB FAILS XYZ to xyY to XYZ (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB PASSES XYZ to xyY to XYZ (tolerance: %g)', tolerance);
+        message = sprintf('PTB PASSES XYZ to xyY to XYZ (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
+    % append to validationData 
+    UnitTest.validationData('ptbXYZs', ptbXYZs);
     
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.ptbXYZs = ptbXYZs;
     
     isetXYZs = xyy2xyz(ptbxyYs')';
     if (any(abs(testXYZs-isetXYZs) > tolerance))
-        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for xyY to XYZ (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('PTB-ISET DIFFERENCE for xyY to XYZ (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for xyY to XYZ (tolerance: %g)', tolerance);
+        message = sprintf('PTB-ISET AGREE for xyY to XYZ (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end 
-    
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.isetXYZs = isetXYZs;
+    % append to validationData 
+    UnitTest.validationData('isetXYZs', isetXYZs);
 
     
     %% CIE uv chromaticity
@@ -91,35 +88,34 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     [isetus,isetvs] = xyz2uv(testXYZs');
     isetuvs = [isetus' ; isetvs'];
     if (any(abs(ptbuvs-isetuvs) > tolerance))
-        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to uv (tolerance: %g)', tolerance);
-        message = sprintf('%s\n\t\t\tI think this is because ISET implements an obsolete version of the standard', message);
-        validationFailedFlag = true;
+        message = sprintf('PTB-ISET DIFFERENCE for XYZ to uv (tolerance: %g)', tolerance);
+        message = sprintf('%s\n\tI think this is because ISET implements an obsolete version of the standard', message);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to uv (tolerance: %g)', tolerance);
+        message = sprintf('PTB-ISET AGREE for XYZ to uv (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.ptbuvs = ptbuvs;
-    validationDataToSave.isetuvs = isetuvs;
+     % append to validationData 
+    UnitTest.validationData('ptbuvs', ptbuvs);
+    UnitTest.validationData('isetuvs', isetuvs);
     
     %% CIELUV
     whiteXYZ = [3,4,3]';
     ptbLuvs = XYZToLuv(testXYZs,whiteXYZ);
     isetLuvs = xyz2luv(testXYZs',whiteXYZ')';
     if (any(abs(ptbLuvs-isetLuvs) > tolerance))
-        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to Luv (tolerance: %g)', tolerance);
-        message = sprintf('%s\n\t\t\tPresumably because the uv transformation differs.', message);
-        validationFailedFlag = true;
+        message = sprintf('PTB-ISET DIFFERENCE for XYZ to Luv (tolerance: %g)', tolerance);
+        message = sprintf('%s\n\tPresumably because the uv transformation differs.', message);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to Luv (tolerance: %g)', tolerance);
+        message = sprintf('PTB-ISET AGREE for XYZ to Luv (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
     
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.whiteXYZ = whiteXYZ;
-    validationDataToSave.ptbLuvs = ptbLuvs;
-    validationDataToSave.isetLuvs = isetLuvs;
+    % update tovalidationData
+    UnitTest.validationData('whiteXYZ', whiteXYZ);
+    UnitTest.validationData('ptbLuvs',  ptbLuvs);
+    UnitTest.validationData('isetLuvs', isetLuvs);
     
     %% CIELAB
     whiteXYZ = [3,4,3]';
@@ -128,37 +124,36 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetLabs = xyz2lab(testXYZs',whiteXYZ')';
     cd(curDir);
     if (any(abs(ptbLabs-isetLabs) > tolerance))
-        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('PTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to Lab (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.ptbLabs  = ptbLabs;
-    validationDataToSave.isetLabs = isetLabs;
+    % append to validationData
+    UnitTest.validationData('ptbLabs',  ptbLabs);
+    UnitTest.validationData('isetLabs', isetLabs);
     
     ptbXYZCheck = LabToXYZ(ptbLabs,whiteXYZ);
     isetXYZCheck = lab2xyz(isetLabs',whiteXYZ')';
     if (any(abs(testXYZs-ptbXYZCheck) > tolerance ))
-        message = sprintf('\n\t\tPTB FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('PTB FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB PASSES XYZ to Lab to XYZ (tolerance: %g)', tolerance);
+        message = sprintf('PTB PASSES XYZ to Lab to XYZ (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.ptbXYZCheck  = ptbXYZCheck;
+    % update to validationData
+    UnitTest.validationData('ptbXYZCheck', ptbXYZCheck);
     
     if (any(abs(testXYZs-isetXYZCheck) > tolerance))
-        message = sprintf('\n\t\tISET FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('ISET FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tISET PASSES XYZ to Lab to XYZ (tolerance: %g)', tolerance);
+        message = sprintf('ISET PASSES XYZ to Lab to XYZ (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.isetXYZCheck  = isetXYZCheck;
+    % append to validationData
+    UnitTest.validationData('isetXYZCheck', isetXYZCheck);
 
     
     %% sRGB
@@ -193,8 +188,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     % One other convention difference is that the PTB routine rounds to
     % integers for the settings, while the iset routine leaves the rounding up
     % to the caller.
-    message = sprintf('\n\n\t\t***** sRGB*****');
-    validationReport = sprintf('%s %s', validationReport, message);
+    UnitTest.validationRecord('message', '***** sRGB *****');
 
     % Create some test sRGB values and convert them in the PTB framework
     ptbSRGBs = [[188 188 188]' [124 218 89]' [255 149 203]' [255 3 203]'];
@@ -209,40 +203,39 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
 
     if (any(abs(isetXYZs-ptbXYZs) > tolerance))
         d = isetXYZs - ptbXYZs;
-        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)',max(abs(d(:))), tolerance);
+        message = sprintf('PTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)',max(abs(d(:))), tolerance);
         d = d ./ptbXYZs;
-        message = sprintf('%s\n\t\tPTB-ISET Percent XYZ DIFFERENCE: %f\n', message, max(abs(d(:))));
-        validationFailedFlag = true;
+        message = sprintf('%s\nPTB-ISET Percent XYZ DIFFERENCE: %f\n', message, max(abs(d(:))));
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to sRGB (tolerance: %g)', tolerance);
+        message = sprintf('PTB-ISET AGREE for XYZ to sRGB (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.isetXYZs = isetXYZs;
-    validationDataToSave.ptbXYZs = ptbXYZs;
+    % append to validationData
+    UnitTest.validationData('isetXYZs', isetXYZs);
+    UnitTest.validationData('ptbXYZs', ptbXYZs);
     
     % PTB testing of inversion
     if (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) > tolerance))
-        message = sprintf('\n\t\tPTB FAILS linear sRGB to XYZ to linear sRGB (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('PTB FAILS linear sRGB to XYZ to linear sRGB (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: %g)', tolerance);
+        message = sprintf('PTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.ptbSRGBPrimary = ptbSRGBPrimary;
+    % append to validationData
+    UnitTest.validationData('ptbSRGBPrimary', ptbSRGBPrimary);
     
     
     if (any(abs(SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs) > tolerance))
-        message = sprintf('\n\t\tPTB FAILS sRGB to linear sRGB to sRGB (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('PTB FAILS sRGB to linear sRGB to sRGB (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB PASSES sRGB to linear sRGB to sRGB (tolerance: %g)', tolerance);
+        message = sprintf('PTB PASSES sRGB to linear sRGB to sRGB (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.ptbSRGBs = ptbSRGBs;
+    % append to validationData
+    UnitTest.validationData('ptbSRGBs', ptbSRGBs);
     
     
     % Compare sRGB matrices
@@ -250,15 +243,15 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetSRGBMatrix = colorTransformMatrix('xyz2srgb')';
 
     if (any(abs(ptbSRGBMatrix-isetSRGBMatrix) > tolerance))
-        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for sRGB transform matrix (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('PTB-ISET DIFFERENCE for sRGB transform matrix (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for sRGB transform matrix (tolerance: %g)', tolerance);
+        message = sprintf('PTB-ISET AGREE for sRGB transform matrix (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.ptbSRGBMatrix = ptbSRGBMatrix;
-    validationDataToSave.isetSRGBMatrix = isetSRGBMatrix;
+    % append to validationData
+    UnitTest.validationData('ptbSRGBMatrix', ptbSRGBMatrix);
+    UnitTest.validationData('isetSRGBMatrix', isetSRGBMatrix);
     
     % XYZ -> lRGB 
     % Reformat shape
@@ -273,54 +266,53 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
 
     if (any(abs(ptbSRGBPrimary-isetSRGBPrimary) > tolerance))
         d = ptbSRGBPrimary - isetSRGBPrimary;
-        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)',max(abs(d(:))), tolerance);
+        message = sprintf('PTB-ISET DIFFERENCE for XYZ to sRGB: %f (tolerance: %g)',max(abs(d(:))), tolerance);
         d = d ./isetSRGBPrimary;
         message = sprintf('%s\n\t\tPTB-ISET Percent RGB DIFFERENCE: %f', message, max(abs(d(:))));
-        validationFailedFlag = true;
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to linear sRGB (tolerance: %g)', tolerance);
+        message = sprintf('PTB-ISET AGREE for XYZ to linear sRGB (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.ptbSRGBPrimary = ptbSRGBPrimary;
-    validationDataToSave.isetSRGBPrimary = isetSRGBPrimary;
+    % append to validationData
+    UnitTest.validationData('ptbSRGBPrimary', ptbSRGBPrimary);
+    UnitTest.validationData('isetSRGBPrimary', isetSRGBPrimary);
     
     
     % ISET/PTB sRGB comparison in integer gamma corrected space
     if (any(abs(round(isetSRGBs*255)-ptbSRGBs) > tolerance))
-        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to sRGB (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('PTB-ISET DIFFERENCE for XYZ to sRGB (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for XYZ to sRGB (tolerance: %g)', tolerance);
+        message = sprintf('PTB-ISET AGREE for XYZ to sRGB (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.isetSRGBs = isetSRGBs*255;
-    validationDataToSave.ptbSRGBs = ptbSRGBs;
+    % append to validationData
+    UnitTest.validationData('isetSRGBs', isetSRGBs*255);
+    UnitTest.validationData('ptbSRGBs', ptbSRGBs);
     
     
     % lrgb -> srgb -> lrgb in ISET
     isetSRGBPrimaryCheckImage = srgb2lrgb(isetSRGBImage);
     isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
     if (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) >  tolerance))
-        message = sprintf('\n\t\tISET FAILS linear sRGB to sRGB to linear sRGB (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('ISET FAILS linear sRGB to sRGB to linear sRGB (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: %g)', tolerance);
+        message = sprintf('ISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.isetSRGBPrimaryCheck = isetSRGBPrimaryCheck;
-    validationDataToSave.isetSRGBPrimary = isetSRGBPrimary;
+    % append to validationData
+    UnitTest.validationData('isetSRGBPrimaryCheck', isetSRGBPrimaryCheck);
+    UnitTest.validationData('isetSRGBPrimary', isetSRGBPrimary);
     
 
     %% Quanta/Energy
     %
     % The ISET routines define c and h to more places than the PTB, so the
     % agreement is only good to about 5 significant places.  Seems OK to me.
-    message = sprintf('\n\n\t\t***** Energy/Quanta *****');
-    validationReport = sprintf('%s %s', validationReport, message);
- 
+    UnitTest.validationRecord('message', '***** Energy/Quanta *****');
+    
     load spd_D65
     spdEnergyTest = spd_D65;
     wlsTest = SToWls(S_D65);
@@ -329,42 +321,41 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetQuanta = Energy2Quanta(wlsTest,spdEnergyTest);
     toleranceQuanta = (10^-testPlaces)*min(ptbQuanta);
     if (any(abs(ptbQuanta-isetQuanta) > toleranceQuanta))
-        message = sprintf('\n\t\tPTB-ISET DO NOT AGREE for energy to quanta conversion at %d significant places (tolerance: %g quanta)',testPlaces, toleranceQuanta);
-        validationFailedFlag = true;
+        message = sprintf('PTB-ISET DO NOT AGREE for energy to quanta conversion at %d significant places (tolerance: %g quanta)',testPlaces, toleranceQuanta);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for energy to quanta conversion to %d significant places (tolerance: %g quanta)',testPlaces,  toleranceQuanta);
+        message = sprintf('PTB-ISET AGREE for energy to quanta conversion to %d significant places (tolerance: %g quanta)',testPlaces,  toleranceQuanta);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.ptbQuanta = ptbQuanta;
-    validationDataToSave.isetQuanta = isetQuanta;
+    % append to validationData
+    UnitTest.validationData('ptbQuanta', ptbQuanta);
+    UnitTest.validationData('isetQuanta', isetQuanta);
     
     if (any(abs(QuantaToEnergy(wlsTest,ptbQuanta)-spdEnergyTest) > tolerance))
-        message = sprintf('\n\t\tPTB FAILS energy to quanta to energy (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('PTB FAILS energy to quanta to energy (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB PASSES energy to quanta to energy (tolerance: %g)', tolerance);
+        message = sprintf('PTB PASSES energy to quanta to energy (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.ptbEnergyFromQuanta = QuantaToEnergy(wlsTest,ptbQuanta);
-    validationDataToSave.spdEnergyTest = spdEnergyTest;
+    % append to validationData
+    UnitTest.validationData('ptbEnergyFromQuanta', QuantaToEnergy(wlsTest,ptbQuanta));
+    UnitTest.validationData('spdEnergyTest', spdEnergyTest);
     
     if (any(abs(Quanta2Energy(wlsTest,isetQuanta')'- spdEnergyTest) > tolerance))
-        message = sprintf('\n\t\tISET FAILS energy to quanta to energy (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('ISET FAILS energy to quanta to energy (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tISET PASSES energy to quanta to energy (tolerance: %g)', tolerance);
+        message = sprintf('ISET PASSES energy to quanta to energy (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.isetEnergyFromQuanta = Quanta2Energy(wlsTest,isetQuanta')';
+    % append to validationData
+    UnitTest.validationData('isetEnergyFromQuanta', Quanta2Energy(wlsTest,isetQuanta')');
     
     %% CIE daylights
     % 
     % These routines are now running in ISET and everything agrees.
-    message = sprintf('\n\n\t\t***** CIE Daylights *****');
-    validationReport = sprintf('%s %s', validationReport, message);
+    UnitTest.validationRecord('message', '***** CIE Daylights *****');
     
     load B_cieday
     testWls = SToWls(S_cieday);
@@ -376,24 +367,21 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     isetDaySpd = daylight(testWls,testTemp);
     isetDaySpd = isetDaySpd/max(isetDaySpd(:));
     if (any(abs(isetDaySpd-ptbDaySpd) > tolerance))
-        message = sprintf('\n\t\tPTB-ISET DIFFERENCE for daylight (tolerance: %g)', tolerance);
-        validationFailedFlag = true;
+        message = sprintf('PTB-ISET DIFFERENCE for daylight (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('\n\t\tPTB-ISET AGREE for for daylight (tolerance: %g)', tolerance);
+        message = sprintf('PTB-ISET AGREE for for daylight (tolerance: %g)', tolerance);
+        UnitTest.validationRecord('PASSED', message);
     end
-    % update validation report and validationDataToSave struct
-    validationReport = sprintf('%s %s', validationReport, message);
-    validationDataToSave.isetDaySpd = isetDaySpd;
-    validationDataToSave.ptbDaySpd  = ptbDaySpd;
+    % append to validationData
+    UnitTest.validationData('isetDaySpd', isetDaySpd);
+    UnitTest.validationData('ptbDaySpd',  ptbDaySpd);
     
-    % Generate plots, if so specified
-    if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
-        % Your plotting code goes here.
+    %% Plotting
+    if (runTimeParams.generatePlots)
+
     end
-    
-    % Output report, if so desired
-    if (nargin >= 1) && (isfield(runParams,'printValidationReport')) && (runParams.printValidationReport == true)
-        disp(validationReport);
-    end
-    
 end
+
+
+

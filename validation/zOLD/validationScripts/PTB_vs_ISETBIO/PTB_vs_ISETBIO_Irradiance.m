@@ -1,32 +1,29 @@
-function varargout = PTB_vs_ISETBIO_Irradiance(varargin)
+function PTB_vs_ISETBIO_Irradiance(runParams)
 %
 %   Validate ISETBIO-based irradiance/isomerization computations by comparing to PTB-based irradiance/isomerization computations.
 % 
 
-    %% Initialization
-    % Initialize validation run
-    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
-    % Initialize return params
-    if (nargout > 0) varargout = {'', false, []}; end
+     %% Default reporting behavior
+     if (nargin < 1 || isempty(runParams))
+         runParams.generatePlots = true;
+         runParams.printValidationReport = true;
+     end
     
-    %% Validation - Call validation script
-    ValidationStricpt(runTimeParams);
-    
-    %% Reporting and return params
-    if (nargout > 0)
-        [validationReport, validationFailedFlag] = UnitTest.validationRecord('command', 'return');
-        validationData = UnitTest.validationData('command', 'return');
-        varargout = {validationReport, validationFailedFlag, validationData};
-    else
-        if (runTimeParams.printValidationReport)
-            [validationReport, ~] = UnitTest.validationRecord('command', 'return');
-            UnitTest.printValidationReport(validationReport);
-        end 
-    end
+    % Call the validation script
+    [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
+        
+    % Update the parent @UnitTest object
+    UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
 end
 
-    
-function ValidationStricpt(runTimeParams)
+
+%% Validation script for PTB_vs_ISETBIO_Irradiance test
+function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
+
+    %% Initialize return params
+    validationReport = 'None'; 
+    validationFailedFlag = true; 
+    validationDataToSave = struct();
     
     %% Initialize ISETBIO
     s_initISET;
@@ -107,21 +104,19 @@ function ValidationStricpt(runTimeParams)
     isetbioIrradianceEnergy = isetbioIrradianceEnergy(:);
     difference = ptbMagCorrectIrradiance-isetbioIrradianceEnergy;
     if (max(abs(difference./isetbioIrradianceEnergy)) > tolerance)
-        message = sprintf('Difference between PTB and isetbio irradiance exceeds tolerance of %0.1f%% !!!', 100*tolerance);
-        UnitTest.validationRecord('FAILED', message);
+        validationReport     = sprintf('Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance of %0.1f%% !!!', 100*tolerance);
+        validationFailedFlag = true;
     else
-        message = sprintf('PTB and isetbio agree about irradiance to %0.1f%%',100*tolerance);
-        UnitTest.validationRecord('PASSED', message);
+        validationReport     = sprintf('Validation PASSED. PTB and isetbio agree about irradiance to %0.1f%%',100*tolerance);
+        validationFailedFlag = false;
     end
-    
-    % append to validationData
-    UnitTest.validationData('fov', fov);
-    UnitTest.validationData('roiSize', roiSize);
-    UnitTest.validationData('tolerance', tolerance);
-    UnitTest.validationData('scene', scene);
-    UnitTest.validationData('oi', oi);
-    UnitTest.validationData('ptbMagCorrectIrradiance', ptbMagCorrectIrradiance);
-    UnitTest.validationData('isetbioIrradianceEnergy',isetbioIrradianceEnergy);
+    validationDataToSave.fov        = fov;
+    validationDataToSave.roiSize    = roiSize;
+    validationDataToSave.tolerance  = tolerance;
+    validationDataToSave.scene      = scene;
+    validationDataToSave.oi         = oi;
+    validationDataToSave.ptbMagCorrectIrradiance = ptbMagCorrectIrradiance;
+    validationDataToSave.isetbioIrradianceEnergy = isetbioIrradianceEnergy;
     
     %% Compare spectral sensitivities used by ISETBIO and PTB.
     %
@@ -134,17 +129,17 @@ function ValidationStricpt(runTimeParams)
     isetCones = isetCones(:,2:4);
     coneDifference = ptbCones-isetCones;
     if (max(abs(coneDifference)) > coneTolerance)
-        message = sprintf('Difference between PTB and isetbio cone quantal efficiencies %0.1g !!!', coneTolerance);
-        UnitTest.validationRecord('FAILED', message);
+        message = sprintf('Validation FAILED. Difference between PTB and isetbio cone quantal efficiencies %0.1g !!!', coneTolerance);
+        validationFailedFlag = true;
     else
-        message = sprintf('PTB and isetbio agree about cone quantal efficiencies to %0.1g',coneTolerance);
-        UnitTest.validationRecord('PASSED', message);
+        message = sprintf('Validation PASSED. PTB and isetbio agree about cone quantal efficiencies to %0.1g',coneTolerance);
+        validationFailedFlag = false;
     end
-    % append to validationData
-    UnitTest.validationData('isetCones',  isetCones);
-    UnitTest.validationData('ptbCones',  ptbCones);
-    UnitTest.validationData('coneTolerance', coneTolerance);
-    UnitTest.validationData('sensor', sensor);
+    validationReport = sprintf('%s\n%s', validationReport, message);
+    validationDataToSave.isetCones  = isetCones;
+    validationDataToSave.ptbCones   = ptbCones;
+    validationDataToSave.coneTolerance  = coneTolerance;
+    validationDataToSave.sensor      = sensor;
    
     %% Compute quantal absorptions
     %
@@ -158,10 +153,8 @@ function ValidationStricpt(runTimeParams)
     sensor = coneAbsorptions(sensor, oi);
     volts  = sensorGet(sensor,'volts');
 
-    
     %% Generate plots, if so specified
-    if (runTimeParams.generatePlots)
-
+    if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
         h = figure(500);
         clf;
         set(h, 'Position', [100 100 800 600]);
@@ -208,4 +201,11 @@ function ValidationStricpt(runTimeParams)
         ylabel('ISET cones');
         axis('square');
     end 
+    
+    %% Output report, if so desired
+    if (nargin >= 1) && (isfield(runParams,'printValidationReport')) && (runParams.printValidationReport == true)
+        disp(validationReport);
+        fprintf('\n');
+    end
+    
 end
