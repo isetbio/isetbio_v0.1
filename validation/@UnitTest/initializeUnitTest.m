@@ -15,11 +15,14 @@ function initializeUnitTest(obj)
     % initialize validation params to default params
     obj.validationParams = obj.defaultValidationParams;
     
-    % initialize verbosity
+    % initialize verbosity based on isetbioValidation prefs
     verbosity = getpref('isetbioValidation', 'verbosity');
     if (ismember(verbosity, UnitTest.validVerbosityLevels))
-       obj.verbosity = find(strcmp(verbosity,UnitTest.validVerbosityLevels)==1)-1;
+       obj.validationParams.verbosity = find(strcmp(verbosity,UnitTest.validVerbosityLevels)==1)-1;
     else
        error('Verbosity level ''%s'', not recognized', verbosity); 
     end
+        
+    % initialize numeric tolerance based on isetbioValidation prefs
+    obj.validationParams.numericTolerance = getpref('isetbioValidation', 'numericTolerance');
 end

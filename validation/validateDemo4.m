@@ -26,6 +26,9 @@ function validateDemo4
     %UnitTest.setPref('verbosity', 'med');
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max');
+    UnitTest.setPref('numericTolerance', 400*eps);
+    %UnitTest.setPref('graphMismatchedData', true);
+    %UnitTest.setPref('graphMismatchedData', false);
     
     % Print available isetbioValidation prefs and their current values
     UnitTest.listPrefs();

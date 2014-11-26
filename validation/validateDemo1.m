@@ -12,7 +12,7 @@ function validateDemo1
     % Initialize ISETBIO preferences
     UnitTest.initializePrefs();
     % or reset to the default prefs
-    % UnitTest.initializePrefs('reset');
+    UnitTest.initializePrefs('reset');
     
     
     % Change any preferences by uncommenting any of the following:
@@ -31,6 +31,9 @@ function validateDemo1
     %UnitTest.setPref('verbosity', 'med');
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max');
+    UnitTest.setPref('numericTolerance', 400*eps);
+    %UnitTest.setPref('graphMismatchedData', true);
+    %UnitTest.setPref('graphMismatchedData', false);
     
     % Print available isetbioValidation prefs and their current values
     UnitTest.listPrefs();
@@ -42,7 +45,7 @@ function validateDemo1
     % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
         {'validateSceneReIllumination'} ...                                  % use ISETBIO prefs
-        {'validateOTFandPupilSize',  struct('generatePlots', true) } ...     % override the ISETBIO pref for generatePlots
+        {'validateOTFandPupilSize',    struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots
         {'PTB_vs_ISETBIO_Irradiance',  struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots 
         {'validateSkeleton'} 
     };
