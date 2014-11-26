@@ -2,7 +2,8 @@ function validateDemoN
     
     % Initialize ISETBIO preferences
     UnitTest.initializeISETBIOprefs();
-    getpref('isetbioValidation')
+    % or to reset to the default prefs
+    %UnitTest.initializeISETBIOprefs('reset');
     
     % change any preferences you would like to.
     % Uncomment one of the following options

@@ -2,7 +2,9 @@ function validateDemo1
     
     % Initialize ISETBIO preferences
     UnitTest.initializeISETBIOprefs();
-
+    % or to reset to the default prefs
+    UnitTest.initializeISETBIOprefs('reset');
+    
     % Change any preferences by uncommenting any of the following:
     %setpref('isetbioValidation', 'updateValidationHistory', true);
     %setpref('isetbioValidation', 'updateValidationHistory', false);

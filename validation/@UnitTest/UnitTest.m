@@ -106,7 +106,7 @@ classdef UnitTest < handle
         runValidationSession(vScriptsList, desiredMode, verbosity);
         
         % Method to initalize prefs for a ISETBIO
-        initializeISETBIOprefs();
+        initializeISETBIOprefs(initMode);
         
         % Method to initalize a validation run.
         % Every validation script must call this method first thing.

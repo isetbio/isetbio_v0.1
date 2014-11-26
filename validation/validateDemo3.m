@@ -2,6 +2,8 @@ function validateDemo3
     
     % Initialize ISETBIO preferences
     UnitTest.initializeISETBIOprefs();
+    % or to reset to the default prefs
+    %UnitTest.initializeISETBIOprefs('reset');
     
     % Change any preferences by uncommenting any of the following:
     setpref('isetbioValidation', 'updateValidationHistory', true);
@@ -27,7 +29,6 @@ function validateDemo3
         {'validationScripts/Scene', struct('generatePlots', false)} ...                                            % use ISETBIO prefs
     };
 
-    
     % Run a FULL validation session
     UnitTest.runValidationSession(vScriptsList, 'FULL');
 end

@@ -2,6 +2,8 @@ function validateDemo2
     
     % Initialize ISETBIO preferences
     UnitTest.initializeISETBIOprefs();
+    % or to reset to the default prefs
+    %UnitTest.initializeISETBIOprefs('reset');
     
     % Change any preferences by uncommenting any of the following:
     %setpref('isetbioValidation', 'updateValidationHistory', true);
@@ -10,7 +12,7 @@ function validateDemo2
     %setpref('isetbioValidation', 'updateGroundTruth', false);
     
     %setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
-    %setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'catchExemptionAndContinue');
+    setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'catchExemptionAndContinue');
     %setpref('isetbioValidation', 'generatePlots',  true); 
     %setpref('isetbioValidation', 'generatePlots',  false); 
     
@@ -27,9 +29,6 @@ function validateDemo2
         {'validationScripts/PTB_vs_ISETBIO', struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots 
         {'validationScripts/Scene'} ...                                            % use ISETBIO prefs
     };
-
-    % Employ the 'catchExemptionAndContinue' runtime behavior
-    setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'catchExemptionAndContinue');
     
     % Run a FULL validation session
     UnitTest.runValidationSession(vScriptsList, 'FULL');
