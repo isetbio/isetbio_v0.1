@@ -159,7 +159,7 @@ function ValidationScript(runTimeParams)
     volts  = sensorGet(sensor,'volts');
 
     
-    %% Generate plots, if so specified
+    %% Plotting
     if (runTimeParams.generatePlots)
 
         h = figure(500);

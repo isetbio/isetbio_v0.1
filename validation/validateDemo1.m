@@ -10,26 +10,30 @@ function validateDemo1
     clc
     
     % Initialize ISETBIO preferences
-    UnitTest.initializeISETBIOprefs();
-    % or to reset to the default prefs
-    UnitTest.initializeISETBIOprefs('reset');
+    UnitTest.initializePrefs();
+    % or reset to the default prefs
+    % UnitTest.initializePrefs('reset');
+    
     
     % Change any preferences by uncommenting any of the following:
-    %setpref('isetbioValidation', 'updateValidationHistory', true);
-    %setpref('isetbioValidation', 'updateValidationHistory', false);
-    %setpref('isetbioValidation', 'updateGroundTruth', true);
-    %setpref('isetbioValidation', 'updateGroundTruth', false);
+    %UnitTest.setPref('updateValidationHistory', true);
+    %UnitTest.setPref('updateValidationHistory', false);
+    %UnitTest.setPref('updateGroundTruth', true);
+    %UnitTest.setPref('updateGroundTruth', false);
+    %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
+    %UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
+    %UnitTest.setPref('generatePlots',  true); 
+    UnitTest.setPref('generatePlots',  false); 
     
-    %setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
-    %setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'catchExemptionAndContinue');
-    %setpref('isetbioValidation', 'generatePlots',  true); 
-    setpref('isetbioValidation', 'generatePlots',  false); 
+    %UnitTest.setPref('verbosity', 'none');
+    UnitTest.setPref('verbosity', 'min');
+    %UnitTest.setPref('verbosity', 'low');
+    %UnitTest.setPref('verbosity', 'med');
+    %UnitTest.setPref('verbosity', 'high');
+    %UnitTest.setPref('verbosity', 'max');
     
-    %setpref('isetbioValidation', 'verbosity', 'min');
-    setpref('isetbioValidation', 'verbosity', 'low');
-    %setpref('isetbioValidation', 'verbosity', 'med');
-    %setpref('isetbioValidation', 'verbosity', 'high');
-    %setpref('isetbioValidation', 'verbosity', 'max');
+    % Print available isetbioValidation prefs and their current values
+    UnitTest.listPrefs();
     
     
     % List of scripts to validate. Each entry contains a cell array with 
@@ -38,8 +42,9 @@ function validateDemo1
     % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
         {'validateSceneReIllumination'} ...                                  % use ISETBIO prefs
-        {'validateOTFandPupilSize',  struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots
+        {'validateOTFandPupilSize',  struct('generatePlots', true) } ...     % override the ISETBIO pref for generatePlots
         {'PTB_vs_ISETBIO_Irradiance',  struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots 
+        {'validateSkeleton'} 
     };
 
     % Run a validation session without specifying a mode: we will be prompted to specify one

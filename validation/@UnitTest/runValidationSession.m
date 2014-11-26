@@ -1,12 +1,12 @@
 function runValidationSession(vScriptsList, desiredMode)
 
     if (nargin == 1)
-        fprintf('\nAvailable validation run types:');
+        fprintf('\nAvailable validation run modes:');
         fprintf('\n\t 1. FASTEST (runtime errors only)');
         fprintf('\n\t 2. FAST    (runtime errors + data hash comparison)');
         fprintf('\n\t 3. FULL    (runtime errors + full data comparison)');
         fprintf('\n\t 4. PUBLISH (runtime errors +  github wiki update)');
-        typeID = input('\nEnter type of validation run [default = 1]: ', 's');
+        typeID = input('\nEnter validation run mode [default = 1]: ', 's');
         if (str2double(typeID) == 1)
             desiredMode = 'RUN_TIME_ERRORS_ONLY';
         elseif (str2double(typeID) == 2)

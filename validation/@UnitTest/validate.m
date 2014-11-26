@@ -1,10 +1,9 @@
 % Main validation engine
 function validate(obj, vScriptsToRunList)
     
-    fprintf('\n--------------------------------------------------------------------------------------------------\n');
-    fprintf('Running in ''%s'' validation mode with ''%s'' runtime hehavior.', obj.validationParams.type, obj.validationParams.onRunTimeError);
-    fprintf('\n--------------------------------------------------------------------------------------------------\n');
-    
+    fprintf('\n------------------------------------------------------------------------------------------------------------\n');
+    fprintf('Running in ''%s'' mode with ''%s'' runtime hehavior (verbosity = ''%s'').', obj.validationParams.type, obj.validationParams.onRunTimeError, UnitTest.validVerbosityLevels{obj.verbosity+1});
+    fprintf('\n------------------------------------------------------------------------------------------------------------\n');
     
     % Parse the scripts list to ensure it is valid
     obj.vScriptsList = obj.parseScriptsList(vScriptsToRunList);
@@ -27,8 +26,10 @@ function validate(obj, vScriptsToRunList)
         % form a URL for it
         urlToScript =  sprintf('<a href="matlab: matlab.desktop.editor.openAndGoToFunction(which(''%s.m''),'''')">''%s.m''</a>', scriptName, scriptName);
         
-        % print it in the command line
-        fprintf('\n[%3d] %s\n', scriptIndex, urlToScript);
+        if (obj.verbosity > 0) 
+            % print it in the command line
+            fprintf('\n[%3d] %s\n', scriptIndex, urlToScript);
+        end
         
         % get the scripRunParams
         if (numel(scriptListEntry) == 2)
@@ -108,7 +109,12 @@ function validate(obj, vScriptsToRunList)
             command = sprintf('try \n\t%s  \n\t exemptionRaisedFlag = false; \ncatch err \n\t exemptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''Exemption raised. Exemption Message: %%s'', err.message), true}; \n\t rethrow(err);  \nend', commandString);
         end
         
-        if (obj.verbosity > 3)
+        if (obj.verbosity >= 3)
+            fprintf('\nRunning with ');
+            eval('scriptRunParams');
+        end
+        
+        if (obj.verbosity == 5)
            fprintf('\nExecuting:\n%s\n', command); 
         end
         
@@ -122,16 +128,18 @@ function validate(obj, vScriptsToRunList)
             validationData       = evalin('base', 'validationData');
         end
             
-        % Update the command line output
-        if (validationFailedFlag)
-           fprintf(2, '\tInternal validation  : FAILED\n');
-        else
-           fprintf('\tInternal validation  : PASSED\n'); 
-        end
-        if (exemptionRaisedFlag)
-           fprintf(2, '\tRun-time status      : exemption raised\n');
-        else
-           fprintf('\tRun-time status      : no exemption raised\n'); 
+        if (obj.verbosity > 0) 
+            % Update the command line output
+            if (validationFailedFlag)
+               fprintf(2, '\tInternal validation  : FAILED\n');
+            else
+               fprintf('\tInternal validation  : PASSED\n'); 
+            end
+            if (exemptionRaisedFlag)
+               fprintf(2, '\tRun-time status      : exemption raised\n');
+            else
+               fprintf('\tRun-time status      : no exemption raised\n'); 
+            end
         end
         
         
@@ -155,15 +163,21 @@ function validate(obj, vScriptsToRunList)
                 if (exist(dataFileName, 'file') == 2)
                     [groundTruthData, groundTruthTime] = obj.importGroundTruthData(dataFileName);
                     if (strcmp(groundTruthData, hashSHA25))
-                        fprintf('\tFast validation      : PASSED against ground truth data of %s\n', groundTruthTime);
+                        if (obj.verbosity > 0) 
+                            fprintf('\tFast validation      : PASSED against ground truth data of %s\n', groundTruthTime);
+                        end
                         groundTruthFastValidationFailed = false;
                     else
-                        fprintf(2,'\tFast validation      : FAILED against ground truth data of %s\n', groundTruthTime);
+                        if (obj.verbosity > 0) 
+                            fprintf(2,'\tFast validation      : FAILED against ground truth data of %s\n', groundTruthTime);
+                        end
                         groundTruthFastValidationFailed = true;
                     end
                 else
                     forceUpdateGroundTruth = true;
-                    fprintf('\tFast validation      : no ground truth dataset exists. Generating one. \n');
+                    if (obj.verbosity > 1) 
+                        fprintf('\tFast validation      : no ground truth dataset exists. Generating one. \n');
+                    end
                 end
 
                 if (~groundTruthFastValidationFailed)
@@ -172,9 +186,13 @@ function validate(obj, vScriptsToRunList)
                         % save/append to LocalValidationHistoryDataFile
                         dataFileName = fastLocalValidationHistoryDataFile;
                         if (exist(dataFileName, 'file') == 2)
-                            fprintf('\tSHA-256 hash key     : %s, appended to ''%s''\n', hashSHA25, dataFileName);
+                            if (obj.verbosity > 1) 
+                                fprintf('\tSHA-256 hash key     : %s, appended to ''%s''\n', hashSHA25, dataFileName);
+                            end
                         else
-                            fprintf('\tSHA-256 hash key     : %s, written to ''%s''\n', hashSHA25, dataFileName);
+                            if (obj.verbosity > 1) 
+                                fprintf('\tSHA-256 hash key     : %s, written to ''%s''\n', hashSHA25, dataFileName);
+                            end
                         end
                         obj.exportData(dataFileName, hashSHA25);
                     end
@@ -183,9 +201,13 @@ function validate(obj, vScriptsToRunList)
                     if (validationParams.updateGroundTruth) || (forceUpdateGroundTruth)
                         dataFileName = fastLocalGroundTruthHistoryDataFile;
                         if (exist(dataFileName, 'file') == 2)
-                            fprintf('\tSHA-256 hash key     : %s, appended to ''%s''\n', hashSHA25, dataFileName);
+                            if (obj.verbosity > 1) 
+                                fprintf('\tSHA-256 hash key     : %s, appended to ''%s''\n', hashSHA25, dataFileName);
+                            end
                         else
-                            fprintf('\tSHA-256 hash key     : %s, written to ''%s''\n', hashSHA25, dataFileName);
+                            if (obj.verbosity > 1) 
+                                fprintf('\tSHA-256 hash key     : %s, written to ''%s''\n', hashSHA25, dataFileName);
+                            end
                         end
                         obj.exportData(dataFileName, hashSHA25);
                     end
@@ -205,15 +227,21 @@ function validate(obj, vScriptsToRunList)
                 if (exist(dataFileName, 'file') == 2)
                     [groundTruthData, groundTruthTime] = obj.importGroundTruthData(dataFileName);
                     if (obj.structsAreSimilar(groundTruthData, validationData))
-                        fprintf('\tFull validation      : PASSED against ground truth data of %s\n', groundTruthTime);
+                        if (obj.verbosity > 0) 
+                            fprintf('\tFull validation      : PASSED against ground truth data of %s\n', groundTruthTime);
+                        end
                         groundTruthFullValidationFailed = false;
                     else
-                        fprintf(2,'\tFull validation      : FAILED against ground truth data of %s\n', groundTruthTime);
+                        if (obj.verbosity > 0) 
+                            fprintf(2,'\tFull validation      : FAILED against ground truth data of %s\n', groundTruthTime);
+                        end
                         groundTruthFullValidationFailed = true;
                     end
                 else
                     forceUpdateGroundTruth = true;
-                    fprintf('\tFull validation      : no ground truth dataset exists. Generating one. \n');
+                    if (obj.verbosity > 0) 
+                        fprintf('\tFull validation      : no ground truth dataset exists. Generating one. \n');
+                    end
                 end
             
 
@@ -223,9 +251,13 @@ function validate(obj, vScriptsToRunList)
                         % save/append to LocalValidationHistoryDataFile
                         dataFileName = fullLocalValidationHistoryDataFile;
                         if (exist(dataFileName, 'file') == 2)
-                            fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
+                            if (obj.verbosity > 1) 
+                                fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
+                            end
                         else
-                            fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
+                            if (obj.verbosity > 1) 
+                                fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
+                            end
                         end
                         obj.exportData(dataFileName, validationData);
                      end
@@ -234,9 +266,13 @@ function validate(obj, vScriptsToRunList)
                     if (validationParams.updateGroundTruth) || (forceUpdateGroundTruth)
                         dataFileName = fullLocalGroundTruthHistoryDataFile;
                         if (exist(dataFileName, 'file') == 2)
-                            fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
+                            if (obj.verbosity > 1) 
+                                fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
+                            end
                         else
-                            fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
+                            if (obj.verbosity > 1) 
+                                fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
+                            end
                         end
                         obj.exportData(dataFileName, validationData);
                     end
@@ -247,7 +283,9 @@ function validate(obj, vScriptsToRunList)
             
             
             if (strcmp(validationParams.type, 'PUBLISH'))
-                fprintf('\tReport published in  : ''%s''\n', htmlDirectory);
+                if (obj.verbosity > 1) 
+                    fprintf('\tReport published in  : ''%s''\n', htmlDirectory);
+                end
             end  % PUBLISH MODE
             
         end  % validationParams.type, 'RUNTIME_ERRORS_ONLY'      

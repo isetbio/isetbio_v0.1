@@ -1,22 +1,22 @@
 function validateDemoN
     
     % Initialize ISETBIO preferences
-    UnitTest.initializeISETBIOprefs();
+    UnitTest.initializePrefs();
     % or to reset to the default prefs
-    %UnitTest.initializeISETBIOprefs('reset');
+    %UnitTest.initializePrefs('reset');
     
     % change any preferences you would like to.
     % Uncomment one of the following options
 
-    %setpref('isetbioValidation', 'updateValidationHistory', true);
-    %setpref('isetbioValidation', 'updateValidationHistory', false);
-    %setpref('isetbioValidation', 'updateGroundTruth', true);
-    %setpref('isetbioValidation', 'updateGroundTruth', false);
+    %UnitTest.setPref('isetbioValidation', 'updateValidationHistory', true);
+    %UnitTest.setPref('isetbioValidation', 'updateValidationHistory', false);
+    %UnitTest.setPref('isetbioValidation', 'updateGroundTruth', true);
+    %UnitTest.setPref('isetbioValidation', 'updateGroundTruth', false);
     
-    %setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
-    setpref('isetbioValidation', 'onRunTimeErrorBehavior', 'catchExemptionAndContinue');
-    %setpref('isetbioValidation', 'generatePlots',  true); 
-    %setpref('isetbioValidation', 'generatePlots',  false); 
+    %UnitTest.setPref('isetbioValidation', 'onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
+    UnitTest.setPref('isetbioValidation', 'onRunTimeErrorBehavior', 'catchExemptionAndContinue');
+    %UnitTest.setPref('isetbioValidation', 'generatePlots',  true); 
+    %sUnitTest.setPref('isetbioValidation', 'generatePlots',  false); 
     
     
     % Example1. Here we pass a list of scripts to validate. Each entry contains a cell array with a

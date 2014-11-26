@@ -1,5 +1,5 @@
 % Method to initalize prefs for ISETBIO
-function initializeISETBIOprefs(initMode)
+function initializePrefs(initMode)
 
     if (nargin == 0)
         initMode = 'none';
@@ -24,6 +24,4 @@ function initializeISETBIOprefs(initMode)
     if (~ispref('isetbioValidation', 'verbosity'))  || (strcmp(initMode, 'reset'))
         setpref('isetbioValidation', 'verbosity',  'low'); 
     end
-    
-    % isetbioValidationPrefs = getpref('isetbioValidation')
 end

@@ -43,10 +43,10 @@ classdef UnitTest < handle
         
         validValidationTypes            = {'RUNTIME_ERRORS_ONLY', 'FAST', 'FULL', 'PUBLISH'};
         validOnRunTimeErrorValues       = {'rethrowExemptionAndAbort', 'catchExemptionAndContinue'};
-        validVerbosityLevels            = {'min', 'low', 'med', 'high', 'max'};
+        validVerbosityLevels            = {'none', 'min', 'low', 'med', 'high', 'max'};
     end
     
-    % Public methods (This is the API)
+    % Public methods (This is the public API)
     methods
         % Constructor
         function obj = UnitTest()           
@@ -105,8 +105,14 @@ classdef UnitTest < handle
         % Executive method to run a validation session
         runValidationSession(vScriptsList, desiredMode, verbosity);
         
-        % Method to initalize prefs for a ISETBIO
-        initializeISETBIOprefs(initMode);
+        % Method to initalize isetbioValidation prefs
+        initializePrefs(initMode);
+        
+        % Method to set an isetbioValidation preference
+        setPref(preference, value);
+        
+        % Method to list the current isetbioValidation preferences
+        listPrefs();
         
         % Method to initalize a validation run.
         % Every validation script must call this method first thing.
