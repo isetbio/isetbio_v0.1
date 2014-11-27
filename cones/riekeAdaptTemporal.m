@@ -40,17 +40,26 @@ dt = 0.001;
 
 %% Simulate differential equations
 
-adaptedData = zeros([size(p.opsin) size(pRate, 3)]);
-for ii = 1 : size(pRate, 3)
-    p.opsin = p.opsin + dt * (pRate(:,:,ii) - p.sigma * p.opsin);
-    p.PDE   = p.PDE   + dt * (p.opsin + p.eta - p.phi * p.PDE);
-    p.Ca    = p.Ca    + dt * (p.q*p.k * p.cGMP.^p.h./(1+p.Ca_slow/p.cdark)-p.beta*p.Ca);
-    p.Ca_slow = p.Ca_slow - dt * p.betaSlow * (p.Ca_slow - p.Ca);
-    p.st    = p.smax ./ (1 + (p.Ca / p.kGc).^p.n);
-    p.cGMP  = p.cGMP  + dt * (p.st - p.PDE .* p.cGMP);
-    
+adaptedData = zeros([size(p.opsin) size(pRate, 3)+1]);
+adaptedData(:,:,1) = p.bgCur;
+for ii = 2 : size(pRate, 3) + 1
+%     p.opsin = p.opsin + dt * (pRate(:,:,ii) - p.sigma * p.opsin);
+%     p.PDE   = p.PDE   + dt * (p.opsin + p.eta - p.phi * p.PDE);
+%     p.Ca    = p.Ca    + dt * (p.q*p.k * p.cGMP.^p.h./(1+p.Ca_slow/p.cdark)-p.beta*p.Ca);
+%     p.Ca_slow = p.Ca_slow - dt * p.betaSlow * (p.Ca_slow - p.Ca);
+%     p.st    = p.smax ./ (1 + (p.Ca / p.kGc).^p.n);
+%     p.cGMP  = p.cGMP  + dt * (p.st - p.PDE .* p.cGMP);
+%     
+%     adaptedData(:,:,ii) = - p.k * p.cGMP.^p.h ./ (1 + p.Ca_slow / p.cdark);
     adaptedData(:,:,ii) = - p.k * p.cGMP.^p.h ./ (1 + p.Ca_slow / p.cdark);
+    p.cGMP  = p.cGMP  + dt * (p.st - p.PDE .* p.cGMP);
+    p.st    = p.smax ./ (1 + (p.Ca / p.kGc).^p.n);
+    p.Ca_slow = p.Ca_slow - dt * p.betaSlow * (p.Ca_slow - p.Ca);
+    p.Ca    = p.Ca    + dt * (p.q*adaptedData(:,:,ii-1)-p.beta*p.Ca);
+    p.PDE   = p.PDE   + dt * (p.opsin + p.eta - p.phi * p.PDE);
+    p.opsin = p.opsin + dt * (pRate(:,:,ii) - p.sigma * p.opsin);
 end
 
+adaptedData = adaptedData(:,:, 2:end);
 
 end

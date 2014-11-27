@@ -41,6 +41,7 @@ sensor = sensorSet(sensor, 'sensorpositions', zeros(1000, 2));
 sensor = coneAbsorptions(sensor, oi);
 
 % integrate over time
+sensor = sensorSet(sensor, 'exp time', expTime);
 ph = sensorGet(sensor, 'photons'); ph = cumsum(ph, 3);
 ph = ph(:, :, expTime/dt + 1:end) - ph(:, :, 1:end-expTime/dt);
 sensor = sensorSet(sensor, 'photons', ph);
@@ -69,7 +70,7 @@ cGMP = st * p.phi ./ (opsin + p.eta);
 % Estimate cone absorptions from adapted current
 for t = 2 : size(adaptedCur, 3)
     cGMP_old = cGMP; PDE_old = PDE; opsin_old = opsin;
-    Ca = Ca + dt * (p.q * adaptedCur(:,:,t) - p.beta * Ca);
+    Ca = Ca + dt * (p.q * adaptedCur(:,:,t-1) - p.beta * Ca);
     Ca_slow = Ca_slow + dt * p.betaSlow * (Ca_slow - Ca);
     cGMP = (adaptedCur(:,:,t) .* (1 + Ca_slow / p.cdark)/p.k).^(1/p.h);
     st = p.smax ./ (1 + (Ca/p.kGc).^p.n);
@@ -79,7 +80,7 @@ for t = 2 : size(adaptedCur, 3)
 end
 
 % Compare estimated absorptions and its true value
-errR = abs(R * expTime - ph) ./ ph; errR(isinf(errR)) = 0;
-fprintf('Average error rate:%.2f%%\n', 100 * mean(errR(:)));
+indx = (ph > 20); errR = abs(R * expTime - ph) ./ ph;
+fprintf('Average error rate:%.2f%%\n', 100 * mean(errR(indx)));
 
 %% Estimate cone absorption from noisy adapted current
