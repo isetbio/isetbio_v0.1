@@ -28,7 +28,13 @@ end
 
 function ValidationScript(runTimeParams)
     
-    % Use ISETBIO's version of lab2xyz.
+    %% Path stuff
+    % Use ISETBIO's version of lab2xyz, otherwise the new
+    % Matlab function of the same name clobbers this and we
+    % get screwy answers.
+    %
+    % Probably in the longer run should just use Matlab's version if it gives
+    % the same answers.
     lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');
     
     %% SETUP
