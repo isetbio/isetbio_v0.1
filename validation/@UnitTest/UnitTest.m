@@ -3,7 +3,7 @@ classdef UnitTest < handle
     
     % Public properties (Read/write by all)
     properties
-        verbosity;
+       
     end
     
     % Read-only public properties
@@ -17,6 +17,7 @@ classdef UnitTest < handle
         
         % Path to directory where all validation data will be stored
         validationDataDir;
+        
     end
     
     % Private properties
@@ -38,8 +39,8 @@ classdef UnitTest < handle
         runTimeOptionNames              = {'generatePlots', 'printValidationReport'};
         runTimeOptionDefaultValues      = {false false};
         
-        validationOptionNames           = {'type', 'onRunTimeError', 'updateGroundTruth', 'updateValidationHistory'}
-        validationOptionDefaultValues   = {'RUNTIME_ERRORS_ONLY', 'rethrowExemptionAndAbort', false, false};
+        validationOptionNames           = {'type',                'verbosity', 'onRunTimeErrorBehavior',      'updateGroundTruth', 'updateValidationHistory', 'numericTolerance', 'graphMismatchedData'}
+        validationOptionDefaultValues   = {'RUNTIME_ERRORS_ONLY', 'low',       'rethrowExemptionAndAbort',    false,               false,                     500*eps,             true};
         
         validValidationTypes            = {'RUNTIME_ERRORS_ONLY', 'FAST', 'FULL', 'PUBLISH'};
         validOnRunTimeErrorValues       = {'rethrowExemptionAndAbort', 'catchExemptionAndContinue'};

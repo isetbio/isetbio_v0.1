@@ -4,7 +4,7 @@ function setValidationOptions(obj,varargin)
     % parse inputs
     parser = inputParser;
     parser.addParamValue('type',                    obj.validationParams.type,                    @ischar);
-    parser.addParamValue('onRunTimeError',          obj.validationParams.onRunTimeError,          @ischar);
+    parser.addParamValue('onRunTimeError',          obj.validationParams.onRunTimeErrorBehavior,  @ischar);
     parser.addParamValue('updateGroundTruth',       obj.validationParams.updateGroundTruth,       @islogical);
     parser.addParamValue('updateValidationHistory', obj.validationParams.updateValidationHistory, @islogical);
 

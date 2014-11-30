@@ -18,9 +18,19 @@ function validateDemoN
     %UnitTest.setPref('isetbioValidation', 'generatePlots',  true); 
     %sUnitTest.setPref('isetbioValidation', 'generatePlots',  false); 
     
+     %UnitTest.setPref('verbosity', 'min');
+    UnitTest.setPref('verbosity', 'low');
+    %UnitTest.setPref('verbosity', 'med');
+    %UnitTest.setPref('verbosity', 'high');
+    %UnitTest.setPref(verbosity', 'max');
+    UnitTest.setPref('numericTolerance', 400*eps);
+    %UnitTest.setPref('graphMismatchedData', true);
+    %UnitTest.setPref('graphMismatchedData', false);
     
-    % Example1. Here we pass a list of scripts to validate. Each entry contains a cell array with a
-    % script name and an optional struct with runtime options.
+    % Pass a list of scripts to validate. Each entry contains a cell array with 
+    % with a validation script and an optional struct with
+    % prefs that override the corresponding isetbioValidation prefs.
+    % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
         {'validateSceneReIllumination'} ...                                             % use ISETBIO prefs 
         {'validateSceneReIllumination',  struct('generatePlots', true) } ...            % override the generatePlots preference

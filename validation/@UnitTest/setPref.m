@@ -7,9 +7,10 @@ function setPref(preference, value)
     
     if ( (strcmp(preference, 'updateValidationHistory')) || ...
          (strcmp(preference, 'updateGroundTruth')) || ...
-         (strcmp(preference, 'generatePlots')) )
+         (strcmp(preference, 'generatePlots')) || ...
+         (strcmp(preference, 'graphMismatchedData')) )
             if (~islogical(value))
-                error('''updateValidationHistory'' preference value must be set to true or false (logical)');
+                error('''%s'' preference value must be set to true or false (logical)', preference);
             end
     end
     

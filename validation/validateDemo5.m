@@ -21,12 +21,14 @@ function validateDemo5
     %UnitTest.setPref('generatePlots',  true); 
     %UnitTest.setPref('generatePlots',  false); 
     
+    %UnitTest.setPref('verbosity', 'none');
     %UnitTest.setPref('verbosity', 'min');
     UnitTest.setPref('verbosity', 'low');
     %UnitTest.setPref('verbosity', 'med');
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max');
-    
+    UnitTest.setPref('numericTolerance', 400*eps);
+    UnitTest.setPref('graphMismatchedData', true);
     
     % Pass a list of directories to validate.  Each entry contains a cell array with 
     % with a directory of validation scripts and an optional struct with

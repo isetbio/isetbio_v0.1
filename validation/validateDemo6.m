@@ -26,6 +26,9 @@ function validateDemo6
     %UnitTest.setPref('verbosity', 'med');
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref(verbosity', 'max');
+    UnitTest.setPref('numericTolerance', 400*eps);
+    %UnitTest.setPref('graphMismatchedData', true);
+    %UnitTest.setPref('graphMismatchedData', false);
     
     % Pass a list of directories to validate.  Each entry contains a cell array with 
     % with a directory of validation scripts and an optional struct with
