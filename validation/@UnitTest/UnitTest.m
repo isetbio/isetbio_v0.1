@@ -1,176 +1,137 @@
 classdef UnitTest < handle
     % Class to handle ISETBIO unit tests
     
-    % Public properties
+    % Public properties (Read/write by all)
     properties
-        % Flag indicating whether info for all validation runs is
-        % displayed in the command window. If set to false, only
-        % information regarding failed validation runs is displayed.
-        displayAllValidationResults = false;
-        
-        % Flag indicating whether to add the validation results to the
-        % history of validation runs.
-        addResultsToValidationResultsHistory = false;
-        
-        % Flag indicating whether to append the validation results to the 
-        % history of ground truth data sets.
-        addResultsToGroundTruthHistory = false;
-    
-        % Flag indicating whether to push results to github upon a sucessful validation
-        % outcome.
-        pushToGitHubOnSuccessfulValidation = true;
-        
-        % Tolernace below which two numeric values are to be considered equal
-        numericTolerance = 100*eps;
-        
-        % Flag indicating whether @UnitTest should ask the user which
-        % ground truth data set to use if more than one are found in the
-        % history of saved ground truth data sets.
-        % If set to false, the last ground truth data set will be used.
-        queryUserIfMoreThanOneGroundTruthDataSetsExist = false;
-        
-        % Local directory where ISETBIO ghPages branch is cloned
-        ISETBIO_gh_pages_CloneDir = '/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio';
-        
-        % Local directory where ISETBIO wiki is cloned
-        ISETBIO_wikiCloneDir = '/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki';
-        
-        % SVN URL where ground truth data sets are kept
-        ISETBIO_DataSets_SVN_URL  = 'https://platypus.psych.upenn.edu/repos/ISETBIO_DataSets';
-        
-        % Flag indicating whether to use the ground truth table kept on
-        % platypus.psych.upenn.edu SVN server
-        useRemoteGroundTruthDataSet = true;
-        
-        % Minimum level at which messages will be emitted to the user via the command window.
-        messageEmissionStrategy = UnitTest.MEDIUM_IMPORTANCE; 
+       
     end
     
+    % Read-only public properties
     properties (SetAccess = private) 
-        % a collection of various system information
-        systemData = struct();
-
-        % validation root directory: same as dir of the executive script
-        validationRootDirectory;
+        % Path to directory containing the @UnitTest class
+        rootDir;
         
-        % cell array with data for all examined probes
-        allProbeData;
+        % Path to directory where all HTML 'published' output will be
+        % directed
+        htmlDir;
         
-        % cell array with info about all probes
-        validationSummary;
+        % Path to directory where all validation data will be stored
+        validationDataDir;
         
-        % full path to the file containing the history of validation data runs 
-        validationDataSetsFileName;
-        
-        % full path to the file containing the ground truth data sets
-        groundTruthDataSetsFileName;
     end
     
+    % Private properties
     properties (Access = private)  
-        % validation results for current probe
-        validationFunctionName = '';
-        validationFailedFlag   = true;
-        validationData         = struct();
-        validationReport       = 'None';
-        validationProbeIndex   = 0;
+        % Struct with validation params
+        defaultValidationParams;
         
-        % map describing section organization
-        sectionData;
+        % Struct with validation params
+        validationParams;
         
-        % struct with data from current validation run. 
-        % this is compared to ground truth data set
-        currentValidationRunDataSet;
-        
-        % struct with data from selected ground truth history. 
-        % this is compared to the current validation run
-        groundTruthDataSet;
-        
-        % Temporary directory to sync ground truth data set with remote SVN
-        ISETBIO_DataSets_Local_SVN_DIR;
+        % List of scripts to validate. Each entry contains a cell array with a
+        % script name and an optional params struct.
+        vScriptsList = {};
     end
     
-    properties (Constant)
-        MAXIMUM_IMPORTANCE = 99;
-        MEDIUM_IMPORTANCE  = 10;
-        MINIMUM_IMPORTANCE = 0;
+    % Constant properties. These are the only properties that can be
+    % accessed by Static methods
+    properties (Constant) 
+        runTimeOptionNames              = {'generatePlots', 'printValidationReport'};
+        runTimeOptionDefaultValues      = {false false};
+        
+        validationOptionNames           = {'type',                'verbosity', 'onRunTimeErrorBehavior',      'updateGroundTruth', 'updateValidationHistory', 'numericTolerance', 'graphMismatchedData'}
+        validationOptionDefaultValues   = {'RUNTIME_ERRORS_ONLY', 'low',       'rethrowExemptionAndAbort',    false,               false,                     500*eps,             true};
+        
+        validValidationTypes            = {'RUNTIME_ERRORS_ONLY', 'FAST', 'FULL', 'PUBLISH'};
+        validOnRunTimeErrorValues       = {'rethrowExemptionAndAbort', 'catchExemptionAndContinue'};
+        validVerbosityLevels            = {'none', 'min', 'low', 'med', 'high', 'max'};
     end
     
-    % Public methods
+    % Public methods (This is the public API)
     methods
         % Constructor
-        function obj = UnitTest(validationScriptFileName)
-            [obj.validationRootDirectory, ~, ~] = fileparts(which(validationScriptFileName));
-            obj.systemData.vScriptFileName      = sprintf('%s',validationScriptFileName);
-            obj.systemData.vScriptListing       = fileread([validationScriptFileName '.m']);
-            obj.systemData.datePerformed        = datestr(now);
-            obj.systemData.matlabVersion        = version;
-            obj.systemData.computer             = computer;
-            obj.systemData.computerAddress      = char(java.net.InetAddress.getLocalHost.getHostName);
-            obj.systemData.userName             = char(java.lang.System.getProperty('user.name'));
-            obj.systemData.gitRepoBranch        = obj.retrieveGitBranch();
-            obj.sectionData                     = containers.Map();
-            obj.allProbeData                    = {};
-            obj.currentValidationRunDataSet     = {};
-            obj.groundTruthDataSet              = {};
-            
-            % full path to the file containing the history of validation data runs 
-            obj.validationDataSetsFileName = fullfile(fileparts(which('validateAll')), 'ISETBIO_LocalValidationDataSetHistory.mat');
-            % full path to the file containing the ground truth data sets
-            obj.groundTruthDataSetsFileName = fullfile(fileparts(which('validateAll')), 'ISETBIO_GroundTruthDataSetHistory.mat');
-            
+        function obj = UnitTest()           
+            % Initialize the instantiated @UnitTest object
+            obj.initializeUnitTest();
         end
         
-        % Method to add and execute a new probe
-        addProbe(obj, varargin);
-         
-        % Method to print the validation report
-        printReport(obj, versbosity);
-    
-        % Method to return feedback messages via the command window.
-        % Whether a message is printed or not will depend on its importance
-        % and the set 'minMessageEmissionLevel' property.
-        emitMessage(obj, message, importanceLevel);
+        % Method to set certain validation options
+        setValidationOptions(obj,varargin);
         
-        % Method to contrast current validation run data to that loaded
-        % from a ground truth data set
-        [diffs, criticalDiffs] = contrastValidationRunDataToGroundTruth(obj); 
+        % Method to reset all validation options to default
+        resetValidationOptions(obj);
+ 
+        % Main validation engine
+        validate(obj,vScriptsList);
+    end % public methods
+    
+    % On the object itself can call these methods
+    methods (Access = private)   
+        
+        % Method to generate the directory path/subDir, if this directory does not exist
+        generateDirectory(obj, path, subDir);
+
+        % Method ensuring that directories exist, and generates them if they do not
+        checkDirectories(obj);
+        
+        % Method to remove the root validationData directory
+        removeValidationDataDir(obj);
+        
+        % Method to remove the root HTML directory
+        removeHTMLDir(obj);
+        
+        % Method to parse the scripts list to ensure it is valid
+        vScriptsList = parseScriptsList(obj, vScriptsToRunList);
+    
+        % Method to recursively compare two struct for equality
+        result = structsAreSimilar(obj, groundTruthData, validationData);
+        
+        % Method to import a ground truth data entry
+        [validationData, validationTime] = importGroundTruthData(obj, dataFileName);
+        
+        % Method to export a validation entry to a validation file
+        exportData(obj, dataFileName, validationData);
+        
+        % Method to generate a hash0256 key based on the passed validationData
+        hashSHA25 = generateSHA256Hash(obj,validationData);
     end
     
-    methods (Access = private)    
-        % Method to retrieve the git branch string
-        gitBranchString = retrieveGitBranch(obj);
-        
-        % Method to generate a grand struct with all results for a single probe
-        validationRunData = assembleResultsIntoValidationRunStuct(obj);
-        
-        % Method to retrieve ground truth data set against which we will
-        % validate the current run
-        groundTruthData = retrieveHistoricalGroundTruthDataToValidateAgaist(obj);
-        
-        % Method to compare the structs: obj.currentValidationRunDataSet and obj.groundTruthDataSet
-        diff = obj.compareDataSets();
-        
-        % Method to update the validation results
-        saveValidationResults(obj, dataType);
-   
-        % Method that pushes results to github
-        pushToGitHub(obj);
-        
-        % Method to return the filename of the SVN-hosted ground truth data set
-        dataSetFilename = svnHostedGroundTruthDataSetsFileName(obj); 
-        
-        % Method to checkout the SVN_hosted ground truth data set
-        issueSVNCheckoutCommand(obj);
-        
-        % Method to commit the SVN_hosted ground truth data set
-        issueSVNCommitCommand(obj, validationDataParamName);
-    end
     
+    % These methods can be called without instantiating an object first,
+    % like so: UnitTest.methodName()
     methods (Static)
-        validationResults = updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
+        % Method to remove all generated directories and files
+        cleanUp();
         
-        % Method to recursively compare 2 structs
-        result = compareStructs(struct1Name, struct1, struct2Name, struct2, probeName, tolerance);
+        % Executive method to run a validation session
+        runValidationSession(vScriptsList, desiredMode, verbosity);
+        
+        % Method to initalize isetbioValidation prefs
+        initializePrefs(initMode);
+        
+        % Method to set an isetbioValidation preference
+        setPref(preference, value);
+        
+        % Method to list the current isetbioValidation preferences
+        listPrefs();
+        
+        % Method to initalize a validation run.
+        % Every validation script must call this method first thing.
+        runTimeParams = initializeValidationRun(varargin);
+        
+        % Method to print what runtime options are available and their default values
+        describeRunTimeOptions();
+        
+        % Method to print what validation options are available and their default values
+        describeValidationOptions();
+        
+        % Method to append messages to the validationReport
+        [report, validationFailedFlag] = validationRecord(varargin);
+        
+        % Method to add validation data
+        data = validationData(varargin);
+        
+        % Method to print the validationReport
+        printValidationReport(validationReport);
     end
-    
 end

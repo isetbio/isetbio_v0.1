@@ -44,7 +44,6 @@ function [isoPerCone,pupilDiamMm,photoreceptors,irradianceWattsPerM2] = ...
 
 %% Set up PTB photoreceptors structure
 
-
 % We'll do the computations at the wavelength spacing passed in for the
 % spectrum of interest.
 whatCalc = 'CIE2Deg';

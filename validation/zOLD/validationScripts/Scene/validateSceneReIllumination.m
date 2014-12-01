@@ -1,4 +1,4 @@
-function varargout = validateSceneReIllumination(varargin)
+function validateSceneReIllumination(runParams)
 %
 % Validate changes in scene illuminant. 
 %
@@ -6,31 +6,21 @@ function varargout = validateSceneReIllumination(varargin)
 % Then re-illuminate using a flusorescent illuminant of equal luminance.
 %
 
-    %% Initialization
-    % Initialize validation run
-    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
-    % Initialize return params
-    if (nargout > 0) varargout = {'', false, []}; end
-    
-    %% Validation - Call validation script
-    ValidationScript(runTimeParams);
-    
-    %% Reporting and return params
-    if (nargout > 0)
-        [validationReport, validationFailedFlag] = UnitTest.validationRecord('command', 'return');
-        validationData = UnitTest.validationData('command', 'return');
-        varargout = {validationReport, validationFailedFlag, validationData};
-    else
-        if (runTimeParams.printValidationReport)
-            [validationReport, ~] = UnitTest.validationRecord('command', 'return');
-            UnitTest.printValidationReport(validationReport);
-        end 
-    end
+    % Call the validation script
+    [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
+        
+    % Update the parent @UnitTest object
+    UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
 end
 
+%% Validation script for scene re-illumination
+function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
-function ValidationScript(runTimeParams)
-
+    %% Initialize return params
+    validationReport = 'Nothing to report.'; 
+    validationFailedFlag = false; 
+    validationDataToSave = struct();
+    
     %% Initialize ISETBIO
     s_initISET;
     
@@ -86,23 +76,24 @@ function ValidationScript(runTimeParams)
     end
     
     
-    %% Internal validation
+    %% Set validationReport, validationFailedFlag and validationData
     % Reflectance range is [0 .. 1]. Specify tolerance as 0.1%
     tolerance = 1E-6;
     maxDiff = max(abs(reflectanceMap2(:)-reflectanceMap(:)));
     if (maxDiff > tolerance)
-        message = sprintf('Scene reflectance before and after re-illumination do not agree to %g. Max diff: %g', tolerance, maxDiff);
-        UnitTest.validationRecord('FAILED', message);
+        validationFailedFlag = true;
+        validationReport = sprintf('Scene reflectance before and after re-illumination do not agree to %g. Max diff: %g', tolerance, maxDiff);
     else
-        message= sprintf('Scene reflectance before and after re-illumination agree to %g. Max diff: %g', tolerance, maxDiff);
-        UnitTest.validationRecord('PASSED', message);
+        validationFailedFlag = false;
+        validationReport = sprintf('Scene reflectance before and after re-illumination agree to %g. Max diff: %g', tolerance, maxDiff);
     end
-    % append to validationData
-    UnitTest.validationData('originalScene', originalScene);
-    UnitTest.validationData('scene', scene);
     
-    %% Plotting
-    if (runTimeParams.generatePlots)
+    %% Save original and modified scene
+    validationDataToSave.originalScene = originalScene;
+    validationDataToSave.scene = scene;
+    
+    %% Generate plots, if so specified
+    if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)  
         plotResults(wavelengthSampling, ...
             rgbImage, illuminantPhotons, peakRadiance, photonRadianceMap, reflectanceMap, ...
             rgbImage2, illuminantPhotons2, peakRadiance2, photonRadianceMap2, reflectanceMap2);
