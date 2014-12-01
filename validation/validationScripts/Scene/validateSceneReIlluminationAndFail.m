@@ -1,6 +1,6 @@
-function varargout = validateSkeleton(varargin)
+function varargout = validateSceneReIlluminationAndFail(varargin)
 %
-% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code. 
+% Skeleton validation script that raises a run-time excemption for testing. 
 %
 
     %% Initialization
@@ -25,38 +25,20 @@ function varargout = validateSkeleton(varargin)
     end
 end
 
-%% Skeleton validation script
 function ValidationScript(runTimeParams)
-
     
-    %% Initialize ISETBIO
-    s_initISET;
+    error('Simulating runtime error');
     
-    %% Isetbio validation code goes here.  
-    
-    %% Internal validations
-    result = randn(100,1)*0.0001;
-    tolerance = 0.001;
-    if (max(abs(result) > tolerance))
-        message = sprintf('Result exceeds specified tolerance (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Result is within the specified tolerance (%0.1g).', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
-    
-    % append to validationData
+    UnitTest.validationRecord('PASSED',  'all right to here');
     UnitTest.validationData('dummyData', ones(100,10));
     
-    %% Plotting
+    % Plotting
     if (runTimeParams.generatePlots)
-        figure(1);
-        clf;
-        plot(1:numel(result), result, 'k-');
-        hold on;
-        plot([1 numel(result)], tolerance*[1 1], 'r-');
-        set(gca, 'YLim', [min(result) max([max(result) tolerance])*1.1]);
-        drawnow;
+       figure(1);
+       clf;
+       plot(1:10, 1:10, 'r-');
+       axis 'square'
+       drawnow;
     end
     
 end

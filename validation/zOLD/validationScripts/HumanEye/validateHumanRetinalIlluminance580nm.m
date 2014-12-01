@@ -1,4 +1,4 @@
-function varargout = validateHumanRetinalIlluminance580nm(varargin)
+function validateHumanRetinalIlluminance580nm(runParams)
 %
 % Validate that a photon flux of 10^15 photons/cm^2/sec at 580 nm corresponds to a retinal illuminance of 590,000 photopic trolands.  
 %
@@ -17,31 +17,27 @@ function varargout = validateHumanRetinalIlluminance580nm(varargin)
 %   590,000 Trolands at the retina at 580nm is supposed to be 187,800
 %   cd/m2 at the scene
 
-    %% Initialization
-    % Initialize validation run
-    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
-    % Initialize return params
-    if (nargout > 0) varargout = {'', false, []}; end
-    
-    %% Validation - Call validation script
-    ValidationScript(runTimeParams);
-    
-    %% Reporting and return params
-    if (nargout > 0)
-        [validationReport, validationFailedFlag] = UnitTest.validationRecord('command', 'return');
-        validationData = UnitTest.validationData('command', 'return');
-        varargout = {validationReport, validationFailedFlag, validationData};
-    else
-        if (runTimeParams.printValidationReport)
-            [validationReport, ~] = UnitTest.validationRecord('command', 'return');
-            UnitTest.printValidationReport(validationReport);
-        end 
+    if (nargin == 0)
+        runParams = [];
     end
+    
+    % Call the validation script
+    [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
+        
+    % Update the parent @UnitTest object
+    UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
 end
 
 %% Validation script for human retinal irradiance at 580 nm.
-function ValidationScript(runTimeParams)
+function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
+
+
+    %% Initialize return params
+    validationReport = 'None'; 
+    validationFailedFlag = true; 
+    validationDataToSave = struct();
+    
     %% Initialize ISETBIO
     s_initISET;
     
@@ -78,23 +74,21 @@ function ValidationScript(runTimeParams)
     %% Validate against a 3% error
     tolerance = 0.03;
     if (abs(percentDifference) < tolerance)
-        message = sprintf('Validation PASSED: Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%', ...
-                           monoChromaticWavelength, photonIrradiance, expectedPhotonIrradiance, percentDifference*100);
-       UnitTest.validationRecord('PASSED', message); 
+        validationFailedFlag = false;
+        validationReport = sprintf('Validation PASSED: Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%', ...
+        monoChromaticWavelength, photonIrradiance, expectedPhotonIrradiance, percentDifference*100);
     else
-        message = sprintf('Validation FAILED: Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%', ...
-                           monoChromaticWavelength, photonIrradiance, expectedPhotonIrradiance, percentDifference*100);
-        UnitTest.validationRecord('FAILED', message);
+        validationFailedFlag = true;
+        validationReport = sprintf('Validation FAILED: Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%', ...
+        monoChromaticWavelength, photonIrradiance, expectedPhotonIrradiance, percentDifference*100);
     end
     
-    % append to validationData
-    UnitTest.validationData('fov', sceneFOV);
-    UnitTest.validationData('tolerance', tolerance);
-    UnitTest.validationData('scene', scene);
-    UnitTest.validationData('oi', oi);
+    validationDataToSave.fov        = sceneFOV;
+    validationDataToSave.tolerance  = tolerance;
+    validationDataToSave.scene      = scene;
+    validationDataToSave.oi         = oi;
     
-    %% Plotting
-    if (runTimeParams.generatePlots)
+    if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
         h = figure(500);
         clf;
         
