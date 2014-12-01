@@ -94,7 +94,7 @@ parm = ieParamFormat(parm);
 
 switch parm 
     case {'name','scenename'}
-        scene.name = val;
+        if ischar(val), scene.name = val; else error('val is not str'); end
     case 'type'
         scene.type = val;
     case {'filename'}

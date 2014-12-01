@@ -46,7 +46,9 @@ set(handles.txtSceneDescription,'String',sceneDescription(scene));
 figNum = vcSelectFigure('SCENE'); 
 figure(figNum);
 displayFlag = get(handles.popupDisplay,'Value');
+
 gam = str2double(get(handles.editGamma,'String'));
-sceneShowImage(scene,displayFlag,gam);
+%sceneShowImage(scene,displayFlag,gam);
+sceneGet(scene, 'rgb', gam, displayFlag);
 
 return;

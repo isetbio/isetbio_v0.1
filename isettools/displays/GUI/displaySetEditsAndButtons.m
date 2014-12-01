@@ -40,10 +40,19 @@ set(handles.txtSummary,'String', displayDescription(d));
 displayShowImage(d, [], handles.axes1);
 
 %% Set subpixel figure
-psfs = displayGet(d, 'psfs');
-if ~isempty(psfs)
-    imshow(psfs / max(psfs(:)), 'Parent', handles.axes4);
+dixel_image = displayGet(d, 'dixel image');
+if ~isempty(dixel_image)
+    if size(dixel_image,3) == 3
+        imshow(dixel_image / max(dixel_image(:)), 'Parent', handles.axes4);
+    else
+        gam = 1;
+        wave = displayGet(d, 'wave');
+        photons = vcReadImage(dixel_image, 'rgb', d);
+        axes(handles.axes4);
+        imageSPD(photons, wave, gam, [], [], 1);
+        axes(handles.axes1);
+    end
 end
 
 %% END
-return;
+end

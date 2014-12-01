@@ -127,9 +127,20 @@ function subpixeImage_Callback(~, ~, ~)
 ind = vcGetSelectedObject('display');
 if isempty(ind), disp('No display selected'); return; end
 d = vcGetObject('display', ind);
-psfs = displayGet(d, 'psfs');
-if isempty(psfs), disp('no psfs in display model'); return;
-else figure; imshow(psfs/ max(psfs(:)));
+psfs = displayGet(d, 'dixel image');
+if isempty(psfs)
+    disp('no psfs in display model');
+    return;
+else
+    figure;
+    if size(psfs,3) == 3
+        imshow(psfs / max(psfs(:)));
+    else
+        gam = 1;
+        wave = displayGet(d, 'wave');
+        photons = vcReadImage(psfs, 'rgb', d);
+        imageSPD(photons, wave, gam, [], [], 1);
+    end
 end
 
 return;
@@ -163,15 +174,38 @@ else
     return;
 end
 
+% select region
+rect = floor(getrect);
+% round width and height to multiple of pixelsperdixel
+ppd = displayGet(d, 'pixels per dixel');
+rect(3:4) = ppd .* ceil(rect(3:4) ./ ppd);
+I = I(rect(2): rect(2)+rect(4)-1, rect(1) : rect(1) + rect(3)-1, :);
+
+% Get scene info
+overSample = displayGet(d, 'over sample');
+answer = inputdlg({'Scene name', 'Up sample (col)', 'Up sample (row)'}, ...
+                   'Scene Info', 1, ...
+                   {sprintf('scene-%s', displayGet(d, 'name')), ...
+                    num2str(overSample(1)), ...
+                    num2str(overSample(2))});
+if isempty(answer)
+    return;
+else
+    name = answer{1};
+    overSample = [str2double(answer{2}) str2double(answer{3})];
+end
+
 % Generate scene
 if isempty(I), disp('No image set'); return; end
-scene = sceneFromFile(I, 'rgb', [], d, [], 1);
+scene = sceneFromFile(I, 'rgb', [], d, [], 1, [], overSample);
+scene = sceneSet(scene, 'name', name);
 
 % Compute scene size
 [r,c,~] = size(I);
 vDist = sceneGet(scene, 'distance');
 fov   = atand(max(r,c) * displayGet(d, 'metersperdot')/vDist);
 scene = sceneSet(scene, 'fov', fov);
+
 
 % Show scene window
 vcAddAndSelectObject('scene', scene);
@@ -194,9 +228,15 @@ else
     return;
 end
 
+% Get scene info
+name = inputdlg({'Scene name'}, 'Scene Info', 1, ...
+            {sprintf('scene-%s', displayGet(d, 'name'))});
+if isempty(name), return; end
+
 % Generate scene
 if isempty(I),  warning('No image set'); return; end
 scene = sceneFromFile(I, 'rgb', [], d, [], 0);
+scene = sceneSet(scene, 'name', name{1});
 
 % Compute scene size
 [r,c,~] = size(I);
@@ -283,7 +323,7 @@ d = vcGetObject('display', ind);
 displayPlot(d, 'gamma');
 
 % --------------------------------------------------------------------
-function menuLCDHorizontalStripesRGB_Callback(hObject, eventdata, handles)
+function menuLCDHorizontalStripesRGB_Callback(~, ~, ~)
 % displayGD   = ctGetObject('display');
 % dpi = 72;
 % dSpacing = 0.001; % sample spacing in mm
@@ -301,7 +341,7 @@ vcAddAndSelectObject('display', d);
 displayRefresh(hObject, eventdata, handles);
 
 % --------------------------------------------------------------------
-function menuLCDVerticalStripesBGR_Callback(hObject, eventdata, handles)
+function menuLCDVerticalStripesBGR_Callback(~, ~, ~)
 % Display | LCD | Vertical BGR
 % displayGD  = ctGetObject('display');
 % 
@@ -315,7 +355,7 @@ function menuLCDVerticalStripesBGR_Callback(hObject, eventdata, handles)
 warning('NYI');
 
 % --------------------------------------------------------------------
-function menuLCDHorizontalStripesBGR_Callback(hObject, eventdata, handles)
+function menuLCDHorizontalStripesBGR_Callback(~, ~, ~)
 % Display | LCD | Vertical BGR
 % displayGD   = ctGetObject('display');
 % 
@@ -385,7 +425,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), ...
 end
 return;
 
-function editVar_Callback(hObject, eventdata, handles)
+function editVar_Callback(~, ~, ~)
 disp('Not yet implemented')
 
 function editVar_CreateFcn(hObject, ~, ~)

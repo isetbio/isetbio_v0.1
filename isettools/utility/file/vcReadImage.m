@@ -20,8 +20,8 @@ function [photons, illuminant, basis, comment, mcCOEF] = vcReadImage(fullname,im
 %
 %  imageType: The type of input data.  There are two general types
 %
-%   'rgb','unispectral','monochrome': 
-%     In this case, varargin{1} can be either 
+%   'rgb','unispectral','monochrome':
+%     In this case, varargin{1} can be either
 %       * file name to a display (displayCreate) structure
 %       * the display structure itself.
 %     In that case, the data in the RGB or other format are returned as
@@ -57,7 +57,10 @@ function [photons, illuminant, basis, comment, mcCOEF] = vcReadImage(fullname,im
 % Copyright ImagEval Consultants, LLC, 2005.
 
 if notDefined('imageType'), imageType = 'rgb'; end
-if notDefined('fullname'), [fullname,imageType] = vcSelectImage(imageType); end
+if notDefined('fullname')
+    [fullname,imageType] = vcSelectImage(imageType);
+end
+
 if isempty(fullname), photons = []; return; end
 
 % These are loaded for a file, when they are returned.
@@ -68,99 +71,143 @@ imageType = ieParamFormat(imageType);
 switch lower(imageType)
     
     case {'rgb','unispectral','monochrome'}
-        if isempty(varargin) || isempty(varargin{1}), dispCal = []; 
+        if isempty(varargin) || isempty(varargin{1}), dispCal = [];
         else dispCal = varargin{1};
         end
         
-        if length(varargin) > 1, doSub = varargin{2}; 
+        % doSub indicates whether or not to use subpixel rendering
+        % techniques
+        if length(varargin) > 1, doSub = varargin{2};
         else doSub = false;
         end
+        
+        % if we do subpixle rendering, the user could specify how many
+        % samples per dixel to be used in scene generation
+        if length(varargin) > 2, sz = varargin{3};
+        else sz = [];
+        end
+        
+        % Programming Note (HJ):
+        %   scene rendered without subpixel (doSub=false) could be
+        %   different from the one rendered with subpixel of size [m n],
+        %   where m and n indicates the number of pixels per dixel in row
+        %   and columns. This kind of inconsistancy will occur especially
+        %   when pixels per dixel is not [1 1].
+        %   
+        %   To be more accurate, please turn off subpixel rendering if the
+        %   samples per dixel gets very small.
+        %
+        % (HJ)
         
         % Read the image data and convert them to double
         if ischar(fullname), inImg = double(imread(fullname));
         else                 inImg = double(fullname);
         end
         
-        % If the data are 2 or 3 dimensions, then we have a unispectral or
-        % an RGB image.
-        if ismatrix(inImg) || ndims(inImg) == 3
+        % An rgb image.
+        if isempty(dispCal)
             if ismatrix(inImg), inImg = repmat(inImg, [1 1 3]); end
-            
-            % An rgb image.
-            if isempty(dispCal)
-                % If there is no display calibration file, we arrange the
-                % photon values so that the scene window shows the same RGB
-                % values as in the original file.
-                %
-                fprintf('[%s]: Assuming input data is 8 bit\n', mfilename);
-                fprintf('[%s]: Using block matrix primaries\n', mfilename);
-                [xwImg,r,c,~] = RGB2XWFormat(inImg/255);
-                
-                % Prevent DR > 10,000.  See ieCompressData.
-                xwImg = ieClip(xwImg,1e-3,1);
-                
-                % When we render the RGB data in xwImg, they are multipled
-                % by the colorBlockMatrix.  By storing the photons this
-                % way, the displayed image in the scene window will be the
-                % same as the original RGB image.
-                photons = xwImg*pinv(colorBlockMatrix(31));
-                
-            else
-                % The user sent a display calibration file. If the user
-                % sent a string, read the file.  If the user sent in the
-                % display structure, set it.
-                if ischar(dispCal)
-                    d = displayCreate(dispCal);
-                elseif isstruct(dispCal) && isequal(dispCal.type,'display')
-                    d = dispCal;
-                else
-                    error('Unknown diplay structure');
-                end
-                
-                % Get the parameters from the display
-                wave   = displayGet(d, 'wave');  % Primary wavelengths
-                spd    = displayGet(d, 'spd');   % Primary SPD in energy
-                gTable = displayGet(d, 'gamma table');
-                psfs   = displayGet(d, 'psf');   % subpixel point spread
-                
-                % Check whether the gTable has enough entries for this
-                % image.
-                if max(inImg(:)) > size(gTable,1)
-                    error('Img exceeds gTable'); 
-                elseif max(inImg(:)) <= 1
-                    % DAC values are [0, 2^nBits - 1]
-                    inImg = round(inImg*(size(gTable,1)-1));
-                elseif max(inImg(:)) <= 255
-                    % We believe this is an 8 bit image.  We check whether
-                    % the gTable is 8 or 10 or whatever.  If it is not 8
-                    % bit, then we stretch the image values out to span the
-                    % same range as the gTable.
-                    s = size(gTable,1);
-                    if s > 256,
-                        fprintf('[%s] Assuming 8 bit RGB image and %d-bit LUT\n',mfilename,log2(s));                       
-                        inImg = round(inImg/255*(s-1));
-                    end
-                end
-                
-                % Convert the DAC values to linear intensities for the
-                % channels.
-                inImg  = ieLUTDigital(inImg,gTable);
-                
-                % Subpixel rendering
-                if doSub
-                    if isempty(psfs), error('display psf not set'); end
-                    inImg = displayCompute(d, inImg);
-                end
-                
-                [xwImg,r,c] = RGB2XWFormat(inImg);
-                
-                % Convert energy units to quanta
-                photons = Energy2Quanta(wave,(xwImg*spd')')';
+            if ndims(inImg) ~= 3
+                error('Bad number of dimensions %.0f of image',ndims(img));
             end
-            photons = XW2RGBFormat(photons,r,c);
+            % If there is no display calibration file, we arrange the
+            % photon values so that the scene window shows the same RGB
+            % values as in the original file.
+            %
+            fprintf('[%s]: Assuming input data is 8 bit\n', mfilename);
+            fprintf('[%s]: Using block matrix primaries\n', mfilename);
+            [xwImg,r,c,~] = RGB2XWFormat(inImg/255);
+            
+            % Prevent DR > 10,000.  See ieCompressData.
+            xwImg = ieClip(xwImg,1e-3,1);
+            
+            % When we render the RGB data in xwImg, they are multipled
+            % by the colorBlockMatrix.  By storing the photons this
+            % way, the displayed image in the scene window will be the
+            % same as the original RGB image.
+            photons = xwImg*pinv(colorBlockMatrix(31));
+            
         else
-            error('Bad number of dimensions (%.0f) for image data',ndims(img));
+            % The user sent a display calibration file. If the user
+            % sent a string, read the file.  If the user sent in the
+            % display structure, set it.
+            if ischar(dispCal)
+                d = displayCreate(dispCal);
+            elseif isstruct(dispCal) && isequal(dispCal.type, 'display')
+                d = dispCal;
+            else
+                error('Unknown diplay structure');
+            end
+            
+            % Get the parameters from the display
+            wave   = displayGet(d, 'wave');  % Primary wavelengths
+            gTable = displayGet(d, 'gamma table');
+            
+            nprimaries = displayGet(d, 'n primaries');
+            if ismatrix(inImg)
+                inImg = repmat(inImg, [1 1 nprimaries]);
+            end
+            
+            % pad third dimension of inImg to nprimaries
+            % we pad 0 here because in most cases, the primary missing in
+            % the inImg is black
+            inImg = padarray(inImg, ...
+                        [0 0 nprimaries-size(inImg,3)], 0, 'post');
+            assert(size(inImg, 3)==nprimaries, 'bad image size');
+            
+            % Check whether the gTable has enough entries for this
+            % image.
+            if max(inImg(:)) > size(gTable,1)
+                error('Img exceeds gTable');
+            elseif max(inImg(:)) <= 1
+                % DAC values are [0, 2^nBits - 1]
+                inImg = round(inImg*(size(gTable,1)-1));
+            elseif max(inImg(:)) <= 255
+                % We believe this is an 8 bit image.  We check whether
+                % the gTable is 8 or 10 or whatever.  If it is not 8
+                % bit, then we stretch the image values out to span the
+                % same range as the gTable.
+                s = size(gTable,1);
+                if s > 256
+                    fprintf('[%s] Assuming 8bit image and %d bit LUT\n',...
+                            mfilename,log2(s));
+                    inImg = round(inImg/255*(s-1));
+                end
+            end
+            
+            % Convert the DAC values to linear intensities for the
+            % channels.
+            inImg  = ieLUTDigital(inImg,gTable);
+            
+            % Subpixel rendering
+            if doSub
+                inImg = displayCompute(d, inImg, sz);
+            end
+            spd = displayGet(d, 'spd');   % Primary SPD in energy
+            
+            [xwImg,r,c] = RGB2XWFormat(inImg);
+            
+            % Convert energy units to quanta
+            % This step could be slow, espetially when we use sub-pixel
+            % sampling
+            if numel(xwImg) < ieSessionGet('image size threshold') ...
+                    || ~ieSessionGet('waitBar') % small image
+                % compute directly
+                photons = Energy2Quanta(wave,(xwImg * spd')')';
+            else
+                % now we have too many pixels, loop over wavelength and
+                % print the progress
+                wBar = waitbar(0, 'Computing radiance of scene');
+                photons = zeros(size(xwImg, 1), length(wave));
+                for ii = 1 : length(wave)
+                    photons(:, ii) = Energy2Quanta(wave(ii), ...
+                                     (xwImg * spd(ii,:)')')';
+                    waitbar(ii/length(wave), wBar);
+                end
+                delete(wBar);
+            end
         end
+        photons = XW2RGBFormat(photons,r,c);
         
     case {'multispectral','hyperspectral'}
         
@@ -171,13 +218,13 @@ switch lower(imageType)
         variables = whos('-file',fullname);
         if ieVarInFile(variables,'mcCOEF')
             disp('Reading multispectral data with mcCOEF.')
-
+            
             % Make this a function.
             % [photons,basis] = ieReadMultispectralCoef(fullname);
             
-
+            
             % The data are stored using a linear model
-            load(fullname,'mcCOEF','basis','comment');
+            load(fullname, 'mcCOEF', 'basis', 'comment');
             
             % Resample basis functions to the user specified wavelength
             % list.  vcReadImage(fullname,'multispectral',[400:20:800]);
@@ -197,7 +244,7 @@ switch lower(imageType)
             % The image data should be in units of photons
             photons = imageLinearTransform(mcCOEF,basis.basis');
             % vcNewGraphWin; imageSPD(photons,basis.wave);
-
+            
             % These lines are left in because there must be different file
             % types out there somewhere.  Sometimes we stored the mean, and
             % sometimes we didn't.
@@ -253,22 +300,22 @@ switch lower(imageType)
             % to be stored in 'photons' or 'data'.  We allow the wavelength
             % to be stored in 'wave' or 'wavelength'.  Ask Joyce why.
             disp('Reading multispectral data with raw data.')
-
+            
             % Make this function.
             % [photons,basis] = ieReadMultispectralRaw(fullname);
             
             if ieVarInFile(variables,'photons'), load(fullname,'photons');
             elseif ieVarInFile(variables,'data')
                 load(fullname,'data'); photons = data; clear data;
-            else error('No photon data in file'); 
-            end  
-            if ieVarInFile(variables,'comment'),  load(fullname,'comment'); end            
+            else error('No photon data in file');
+            end
+            if ieVarInFile(variables,'comment'),  load(fullname,'comment'); end
             if ieVarInFile(variables,'wave'), load(fullname,'wave');
             elseif ieVarInFile(variables,'wavelength')
                 load(fullname,'wavelength');
                 wave = wavelength; clear wavelength;
             end
-
+            
             % Pull out the photons
             if ~isempty(varargin) && ~isempty(varargin{1})
                 newWave = varargin{1};

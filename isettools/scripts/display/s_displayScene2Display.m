@@ -37,7 +37,7 @@ srgb = lrgb2srgb(lrgb);
 % vcNewGraphWin; imagescRGB(srgb);
 
 %%
-dImage = displayCompute(d,srgb,10);
+dImage = displayCompute(d,srgb);
 vcNewGraphWin; imagescRGB(dImage); title('Display showing subpixel')
 
 %% Now move the dImage back to a scene, as per the script s_display2Scene

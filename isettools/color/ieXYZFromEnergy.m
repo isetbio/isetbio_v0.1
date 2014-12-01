@@ -76,7 +76,7 @@ else                 dWave = 10;   disp('10 nm band assumed');
 end
 
 % The return value has three columns, [X,Y,Z].
-XYZ = 683*(xwData*S) * dWave;
+XYZ = 683 * dWave * (xwData*S);
 
 % If it was sent in RGB, return it in RGB
 switch iFormat

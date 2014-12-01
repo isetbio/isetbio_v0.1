@@ -23,6 +23,7 @@ function [coneIsolating, monitor2cones] = humanConeIsolating(dsp)
 %
 % Copyright ImagEval Consultants, LLC, 2005.
 
+warning('Deprecated, use displayGet(d, ''rgb2lms'') instead');
 if notDefined('dsp'), dsp = displayCreate;  end
 
 wave = displayGet(dsp,'wave');
@@ -38,7 +39,9 @@ monitor2cones = cones'*spd;
 %    monitor2cones * col1 = (1,0,0)
 %
 % and so forth 
-coneIsolating = inv(monitor2cones);
-
-
+if size(monitor2cones,1) == size(monitor2cones, 2)
+    coneIsolating = inv(monitor2cones);
+else
+    warning('monitor to cones not invertible, returning empty');
+    coneIsolating = [];
 end

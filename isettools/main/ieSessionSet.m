@@ -147,7 +147,8 @@ switch param
         %         setpref('ISET','whitePoint',val);
     case {'gpu', 'gpucompute', 'gpucomputing'}
         vcSESSION.GPUCOMPUTE = val;
-        
+    case {'imagesizethreshold'}
+        vcSESSION.imagesizethreshold = val;
         
         % Set window information at startup
     case {'mainwindow'}

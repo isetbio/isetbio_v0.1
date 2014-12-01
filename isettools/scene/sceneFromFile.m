@@ -1,7 +1,9 @@
-function [scene,I] = sceneFromFile(I, imType, meanLuminance,dispCal,wList, doSub)
+function [scene,I] = sceneFromFile(I, imType, meanLuminance, dispCal, ...
+    wList, varargin)
 % Create a scene structure by reading data from a file
 %
-%     [scene,fname,comment] = sceneFromFile(imageData,imageType,[meanLuminance],[dispCal],[wList])
+%     [scene, I] = sceneFromFile(imageData, imageType, ...
+%                  [meanLuminance], [display], [wave], [doSub], [ambient])
 %
 % imageData:  Usually the filename of an RGB image.  It is allowed to send
 %             in RGB data itself, rather than the file name.
@@ -44,7 +46,8 @@ function [scene,I] = sceneFromFile(I, imType, meanLuminance,dispCal,wList, doSub
 %   scene = sceneFromFile(fName,'rgb',meanLuminance,dispCal);
 %
 %   wList = [400:50:700];
-%   fullFileName = fullfile(isetRootPath,'data','images','multispectral','StuffedAnimals_tungsten-hdrs');
+%   fullFileName = fullfile(isetRootPath,'data','images', ...
+%                   'multispectral','StuffedAnimals_tungsten-hdrs');
 %   scene = sceneFromFile(fullFileName,'multispectral',[],[],wList);
 %
 %   dispCal = 'OLED-Sony.mat';meanLuminance=[];
@@ -65,7 +68,6 @@ if notDefined('I')
     end
     if isempty(I), scene = []; return; end
 end
-if notDefined('doSub'), doSub = false; end
 
 %% Read the photons and illuminant structure
 % Remove spaces and force lower case.
@@ -73,32 +75,57 @@ imType = ieParamFormat(imType);
 
 switch lower(imType)
     case {'monochrome','rgb'}  % 'unispectral'
+        % init display structure
         if notDefined('dispCal')
             warning('Default display lcdExample is used to create scene');
-            dispCal = fullfile(isetRootPath,'data','displays','lcdExample.mat');
+            dispCal = displayCreate('lcdExample');
         end
         
-        photons = vcReadImage(I,imType,dispCal, doSub);
-        
-        % Match the display wavelength and the scene wavelength
-        scene = sceneCreate('rgb');
         if ischar(dispCal), d = displayCreate(dispCal);
-        elseif isstruct(dispCal) && isequal(dispCal.type,'display'),
+        elseif isstruct(dispCal) && isequal(dispCal.type, 'display'),
             d = dispCal;
         end
         
-        wave = displayGet(d,'wave');
-        scene = sceneSet(scene,'wave',wave);
+        wave  = displayGet(d, 'wave');
         
-        % Set the illuminant SPD to the white point of the display. This
-        % also forces the peak reflectance to 1, so we could delete
-        % illuminant scaling below.
+        % get additional parameter values
+        if ~isempty(varargin), doSub = varargin{1}; else doSub = false; end
+        if length(varargin) > 2, sz = varargin{3};  else sz = []; end
+        
+        % read radiance / reflectance
+        photons = vcReadImage(I,imType,dispCal, doSub, sz);
+        
+        % Match the display wavelength and the scene wavelength
+        scene = sceneCreate('rgb');
+        scene = sceneSet(scene, 'wave', wave);
+        
+        % For emissive display, set the illuminant SPD to the white point
+        % of the display if ambient lighting is not set.
+        % 
+        % For reflective display, the illuminant is required and should be
+        % passed in in varargin{2}
+        
+        if length(varargin) > 1, il = varargin{2}; else il = []; end
         
         % Initialize
-        il    = illuminantCreate('d65',wave);
-        % Replace default with white point
-        il    = illuminantSet(il,'energy',sum(d.spd,2));
+        if isempty(il) && ~displayGet(d, 'is emissive')
+            error('illuminant required for reflective display');
+        end
+        if isempty(il)
+            il    = illuminantCreate('d65', wave);
+            % Replace default with white point
+            il    = illuminantSet(il, 'energy', sum(d.spd,2));
+        end
         scene = sceneSet(scene, 'illuminant', il);
+        
+        % compute photons for reflective display
+        % for reflective display, the photons before this part actually
+        % stores reflectance information
+        if ~displayGet(d, 'is emissive')
+            il_photons = illuminantGet(il, 'photons', wave);
+            il_photons = reshape(il_photons, [1 1 length(wave)]);
+            photons = bsxfun(@times, photons, il_photons);
+        end
         
         % Set viewing distance
         scene = sceneSet(scene, 'distance', displayGet(d, 'distance'));
@@ -106,6 +133,7 @@ switch lower(imType)
         % Set field of view
         imgFov = size(I, 2)*displayGet(d, 'deg per dot');
         scene  = sceneSet(scene, 'h fov', imgFov);
+        
     case {'multispectral','hyperspectral'}
         if ~ischar(I), error('File name required for multispectral'); end
         if notDefined('wList'), wList = []; end

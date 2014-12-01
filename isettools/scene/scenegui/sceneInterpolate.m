@@ -9,6 +9,15 @@ function scene = sceneInterpolate(scene,sFactor)
 %  If sFactor is a 2D vector, the two entries are applied separately to the
 %  row and column dimensions.
 %
+% Example:
+%  scene = sceneCreate;
+%  scene = sceneInterpolate(scene,[1/2 1/2]);
+%  vcAddObject(scene); sceneWindow;
+%
+%  scene = sceneCreate;
+%  scene = sceneInterpolate(scene,[2 2]);
+%  vcAddObject(scene); sceneWindow;
+%
 % Copyright ImagEval Consultants, LLC, 2003.
 
 if notDefined('sFactor'), error('sFactor must be defined'); end
@@ -28,13 +37,15 @@ end
 if checkfields(scene,'data','photons')
     photons = sceneGet(scene,'photons');
     scene = sceneClearData(scene);
-    photons = imageInterpolate(photons,newRow,newCol);
+    photons = imresize(photons,[newRow,newCol]);
+    % photons = imageInterpolate(photons,newRow,newCol);
     scene = sceneSet(scene,'cphotons',photons);
 end
 
 if checkfields(scene,'depthMap')
     dMap = sceneGet(scene,'depthMap');
-    dMap = imageInterpolate(dMap,newRow,newCol);
+    dMap = imresize(dMap,[newRow,newCol]);
+    % dMap = imageInterpolate(dMap,newRow,newCol);
     scene = sceneSet(scene,'depthMap',dMap);
 end
 

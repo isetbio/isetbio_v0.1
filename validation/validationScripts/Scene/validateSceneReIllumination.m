@@ -1,4 +1,4 @@
-function validateSceneReIllumination(runParams)
+function varargout = validateSceneReIllumination(varargin)
 %
 % Validate changes in scene illuminant. 
 %
@@ -6,21 +6,31 @@ function validateSceneReIllumination(runParams)
 % Then re-illuminate using a flusorescent illuminant of equal luminance.
 %
 
-    % Call the validation script
-    [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams);
-        
-    % Update the parent @UnitTest object
-    UnitTest.updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams);
+    %% Initialization
+    % Initialize validation run
+    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
+    % Initialize return params
+    if (nargout > 0) varargout = {'', false, []}; end
+    
+    %% Validation - Call validation script
+    ValidationScript(runTimeParams);
+    
+    %% Reporting and return params
+    if (nargout > 0)
+        [validationReport, validationFailedFlag] = UnitTest.validationRecord('command', 'return');
+        validationData = UnitTest.validationData('command', 'return');
+        varargout = {validationReport, validationFailedFlag, validationData};
+    else
+        if (runTimeParams.printValidationReport)
+            [validationReport, ~] = UnitTest.validationRecord('command', 'return');
+            UnitTest.printValidationReport(validationReport);
+        end 
+    end
 end
 
-%% Skeleton validation script
-function [validationReport, validationFailedFlag, validationDataToSave] = validationScript(runParams)
 
-    %% Initialize return params
-    validationReport = 'Nothing to report.'; 
-    validationFailedFlag = false; 
-    validationDataToSave = struct();
-    
+function ValidationScript(runTimeParams)
+
     %% Initialize ISETBIO
     s_initISET;
     
@@ -67,7 +77,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     %% Generate an RGB rendition of the scene
     rgbImage2 = sceneGet(scene,'rgb image');
     
-     %% Compute scene reflectance functions at all (row,col) positions
+    %% Compute scene reflectance functions at all (row,col) positions
     reflectanceMap2 = zeros(size(photonRadianceMap2));
     for row = 1:samplingGridPositions(1)
         for col = 1:samplingGridPositions(2)
@@ -76,88 +86,95 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     end
     
     
-    
-    %% Set validationReport, validationFailedFlag and validationData
+    %% Internal validation
     % Reflectance range is [0 .. 1]. Specify tolerance as 0.1%
     tolerance = 1E-6;
     maxDiff = max(abs(reflectanceMap2(:)-reflectanceMap(:)));
     if (maxDiff > tolerance)
-        validationFailedFlag = true;
-        validationReport = sprintf('Scene reflectance before and after re-illumination do not agree to %g. Max diff: %g', tolerance, maxDiff);
+        message = sprintf('Scene reflectance before and after re-illumination do not agree to %g. Max diff: %g', tolerance, maxDiff);
+        UnitTest.validationRecord('FAILED', message);
     else
-        validationFailedFlag = false;
-        validationReport = sprintf('Scene reflectance before and after re-illumination agree to %g. Max diff: %g', tolerance, maxDiff);
+        message= sprintf('Scene reflectance before and after re-illumination agree to %g. Max diff: %g', tolerance, maxDiff);
+        UnitTest.validationRecord('PASSED', message);
     end
+    % append to validationData
+    UnitTest.validationData('originalScene', originalScene);
+    UnitTest.validationData('scene', scene);
     
-    % Save original and modified scene
-    validationDataToSave.originalScene = originalScene;
-    validationDataToSave.scene = scene;
-    
-    % Generate plots, if so specified
-    if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
-        h = figure(500); clf;
-        set(h, 'Position', [100 100 740 1020]);
-
-        subplot('Position', [0.11 0.8 0.30 0.15]);
-        imshow(rgbImage);
-        xlabel('x');
-        ylabel('y');
-        title(sprintf('Macbeth under D65 light\nRGB image'));
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-  
-        subplot('Position', [0.09 0.63 0.34 0.12]);  hold on;
-        plot(wavelengthSampling, illuminantPhotons, 'r-');
-        plot(wavelengthSampling, peakRadiance, 'k-');
-        xlabel('wavelength');
-        ylabel('photon flux');
-        legend('illuminant', 'peak radiance', 'Location', 'SouthEast');
-        box on;
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-
-        wavelengthSubSamplingInterval = 1;
-        subplot('Position', [0.06 0.32 0.39 0.26]);  
-        plotRadianceMap(photonRadianceMap, wavelengthSampling, wavelengthSubSamplingInterval, 'Radiance (photon flux)');
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-
-        subplot('Position', [0.06 0.02 0.39 0.26]); 
-        plotRadianceMap(reflectanceMap, wavelengthSampling, wavelengthSubSamplingInterval, 'Reflectance')
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-
-        % Now, plot re-illuminated scene data  
-        subplot('Position', [0.11+0.5 0.8 0.30 0.15]);
-        imshow(rgbImage2);
-        xlabel('x');
-        ylabel('y');
-        title(sprintf('Macbeth under fluorescent light\nRGB image'));
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-
-        subplot('Position', [0.09+0.50 0.63 0.34 0.12]); hold on;
-        plot(wavelengthSampling, illuminantPhotons2, 'r-');
-        plot(wavelengthSampling, peakRadiance2, 'k-');
-        xlabel('wavelength');
-        ylabel('photon flux');
-        legend('illuminant', 'peak radiance', 'Location', 'NorthWest');
-        box on;
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-     
-        subplot('Position', [0.06+0.50 0.32 0.39 0.26]); 
-        plotRadianceMap(photonRadianceMap2, wavelengthSampling, wavelengthSubSamplingInterval, 'Radiance (photon flux)');
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-
-        subplot('Position', [0.06+0.50 0.02 0.39 0.26]); 
-        plotRadianceMap(reflectanceMap2, wavelengthSampling, wavelengthSubSamplingInterval, 'Reflectance')
-        set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
-
-        % Adjust figure
-        set(h,'PaperOrientation','Portrait');
-        set(h,'PaperUnits','normalized');
-        set(h,'PaperPosition', [0 0 1 1]);
-        drawnow;
+    %% Plotting
+    if (runTimeParams.generatePlots)
+        plotResults(wavelengthSampling, ...
+            rgbImage, illuminantPhotons, peakRadiance, photonRadianceMap, reflectanceMap, ...
+            rgbImage2, illuminantPhotons2, peakRadiance2, photonRadianceMap2, reflectanceMap2);
     end
     
 end
 
+%% Helper plotting functions
+function plotResults(wavelengthSampling, ...
+            rgbImage, illuminantPhotons, peakRadiance, photonRadianceMap, reflectanceMap, ...
+            rgbImage2, illuminantPhotons2, peakRadiance2, photonRadianceMap2, reflectanceMap2);
+        
+    h = figure(500); clf;
+    set(h, 'Position', [100 100 740 1020]);
 
+    subplot('Position', [0.11 0.8 0.30 0.15]);
+    imshow(rgbImage);
+    xlabel('x');
+    ylabel('y');
+    title(sprintf('Macbeth under D65 light\nRGB image'));
+    set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+
+    subplot('Position', [0.09 0.63 0.34 0.12]);  hold on;
+    plot(wavelengthSampling, illuminantPhotons, 'r-');
+    plot(wavelengthSampling, peakRadiance, 'k-');
+    xlabel('wavelength');
+    ylabel('photon flux');
+    legend('illuminant', 'peak radiance', 'Location', 'SouthEast');
+    box on;
+    set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+
+    wavelengthSubSamplingInterval = 1;
+    subplot('Position', [0.06 0.32 0.39 0.26]);  
+    plotRadianceMap(photonRadianceMap, wavelengthSampling, wavelengthSubSamplingInterval, 'Radiance (photon flux)');
+    set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+
+    subplot('Position', [0.06 0.02 0.39 0.26]); 
+    plotRadianceMap(reflectanceMap, wavelengthSampling, wavelengthSubSamplingInterval, 'Reflectance')
+    set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+
+    % Now, plot re-illuminated scene data  
+    subplot('Position', [0.11+0.5 0.8 0.30 0.15]);
+    imshow(rgbImage2);
+    xlabel('x');
+    ylabel('y');
+    title(sprintf('Macbeth under fluorescent light\nRGB image'));
+    set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+
+    subplot('Position', [0.09+0.50 0.63 0.34 0.12]); hold on;
+    plot(wavelengthSampling, illuminantPhotons2, 'r-');
+    plot(wavelengthSampling, peakRadiance2, 'k-');
+    xlabel('wavelength');
+    ylabel('photon flux');
+    legend('illuminant', 'peak radiance', 'Location', 'NorthWest');
+    box on;
+    set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+
+    subplot('Position', [0.06+0.50 0.32 0.39 0.26]); 
+    plotRadianceMap(photonRadianceMap2, wavelengthSampling, wavelengthSubSamplingInterval, 'Radiance (photon flux)');
+    set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+
+    subplot('Position', [0.06+0.50 0.02 0.39 0.26]); 
+    plotRadianceMap(reflectanceMap2, wavelengthSampling, wavelengthSubSamplingInterval, 'Reflectance')
+    set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
+
+    % Adjust figure
+    set(h,'PaperOrientation','Portrait');
+    set(h,'PaperUnits','normalized');
+    set(h,'PaperPosition', [0 0 1 1]);
+    drawnow;
+ end
+        
 function plotRadianceMap(radianceMap, wavelengthSampling, wavelengthSubSamplingInterval, titleText)
     [X,Y,Z] = meshgrid(1:size(radianceMap,2), wavelengthSampling, 1:size(radianceMap,1));
     radianceMap = permute(radianceMap, [3 2 1]);
@@ -180,7 +197,7 @@ function plotRadianceMap(radianceMap, wavelengthSampling, wavelengthSubSamplingI
     ylabel('wavelength', 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold'); 
     zlabel('y','FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
     colormap(hot(256));
-    colorbarHandle = colorbar('horiz', 'Ticks', [min(radianceMap(:)) max(radianceMap(:))], 'TickLabels', [0 1.0]*(maxRadiance-minRadiance) + minRadiance);
+    colorbarHandle = colorbar('horiz', 'XTick', [min(radianceMap(:)) max(radianceMap(:))], 'XTickLabel', [0 1.0]*(maxRadiance-minRadiance) + minRadiance);
     xlabel(colorbarHandle, titleText, 'FontName', 'Helvetica', 'FontSize', 12, 'FontWeight', 'bold');
     box on;
     grid off;

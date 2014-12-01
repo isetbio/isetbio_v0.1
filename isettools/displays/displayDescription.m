@@ -9,6 +9,7 @@ function str = displayDescription(d)
 % (HJ) May, 2014
 
 if notDefined('d'), d = []; end
+global vcSESSION
 
 if isempty(d)
     str = 'No display structure';
@@ -23,8 +24,11 @@ else
                     
     str = addText(str, sprintf('# primaries:\t%d\n', ...
                             displayGet(d, 'nprimaries')));
-    str = addText(str, sprintf('Color bit depth:\t%d', ...
-                            displayGet(d, 'bits'))); 
+    str = addText(str, sprintf('Color bit depth:\t%d\n', ...
+                            displayGet(d, 'bits')));
+    I = vcSESSION.imgData;
+    str = addText(str, sprintf('Image width: %d\t Height: %d', ...
+                            size(I, 2), size(I, 1)));
     
 end
 

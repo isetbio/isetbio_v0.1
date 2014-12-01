@@ -1,53 +1,73 @@
-function val = displayGet(d,parm,varargin)
+function val = displayGet(d, parm, varargin)
 %Get display parameters and derived properties
 %
 %     val = displayGet(d,parm,varargin)
 %
 % Basic parameters
-%     {'type'} - Always 'display'
-%     {'name'} - Which specific display
+%     {'type'}        - Always 'display'
+%     {'name'}        - Which specific display
+%     {'is emissive'} - true (emissive) or false (reflective)
 %
 % Transduction
-%     {'gamma table'}  - Nlevels x Nprimaries
-%     {'dacsize'}      - Number of bits (log2(nSamples))
-%     {'nlevels'}      - Number of levels
-%     {'levels'}       - List of levels
+%     {'gamma table'}  - nLevels x nPrimaries
+%     {'dacsize'}      - number of bits (log2(nSamples))
+%     {'nlevels'}      - number of levels
+%     {'levels'}       - list of levels
 %
 % SPD calculations
-%     {'wave'}                % Nanometers
-%     {'nwave'}               % Number of wave samples
-%     {'spd primaries'}       % Energy units, always nWave by nPrimaries
-%     {'white spd'}           % White point spectral power distribution
-%     {'nprimaries'} 
+%     {'wave'}                - wavelength samples in nanometers
+%     {'nwave'}               - number of wave samples
+%     {'spd primaries'}       - nWave x nPrimaries matrix, in energy units 
+%     {'white spd'}           - white point spectral power distribution
+%     {'black spd'}           - spd when display is black
+%     {'nprimaries'}          - number of primaries
 %
 % Color conversion and metric
 %     {'rgb2xyz'}
 %     {'rgb2lms'}
 %     {'white xyz'}
+%     {'black xyz'}
 %     {'white xy'}
 %     {'white lms'}
 %     {'primaries xyz'}
 %     {'primaries xy'}
+%     {'peak luminance'}
+%     {'dark luminance'}
+%     {'peak contrast'}
 %
 % Spatial parameters
-%     {'dpi', 'ppi'}                  % Dots per inch
+%     {'dpi', 'ppi'}           - dots per inch
 %     {'meters per dot'}
 %     {'dots per meter'}
-%     {'dots per deg'}         % Dots per degree visual angle
-%     {'viewing distance'}     % Meters
+%     {'dots per deg'}         - dots per degree visual angle
+%     {'viewing distance'}     - in meters
+%
+% Subpixel structure
+%     {'dixel'}              - dixel structure describing repeating unit
+%     {'pixels per dixel'}   - number of pixels in one repeating unit
+%     {'dixel size'}         - number of samples in one dixel
+%     {'dixel intensity map'}
+%     {'dixel control map'}  - control map, describing which regions are
+%                              individually addressable
+%     {'peak spd'}           - peak spd for each primary
+%     {'oversample'}         - up-scale factor for subpixel rendering
+%     {'sample spacing'}     - spacing between samples
+%     {'fill factor'}        - fill factor of each primary
+%     {'render function'}    - function handle used to convert rgb input to
+%                              corresponding dixel image
 %
 % Examples
 %   d = displayCreate;
 %   w = displayGet(d,'wave');
 %   p = displayGet(d,'spd');
-%   vcNewGraphWin; plot(w,p); set(gca,'ylim',[-.1 1.1])
+%   vcNewGraphWin; plot(w,p); set(gca, 'ylim', [-.1 1.1])
 %
-%   chromaticityPlot(displayGet(d,'white xy'))
+%   chromaticityPlot(displayGet(d, 'white xy'))
 %
 %   vci = vcimageCreate('test',[],d);
 %   plotDisplayGamut(vci)
 %
-% Copyright ImagEval 2011
+% HJ/BW, ISETBIO TEAM, Copyright 2014
 
 %% Check parameters
 if notDefined('parm'), error('Parameter not found.');  end
@@ -65,7 +85,10 @@ switch parm
         % Type should always be 'display'
         val = d.type;
     case {'gtable','dv2intensity','gamma','gammatable'}
-        if checkfields(d,'gamma'), val = d.gamma; end
+        if isfield(d,'gamma'), val = d.gamma; end
+    case {'isemissive'}
+        val = true;
+        if isfield(d, 'isEmissive'), val = d.isEmissive; end
     case {'bits','dacsize'}
         % color bit depths, e.g. 8 bit / 10 bit
         % This is computed from size of gamma table
@@ -103,24 +126,8 @@ switch parm
         % displayGet(dsp,'spd');
         % displayGet(d,'spd',wave);
         %
-        % The issue of scaling the units of the SPD is worth thinking
-        % about. When we calibrate a display we are at a distance and we
-        % obtain the SPD of each channel maximum averaging over a lot of
-        % pixels. 
-        %
-        % When we want to represent the data at high spatial
-        % resolution, it should always be the case that the peak luminance
-        % of each channel, averaged over a large region of image, equals
-        % that peak.  But at high spatial resolution, the channel may be
-        % zero over large portions of the image.  For example, the red
-        % channel doesn't span the green/blue or black lines.  So, when we
-        % create a spatially resolved subpixel image we need to know how to
-        % scale the spd for that image so that the mean luminance is
-        % preserved.
-        
-        
         % Always make sure the spd has rows equal to number of wavelength
-        % samples.  The PTB uses spectra rather than spd.  This hack makes
+        % samples. The PTB uses spectra rather than spd.  This hack makes
         % it compatible.  Or, we could convert displayCreate from spd to
         % spectra some day.
         if checkfields(d,'spd'),         val = d.spd;
@@ -145,7 +152,7 @@ switch parm
         else                   wave = displayGet(d,'wave');
         end
         e = displayGet(d,'spd',wave);
-        val = e*ones(3,1);
+        val = sum(e, 2);
         
         % Color conversion
     case {'rgb2xyz'}
@@ -171,18 +178,18 @@ switch parm
         %   imageLinearTransform(img,rgb2lms)
         %
         wave = displayGet(d,'wave');
-        coneFile = fullfile(isetRootPath,'data','human','Stockman');
-        cones = ieReadSpectra(coneFile,wave);   % plot(wave,spCones)
-        spd = displayGet(d,'spd',wave);         % plot(wave,displaySPD)
+        coneFile = fullfile(isetRootPath,'data','human','stockman');
+        cones = ieReadSpectra(coneFile,wave);     % plot(wave,spCones)
+        spd = displayGet(d, 'spd', wave);         % plot(wave,displaySPD)
         val = cones'* spd;                  
         val = val';
         
         % Scale the transform so that sum L and M values sum to Y-value of
         % white 
-        e = displayGet(d,'white spd',wave);
-        whiteXYZ = ieXYZFromEnergy(e',wave);
-        whiteLMS = ones(1,3)*val;
-        val = val*(whiteXYZ(2)/(whiteLMS(1)+whiteLMS(2)));
+%         e = displayGet(d,'white spd',wave);
+%         whiteXYZ = ieXYZFromEnergy(e',wave);
+%         whiteLMS = sum(val);
+%         val = val*(whiteXYZ(2)/(whiteLMS(1)+whiteLMS(2)));
         
      case {'whitexyz','whitepoint'}
         % displayGet(dsp,'white xyz',wave)
@@ -211,7 +218,7 @@ switch parm
         % displayGet(dsp,'white lms')
         rgb2lms = displayGet(d,'rgb2lms');        
         % Sent back in XW format, so a row vector
-        val = ones(1,3)*rgb2lms;
+        val = sum(rgb2lms);
 
         % Spatial parameters
     case {'dpi', 'ppi'}
@@ -259,43 +266,156 @@ switch parm
         % display refresh rate
         if isfield(d, 'refreshRate'), val = d.refreshRate; end
         
-    % PSF information
-    case {'psfs', 'pointspread', 'psf'}
-        % The whole psf data set
-        if isfield(d, 'psfs'), val = d.psfs; end
+    % Dixel (subpixel) information
+    case {'dixel'}
+        % The whole dixel structure
+        % displayGet(d, 'dixel')
+        if isfield(d, 'dixel'), val = d.dixel; end
         
-    case {'psfsamples','oversample', 'osample'}
-        % Number of psf samples per pixel
-        if isfield(d, 'psfs'), val = size(d.psfs, 1); end
+    case {'dixelsize'}
+        % number of samples in one dixel
+        % displayGet(d, 'dixel size')
+        dixel_image = displayGet(d, 'dixel intensity map');
+        val = size(dixel_image);
+        val = val(1:2);
+    
+    case {'oversample', 'osample'}
+        % Number of subpixel samples per pixel
+        % displayGet(d, 'over sample')
+        sz  = displayGet(d, 'dixel size');
+        val = sz ./ displayGet(d, 'pixels per dixel');
         
-    case {'psfsamplespacing'}
+    case {'samplespacing'}
         % spacing between psf samples
-        % displayGet(d,'psf sample sampling',units)
-        if isempty(displayGet(d, 'psfs')), return; end
-        val = displayGet(d, 'metersperdot') / displayGet(d, 'psfsamples');
+        % displayGet(d, 'sample sampling', units)
+        val = displayGet(d, 'metersperdot') ./ displayGet(d, 'dixel size');
+        
+        % adjust for the number of pixels in one dixel
+        val = val .* displayGet(d, 'pixels per dixel');
+        
         if ~isempty(varargin)
             val = val*ieUnitScaleFactor(varargin{1});
         end
     case {'fillfactor','fillingfactor','subpixelfilling'}
-        % Fill factor of subpixel
-        psfs = displayGet(d, 'psfs');
-        if isempty(psfs), return; end
-        [r,c,~] = size(psfs);
-        psfs = psfs ./ repmat(max(max(psfs)), [r c]);
-        psfs = psfs > 0.2;
-        val = sum(sum(psfs))/r/c;
+        % Fill factor of subpixle for each primary
+        % displayGet(d, 'fill factor')
+        dixel_image = displayGet(d, 'dixel image');
+        [r,c,~] = size(dixel_image);
+        dixel_image = dixel_image ./ repmat(max(max(dixel_image)), [r c]);
+        dixel_image = dixel_image > 0.2;
+        val = sum(sum(dixel_image))/r/c;
         val = val(:);
     case {'subpixelspd'}
         % spectral power distribution for subpixels
-        % see comments in spd
+        %
         % This is the real subpixel spd, not the spatial averaged one
         % To get the spd for the whole pixel, use displayGet(d, 'spd')
         % instead
         spd = displayGet(d, 'spd');
         ff  = displayGet(d, 'filling factor');
         val = spd ./ repmat(ff(:)', [size(spd, 1) 1]);
+    case {'pixelsperdixel'}
+        % number of pixels per dixel
+        % returns number of pixels in one block (unit repeated pattern)
+        %
+        % displayGet(d, 'pixels per dixel')
+        if checkfields(d, 'dixel', 'nPixels')
+            val = d.dixel.nPixels;
+        else
+            dixel_control = displayGet(d, 'dixel control map');
+            val = max(dixel_control(:));
+        end
+    case {'dixelintensitymap', 'dixelimage'}
+        % dixel intensity map  
+        % This field specify the intensity (scale factor) at each sample
+        % point in dixel
+        %
+        % displayGet(d, 'dixel intensity map')
+        dixel = displayGet(d, 'dixel');
+        if isempty(dixel), error('dixel structure not exist'); end
+        if isfield(dixel, 'intensitymap')
+            val = dixel.intensitymap;
+        end
+        
+        % adjust the size of the intensity map if required
+        if ~isempty(varargin)
+            sz = varargin{1};
+            if isscalar(sz), sz = [sz sz]; end
+            
+            % resize the intensity map
+            val = imresize(val, sz);
+            
+            % crop the intensity map and make it non-negative
+            val(val < 0) = 0;
+            
+            % scale the intensity map
+            scale = prod(sz) ./ sum(sum(val));
+            val = bsxfun(@times, val, scale);
+        end
+    case {'dixelcontrolmap'}
+        % dixel control map
+        % This field specify which region in one dixel is individually
+        % addressable
+        %
+        % The control map contains integer values from 1 ~ n, its value
+        % indicates which control group (actual pixel) it belongs to
+        %
+        % displayGet(d, 'dixel control map')
+        dixel = displayGet(d, 'dixel');
+        if isempty(dixel), error('dixel structure not exist'); end
+        if isfield(dixel, 'controlmap')
+            val = dixel.controlmap;
+        end
+        
+        % adjust the size of the control map if required
+        if ~isempty(varargin)
+            sz = varargin{1};
+            if isscalar(sz), sz = [sz sz]; end
+            % resize
+            val = imresize(val, sz, 'nearest');
+        end
+    case {'renderfunction'}
+        % render function
+        % returns user defined subpixel render function handle. If user
+        % does not specify this render function, return empty
+        %
+        % displayGet(d, 'render function')
+        if checkfields(d, 'dixel', 'renderFunc')
+            val = d.dixel.renderFunc;
+        end
+    case {'contrast', 'peakcontrast'}
+        % peak contrast
+        % returns the black/white contrast of the display
+        %
+        % displayGet(d, 'peak contrast')
+        peakLum = displayGet(d, 'peak luminance');
+        darkLum = displayGet(d, 'dark luminance');
+        val = peakLum / darkLum;
+    case {'darklevel'}
+        % dark level
+        % returns the first line in the gamma table
+        %
+        % displayGet(d, 'dark level')
+        gTable = displayGet(d, 'gTable');
+        val = gTable(1, :);
+    case {'blackspd', 'blackradiance'}
+        % black radiance
+        % computes dark spd (radiance) of the display in units of energy
+        % (watts / ...)
+        %
+        % displayGet(d, 'black radiance')
+        dark_level = displayGet(d, 'dark level');
+        val = displayGet(d, 'spd') * dark_level';
+    case {'darkluminance', 'blackluminance'}
+        % dark luminance
+        % returns the luminance of display when all pixels are turned off
+        %
+        % displayGet(d, 'dark luminance')
+        blackSpd = displayGet(d, 'black spd');
+        blackXYZ = ieXYZFromEnergy(blackSpd', displayGet(d, 'wave'));
+        val = blackXYZ(2);
     otherwise
         error('Unknown parameter %s\n',parm);
 end
 
-return;
+end

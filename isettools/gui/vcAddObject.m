@@ -40,6 +40,8 @@ obj = gatherStruct(obj);
 if exist('obj','var')
     switch lower(objType)
         case {'scene'}
+            lum = sceneGet(obj, 'luminance');
+            obj = sceneSet(obj, 'luminance', lum);
             vcSESSION.SCENE{val} = obj;
         case {'opticalimage'}
             vcSESSION.OPTICALIMAGE{val} = obj;
