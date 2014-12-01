@@ -1,4 +1,4 @@
-function printReport(obj)
+function printReport(obj, verbosity)
 
     if obj.validationFailedFlag
         port = 2;
@@ -6,12 +6,27 @@ function printReport(obj)
         port = 1;
     end
     
+    if (strcmp(verbosity, 'SummaryOnly'))
+        if (obj.validationFailedFlag)
+            fprintf(port, '\n[%2d.] Results for ''%s'' probe: FAILED', obj.validationProbeIndex, obj.validationFunctionName);
+            validationSummary = sprintf('`[%s] %s.m`\n', obj.validationReport, obj.validationFunctionName);
+        else
+            fprintf(port, '\n[%2d.] Results for ''%s'' probe: PASSED', obj.validationProbeIndex, obj.validationFunctionName);
+            validationSummary = sprintf('`[Validation passed] %s.m `\n', obj.validationFunctionName);
+        end
+        
+        % Update validation summary
+        obj.validationSummary{obj.validationProbeIndex} = validationSummary;
+    
+        return;
+    end
+        
     fprintf(port, '\n[%2d.] Results for ''%s'' probe:', obj.validationProbeIndex, obj.validationFunctionName);
     
     % Compose validationStatusString
     if (obj.validationFailedFlag)
         validationStatusString = sprintf('validation status      : FAILED');
-        validationSummary = sprintf('`[%s] %s.m`\n', obj.validationFailureShortReport, obj.validationFunctionName);
+        validationSummary = sprintf('`[%s] %s.m`\n', obj.validationReport, obj.validationFunctionName);
     else
         validationStatusString = sprintf('validation status      : PASSED');
         validationSummary = sprintf('`[Validation passed] %s.m `\n', obj.validationFunctionName);
@@ -23,6 +38,7 @@ function printReport(obj)
     
     % Update validation summary
     obj.validationSummary{obj.validationProbeIndex} = validationSummary;
+    
     
     if obj.validationFailedFlag
         return;

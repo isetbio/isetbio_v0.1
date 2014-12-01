@@ -66,8 +66,8 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     oiRoiLocs  = ieRoi2Locs(rect);
 
     %% Get wavelength and spectral irradiance spd data (averaged within the scene ROI)
-    wave             = oiGet(scene,'wave');
-    irradianceEnergy = oiGet(oi, 'roi mean energy', oiRoiLocs);
+    wave                    = oiGet(scene,'wave');
+    isetbioIrradianceEnergy = oiGet(oi, 'roi mean energy', oiRoiLocs);
 
     %% Get the underlying parameters that are needed from the ISETBIO structures.
     optics = oiGet(oi,'optics');
@@ -101,11 +101,11 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     tolerance = 0.01;
     
     ptbMagCorrectIrradiance = ptbMagCorrectIrradiance(:);
-    irradianceEnergy = irradianceEnergy(:);
-    difference = ptbMagCorrectIrradiance-irradianceEnergy;
+    isetbioIrradianceEnergy = isetbioIrradianceEnergy(:);
+    difference = ptbMagCorrectIrradiance-isetbioIrradianceEnergy;
    
     %% Set validationReport, validationFailedFlag and validationData
-    if (max(abs(difference./irradianceEnergy)) > tolerance)
+    if (max(abs(difference./isetbioIrradianceEnergy)) > tolerance)
         validationReport     = sprintf('Validation FAILED. Difference between PTB and isetbio irradiance exceeds tolerance of %0.5f %% !!!', 100*tolerance);
         validationFailedFlag = true;
     else
@@ -118,7 +118,8 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     validationDataToSave.tolerance  = tolerance;
     validationDataToSave.scene      = scene;
     validationDataToSave.oi         = oi;
-    
+    validationDataToSave.ptbMagCorrectIrradiance = ptbMagCorrectIrradiance;
+    validationDataToSave.isetbioIrradianceEnergy = isetbioIrradianceEnergy;
     
     %% Generate plots, if so specified
     if (nargin >= 1) && (isfield(runParams, 'generatePlots')) && (runParams.generatePlots == true)
@@ -128,9 +129,9 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         subplot(2,1,1);
         plot(wave, ptbIrradiance, 'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
         hold on;
-        plot(wave, irradianceEnergy, 'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
+        plot(wave, isetbioIrradianceEnergy, 'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
         hold off
-        set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
+        set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(isetbioIrradianceEnergy(:))])]);
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14,  'FontWeight', 'bold');
         legend({'PTB','ISETBIO'}, 'Location','SouthEast','FontSize',12);
         xlabel('Wave (nm)', 'FontName', 'Helvetica', 'FontSize', 16); ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 16)
@@ -139,9 +140,9 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
         subplot(2,1,2);
         plot(wave,ptbMagCorrectIrradiance,'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
         hold on;
-        plot(wave,irradianceEnergy,'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
+        plot(wave,isetbioIrradianceEnergy,'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
         hold off
-        set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(irradianceEnergy(:))])]);
+        set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(isetbioIrradianceEnergy(:))])]);
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
         xlabel('Wave (nm)', 'FontName', 'Helvetica', 'FontSize', 14); ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 14)
         legend({'PTB','ISETBIO'}, 'Location','SouthEast','FontSize',12)

@@ -119,18 +119,6 @@ switch param
             val = 0; 
         end
         if isempty(val), val = 0; end
-%     case {'whitepoint'}
-%         % The white point default is equal photon maps to (1,1,1)
-%         % You can set to equal energy ('ee') or Daylight 6500 (d65).
-%         isetPref = getpref('ISET');
-%         if ~isempty(isetPref)
-%             if checkfields(isetPref,'whitePoint')
-%                 val = isetPref.whitePoint;
-%             else val = 'ep';
-%             end
-%         else
-%             val = 'ep';  % Equal photon
-%         end
         
     case {'waitbar'}
         % Used to decide whether we show the waitbars.
@@ -150,15 +138,13 @@ switch param
         end
         
     case {'gpu', 'gpucompute', 'gpucomputing'}
-%         if isfield(vcSESSION, 'GPUCOMPUTE')
-%             val = vcSESSION.GPUCOMPUTE;
-%         else % do a simple test here
-%             val = true;
-%             try gpuArray(0); catch, val = false; end
-%             vcSESSION.GPUCOMPUTE = val;
-%         end
+        % Whether or not to use gpu compute.  Always false now, but in the
+        % future we may do more with this.
         val = false;
     case {'imagesizethreshold'}
+        % Used by the display code.  This sets a value for when we loop
+        % over wavelength instead of doing a large matrix multiplication.
+        % HJ - more comments later.
         if isfield(vcSESSION, 'imagesizethreshold')
             val = vcSESSION.imagesizethreshold;
         else

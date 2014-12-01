@@ -1,5 +1,5 @@
 function validationResults = updateParentUnitTestObject(validationReport, validationFailedFlag, validationDataToSave, runParams)
-    %% Book-keeping ops
+    % Book-keeping ops
     if (isempty(validationReport))
         validationReport = 'None';
     end
@@ -21,7 +21,11 @@ function validationResults = updateParentUnitTestObject(validationReport, valida
         parentUnitTestOBJ.validationReport      = validationReport;
         parentUnitTestOBJ.validationFailedFlag  = validationFailedFlag;
         parentUnitTestOBJ.validationData        = validationDataToSave;
-        parentUnitTestOBJ.printReport();
+        if (parentUnitTestOBJ.displayAllValidationResults)
+            parentUnitTestOBJ.printReport('All');
+        else
+            parentUnitTestOBJ.printReport('SummaryOnly');
+        end
         validationResults = [];
         
     else 

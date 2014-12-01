@@ -35,12 +35,13 @@ function [sensor, adaptedData] = coneAdapt(sensor, typeAdapt, params)
 %
 % Inputs:
 %  sensor     - ISETBio sensor with cone absorption computed and stored
-%  typeAdapt  -  The adaptation model, meaning of value are as below
+%  typeAdapt  - The adaptation model, meaning of value are as below
 %           0 = no adaptation
 %           1 = a single gain map for the whole cone array
 %           2 = one gain map computed for each cone class
 %           3 = non-linear adaptation
 %           4 = cone adaptation by physiological differential equation
+%               (Rieke)
 %  params     - Cone adaptation parameters, could include
 %    .bgVolts = background voltage
 %    .vSwing  = maximum volts response
@@ -60,10 +61,16 @@ function [sensor, adaptedData] = coneAdapt(sensor, typeAdapt, params)
 %   for adaptation.
 %
 % Examples:
+%   scene = sceneCreate; oi = oiCreate; oi = oiCompute(oi,scene);
+%   sensor = sensorCreate('human'); sensor = sensorCompute(sensor,oi);
+%
 %   sensor = coneAdapt(sensor, 1);
 %   adaptedData = sensorGet(sensor, 'adapted volts');
 %   gain = sensorGet(sensor, 'adaptation gain');
 %   offset = sensorGet(sensor, 'adaptation volts');
+%
+%   sensor = coneAdapt(sensor,4);  % Rieke model 
+%   v = sensorGet(sensor,'volts');
 %
 % (c) Stanford VISTA Lab, 2014
 
@@ -71,30 +78,32 @@ function [sensor, adaptedData] = coneAdapt(sensor, typeAdapt, params)
 if notDefined('sensor'),      error('sensor is required'); end
 if ~sensorCheckHuman(sensor), error('unsupported species'); end
 if notDefined('typeAdapt'),   typeAdapt = 3; end
-if notDefined('params'), params = []; end
+if notDefined('params'),      params = []; end
 
 %% Compute cone adaptations
 volts  = double(sensorGet(sensor, 'volts'));
-
 if isempty(volts), error('cone absorptions should be pre-computed'); end
 
-if isfield(params, 'vSwing')
-    vSwing = params.vSwing;
-else
-    vSwing = sensorGet(sensor,'pixel voltageSwing');
+if isfield(params, 'vSwing'),    vSwing = params.vSwing;
+else                             vSwing = sensorGet(sensor,'pixel voltageSwing');
 end
 
-if isfield(params, 'bgVolts')
-    bgVolts = params.bgVolts;
-else
-    bgVolts = median(volts(:));
+if isfield(params, 'bgVolts'),     bgVolts = params.bgVolts;
+else                               bgVolts = mean(volts(:));
 end
 
+if ischar(typeAdapt), typeAdapt = ieParamFormat(typeAdapt); end
+    
 switch typeAdapt
-    case 0 % no adaptation
+    case {0, 'noadapt', 'noadaptation'} % no adaptation
         gainMap = 1;
         bgVolts  = 0;
-    case 1
+        
+        % Set adaptation parameters back to sensor
+        sensor = sensorSet(sensor, 'adaptation gain', gainMap);
+        sensor = sensorSet(sensor, 'adaptation offset', bgVolts);
+        
+    case {1, 'globalgain'}
         % Use same gain for all cone type
         
         % Adjust for bg volts as offset
@@ -103,8 +112,11 @@ switch typeAdapt
         % Set the gain so that the max - min get scaled to vSwig mV
         gainMap = vSwing / (max(volts(:)) - min(volts(:)));
         adaptedData = gainMap * volts;
+        % Set adaptation parameters back to sensor
+        sensor = sensorSet(sensor, 'adaptation gain', gainMap);
+        sensor = sensorSet(sensor, 'adaptation offset', bgVolts);
         
-    case 2
+    case {2, 'adaptbyconetype'}
         % Use different gains for each cone type
         % For human, the cone types in sensor are 1~4 for K, L, M, S
         if isscalar(bgVolts), bgVolts = ones(4,1)*bgVolts; end
@@ -126,7 +138,12 @@ switch typeAdapt
         gainMap = gainMap(sensorGet(sensor, 'cone type'));
         
         adaptedData = volts .* repmat(gainMap, [1 1 nSamples]);
-    case 3
+        
+        % Set adaptation parameters back to sensor
+        sensor = sensorSet(sensor, 'adaptation gain', gainMap);
+        sensor = sensorSet(sensor, 'adaptation offset', bgVolts);
+
+    case {3, 'felice'}
         % In this case, we will do non-linear cone adaptation
         % Reference:
         %   Felice A. Dunn, et al. Light adaptation in cone vision involves
@@ -174,80 +191,46 @@ switch typeAdapt
         % Set gain map and offset
         gainMap = adaptedData ./ volts;
         bgVolts = 0; % We don't have an actual offset
-    case 4
-        % In this case, the physiological differential equations for cones
-        % are implemented. The differential equations are:
-        %    1) d opsin(t) / dt = -sigma * opsin(t) + R*(t)
-        %    2) d PDE(t) / dt = opsin(t) - phi * PDE(t) + eta
-        %    3) d cGMP(t) / dt = S(t) - PDE(t) * cGMP(t)
-        %    4) d Ca(t) / dt = q * I(t) - beta * Ca(t)
-        %    5) d Ca_slow(t) / dt = - beta_slow * (Ca_slow(t) - Ca(t))
-        %    6) S(t) = smax / (1 + (Ca(t)/kGc)^n)
-        %    7) I(t) = k * cGMP(t)^h / (1 + Ca_slow/Ca_dark)
-        %
-        % This model gives a cone-by-cone adaptation and it requires a
-        % time-series data in sensor structure
         
-        % Set parameter values
-        sigma = 100;  % rhodopsin activity decay rate (1/sec)
-        phi = 50;     % phosphodiesterase activity decay rate (1/sec)
-        eta = 100;	  % phosphodiesterase activation rate constant (1/sec)
-        gdark = 35;	  % concentration of cGMP in darkness
-        k = 0.02;     % constant relating cGMP to current
-        cdark = 0.5;  % dark calcium concentration
-        beta = 50;	  % rate constant for calcium removal in 1/sec
-        betaSlow = 2;
-        n = 4;  	  % cooperativity, hill coef
-        kGc = 0.35;   % hill affinity
-        h = 3;
+        % Set adaptation parameters back to sensor
+        sensor = sensorSet(sensor, 'adaptation gain', gainMap);
+        sensor = sensorSet(sensor, 'adaptation offset', bgVolts);
+
+    case {4, 'rieke'}
+        % See rieke<TAB> for explanations.
         
-        q    = 2 * beta * cdark / (k * gdark^h);
-        smax = eta/phi * gdark * (1 + (cdark / kGc)^n);
+        % sensor = sensorCreate('human');
+        % sensor = sensorSet(sensor,'pixel voltage swing',0.05);
+        % v = rand(32,32,200)*sensorGet(sensor,'pixel voltage swing');
+        % sensor = sensorSet(sensor,'volts',v);
+        % vcAddObject(sensor); sensorWindow;
+        % [~,adaptedData] = coneAdapt(sensor, 4);
+        % s = 255 / max(abs(adaptedData(:)));
+        %                 vcNewGraphWin
+        %                 for ii=1:size(adaptedData,3)
+        %                     imagesc(abs(s*adaptedData(:,:,ii)));
+        %                     pause(0.02);
+        %                 end
+        % 
+        % Fix this mplay(adaptedData,'I');
         
-        photons = volts / sensorGet(sensor, 'conversion gain');
-        photons = photons / sensorGet(sensor, 'exposure time');
-        dt = sensorGet(sensor, 'timeInterval');
+        p = riekeInit;
+        expTime = sensorGet(sensor,'exposure time');
+        sz = sensorGet(sensor,'size');
         
+        % absRate = sensorGet(sensor,'absorptions per second');        
+        pRate = sensorGet(sensor, 'photon rate');
+                
         % Compute background adaptation parameters
-        bgR = bgVolts / sensorGet(sensor, 'conversion gain');
-        bgCur = fminbnd(@(x) abs(x - k*beta*cdark*smax^h * phi^h / ...
-                    (bgR/sigma + eta)^h / (beta*cdark + q*x) / ...
-                    (1 + (q*x/beta/kGc)^n)^h), 0, 1000);
+        bgR = bgVolts / (sensorGet(sensor,'conversion gain')*expTime);
         
-        % Compute starting values
-        opsin   = ones(sensorGet(sensor, 'size')) * bgR / sigma;
-        PDE     = (opsin + eta) / phi;
-        Ca      = ones(sensorGet(sensor, 'size')) * bgCur * q / beta;
-        Ca_slow = Ca;
-        st      = smax ./ (1 + (Ca / kGc).^n);
-        cGMP    = st * phi ./ (opsin + eta);
-        
-        % simulate differential equtions
-        adaptedData = zeros([size(opsin) size(volts, 3)]);
-        for ii = 1 : size(volts, 3)
-           opsin = opsin + dt * (photons(:,:,ii) - sigma * opsin);
-           PDE   = PDE   + dt * (opsin + eta - phi * PDE);
-           Ca    = Ca    + dt * (q*k * cGMP.^h./(1+Ca_slow/cdark)-beta*Ca);
-           st    = smax ./ (1 + (Ca / kGc).^n);
-           cGMP  = cGMP  + dt * (st - PDE .* cGMP);
-           Ca_slow = Ca_slow - dt * betaSlow * (Ca_slow - Ca);
-           adaptedData(:,:,ii) = - k * cGMP.^h ./ (1 + Ca_slow / cdark);
-        end
-        
-        % Set back
-        % Currently, there's no space for temporally varying adaptation
-        % data. Thus, we just return back the adapted volts
-        gainMap = [];
-        bgVolts = [];
-        
-         % adapt cur
-        
+        initialState = riekeAdaptSteadyState(bgR, p, sz);
+        adaptedData  = riekeAdaptTemporal(pRate, initialState);
+                       
     otherwise
         error('unknown adaptation type');
 end
 
-% Set adaptation parameters back to sensor
-sensor = sensorSet(sensor, 'adaptation gain', gainMap);
-sensor = sensorSet(sensor, 'adaptation offset', bgVolts);
+
 
 end

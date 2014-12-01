@@ -6,7 +6,6 @@ function addProbe(obj, varargin)
     p.addParamValue('functionSectionName', @ischar);
     p.addParamValue('functionName', @ischar);
     p.addParamValue('functionParams', @isstruct);
-    p.addParamValue('publishReport',  @islogical);
     p.addParamValue('showTheCode',  @islogical);
     p.addParamValue('generatePlots',  @islogical);
     p.addParamValue('onErrorReaction', @ischar); 
@@ -18,7 +17,6 @@ function addProbe(obj, varargin)
     newProbe.functionName   = p.Results.functionName;
     newProbe.functionParams = p.Results.functionParams;
     newProbe.onErrorReactBy = p.Results.onErrorReaction;
-    newProbe.publishReport  = p.Results.publishReport;
     newProbe.generatePlots  = p.Results.generatePlots;
     
     if (exist(newProbe.functionName, 'file') == 2)
@@ -30,7 +28,7 @@ function addProbe(obj, varargin)
     end
     
     
-    if (newProbe.publishReport)
+    if (obj.pushToGitHubOnSuccessfulValidation)
         % update sectionData map
         s = {};
         if (isKey(obj.sectionData,newProbe.functionSectionName))
@@ -61,7 +59,7 @@ function addProbe(obj, varargin)
     obj.validationProbeIndex = obj.validationProbeIndex + 1;
     
     % form probe command string
-    if (newProbe.publishReport)    
+    if (obj.pushToGitHubOnSuccessfulValidation)    
         % Critical: Assign the params variable to the base workstation
         assignin('base', 'params', params);
         
@@ -73,9 +71,10 @@ function addProbe(obj, varargin)
             'catchError', false, ...
             'outputDir', htmlDirectory ...
             );
-        
+        % Run validation script via MATLAB's publish method
         probeCommandString = sprintf(' publish(''%s'', options);', newProbe.functionName);
     else 
+        % Run validation script the regular way
         probeCommandString = sprintf(' %s(params);', newProbe.functionName);
     end
         
@@ -100,7 +99,7 @@ function addProbe(obj, varargin)
         % remove generated htmlDirectory so that it is not published to gitHub
         system(sprintf('rm -r -f %s',htmlDirectory));
         % also remove entry in sectionData
-        if (newProbe.publishReport)
+        if (obj.pushToGitHubOnSuccessfulValidation)
             % update sectionData map
             s = obj.sectionData(newProbe.functionSectionName);
             if (numel(s) == 1)
@@ -110,9 +109,6 @@ function addProbe(obj, varargin)
             end
             obj.sectionData(newProbe.functionSectionName) = s;
         end
-        
-        % write short report of why probe failed to validate
-        obj.validationFailureShortReport = 'Runtime exception';
         
         obj.printReport();
         fprintf(2,'\n\t ValidationReport\t:  Error (code raised an excemption which we caught). \n');
@@ -124,7 +120,7 @@ function addProbe(obj, varargin)
         % remove generated htmlDirectory so that it is not published to gitHub
         system(sprintf('rm -r -f %s', htmlDirectory));
         % also remove entry in sectionData
-        if (newProbe.publishReport)
+        if (obj.pushToGitHubOnSuccessfulValidation)
             % update sectionData map
             s = obj.sectionData(newProbe.functionSectionName);
             if (numel(s) == 1)
@@ -135,21 +131,22 @@ function addProbe(obj, varargin)
             obj.sectionData(newProbe.functionSectionName) = s;
         end
         
-        % write short report of why probe failed to validate
-        obj.validationFailureShortReport = 'Outcome>tolerance';
-        
         obj.printReport();
-        fprintf(2,'\n\t ValidationReport\t:  \n%s\n', newProbe.result.validationReport);
+        fprintf(2,'\n\t ValidationReport\t: %s\n', newProbe.result.validationReport);
         return;
     end
     
     % 
     if (~newProbe.result.validationFailedFlag) && (~newProbe.result.excemptionRaised)
+        
+        if (1==2)
         if (obj.displayAllValidationResults)
-            obj.printReport();
+            obj.printReport('All');
+        else
+            obj.printReport('SummaryOnly');
         end
-        % Show published report
-        % web(sprintf('%s/%s.html', htmlDirectory, newProbe.functionName));
+        end
+        
     end
         
 end
