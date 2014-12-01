@@ -5,15 +5,19 @@ function varargout = v_PTB_vs_ISETBIO_IrradianceIsomerizations(varargin)
 %
 % Minor issues:
 %
-% 1) The irradiance calculations agree to about 1%, once the difference in how
-% isetbio and PTB compute degrees to mm of retina is taken into account. We
-% are not sure of the reason for the 1% difference.  This may be related to
-% the fact that the spatial uniformity of the optical image irradiance in
-% isetbio is only good to about 1%, even though we think the optics are
-% turned off in the computation.
+% 1) The irradiance calculations agree to about 1%, once the difference in
+% how isetbio and PTB compute degrees to mm of retina is taken into
+% account. We are not sure of the reason for the 1% difference.  This may
+% be related to the fact that the spatial uniformity of the optical image
+% irradiance in isetbio is only good to about 1%, even though we think the
+% optics are turned off in the computation.  A similar magnitude difference
+% is seen in the isomerizations, which may have its roots in this same
+% effect (since isomerizations are computed from the irradiance in each
+% case), or in the slight differences in spectral qe below.
 %
-% 2) Isetbio and PTB agree to about a percent, but not exactly, about the
-% CIE 2-deg cone fundamentals, when converted to quantal efficiencies.
+% 2) Isetbio and PTB agree to about a percent or quantal efficiencies, but
+% not exactly, about the CIE 2-deg cone fundamentals, when converted to
+% quantal efficiencies.
 
     %% Initialization
     % Initialize validation run and return params
@@ -142,7 +146,7 @@ function ValidationScript(runTimeParams)
     % The integration time doesn't affect the irradiance, but we need to pass it 
     macularPigmentOffset = 0;
     integrationTimeSec   = 0.05;
-    [isoPerCone, ~, ptbPhotoreceptors, ptbIrradiance] = ...
+    [ptbIsomerizations, ~, ptbPhotoreceptors, ptbIrradiance] = ...
         ptb.ConeIsomerizationsFromRadiance(radianceEnergy(:), wave(:),...
         pupilDiameterMm, focalLengthMm, integrationTimeSec,macularPigmentOffset);
     
@@ -180,6 +184,7 @@ function ValidationScript(runTimeParams)
     UnitTest.validationData('tolerance', tolerance);
     UnitTest.validationData('scene', scene);
     UnitTest.validationData('oi', oi);
+    UnitTest.validationData('magCorrectionFactor',m);
     UnitTest.validationData('ptbMagCorrectIrradiance', ptbMagCorrectIrradiance);
     UnitTest.validationData('isetbioIrradianceEnergy',isetbioIrradianceEnergy);
     
@@ -189,24 +194,32 @@ function ValidationScript(runTimeParams)
     % Stockman-Sharpe 2-degree fundamentals.  Apparently, so does ISETBIO.
     % 
     % The agreement is good to about a percent.
+    %
+    % Get PTB cones spectral sensitivity, quantal units
     coneTolerance = 0.01;
     ptbCones = ptbPhotoreceptors.isomerizationAbsorptance';
-    sensor   = sensorCreate('human');
-    isetCones = sensorGet(sensor,'spectral qe');
-    isetCones = isetCones(:,2:4);
-    coneDifference = ptbCones-isetCones;
-    coneMean = mean(isetCones(:));
+    
+    % Create isetbio sensor object with human cones, and pull out quantal
+    % efficiencies. 
+    sensor = sensorCreate('human');
+    sensor = sensorSet(sensor,'size',oiGet(oi,'size'));
+    sensor = sensorSet(sensor,'noise flag',0);
+    isetbioCones = sensorGet(sensor,'spectral qe');
+    isetbioCones = isetbioCones(:,2:4);
+    
+    % Compare with PTB
+    coneDifference = ptbCones-isetbioCones;
+    coneMean = mean(isetbioCones(:));
     if (max(abs(coneDifference/coneMean)) > coneTolerance)
-        message = sprintf('Difference between PTB and isetbio cone quantal efficiencies %0.1g%%!!!',100*coneTolerance);
+        message = sprintf('Difference between PTB and isetbio cone quantal efficiencies exceeds %0.1f%%!!!',100*coneTolerance);
         UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('PTB and isetbio agree about cone quantal efficiencies to %0.1g%%',100*coneTolerance);
+        message = sprintf('PTB and isetbio agree about cone quantal efficiencies good to %0.1f%%',100*coneTolerance);
         UnitTest.validationRecord('PASSED', message);
     end
-    UnitTest.validationData('isetCones',isetCones);
+    UnitTest.validationData('isetCones',isetbioCones);
     UnitTest.validationData('ptbCones',ptbCones);
     UnitTest.validationData('coneTolerance',coneTolerance);
-    UnitTest.validationData('sensor',sensor);
    
     %% Compute quantal absorptions
     %  Still need to:
@@ -214,14 +227,73 @@ function ValidationScript(runTimeParams)
     %  2) Compare with PTB computation done above.
     %  3) Work through parameters that might lead to differences
     %    e.g., cone aperture, integration time, ...
-    sensor = sensorSet(sensor, 'exp time', integrationTimeSec); 
-    sensor = coneAbsorptions(sensor, oi);
-    volts  = sensorGet(sensor,'volts');
-    % Something like this may pull out the LMS vals.
-    % for jj=2:4
-    %     a = elROI(:,jj);
-    %     absorptions(ii,jj-1) = mean(a(~isnan(a)));
-    % end
+    sensor = sensorSet(sensor, 'exp time', integrationTimeSec);
+    sensor = sensorCompute(sensor, oi);
+    isetbioIsomerizationsArray = sensorGet(sensor,'photons');
+    
+    % Pull out responses of each cone type within ROI. I am doing this by
+    % brute force, because I can't find quite the right combination of ROI
+    % gets from the sensor image.
+    %
+    % This code should be slicked up by an isetbio pro.  Do I have the
+    % row/col indexing convention of the RoiLocs correct, or reversed?
+    sensorCFA = sensorGet(sensor,'cfa');
+    nLocs = size(oiRoiLocs,1);
+    sumIsomerizations = zeros(3,1);
+    nSummed = zeros(3,1);
+    for jj = 1:nLocs
+        coneType = sensorCFA.pattern(oiRoiLocs(jj,1),oiRoiLocs(jj,2))-1;
+        sumIsomerizations(coneType) = sumIsomerizations(coneType)+isetbioIsomerizationsArray(oiRoiLocs(jj,1),oiRoiLocs(jj,2));
+        nSummed(coneType) = nSummed(coneType) + 1;
+    end
+    isetbioIsomerizations = sumIsomerizations ./ nSummed;
+    
+    %% Adjust answer for differences in collecting area in the two calculations
+    %
+    % PTB specifies cone aperture as the diameter of the inner segment and
+    % assumes a circular aperture, and allows separate specifciation for
+    % each cone type.  ISETBIO specifies square pixels, the same for each
+    % cone type as far as I can tell.
+    %
+    % Since in both cases isomerizations are proportional to area, we can
+    % do the consistency check without too much fuss.
+    %
+    % It's possible we should handle this by setting the areas to be the
+    % same in the two calculations, rather than post-correcting.
+    %
+    % I checked by hand that the axial densities and quantal efficiences in
+    % the two calculations match.
+    ptbConeDiameter = mean(ptbPhotoreceptors.ISdiameter.value);
+    if (any(ptbPhotoreceptors.ISdiameter.value ~= ptbConeDiameter))
+        error('This calculation assumes all entries for PTB ISDiameter the same, but they are not');
+    end
+    ptbConeArea = pi*((ptbConeDiameter/2)^2);
+    pixel = sensorGet(sensor,'pixel');
+    isetbioConeArea = pixelGet(pixel,'width')*pixelGet(pixel,'width')*1e12;
+    ptbAreaCorrectedIsomerizations = (isetbioConeArea/ptbConeArea)*ptbIsomerizations;
+    
+    %% Also need to correct for magnification difference
+    % This follows irradiance correction above.
+    ptbCorrectedIsomerizations = ptbAreaCorrectedIsomerizations/(1+abs(m))^2;
+
+    isomerizationTolerance = 0.01;
+    isomerizationDifference = ptbCorrectedIsomerizations-isetbioIsomerizations;
+    if (max(abs(isomerizationDifference./ptbCorrectedIsomerizations)) > isomerizationTolerance)
+        message = sprintf('Difference between PTB and isetbio isomerizatoins exceeds %0.1f%%!!!',100*isomerizationTolerance);
+        UnitTest.validationRecord('FAILED', message);
+    else
+        message = sprintf('Difference between PTB and isetbio isomerizatoins good to %0.1f%%',100*isomerizationTolerance);
+        UnitTest.validationRecord('PASSED', message);
+    end
+    UnitTest.validationData('isomerizationTolerance',isomerizationTolerance);
+    UnitTest.validationData('isetIsomerizatoins',isetbioIsomerizations);
+    UnitTest.validationData('ptbIsomerizatoins',ptbIsomerizations);
+    UnitTest.validationData('ptbAreaCorrectedIsomerizatoins',ptbAreaCorrectedIsomerizations);
+    UnitTest.validationData('ptbCorrectedIsomerizatoins',ptbCorrectedIsomerizations);
+    UnitTest.validationData('ptbConeArea',ptbConeArea);
+    UnitTest.validationData('isetbioConeArea',ptbConeArea);
+    UnitTest.validationData('ptbPhotoreceptors',ptbPhotoreceptors);
+    UnitTest.validationData('sensor',sensor);    
  
     %% Plotting
     if (runTimeParams.generatePlots)
@@ -254,11 +326,11 @@ function ValidationScript(runTimeParams)
         % Compare PTB sensor spectral responses with ISETBIO
         vcNewGraphWin; hold on; 
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14,  'FontWeight', 'bold');
-        plot(wave, isetCones(:,1),'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
+        plot(wave, isetbioCones(:,1),'ro', 'MarkerFaceColor', [1.0 0.8 0.8], 'MarkerSize', 10);
         plot(wave, ptbCones(:,1), 'r-');
-        plot(wave, isetCones(:,2),'go', 'MarkerFaceColor', [0.8 1.0 0.8], 'MarkerSize', 10);
+        plot(wave, isetbioCones(:,2),'go', 'MarkerFaceColor', [0.8 1.0 0.8], 'MarkerSize', 10);
         plot(wave, ptbCones(:,2), 'g-');
-        plot(wave, isetCones(:,3),'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
+        plot(wave, isetbioCones(:,3),'bo', 'MarkerFaceColor', [0.8 0.8 1.0], 'MarkerSize', 10);
         plot(wave, ptbCones(:,3), 'b-');
         legend({'ISETBIO','PTB'},'Location','NorthWest','FontSize',12);
         xlabel('Wavelength');
@@ -266,7 +338,7 @@ function ValidationScript(runTimeParams)
 
         vcNewGraphWin; hold on
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14,  'FontWeight', 'bold');
-        plot(ptbCones(:),isetCones(:),'o','MarkerSize', 10);
+        plot(ptbCones(:),isetbioCones(:),'o','MarkerSize', 10);
         plot([0 0.5],[0 0.5], '--');
         xlabel('PTB cones');
         ylabel('ISET cones');
