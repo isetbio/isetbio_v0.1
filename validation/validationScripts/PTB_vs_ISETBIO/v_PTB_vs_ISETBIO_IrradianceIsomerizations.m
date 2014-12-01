@@ -18,6 +18,14 @@ function varargout = v_PTB_vs_ISETBIO_IrradianceIsomerizations(varargin)
 % 2) Isetbio and PTB agree to about a percent or quantal efficiencies, but
 % not exactly, about the CIE 2-deg cone fundamentals, when converted to
 % quantal efficiencies.
+%
+% To do:
+%
+% 1) It might be good to vary some of the underlying parameters in both
+% calculational paths and make sure that all of the parameters are have
+% the expected and same effects in both cases.  Key parameters are lens and
+% macular pigment density, pigment optical density, photopigment
+% lambda-max, cone aperature area, photopigment quantal efficiency.
 
     %% Initialization
     % Initialize validation run and return params
