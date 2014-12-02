@@ -1,0 +1,1 @@
+This section contains scripts that examine the effects of different numerical precision (say in different hardware) on the reliability of data hash and full data validation. The speed of the two types of validations is also assessed.
