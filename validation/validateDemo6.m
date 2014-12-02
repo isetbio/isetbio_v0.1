@@ -16,8 +16,8 @@ function validateDemo6
     %UnitTest.setPref('updateGroundTruth', true);
     %UnitTest.setPref('updateGroundTruth', false);
     
-    UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
-    %UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
+    %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
+    UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
     UnitTest.setPref('generatePlots',  true); 
     %UnitTest.setPref('generatePlots',  false); 
     

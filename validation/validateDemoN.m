@@ -32,8 +32,8 @@ function validateDemoN
     % prefs that override the corresponding isetbioValidation prefs.
     % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
-        {'validateSceneReIllumination'} ...                                             % use ISETBIO prefs 
-        {'validateSceneReIllumination',  struct('generatePlots', true) } ...            % override the generatePlots preference
+        {'v_SceneReIllumination'} ...                                             % use ISETBIO prefs 
+        {'v_SceneReIllumination',  struct('generatePlots', true) } ...            % override the generatePlots preference
     };
 
     % runValidationSession without specifying a mode: we will be prompted

@@ -4,7 +4,7 @@ function structsAreSimilarWithinSpecifiedTolerance = structsAreSimilar(obj, grou
     graphMismatchedData = obj.validationParams.graphMismatchedData;
 
     result = {};
-    result = recursivelyCompareStructs('groundTruthData', groundTruthData, ...
+    result = recursivelyCompareStructs(obj, 'groundTruthData', groundTruthData, ...
                                        'validationData', validationData, ...
                                        tolerance, graphMismatchedData, result);
                                    
@@ -20,7 +20,7 @@ function structsAreSimilarWithinSpecifiedTolerance = structsAreSimilar(obj, grou
     
 end
 
-function result = recursivelyCompareStructs(struct1Name, struct1, struct2Name, struct2, tolerance, graphMismatchedData, oldResult)
+function result = recursivelyCompareStructs(obj, struct1Name, struct1, struct2Name, struct2, tolerance, graphMismatchedData, oldResult)
 
     result = oldResult;
     
@@ -81,7 +81,7 @@ function result = recursivelyCompareStructs(struct1Name, struct1, struct2Name, s
        % compare structs
        if isstruct(field1)
            if isstruct(field2)
-                result = recursivelyCompareStructs(field1Name, field1, field2Name, field2, tolerance, graphMismatchedData, result);
+                result = recursivelyCompareStructs(obj, field1Name, field1, field2Name, field2, tolerance, graphMismatchedData, result);
            else
                 resultIndex = numel(result)+1;
                 result{resultIndex} = sprintf('''%s'' is a struct but ''%s'' is not.', field1Name, field2Name);
@@ -114,7 +114,7 @@ function result = recursivelyCompareStructs(struct1Name, struct1, struct2Name, s
                        if (any(abs(field1(:)-field2(:)) > tolerance))
                             figureName = '';
                             if (graphMismatchedData)
-                                figureName = plotDataAndTheirDifference(field1, field2, field1Name, field2Name);
+                                figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name, field2Name);
                             end
                             resultIndex = numel(result)+1;
                             maxDiff = max(abs(field1(:)-field2(:)));
@@ -185,8 +185,10 @@ function result = CompareCellArrays(field1, field2, result)
 end
      
 
-function figureName = plotDataAndTheirDifference(field1, field2, field1Name, field2Name)
-    h = figure();
+function figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name, field2Name)
+  
+    obj.dataMismatchFigNumber = obj.dataMismatchFigNumber + 1;
+    h = figure(obj.dataMismatchFigNumber);
     figureName = sprintf('''%s'' vs. ''%s''', field1Name, field2Name);
     set(h, 'Name', figureName);
     clf;

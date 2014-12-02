@@ -17,7 +17,6 @@ classdef UnitTest < handle
         
         % Path to directory where all validation data will be stored
         validationDataDir;
-        
     end
     
     % Private properties
@@ -31,13 +30,17 @@ classdef UnitTest < handle
         % List of scripts to validate. Each entry contains a cell array with a
         % script name and an optional params struct.
         vScriptsList = {};
+        
+        % Starting figure number for figures showing mismatched data.
+        % These figures should remain open
+        dataMismatchFigNumber;
     end
     
     % Constant properties. These are the only properties that can be
     % accessed by Static methods
     properties (Constant) 
-        runTimeOptionNames              = {'generatePlots', 'printValidationReport'};
-        runTimeOptionDefaultValues      = {false false};
+        runTimeOptionNames              = {'generatePlots', 'closeFigsOnInit', 'printValidationReport'};
+        runTimeOptionDefaultValues      = {false true false};
         
         validationOptionNames           = {'type',                'verbosity', 'onRunTimeErrorBehavior',      'updateGroundTruth', 'updateValidationHistory', 'numericTolerance', 'graphMismatchedData'}
         validationOptionDefaultValues   = {'RUNTIME_ERRORS_ONLY', 'low',       'rethrowExemptionAndAbort',    false,               false,                     500*eps,             true};
@@ -45,6 +48,8 @@ classdef UnitTest < handle
         validValidationTypes            = {'RUNTIME_ERRORS_ONLY', 'FAST', 'FULL', 'PUBLISH'};
         validOnRunTimeErrorValues       = {'rethrowExemptionAndAbort', 'catchExemptionAndContinue'};
         validVerbosityLevels            = {'none', 'min', 'low', 'med', 'high', 'max'};
+        
+        minFigureNoForMistmatchedData = 10000;
     end
     
     % Public methods (This is the public API)
@@ -102,6 +107,9 @@ classdef UnitTest < handle
     methods (Static)
         % Method to remove all generated directories and files
         cleanUp();
+        
+        % Method to close all non-data mismatch figures
+        closeAllNonDataMismatchFigures()
         
         % Executive method to run a validation session
         runValidationSession(vScriptsList, desiredMode, verbosity);

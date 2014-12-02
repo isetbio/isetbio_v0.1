@@ -3,10 +3,14 @@ function validate(obj, vScriptsToRunList)
     
     fprintf('\n------------------------------------------------------------------------------------------------------------\n');
     fprintf('Running in ''%s'' mode with ''%s'' runtime hehavior (verbosity = ''%s'').', obj.validationParams.type, obj.validationParams.onRunTimeError, UnitTest.validVerbosityLevels{obj.validationParams.verbosity+1});
-    fprintf('\n------------------------------------------------------------------------------------------------------------\n');
     
     % Parse the scripts list to ensure it is valid
     obj.vScriptsList = obj.parseScriptsList(vScriptsToRunList);
+    
+    if (obj.validationParams.verbosity > 1) 
+        fprintf('\nWill validate %d scripts.', numel(obj.vScriptsList)); 
+    end
+    fprintf('\n------------------------------------------------------------------------------------------------------------\n');
     
     % get validation params
     validationParams = obj.validationParams;
@@ -14,6 +18,7 @@ function validate(obj, vScriptsToRunList)
     %Ensure that needed directories exist, and generates them if they do not
     obj.checkDirectories();
     
+
     % Go through each entry
     for scriptIndex = 1:numel(obj.vScriptsList) 
         
@@ -40,6 +45,7 @@ function validate(obj, vScriptsToRunList)
             end
         else % Use IOSETBIO prefs
             scriptRunParams = [];
+            
             if (strcmp(obj.validationParams.type, 'RUNTIME_ERRORS_ONLY'))
                 scriptRunParams.generatePlots = false;
             end
@@ -58,7 +64,7 @@ function validate(obj, vScriptsToRunList)
             fullLocalGroundTruthHistoryDataFile = sprintf('%s/%s/%s_FullGroundTruthDataHistory.mat', obj.validationDataDir, functionSubDirectory, scriptName);
             fastLocalGroundTruthHistoryDataFile = sprintf('%s/%s/%s_FastGroundTruthDataHistory.mat', obj.validationDataDir, functionSubDirectory, scriptName);
         else
-            error('File ''%s'' not found in Matlab''s path.', scriptName);
+            error('A file named ''%s'' does not exist in the path.', scriptName);
         end
    
         
@@ -180,6 +186,7 @@ function validate(obj, vScriptsToRunList)
                     end
                 end
 
+                
                 if (~groundTruthFastValidationFailed)
                     
                     if (validationParams.updateValidationHistory)
@@ -294,7 +301,24 @@ function validate(obj, vScriptsToRunList)
             UnitTest.printValidationReport(validationReport); 
         end
         
+        % Make sure figs are rendered at the conclusion of the script validation
+        drawnow;
+        pause(0.01);
+        
     end % scriptIndex
+    
+    
+    % Close any remaining non-data mismatch figures
+    if (~isempty(scriptRunParams)) && (isfield(scriptRunParams, 'closeFigsOnInit'))
+        closeFigsOnExit = scriptRunParams.closeFigsOnInit;
+    else
+        closeFigsOnExit = getpref('isetbioValidation', 'closeFigsOnInit');
+    end
+
+    if (closeFigsOnExit)
+       UnitTest.closeAllNonDataMismatchFigures(); 
+    end
+
 end
 
 

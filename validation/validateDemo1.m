@@ -23,11 +23,12 @@ function validateDemo1
     %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
     %UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
     %UnitTest.setPref('generatePlots',  true); 
-    UnitTest.setPref('generatePlots',  false); 
+    UnitTest.setPref('generatePlots',  true); 
+    UnitTest.setPref('closeFigsOnInit', true);
     
     %UnitTest.setPref('verbosity', 'none');
-    UnitTest.setPref('verbosity', 'min');
-    %UnitTest.setPref('verbosity', 'low');
+    %UnitTest.setPref('verbosity', 'min');
+    UnitTest.setPref('verbosity', 'low');
     %UnitTest.setPref('verbosity', 'med');
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max');
@@ -44,10 +45,12 @@ function validateDemo1
     % prefs that override the corresponding isetbioValidation prefs.
     % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
-        {'validateSceneReIllumination'} ...                                  % use ISETBIO prefs
-        {'validateOTFandPupilSize',    struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots
-        {'PTB_vs_ISETBIO_Irradiance',  struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots 
-        {'validateSkeleton'} 
+   %     {'v_sceneReIllumination'} ...                                  % use ISETBIO prefs
+   %     {'v_OTFandPupilSize',    struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots
+        {'v_PTB_vs_ISETBIO_IrradianceIsomerizations',  struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots 
+        {'v_Skeleton', struct('generatePlots', true)}...
+        {'v_sceneReIllumination'} ...
+        {'v_Skeleton', struct('generatePlots', true)}...
     };
 
     % Run a validation session without specifying a mode: we will be prompted to specify one

@@ -120,5 +120,11 @@ function validatePublish(vScriptsList)
                 );
             
     % ... and Go ! 
-    UnitTestOBJ.validate(vScriptsList);       
+    UnitTestOBJ.validate(vScriptsList);     
+    
+    % Here we must push to github
+    
+    % Cleanup HTML directory
+    UnitTestOBJ.removeHTMLDir();
+    
 end

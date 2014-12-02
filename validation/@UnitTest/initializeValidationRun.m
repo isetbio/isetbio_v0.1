@@ -24,7 +24,11 @@ function runParams = initializeRunTimeParams(varargin)
         % If the passed argument is an empty array, use the isetbio prefs
         if (isempty(runParamsPassed))
             runParams = defaultParams;
-            runParams.generatePlots = getpref('isetbioValidation', 'generatePlots');
+            runParams.generatePlots   = getpref('isetbioValidation', 'generatePlots');
+            runParams.closeFigsOnInit = getpref('isetbioValidation', 'closeFigsOnInit');
+            if (runParams.closeFigsOnInit)
+                UnitTest.closeAllNonDataMismatchFigures();
+            end
             return;
         end
         
@@ -52,7 +56,10 @@ function runParams = initializeRunTimeParams(varargin)
        runParams = defaultParams; 
        runParams.printValidationReport = true;
        runParams.generatePlots = true;
+       runParams.closeFigsOnInit = false;
     end 
+    
+    if (runParams.closeFigsOnInit)
+       UnitTest.closeAllNonDataMismatchFigures()
+    end
 end
-
-        

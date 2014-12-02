@@ -20,19 +20,22 @@ function validateDemo2
     %UnitTest.setPref('updateGroundTruth', false);
     %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
     UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
-    %UnitTest.setPref('generatePlots',  true); 
+    UnitTest.setPref('generatePlots',  true); 
     %UnitTest.setPref('generatePlots',  false); 
     
+    UnitTest.setPref('closeFigsOnInit', true);
+    %UnitTest.setPref('closeFigsOnInit', false);
+      
     %UnitTest.setPref('verbosity', 'none');
     %UnitTest.setPref('verbosity', 'min');
-    %UnitTest.setPref('verbosity', 'low');
+    UnitTest.setPref('verbosity', 'low');
     %UnitTest.setPref('verbosity', 'med');
-    UnitTest.setPref('verbosity', 'high');
+    %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max'); 
     UnitTest.setPref('numericTolerance', 400*eps);
     %UnitTest.setPref('graphMismatchedData', true);
     %UnitTest.setPref('graphMismatchedData', false);
-    
+
     
     % Print available isetbioValidation prefs and their current values
     UnitTest.listPrefs();
@@ -42,8 +45,8 @@ function validateDemo2
     % prefs that override the corresponding isetbioValidation prefs.
     % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
-        {'validationScripts/PTB_vs_ISETBIO', struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots 
-        {'validationScripts/Scene'} ...                                            % use ISETBIO prefs
+        {'validationScripts/PTB_vs_ISETBIO'} ...   % override the ISETBIO pref for generatePlots 
+        {'validationScripts/Scene',  struct('generatePlots', false) } ...                                            % use ISETBIO prefs
         {'validationScripts/HumanEye'} ...                                         % use ISETBIO prefs
     };
     

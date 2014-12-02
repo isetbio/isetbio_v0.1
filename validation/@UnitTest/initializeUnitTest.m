@@ -25,4 +25,6 @@ function initializeUnitTest(obj)
         
     % initialize numeric tolerance based on isetbioValidation prefs
     obj.validationParams.numericTolerance = getpref('isetbioValidation', 'numericTolerance');
+    
+    obj.dataMismatchFigNumber = UnitTest.minFigureNoForMistmatchedData;
 end

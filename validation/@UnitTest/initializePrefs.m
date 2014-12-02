@@ -29,6 +29,13 @@ function initializePrefs(initMode)
         setpref('isetbioValidation', 'generatePlots',  value); 
     end
     
+    if (~ispref('isetbioValidation', 'closeFigsOnInit'))  || (strcmp(initMode, 'reset'))
+        index = find(strcmp(UnitTest.runTimeOptionNames, 'closeFigsOnInit'));
+        value = UnitTest.runTimeOptionDefaultValues{index};
+        setpref('isetbioValidation', 'closeFigsOnInit',  value); 
+    end
+    
+    
     if (~ispref('isetbioValidation', 'verbosity'))  || (strcmp(initMode, 'reset'))
         index = find(strcmp(UnitTest.validationOptionNames, 'verbosity'));
         value = UnitTest.validationOptionDefaultValues{index};
