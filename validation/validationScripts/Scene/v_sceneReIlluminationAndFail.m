@@ -1,4 +1,4 @@
-function varargout = validateSceneReIlluminationAndFail(varargin)
+function varargout = v_sceneReIlluminationAndFail(varargin)
 %
 % Skeleton validation script that raises a run-time excemption for testing. 
 %

@@ -1,4 +1,4 @@
-function varargout = PTB_vs_ISETBIO_Colorimetry(varargin)
+function varargout = v_PTB_vs_ISETBIO_Colorimetry(varargin)
 %
 %  Validate ISETBIO-based colorimetric computations by comparing to PTB-based colorimetric computations.
 %

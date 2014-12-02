@@ -1,4 +1,4 @@
-function varargout = validateSkeleton(varargin)
+function varargout = v_Skeleton(varargin)
 %
 % Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code. 
 %
@@ -50,7 +50,7 @@ function ValidationScript(runTimeParams)
     
     %% Plotting
     if (runTimeParams.generatePlots)
-        figure(1);
+        figure(7);
         clf;
         plot(1:numel(result), result, 'k-');
         hold on;

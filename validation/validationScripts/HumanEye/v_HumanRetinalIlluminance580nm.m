@@ -1,4 +1,4 @@
-function varargout = validateHumanRetinalIlluminance580nm(varargin)
+function varargout = v_HumanRetinalIlluminance580nm(varargin)
 %
 % Validate that a photon flux of 10^15 photons/cm^2/sec at 580 nm corresponds to a retinal illuminance of 590,000 photopic trolands.  
 %

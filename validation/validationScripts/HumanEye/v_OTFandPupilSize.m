@@ -1,4 +1,4 @@
-function varargout =  validateOTFandPupilSize(varargin)
+function varargout =  v_OTFandPupilSize(varargin)
 %
 % Validate the ISETBIO's OTF as a function of pupil size by comparing it to the Watson (2013) OTF model.
 % "A formula for the mean human optical modulation transfer function as a function of pupil size".

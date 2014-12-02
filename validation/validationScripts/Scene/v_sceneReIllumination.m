@@ -1,4 +1,4 @@
-function varargout = validateSceneReIllumination(varargin)
+function varargout = v_sceneReIllumination(varargin)
 %
 % Validate changes in scene illuminant. 
 %
