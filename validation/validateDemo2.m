@@ -20,11 +20,11 @@ function validateDemo2
     %UnitTest.setPref('updateGroundTruth', false);
     %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
     UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
+    UnitTest.setPref('numericTolerance', 400*eps);
     UnitTest.setPref('generatePlots',  true); 
-    %UnitTest.setPref('generatePlots',  false); 
-    
     UnitTest.setPref('closeFigsOnInit', true);
-    %UnitTest.setPref('closeFigsOnInit', false);
+    UnitTest.setPref('graphMismatchedData', true);
+    
       
     %UnitTest.setPref('verbosity', 'none');
     %UnitTest.setPref('verbosity', 'min');
@@ -32,13 +32,11 @@ function validateDemo2
     %UnitTest.setPref('verbosity', 'med');
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max'); 
-    UnitTest.setPref('numericTolerance', 400*eps);
-    %UnitTest.setPref('graphMismatchedData', true);
-    %UnitTest.setPref('graphMismatchedData', false);
-
     
+
     % Print available isetbioValidation prefs and their current values
     UnitTest.listPrefs();
+    pause(1);
     
     % Pass a list of directories to validate.  Each entry contains a cell array with 
     % with a directory of validation scripts and an optional struct with
