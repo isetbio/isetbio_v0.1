@@ -21,7 +21,11 @@ function data = validationData(varargin)
         if ismember(fieldName, fieldnames(validationData))
             fprintf(2,'\tField ''%s'' already exists in the validationData struct. Its value will be overriden.\n', fieldName);
         end
-        validationData.(fieldName) = fieldValue;
+        if (isnumeric(fieldValue))
+            validationData.(fieldName) = round(fieldValue,16);
+        else
+            validationData.(fieldName) = fieldValue;
+        end
     end
          
 end
