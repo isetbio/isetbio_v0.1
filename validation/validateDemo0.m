@@ -29,7 +29,7 @@ function validateDemo0
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max');
     
-    UnitTest.setPref('numericTolerance', 2*eps);
+    UnitTest.setPref('numericTolerance', 10*eps);
     UnitTest.setPref('graphMismatchedData', true);
     
     % Print available isetbioValidation prefs and their current values
@@ -41,8 +41,8 @@ function validateDemo0
     % prefs that override the corresponding isetbioValidation prefs.
     % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
-        {'v_DataHash_VS_FullData'} ... 
-        {'v_PTB_vs_ISETBIO_IrradianceIsomerizations'}
+        {'v_NumericalPrecision'} ... 
+        {'v_PTB_vs_ISETBIO_Colorimetry'} ...
     };
 
     % Run a validation session without specifying a mode: we will be prompted to specify one

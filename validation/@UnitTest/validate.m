@@ -175,7 +175,9 @@ function validate(obj, vScriptsToRunList)
                         groundTruthFastValidationFailed = false;
                     else
                         if (obj.validationParams.verbosity > 0) 
-                            fprintf(2,'\tFast validation      : FAILED against ground truth data of %s\n', groundTruthTime);
+                            fprintf(2,'\tFast validation      : FAILED against ground truth data of %s.\n', groundTruthTime);
+                            fprintf(2,'\tDataHash-this run    : %s\n', hashSHA25);
+                            fprintf(2,'\tDataHash-ground truth: %s\n', groundTruthData);
                         end
                         groundTruthFastValidationFailed = true;
                     end
