@@ -36,26 +36,27 @@ function ValidationScript(runTimeParams)
     
     %% Internal validations
     % The result of a computation: a vector of doubles
-    result = eps*2.^([0:11]);
+    result = eps*(2.^([0:20]));
     
-    % Conversion to floating-point symbolic form
-    resultSymFloat    = sym(result, 'f');
-    
-    % Conversion to rational symbolic form
-    resultSymRational = sym(result, 'r');
-    
-    % Conversion to decimal symbolic form
-    resultSymDecimal = sym(result, 'd');
-    
-    % Update record
-    UnitTest.validationRecord('PASSED', 'All OK');
+    % Doubles are represented by 64 bits with
+    % 
+    % Conversion to N- digit precision
+    for index = 1:numel(result)
+        for nDigits = 25:31
+            resultRepresentations(index, nDigits) = round(result(index),nDigits);
+            if (abs(resultRepresentations(index, nDigits) - result(index)) == 0)
+                UnitTest.validationRecord('PASSED', sprintf('eps*%d is represented accurately with %d decimal digits.', 2^(index-1), nDigits));
+            else
+                UnitTest.validationRecord('FAILED', sprintf('eps*%d is not represented accurately with %d decimal digits.', 2^(index-1), nDigits));
+            end
+             
+        end
+    end
 
     % append to validationData
     UnitTest.validationData('resultDouble', result);
-    UnitTest.validationData('resultRound10', round(result,10));
-    UnitTest.validationData('resultRound15', round(result,15));
-    UnitTest.validationData('resultRound20', round(result,20));
-    UnitTest.validationData('resultRound25', round(result,25));
+    UnitTest.validationData('resultRepresentations', resultRepresentations);
+    
     %% Plotting
     if (runTimeParams.generatePlots)
         
