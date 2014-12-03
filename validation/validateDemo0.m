@@ -14,8 +14,8 @@ function validateDemo0
     
     
     % Change any preferences by uncommenting any of the following:
-    UnitTest.setPref('updateValidationHistory', true);
-    UnitTest.setPref('updateGroundTruth', true);
+    UnitTest.setPref('updateValidationHistory', false);
+    UnitTest.setPref('updateGroundTruth', false);
     %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
     UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
     %UnitTest.setPref('generatePlots',  true); 
@@ -41,7 +41,8 @@ function validateDemo0
     % prefs that override the corresponding isetbioValidation prefs.
     % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
-        {'v_DataHash_VS_FullData' } ... 
+        {'v_DataHash_VS_FullData'} ... 
+        {'v_PTB_vs_ISETBIO_IrradianceIsomerizations'}
     };
 
     % Run a validation session without specifying a mode: we will be prompted to specify one

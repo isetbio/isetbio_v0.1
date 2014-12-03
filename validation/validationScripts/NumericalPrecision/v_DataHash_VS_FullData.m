@@ -52,10 +52,10 @@ function ValidationScript(runTimeParams)
 
     % append to validationData
     UnitTest.validationData('resultDouble', result);
-    UnitTest.validationData('resultSymbolicFloatingPoint', resultSymFloat);
-    UnitTest.validationData('resultSymbolicRational', resultSymRational);
-    UnitTest.validationData('resultSymbolicDecimal', resultSymDecimal);
-    
+    UnitTest.validationData('resultRound10', round(result,10));
+    UnitTest.validationData('resultRound15', round(result,15));
+    UnitTest.validationData('resultRound20', round(result,20));
+    UnitTest.validationData('resultRound25', round(result,25));
     %% Plotting
     if (runTimeParams.generatePlots)
         
