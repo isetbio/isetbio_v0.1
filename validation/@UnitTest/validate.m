@@ -115,7 +115,7 @@ function validate(obj, vScriptsToRunList)
             command = sprintf('try \n\t%s  \n\t exemptionRaisedFlag = false; \ncatch err \n\t exemptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''Exemption raised. Exemption Message: %%s'', err.message), true}; \n\t rethrow(err);  \nend', commandString);
         end
         
-        if (obj.validationParams.verbosity >= 3)
+        if (obj.validationParams.verbosity > 3)
             fprintf('\nRunning with ');
             eval('scriptRunParams');
         end
@@ -174,6 +174,10 @@ function validate(obj, vScriptsToRunList)
                         if (obj.validationParams.verbosity > 0) 
                             fprintf('\tFast validation      : PASSED against ground truth data of %s\n', groundTruthTime);
                         end
+                        if (obj.validationParams.verbosity > 2) 
+                            fprintf('\tData hash key        : %s\n', hashSHA25);
+                        end
+                        
                         groundTruthFastValidationFailed = false;
                     else
                         if (obj.validationParams.verbosity > 0) 
