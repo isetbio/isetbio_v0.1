@@ -159,8 +159,10 @@ function validate(obj, vScriptsToRunList)
             if ( (strcmp(validationParams.type, 'FAST'))  && ...
                  (~validationFailedFlag) && (~exemptionRaisedFlag) )
 
-                % Generate SHA256 hash from the validationData
-                hashSHA25 = obj.generateSHA256Hash(validationData);
+                % Generate SHA256 hash from the validationData.hashData
+                % substruct, which is a truncated copy of the data to
+                % 12-decimal digits
+                hashSHA25 = obj.generateSHA256Hash(validationData.hashData);
 
                 % Load and check value stored in LocalGroundTruthHistoryDataFile 
                 dataFileName = fastLocalGroundTruthHistoryDataFile;

@@ -45,14 +45,13 @@ function validateDemo1
     % prefs that override the corresponding isetbioValidation prefs.
     % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
-   %     {'v_sceneReIllumination'} ...                                  % use ISETBIO prefs
-   %     {'v_OTFandPupilSize',    struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots
-        {'v_PTB_vs_ISETBIO_Colorimetry',  struct('generatePlots', true) } ...   % override the ISETBIO pref for generatePlots 
-        {'v_Skeleton', struct('generatePlots', true)}...
-        {'v_sceneReIllumination'} ...
-        {'v_Skeleton', struct('generatePlots', true)}...
+        {'v_PTB_vs_ISETBIO_Colorimetry'} ... 
     };
 
-    % Run a validation session without specifying a mode: we will be prompted to specify one
+    % Run a FAST validation session (comparing hash keys)
     UnitTest.runValidationSession(vScriptsList, 'FAST');
+    
+    % Run a FULL validation session (comparing actual data)
+    UnitTest.runValidationSession(vScriptsList, 'FULL');
+    
 end

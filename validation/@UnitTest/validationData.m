@@ -21,11 +21,20 @@ function data = validationData(varargin)
         if ismember(fieldName, fieldnames(validationData))
             fprintf(2,'\tField ''%s'' already exists in the validationData struct. Its value will be overriden.\n', fieldName);
         end
+        
+        % save the full data
+        validationData.(fieldName) = fieldValue;
+        
+        % save truncated data in hashData.(fieldName)
         if (isnumeric(fieldValue))
-            validationData.(fieldName) = round(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
+            validationData.hashData.(fieldName) = round(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
+        elseif (isstruct(fieldValue))
+            fprintf(2,'Truncation to 12 decimal digits for struct fields is not implemented yet!!\n');
+            validationData.hashData.(fieldName) = fieldValue;
         else
-            validationData.(fieldName) = fieldValue;
+            validationData.hashData.(fieldName) = fieldValue;
         end
+ 
     end
          
 end
