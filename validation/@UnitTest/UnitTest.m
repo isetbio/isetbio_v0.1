@@ -49,7 +49,10 @@ classdef UnitTest < handle
         validOnRunTimeErrorValues       = {'rethrowExemptionAndAbort', 'catchExemptionAndContinue'};
         validVerbosityLevels            = {'none', 'min', 'low', 'med', 'high', 'max'};
         
-        minFigureNoForMistmatchedData = 10000;
+        minFigureNoForMistmatchedData   = 10000;
+        
+        % number of decimal digits for rounding off data for hash computation 
+        decimalDigitNumRoundingForHashComputation = 12;
     end
     
     % Public methods (This is the public API)
