@@ -97,11 +97,11 @@ function plotResults(figNum, decimalDigits, result, resultRepresentations, figNa
         diff = abs(result-squeeze(resultRepresentations(k,:)));
         plot(result, diff, 'b.');
         hold on; 
-        plot([min(result) max(result)], 0.5*[eps eps], 'r-');
+        plot([min(result) max(result)], [eps eps], 'r-');
         
         hold off
         set(gca, 'XLim', [min(result) max(result)], 'YLim', [0 4*eps], ...
-             'YTick', [0 eps/2 eps eps*2 eps*4], 'YTickLabel', {'0', 'eps/2', 'eps', 'eps*2', 'eps*4'});
+             'YTick', [0 eps eps*2 eps*4], 'YTickLabel', {'0', 'eps', 'eps*2', 'eps*4'});
         set(gca, 'FontSize', 12, 'FontName', 'Helvetica');
 
         xlabel('value', 'FontSize', 14, 'FontName', 'Helvetica', 'FontWeight', 'b');
