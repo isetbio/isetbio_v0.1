@@ -22,7 +22,7 @@ function data = validationData(varargin)
             fprintf(2,'\tField ''%s'' already exists in the validationData struct. Its value will be overriden.\n', fieldName);
         end
         if (isnumeric(fieldValue))
-            validationData.(fieldName) = round(fieldValue,16);
+            validationData.(fieldName) = round(fieldValue,15);
         else
             validationData.(fieldName) = fieldValue;
         end
