@@ -154,50 +154,10 @@ function result = recursivelyCompareStructs(obj, struct1Name, struct1, struct2Na
                resultIndex = numel(result)+1;
                result{resultIndex} = sprintf('''%s'' is a cell but ''%s'' is not.', field1Name, field2Name);
            end
-       
-       elseif (isa(field1, 'sym'))
-           if (isa(field2, 'sym'))
-               if (ndims(field1) ~= ndims(field2))
-                   resultIndex = numel(result)+1;
-                   result{resultIndex} = sprintf('''%s'' is a %d-D symbolic whereas ''%s'' is a %d-D symbolic.', field1Name, ndims(field1), field2Name, ndims(field2));
-               else 
-                   if (any(size(field1)-size(field2)))    
-                        sizeField1String = sprintf((repmat('%2.0f  ', 1, numel(size(field1)))), size(field1));
-                        sizeField2String = sprintf((repmat('%2.0f  ', 1, numel(size(field2)))), size(field2));
-                        resultIndex = numel(result)+1;
-                        result{resultIndex} = sprintf('''%s'' is a [%s] symbolic matrix whereas ''%s'' is a [%s] matrix.', field1Name, sizeField1String, field2Name, sizeField2String);
-                   else
-                       % equal size numerics
-                       numericalValue1 = double(field1)
-                       numericalValue2 = double(field2)
-                       eps
-                       tolerance
-                       fprintf('Comparing symbolic quantities\n');
-                       abs(numericalValue1(:)-numericalValue2(:))
-                       if (any(abs(numericalValue1(:)-numericalValue2(:)) > tolerance))
-                           
-                           figureName = '';
-                            if (graphMismatchedData)
-                                figureName = plotDataAndTheirDifference(obj, numericalValue1, numericalValue2, field1Name, field2Name);
-                            end
-                            resultIndex = numel(result)+1;
-                            maxDiff = max(abs(numericalValue1(:)-numericalValue2(:)));
-                            if (isempty(figureName))
-                                result{resultIndex} = sprintf('Max difference between ''%s'' and ''%s'' (%g) is greater than the set tolerance (%g).', field1Name, field2Name, maxDiff, tolerance);
-                            else
-                                result{resultIndex} = sprintf('Max difference between ''%s'' and ''%s'' (%g) is greater than the set tolerance (%g). See figure named: ''%s''', field1Name, field2Name, maxDiff, tolerance, figureName);
-                            end
-                       end
-                   end
-               end
-           else
-               resultIndex = numel(result)+1;
-               result{resultIndex} = sprintf('''%s'' is a symbolic quantity but ''%s'' is not.', field1Name, field2Name);
-           end
        else
             class(field1)
             class(field2)
-            error('Do not know this class type');
+            error('Do not know how to compare this class type');
         end
     end  % for k
        
@@ -227,6 +187,14 @@ function result = CompareCellArrays(field1, field2, result)
                    result{resultIndex} = sprintf('Corresponding cell fields have different numeric values: ''%g'' vs. ''%g''.', field1{k}, field2{k});
                end
           else
+              resultIndex = numel(result)+1;
+              result{resultIndex} = sprintf('Corresponding cell fields have different types');
+           end
+       elseif (iscell(field1{k}))
+           if (iscell(field2{k}))
+               resultIndex = numel(result)+1;
+               result{resultIndex} = CompareCellArrays(field1, field2, result);
+           else
               resultIndex = numel(result)+1;
               result{resultIndex} = sprintf('Corresponding cell fields have different types');
            end

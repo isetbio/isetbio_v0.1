@@ -29,8 +29,9 @@ function data = validationData(varargin)
         if (isnumeric(fieldValue))
             validationData.hashData.(fieldName) = round(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
         elseif (isstruct(fieldValue))
-            fprintf(2,'Truncation to 12 decimal digits for struct fields is not implemented yet!!\n');
-            validationData.hashData.(fieldName) = fieldValue;
+            validationData.hashData.(fieldName) = roundStruct(fieldValue);
+        elseif (iscell(fieldValue))
+            validationData.hashData.(fieldName) = roundCellArray(fieldValue);
         else
             validationData.hashData.(fieldName) = fieldValue;
         end
@@ -39,5 +40,59 @@ function data = validationData(varargin)
          
 end
 
+% Method to recursive round a struct
+function s = roundStruct(oldStruct)
+
+    s = oldStruct;
+    
+    if (isempty(s))
+        return;
+    end
+    
+    structFieldNames = fieldnames(s);
+    for k = 1:numel(structFieldNames)
+        
+        % get field
+        fieldValue = s.(structFieldNames{k});
+        
+        if isstruct(fieldValue)
+            s.(structFieldNames{k}) = roundStruct(fieldValue);
+        elseif ischar(fieldValue)
+            s.(structFieldNames{k}) = fieldValue;
+        elseif isnumeric(fieldValue)
+            s.(structFieldNames{k}) = round(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
+        elseif iscell(fieldValue)
+            s.(structFieldNames{k}) = roundCellArray(fieldValue);
+        else
+            class(fieldValue)
+            error('Do not know how to round this class type');
+        end
+    end
+    
+end
+
+
+% Method to recursive round a cellArray
+function cellArray = roundCellArray(oldCellArray)
+    cellArray = oldCellArray;
+    for k = 1:numel(cellArray)
+        fieldValue = cellArray{k};
+        
+        % Char values
+        if ischar(fieldValue )
+             % do nothing
+             
+        % Numeric values
+        elseif (isnumeric(fieldValue))
+            cellArray{k} = round(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
+        
+        % Cells
+        elseif (iscell(fieldValue))
+            cellArray{k} = roundCellArray(fieldValue);
+        else
+            fprintf(2,'UnitTest.validatioData.roundCellArray: non-char, non-numeric cell array rounding not implemented\n');
+        end
+    end
+end
 
     

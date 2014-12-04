@@ -160,10 +160,12 @@ function validate(obj, vScriptsToRunList)
                  (~validationFailedFlag) && (~exemptionRaisedFlag) )
 
                 % Generate SHA256 hash from the validationData.hashData
-                % substruct, which is a truncated copy of the data to
-                % 12-decimal digits
+                % substruct, which is a truncated copy of the data to 12-decimal digits
                 hashSHA25 = obj.generateSHA256Hash(validationData.hashData);
 
+                % hashData not needed after hash key-generation, so delete it
+                validationData = rmfield(validationData, 'hashData');
+                
                 % Load and check value stored in LocalGroundTruthHistoryDataFile 
                 dataFileName = fastLocalGroundTruthHistoryDataFile;
                 forceUpdateGroundTruth = false;
