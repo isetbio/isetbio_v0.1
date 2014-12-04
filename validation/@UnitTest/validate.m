@@ -159,6 +159,12 @@ function validate(obj, vScriptsToRunList)
             if ( (strcmp(validationParams.type, 'FAST'))  && ...
                  (~validationFailedFlag) && (~exemptionRaisedFlag) )
 
+                if (~isfield(validationData, 'hashData'))
+                    if (obj.validationParams.verbosity > 1) 
+                        fprintf('\tNote (*)             : Scipt does not store any validation data\n');
+                    end
+                    validationData.hashData = struct();
+                end
                 % Generate SHA256 hash from the validationData.hashData
                 % substruct, which is a truncated copy of the data to 12-decimal digits
                 hashSHA25 = obj.generateSHA256Hash(validationData.hashData);
@@ -241,6 +247,12 @@ function validate(obj, vScriptsToRunList)
                 dataFileName = fullLocalGroundTruthHistoryDataFile;
                 forceUpdateGroundTruth = false;
 
+                
+                if (isempty(fieldnames(validationData)))
+                    if (obj.validationParams.verbosity > 1) 
+                        fprintf('\tNote (*)             : Scipt does not store any validation data\n');
+                    end
+                end
                 if (exist(dataFileName, 'file') == 2)
                     [groundTruthData, groundTruthTime] = obj.importGroundTruthData(dataFileName);
                     if (obj.structsAreSimilar(groundTruthData, validationData))

@@ -11,8 +11,10 @@ function structsAreSimilarWithinSpecifiedTolerance = structsAreSimilar(obj, grou
     if (isempty(result))
         structsAreSimilarWithinSpecifiedTolerance = true;
     else
-       for k = 1:numel(result)
-          fprintf(2,'\t[data mismatch %2d]   : %s\n ', k, char(result{k}));
+       if (obj.validationParams.verbosity > 0) 
+           for k = 1:numel(result)
+              fprintf(2,'\t[data mismatch %2d]   : %s\n ', k, char(result{k}));
+           end
        end
        structsAreSimilarWithinSpecifiedTolerance = false;
     end

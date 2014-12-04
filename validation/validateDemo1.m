@@ -21,14 +21,14 @@ function validateDemo1
     %UnitTest.setPref('updateGroundTruth', true);
     %UnitTest.setPref('updateGroundTruth', false);
     %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
-    %UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
+    UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
     %UnitTest.setPref('generatePlots',  true); 
     UnitTest.setPref('generatePlots',  false); 
     UnitTest.setPref('closeFigsOnInit', true);
     
-    %UnitTest.setPref('verbosity', 'none');
+    UnitTest.setPref('verbosity', 'none');
     %UnitTest.setPref('verbosity', 'min');
-    UnitTest.setPref('verbosity', 'low');
+    %UnitTest.setPref('verbosity', 'low');
     %UnitTest.setPref('verbosity', 'med');
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max');
@@ -45,8 +45,9 @@ function validateDemo1
     % prefs that override the corresponding isetbioValidation prefs.
     % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
-        {'v_PTB_vs_ISETBIO_Colorimetry'} ... 
-        {'v_sceneReIllumination',  struct('generatePlots', false) } ...
+        {'validationScripts/PTB_vs_ISETBIO', struct('generatePlots', false) } ...    % override the ISETBIO pref for 'generatePlots'
+        {'validationScripts/Scene', struct('generatePlots', false)} ...             % use ISETBIO prefs
+        {'validationScripts/HumanEye', struct('generatePlots', false) }
     };
 
     % Run a FAST validation session (comparing hash keys)
