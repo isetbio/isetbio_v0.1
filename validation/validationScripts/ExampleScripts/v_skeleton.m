@@ -1,4 +1,4 @@
-function varargout = v_Skeleton(varargin)
+function varargout = v_skeleton(varargin)
 %
 % Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code. 
 %
@@ -14,9 +14,9 @@ function varargout = v_Skeleton(varargin)
     
     %% Reporting and return params
     if (nargout > 0)
-        [validationReport, validationFailedFlag] = UnitTest.validationRecord('command', 'return');
+        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = UnitTest.validationRecord('command', 'return');
         validationData = UnitTest.validationData('command', 'return');
-        varargout = {validationReport, validationFailedFlag, validationData};
+        varargout = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData};
     else
         if (runTimeParams.printValidationReport)
             [validationReport, ~] = UnitTest.validationRecord('command', 'return');

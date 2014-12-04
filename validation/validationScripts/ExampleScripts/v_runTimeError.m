@@ -1,6 +1,6 @@
-function varargout = v_sceneReIlluminationAndFail(varargin)
+function varargout = v_runTimeError(varargin)
 %
-% Skeleton validation script that raises a run-time excemption for testing. 
+%  Example validation script that simulates runtime exemption. 
 %
 
     %% Initialization
@@ -14,9 +14,9 @@ function varargout = v_sceneReIlluminationAndFail(varargin)
     
     %% Reporting and return params
     if (nargout > 0)
-        [validationReport, validationFailedFlag] = UnitTest.validationRecord('command', 'return');
+        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = UnitTest.validationRecord('command', 'return');
         validationData = UnitTest.validationData('command', 'return');
-        varargout = {validationReport, validationFailedFlag, validationData};
+        varargout = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData};
     else
         if (runTimeParams.printValidationReport)
             [validationReport, ~] = UnitTest.validationRecord('command', 'return');

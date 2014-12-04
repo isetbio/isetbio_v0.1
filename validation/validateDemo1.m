@@ -17,22 +17,23 @@ function validateDemo1
     
     % Change any preferences by uncommenting any of the following:
     %UnitTest.setPref('updateValidationHistory', true);
-    %UnitTest.setPref('updateValidationHistory', false);
+    UnitTest.setPref('updateValidationHistory', false);
     %UnitTest.setPref('updateGroundTruth', true);
-    %UnitTest.setPref('updateGroundTruth', false);
+    UnitTest.setPref('updateGroundTruth', false);
     %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
     UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
     %UnitTest.setPref('generatePlots',  true); 
     UnitTest.setPref('generatePlots',  false); 
     UnitTest.setPref('closeFigsOnInit', true);
     
-    UnitTest.setPref('verbosity', 'none');
+    %UnitTest.setPref('verbosity', 'none');
     %UnitTest.setPref('verbosity', 'min');
-    %UnitTest.setPref('verbosity', 'low');
+    UnitTest.setPref('verbosity', 'low');
     %UnitTest.setPref('verbosity', 'med');
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max');
-    UnitTest.setPref('numericTolerance', 400*eps);
+    UnitTest.setPref('numericTolerance', 1E-12);
+    %UnitTest.setPref('numericTolerance', 500*eps);
     %UnitTest.setPref('graphMismatchedData', true);
     %UnitTest.setPref('graphMismatchedData', false);
     
@@ -47,7 +48,9 @@ function validateDemo1
     vScriptsList = {...
         {'validationScripts/PTB_vs_ISETBIO', struct('generatePlots', false) } ...    % override the ISETBIO pref for 'generatePlots'
         {'validationScripts/Scene', struct('generatePlots', false)} ...             % use ISETBIO prefs
-        {'validationScripts/HumanEye', struct('generatePlots', false) }
+        {'validationScripts/HumanEye', struct('generatePlots', false) } ...
+        {'validationScripts/Cones', struct('generatePlots', false) } ...
+        {'validationScripts/ExampleScripts', struct('generatePlots', false) } ...
     };
 
     % Run a FAST validation session (comparing hash keys)
