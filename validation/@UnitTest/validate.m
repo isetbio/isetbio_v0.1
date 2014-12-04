@@ -76,19 +76,19 @@ function validate(obj, vScriptsToRunList)
         
         if strcmp(validationParams.type, 'RUNTIME_ERRORS_ONLY')
             % Run script the regular way
-            commandString = sprintf(' [validationReport, validationFailedFlag, validationData] = %s(scriptRunParams);', scriptName);
+            commandString = sprintf(' [validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData] = %s(scriptRunParams);', scriptName);
             
         elseif strcmp(validationParams.type, 'FAST')
             % Create validationData sub directory if it does not exist;
             obj.generateDirectory(obj.validationDataDir, functionSubDirectory);
             % Run script the regular way
-            commandString = sprintf(' [validationReport, validationFailedFlag, validationData] = %s(scriptRunParams);', scriptName);
+            commandString = sprintf(' [validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData] = %s(scriptRunParams);', scriptName);
             
         elseif strcmp(validationParams.type, 'FULL')
             % Create validationData sub directory if it does not exist;
             obj.generateDirectory(obj.validationDataDir, functionSubDirectory);
             % Run script the regular way
-            commandString = sprintf(' [validationReport, validationFailedFlag, validationData] = %s(scriptRunParams);', scriptName);
+            commandString = sprintf(' [validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData] = %s(scriptRunParams);', scriptName);
             
         elseif strcmp(validationParams.type, 'PUBLISH')
             % Create HTML sub directory if it does not exist;
@@ -96,7 +96,7 @@ function validate(obj, vScriptsToRunList)
             % Critical: Assign the params variable to the base workstation
             assignin('base', 'scriptRunParams', scriptRunParams);
             % Form publish options struct
-            command = sprintf('[validationReport, validationFailedFlag, validationData] = %s(scriptRunParams);', scriptName);
+            command = sprintf('[validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData] = %s(scriptRunParams);', scriptName);
             options = struct(...
                 'codeToEvaluate', ['scriptRunParams;', char(10), sprintf('%s',command), char(10)'], ...
                 'evalCode',     true, ...
@@ -110,9 +110,9 @@ function validate(obj, vScriptsToRunList)
         
         % Form the try-catch command 
         if (strcmp(validationParams.onRunTimeError, 'catchExemptionAndContinue'))
-            command = sprintf('try \n\t%s \n\t exemptionRaisedFlag = false;  \ncatch err \n\t exemptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''Exemption raised (and caught). Exemption Message: %%s'', err.message), true}; \nend', commandString);
+            command = sprintf('try \n\t%s \n\t exemptionRaisedFlag = false;  \ncatch err \n\t exemptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''Exemption raised (and caught). Exemption Message: %%s'', err.message), true, false}; \nend', commandString);
         else
-            command = sprintf('try \n\t%s  \n\t exemptionRaisedFlag = false; \ncatch err \n\t exemptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''Exemption raised. Exemption Message: %%s'', err.message), true}; \n\t rethrow(err);  \nend', commandString);
+            command = sprintf('try \n\t%s  \n\t exemptionRaisedFlag = false; \ncatch err \n\t exemptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''Exemption raised. Exemption Message: %%s'', err.message), true, false}; \n\t rethrow(err);  \nend', commandString);
         end
         
         if (obj.validationParams.verbosity > 3)
@@ -129,18 +129,25 @@ function validate(obj, vScriptsToRunList)
     
         if strcmp(validationParams.type, 'PUBLISH')
             % Extract the value of the variables 'validationReport' in the MATLAB's base workspace and captures them in the corresponding local variable 'validationReport'
-            validationReport     = evalin('base', 'validationReport');
-            validationFailedFlag = evalin('base', 'validationFailedFlag');
-            validationData       = evalin('base', 'validationData');
+            validationReport                = evalin('base', 'validationReport');
+            validationFailedFlag            = evalin('base', 'validationFailedFlag');
+            validationFundametalFailureFlag = evalin('base', 'validationFundametalFailureFlag');
+            validationData                  = evalin('base', 'validationData');
         end
             
         if (obj.validationParams.verbosity > 0) 
             % Update the command line output
             if (validationFailedFlag)
-               fprintf(2, '\tInternal validation  : FAILED\n');
+                if (validationFundametalFailureFlag)
+                    fprintf(2, '\tInternal validation  : FUNDAMENTAL FAILURE !!\n');
+                else
+                    fprintf(2, '\tInternal validation  : FAILED\n');
+                end
             else
                fprintf('\tInternal validation  : PASSED\n'); 
             end
+            
+            
             if (exemptionRaisedFlag)
                fprintf(2, '\tRun-time status      : exemption raised\n');
             else

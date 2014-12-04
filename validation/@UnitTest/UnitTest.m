@@ -137,7 +137,7 @@ classdef UnitTest < handle
         describeValidationOptions();
         
         % Method to append messages to the validationReport
-        [report, validationFailedFlag] = validationRecord(varargin);
+        [report, validationFailedFlag, validationFundametalFailureFlag] = validationRecord(varargin);
         
         % Method to add validation data
         data = validationData(varargin);

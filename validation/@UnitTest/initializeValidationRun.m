@@ -60,6 +60,6 @@ function runParams = initializeRunTimeParams(varargin)
     end 
     
     if (runParams.closeFigsOnInit)
-       UnitTest.closeAllNonDataMismatchFigures()
+       UnitTest.closeAllNonDataMismatchFigures();
     end
 end
