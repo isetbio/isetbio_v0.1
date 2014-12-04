@@ -71,32 +71,35 @@ function validate(obj, vScriptsToRunList)
         % Initialize flags, reports, and validation data
         validationReport        = '';
         validationFailedFlag    = true;
+        validationFundamentalFailureFlag = true;
         exemptionRaisedFlag     = true;
         validationData          = [];
         
         if strcmp(validationParams.type, 'RUNTIME_ERRORS_ONLY')
             % Run script the regular way
-            commandString = sprintf(' [validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData] = %s(scriptRunParams);', scriptName);
+            commandString = sprintf(' [validationReport, validationFailedFlag, validationFundamentalFailureFlag, validationData] = %s(scriptRunParams);', scriptName);
             
         elseif strcmp(validationParams.type, 'FAST')
             % Create validationData sub directory if it does not exist;
             obj.generateDirectory(obj.validationDataDir, functionSubDirectory);
             % Run script the regular way
-            commandString = sprintf(' [validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData] = %s(scriptRunParams);', scriptName);
+            commandString = sprintf(' [validationReport, validationFailedFlag, validationFundamentalFailureFlag, validationData] = %s(scriptRunParams);', scriptName);
             
         elseif strcmp(validationParams.type, 'FULL')
             % Create validationData sub directory if it does not exist;
             obj.generateDirectory(obj.validationDataDir, functionSubDirectory);
             % Run script the regular way
-            commandString = sprintf(' [validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData] = %s(scriptRunParams);', scriptName);
+            commandString = sprintf(' [validationReport, validationFailedFlag, validationFundamentalFailureFlag, validationData] = %s(scriptRunParams);', scriptName);
             
         elseif strcmp(validationParams.type, 'PUBLISH')
+            % Create validationData sub directory if it does not exist;
+            obj.generateDirectory(obj.validationDataDir, functionSubDirectory);
             % Create HTML sub directory if it does not exist;
             obj.generateDirectory(obj.htmlDir, functionSubDirectory)
             % Critical: Assign the params variable to the base workstation
             assignin('base', 'scriptRunParams', scriptRunParams);
             % Form publish options struct
-            command = sprintf('[validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData] = %s(scriptRunParams);', scriptName);
+            command = sprintf('[validationReport, validationFailedFlag, validationFundamentalFailureFlag, validationData] = %s(scriptRunParams);', scriptName);
             options = struct(...
                 'codeToEvaluate', ['scriptRunParams;', char(10), sprintf('%s',command), char(10)'], ...
                 'evalCode',     true, ...
@@ -110,9 +113,9 @@ function validate(obj, vScriptsToRunList)
         
         % Form the try-catch command 
         if (strcmp(validationParams.onRunTimeError, 'catchExemptionAndContinue'))
-            command = sprintf('try \n\t%s \n\t exemptionRaisedFlag = false;  \ncatch err \n\t exemptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''Exemption raised (and caught). Exemption Message: %%s'', err.message), true, false}; \nend', commandString);
+            command = sprintf('try \n\t%s \n\t exemptionRaisedFlag = false;  \ncatch err \n\t exemptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''Exemption raised (and caught). Exemption Message: %%s'', err.message), true, false};  \nend', commandString);
         else
-            command = sprintf('try \n\t%s  \n\t exemptionRaisedFlag = false; \ncatch err \n\t exemptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''Exemption raised. Exemption Message: %%s'', err.message), true, false}; \n\t rethrow(err);  \nend', commandString);
+            command = sprintf('try \n\t%s  \n\t exemptionRaisedFlag = false; \ncatch err \n\t exemptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''Exemption raised. Exemption Message: %%s'', err.message), true, false};  \n\t rethrow(err);  \nend', commandString);
         end
         
         if (obj.validationParams.verbosity > 3)
@@ -126,19 +129,24 @@ function validate(obj, vScriptsToRunList)
         
         % Run the try-catch command
         eval(command);
-    
-        if strcmp(validationParams.type, 'PUBLISH')
+        
+        if (strcmp(validationParams.type, 'PUBLISH'))
             % Extract the value of the variables 'validationReport' in the MATLAB's base workspace and captures them in the corresponding local variable 'validationReport'
-            validationReport                = evalin('base', 'validationReport');
-            validationFailedFlag            = evalin('base', 'validationFailedFlag');
-            validationFundametalFailureFlag = evalin('base', 'validationFundametalFailureFlag');
-            validationData                  = evalin('base', 'validationData');
+            validationReport                 = evalin('base', 'validationReport');
+            validationFailedFlag             = evalin('base', 'validationFailedFlag');
+            validationFundamentalFailureFlag = evalin('base', 'validationFundamentalFailureFlag');
+            validationData                   = evalin('base', 'validationData');
         end
-            
+        
+        if (exemptionRaisedFlag)
+            validationFailedFlag             = validationReport{1}{2};
+            validationFundamentalFailureFlag = validationReport{1}{3};
+        end
+        
         if (obj.validationParams.verbosity > 0) 
             % Update the command line output
             if (validationFailedFlag)
-                if (validationFundametalFailureFlag)
+                if (validationFundamentalFailureFlag)
                     fprintf(2, '\tInternal validation  : FUNDAMENTAL FAILURE !!\n');
                 else
                     fprintf(2, '\tInternal validation  : FAILED\n');
@@ -146,7 +154,6 @@ function validate(obj, vScriptsToRunList)
             else
                fprintf('\tInternal validation  : PASSED\n'); 
             end
-            
             
             if (exemptionRaisedFlag)
                fprintf(2, '\tRun-time status      : exemption raised\n');
@@ -254,12 +261,17 @@ function validate(obj, vScriptsToRunList)
                 dataFileName = fullLocalGroundTruthHistoryDataFile;
                 forceUpdateGroundTruth = false;
 
-                
                 if (isempty(fieldnames(validationData)))
                     if (obj.validationParams.verbosity > 1) 
                         fprintf('\tNote (*)             : Scipt does not store any validation data\n');
                     end
                 end
+                
+                % hashData not needed for FULL validation, so remove it
+                if (isfield(validationData, 'hashData'))
+                    validationData = rmfield(validationData, 'hashData');
+                end
+                
                 if (exist(dataFileName, 'file') == 2)
                     [groundTruthData, groundTruthTime] = obj.importGroundTruthData(dataFileName);
                     if (obj.structsAreSimilar(groundTruthData, validationData))
@@ -318,10 +330,83 @@ function validate(obj, vScriptsToRunList)
             end  % FULL validation mode
             
             
-            if (strcmp(validationParams.type, 'PUBLISH'))
+            if ( (strcmp(validationParams.type, 'PUBLISH')) && ...
+                 (~validationFailedFlag) && (~exemptionRaisedFlag) )
+
+                % Do full validation
+                % Load and check value stored in LocalGroundTruthHistoryDataFile 
+                dataFileName = fullLocalGroundTruthHistoryDataFile;
+                forceUpdateGroundTruth = false;
+
+                if (isempty(fieldnames(validationData)))
+                    if (obj.validationParams.verbosity > 1) 
+                        fprintf('\tNote (*)             : Scipt does not store any validation data\n');
+                    end
+                end
+                
+                % hashData not needed for FULL validation, so remove it
+                if (isfield(validationData, 'hashData'))
+                    validationData = rmfield(validationData, 'hashData');
+                end
+                
+                if (exist(dataFileName, 'file') == 2)
+                    [groundTruthData, groundTruthTime] = obj.importGroundTruthData(dataFileName);
+                    if (obj.structsAreSimilar(groundTruthData, validationData))
+                        if (obj.validationParams.verbosity > 0) 
+                            fprintf('\tFull validation      : PASSED against ground truth data of %s\n', groundTruthTime);
+                        end
+                        groundTruthFullValidationFailed = false;
+                    else
+                        if (obj.validationParams.verbosity > 0) 
+                            fprintf(2,'\tFull validation      : FAILED against ground truth data of %s\n', groundTruthTime);
+                        end
+                        groundTruthFullValidationFailed = true;
+                    end
+                else
+                    forceUpdateGroundTruth = true;
+                    if (obj.validationParams.verbosity > 0) 
+                        fprintf('\tFull validation      : no ground truth dataset exists. Generating one. \n');
+                    end
+                end
+                
+                if (~groundTruthFullValidationFailed)
+                    
+                     if (validationParams.updateValidationHistory)
+                        % save/append to LocalValidationHistoryDataFile
+                        dataFileName = fullLocalValidationHistoryDataFile;
+                        if (exist(dataFileName, 'file') == 2)
+                            if (obj.validationParams.verbosity > 1) 
+                                fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
+                            end
+                        else
+                            if (obj.validationParams.verbosity > 1) 
+                                fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
+                            end
+                        end
+                        obj.exportData(dataFileName, validationData);
+                     end
+
+                    % save/append to LocalGroundTruthHistoryDataFile
+                    if (validationParams.updateGroundTruth) || (forceUpdateGroundTruth)
+                        dataFileName = fullLocalGroundTruthHistoryDataFile;
+                        if (exist(dataFileName, 'file') == 2)
+                            if (obj.validationParams.verbosity > 1) 
+                                fprintf('\tFull validation data : appended to ''%s''\n', dataFileName);
+                            end
+                        else
+                            if (obj.validationParams.verbosity > 1) 
+                                fprintf('\tFull validation data : written to ''%s''\n', dataFileName);
+                            end
+                        end
+                        obj.exportData(dataFileName, validationData);
+                    end
+                    
+                end % (~groundTruthFullValidationFailed)
+                
                 if (obj.validationParams.verbosity > 1) 
                     fprintf('\tReport published in  : ''%s''\n', htmlDirectory);
                 end
+                
             end  % PUBLISH MODE
             
         end  % validationParams.type, 'RUNTIME_ERRORS_ONLY'      
@@ -335,6 +420,7 @@ function validate(obj, vScriptsToRunList)
         pause(0.01);
         
     end % scriptIndex
+    
     
     
     % Close any remaining non-data mismatch figures

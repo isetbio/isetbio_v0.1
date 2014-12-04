@@ -1,12 +1,12 @@
 % Method to append messages to the validationReport
-function [report, validationFailedFlag, validationFundametalFailureFlag] = validationRecord(varargin)
+function [report, validationFailedFlag, validationFundamentalFailureFlag] = validationRecord(varargin)
     
     report = {};
     validationFailedFlag = false;
     
     persistent validationReport
     persistent validationFailedFlagVector
-    persistent validationFundametalFailureVector
+    persistent validationFundamentalFailureVector
     
     % Parse inputs
     self.message                    = '';
@@ -35,16 +35,16 @@ function [report, validationFailedFlag, validationFundametalFailureFlag] = valid
     if (strcmp(self.command, 'init'))
        validationReport = {};
        validationFailedFlagVector = [];
-       validationFundametalFailureVector = [];
+       validationFundamentalFailureVector = [];
        return;
     end
     
     if  (strcmp(self.command, 'return'))
         for k = 1:numel(validationReport)
-            report{k} = {validationReport{k}, validationFailedFlagVector(k), validationFundametalFailureVector(k)};
+            report{k} = {validationReport{k}, validationFailedFlagVector(k), validationFundamentalFailureVector(k)};
         end
         validationFailedFlag = any(validationFailedFlagVector);
-        validationFundametalFailureFlag = any(validationFundametalFailureVector);
+        validationFundamentalFailureFlag = any(validationFundamentalFailureVector);
         return;
     end
     
@@ -53,7 +53,7 @@ function [report, validationFailedFlag, validationFundametalFailureFlag] = valid
         index = numel(validationReport)+1;
         validationReport{index}                  = self.message;
         validationFailedFlagVector(index)        = false;
-        validationFundametalFailureVector(index) = false;
+        validationFundamentalFailureVector(index) = false;
         return;
     end
     
@@ -62,7 +62,7 @@ function [report, validationFailedFlag, validationFundametalFailureFlag] = valid
         index = numel(validationReport)+1;
         validationReport{index}                  = self.PASSED;
         validationFailedFlagVector(index)        = false;
-        validationFundametalFailureVector(index) = false;
+        validationFundamentalFailureVector(index) = false;
         return;
     end
     
@@ -71,7 +71,7 @@ function [report, validationFailedFlag, validationFundametalFailureFlag] = valid
         index = numel(validationReport)+1;
         validationReport{index}                  = self.FAILED;
         validationFailedFlagVector(index)        = true;
-        validationFundametalFailureVector(index) = false;
+        validationFundamentalFailureVector(index) = false;
         return;
     end
     
@@ -80,7 +80,7 @@ function [report, validationFailedFlag, validationFundametalFailureFlag] = valid
         index = numel(validationReport)+1;
         validationReport{index}                  = self.FUNDAMENTAL_CHECK_FAILED;
         validationFailedFlagVector(index)        = true;
-        validationFundametalFailureVector(index) = true;
+        validationFundamentalFailureVector(index) = true;
         return;
     end
     

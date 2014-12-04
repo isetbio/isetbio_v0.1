@@ -3,41 +3,47 @@ function validateDemo1
 % Validation demo illustrating how to 
 % - validate a list of scripts. 
 % - override the generatePlots isetbioValidation pref
-% - conduct a validationSession with unspecified mode, which results in
-%   a listing of all available modes.
+% - conduct a validationSession with different modes
 
     close all
     clc
     
-    % Initialize ISETBIO preferences
+    %% Initialize ISETBIO preferences
     UnitTest.initializePrefs();
-    % or reset to the default prefs
+    
+    % Optionally, reset prefs to the default values
     UnitTest.initializePrefs('reset');
     
     
     % Change any preferences by uncommenting any of the following:
-    %UnitTest.setPref('updateValidationHistory', true);
+    
+    %% Whether to update history
     UnitTest.setPref('updateValidationHistory', false);
-    %UnitTest.setPref('updateGroundTruth', true);
     UnitTest.setPref('updateGroundTruth', false);
+    
+    %% Run time behavior
     %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
     UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
-    %UnitTest.setPref('generatePlots',  true); 
-    UnitTest.setPref('generatePlots',  false); 
+    
+    %% Plot generation
+    UnitTest.setPref('generatePlots',  true); 
     UnitTest.setPref('closeFigsOnInit', true);
     
+    %% Verbosity
     %UnitTest.setPref('verbosity', 'none');
     %UnitTest.setPref('verbosity', 'min');
-    UnitTest.setPref('verbosity', 'low');
-    %UnitTest.setPref('verbosity', 'med');
+    %UnitTest.setPref('verbosity', 'low');
+    UnitTest.setPref('verbosity', 'med');
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max');
-    UnitTest.setPref('numericTolerance', 1E-12);
-    %UnitTest.setPref('numericTolerance', 500*eps);
-    %UnitTest.setPref('graphMismatchedData', true);
-    %UnitTest.setPref('graphMismatchedData', false);
     
-    % Print available isetbioValidation prefs and their current values
+    %% Numeric tolerance for comparison to ground truth data
+    UnitTest.setPref('numericTolerance', 300*eps);
+    
+    %% Whether to plot data that do not agree with the ground truth
+    UnitTest.setPref('graphMismatchedData', false);
+    
+    % Print  isetbioValidation prefs and their current values
     UnitTest.listPrefs();
     
     
@@ -46,17 +52,20 @@ function validateDemo1
     % prefs that override the corresponding isetbioValidation prefs.
     % At the moment only the generatePlots pref can be overriden.
     vScriptsList = {...
-        {'validationScripts/PTB_vs_ISETBIO', struct('generatePlots', false) } ...    % override the ISETBIO pref for 'generatePlots'
-        {'validationScripts/Scene', struct('generatePlots', false)} ...             % use ISETBIO prefs
-        {'validationScripts/HumanEye', struct('generatePlots', false) } ...
-        {'validationScripts/Cones', struct('generatePlots', false) } ...
-        {'validationScripts/ExampleScripts', struct('generatePlots', false) } ...
+        {'validationScripts/PTB_vs_ISETBIO', } ...    % override the ISETBIO pref for 'generatePlots'
+        {'validationScripts/Scene',          } ...    
+        {'validationScripts/HumanEye',       } ...
+        {'validationScripts/ExampleScripts', struct('generatePlots', true) } ...
     };
 
-    % Run a FAST validation session (comparing hash keys)
-    UnitTest.runValidationSession(vScriptsList, 'FAST');
+    % Run a FAST validation session (comparing SHA-256 hash keys of the data)
+    %UnitTest.runValidationSession(vScriptsList, 'FAST');
     
     % Run a FULL validation session (comparing actual data)
-    UnitTest.runValidationSession(vScriptsList, 'FULL');
+    %UnitTest.runValidationSession(vScriptsList, 'FULL');
     
+    % Run a FULL validation session without a specified mode. You will be
+    % promped to select one of the available modes
+    UnitTest.runValidationSession(vScriptsList);
+
 end
