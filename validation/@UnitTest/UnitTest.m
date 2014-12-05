@@ -52,6 +52,9 @@ classdef UnitTest < handle
         minFigureNoForMistmatchedData   = 10000;
         
         % number of decimal digits for rounding off data for hash computation 
+        % we have found that when data are truncated to 12 decimal digits
+        % the data hash keys across different computers are identical.
+        % 13 and higher decimal digits lead to different hash keys
         decimalDigitNumRoundingForHashComputation = 12;
     end
     
@@ -92,13 +95,13 @@ classdef UnitTest < handle
         vScriptsList = parseScriptsList(obj, vScriptsToRunList);
     
         % Method to recursively compare two struct for equality
-        result = structsAreSimilar(obj, groundTruthData, validationData);
+        [structsAreSimilarWithinSpecifiedTolerance, result] = structsAreSimilar(obj, groundTruthData, validationData);
         
         % Method to import a ground truth data entry
-        [validationData, validationTime] = importGroundTruthData(obj, dataFileName);
+        [validationData, extraData, validationTime] = importGroundTruthData(obj, dataFileName);
         
         % Method to export a validation entry to a validation file
-        exportData(obj, dataFileName, validationData);
+        exportData(obj, dataFileName, validationData, extraData);
         
         % Method to generate a hash0256 key based on the passed validationData
         hashSHA25 = generateSHA256Hash(obj,validationData);
@@ -139,8 +142,11 @@ classdef UnitTest < handle
         % Method to append messages to the validationReport
         [report, validationFailedFlag, validationFundametalFailureFlag] = validationRecord(varargin);
         
-        % Method to add validation data
+        % Method to add new data to the validation data struct
         data = validationData(varargin);
+        
+        % Method to add new data to the extra data struct
+        data = extraData(varargin);
         
         % Method to print the validationReport
         printValidationReport(validationReport);

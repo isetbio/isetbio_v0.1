@@ -1,3 +1,4 @@
+% Method to add new data to the validation data struct
 function data = validationData(varargin)
     
     data = [];

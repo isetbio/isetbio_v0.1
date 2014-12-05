@@ -14,9 +14,11 @@ function varargout = v_numericalPrecision(varargin)
     
     %% Reporting and return params
     if (nargout > 0)
-        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = UnitTest.validationRecord('command', 'return');
-        validationData = UnitTest.validationData('command', 'return');
-        varargout = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData};
+        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
+                          UnitTest.validationRecord('command', 'return');
+        validationData  = UnitTest.validationData('command', 'return');
+        extraData       = UnitTest.extraData('command', 'return');
+        varargout       = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData, extraData};
     else
         if (runTimeParams.printValidationReport)
             [validationReport, ~] = UnitTest.validationRecord('command', 'return');
@@ -44,8 +46,8 @@ function ValidationScript(runTimeParams)
     smallResult = gain*eps*rand(1,100*1000);
     smallResult = smallResult - mean(smallResult);
     
-    decimalDigits = [11 12 13 14 15 16];
-    tolerance = 1E-12;
+    decimalDigits = [10:16];
+    tolerance = 500*eps;
     
     % 
     % Conversion to N- digit precision
@@ -54,9 +56,9 @@ function ValidationScript(runTimeParams)
         largeResultRepresentations(k,:) = round(largeResult,nDigits);
         diff = abs(largeResult-squeeze(largeResultRepresentations(k,:)));
         if (any(diff >= tolerance ))
-            UnitTest.validationRecord('FAILED', sprintf('large result is not represented accurately with %d decimal digits.', nDigits));
+            UnitTest.validationRecord('message', sprintf('large result is not represented accurately with %d decimal digits.', nDigits));
         else
-            UnitTest.validationRecord('PASS', sprintf('large result is represented accurately with %d decimal digits.', nDigits));
+            UnitTest.validationRecord('message', sprintf('large result is represented accurately with %d decimal digits.', nDigits));
         end
     end
     
@@ -65,18 +67,19 @@ function ValidationScript(runTimeParams)
         smallResultRepresentations(k,:) = round(smallResult,nDigits);
         diff = abs(smallResult-squeeze(smallResultRepresentations(k,:)));
         if (any(diff >= tolerance ))
-            UnitTest.validationRecord('FAILED', sprintf('small result is not represented accurately with %d decimal digits.', nDigits));
+            UnitTest.validationRecord('message', sprintf('small result is not represented accurately with %d decimal digits.', nDigits));
         else
-            UnitTest.validationRecord('PASS', sprintf('small result is represented accurately with %d decimal digits.', nDigits));
+            UnitTest.validationRecord('message', sprintf('small result is represented accurately with %d decimal digits.', nDigits));
         end
+
     end
     
-    % append to validationData
-    UnitTest.validationData('largeResult', largeResult);
-    UnitTest.validationData('resultRepresentations', largeResultRepresentations);
-    UnitTest.validationData('smallResult', smallResult);
-    UnitTest.validationData('smallRepresentations', smallResultRepresentations);
-    
+    % append to extraData
+    UnitTest.extraData('largeResult', largeResult);
+    UnitTest.extraData('resultRepresentations', largeResultRepresentations);
+    UnitTest.extraData('smallResult', smallResult);
+    UnitTest.extraData('smallRepresentations', smallResultRepresentations);
+     
     %% Plotting
     if (runTimeParams.generatePlots)
         plotResults(1, decimalDigits, largeResult, largeResultRepresentations, 'Large Values');
@@ -89,9 +92,9 @@ end
 %% Helper plotting function
 function plotResults(figNum, decimalDigits, result, resultRepresentations, figName)
     h = figure(figNum);
-    set(h, 'Position', [100 100  1310 1060], 'Name', figName);
+    set(h, 'Position', [100 100  1310 900], 'Name', figName);
     clf;
-    subplotWidth = 0.66/6;
+    subplotWidth = 0.62/7;
     margin = 0.05;
     for k = 1:numel(decimalDigits)
         nDigits = decimalDigits(k);
@@ -108,7 +111,7 @@ function plotResults(figNum, decimalDigits, result, resultRepresentations, figNa
         set(gca, 'FontSize', 12, 'FontName', 'Helvetica');
 
         xlabel('value', 'FontSize', 14, 'FontName', 'Helvetica', 'FontWeight', 'b');
-        if (mod(k-1,6) == 0)
+        if (mod(k-1,7) == 0)
             ylabel('| value - round(value,nDigits) |', 'FontSize', 14, 'FontName', 'Helvetica', 'FontWeight', 'b');
         end
         %   set(gca, 'YTick', []) 

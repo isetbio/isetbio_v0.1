@@ -8,6 +8,10 @@ function runTimeParams = initalizeValidationRun(varargin)
    
     % Initialize validationData
     UnitTest.validationData('command', 'init');
+    
+    % Initialize extraData
+    UnitTest.extraData('command', 'init');
+    
 end
 
 function runParams = initializeRunTimeParams(varargin)
@@ -54,9 +58,9 @@ function runParams = initializeRunTimeParams(varargin)
        % This is the case where the script is called directly, not from a
        % UnitTest validation session, or when no argument is passed
        runParams = defaultParams; 
-       runParams.printValidationReport = true;
-       runParams.generatePlots = true;
-       runParams.closeFigsOnInit = false;
+       runParams.printValidationReport  = true;
+       runParams.generatePlots          = true;
+       runParams.closeFigsOnInit        = false;
     end 
     
     if (runParams.closeFigsOnInit)

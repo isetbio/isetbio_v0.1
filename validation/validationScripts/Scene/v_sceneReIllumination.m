@@ -17,9 +17,11 @@ function varargout = v_sceneReIllumination(varargin)
     
     %% Reporting and return params
     if (nargout > 0)
-        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = UnitTest.validationRecord('command', 'return');
-        validationData = UnitTest.validationData('command', 'return');
-        varargout = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData};
+        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
+                          UnitTest.validationRecord('command', 'return');
+        validationData  = UnitTest.validationData('command', 'return');
+        extraData       = UnitTest.extraData('command', 'return');
+        varargout       = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData, extraData};
     else
         if (runTimeParams.printValidationReport)
             [validationReport, ~] = UnitTest.validationRecord('command', 'return');

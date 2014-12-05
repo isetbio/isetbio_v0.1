@@ -1,21 +1,17 @@
-function structsAreSimilarWithinSpecifiedTolerance = structsAreSimilar(obj, groundTruthData, validationData)
+function [structsAreSimilarWithinSpecifiedTolerance, result] = structsAreSimilar(obj, groundTruthData, validationData)
 
     tolerance           = obj.validationParams.numericTolerance;
     graphMismatchedData = obj.validationParams.graphMismatchedData;
 
     result = {};
-    result = recursivelyCompareStructs(obj, 'groundTruthData', groundTruthData, ...
-                                       'validationData', validationData, ...
-                                       tolerance, graphMismatchedData, result);
+    result = recursivelyCompareStructs(obj, ...
+        'groundTruthData', groundTruthData, ...
+        'validationData', validationData, ...
+        tolerance, graphMismatchedData, result);
                                    
     if (isempty(result))
         structsAreSimilarWithinSpecifiedTolerance = true;
     else
-       if (obj.validationParams.verbosity > 0) 
-           for k = 1:numel(result)
-              fprintf(2,'\t[data mismatch %2d]   : %s\n ', k, char(result{k}));
-           end
-       end
        structsAreSimilarWithinSpecifiedTolerance = false;
     end
     
@@ -68,7 +64,7 @@ function result = recursivelyCompareStructs(obj, struct1Name, struct1, struct2Na
         % Check that the two structs have the same field names
        if (strcmp(struct1FieldNames{k}, struct2FieldNames{k}) == 0)
             resultIndex = numel(result)+1;
-            result{resultIndex} = sprintf('''%s'' and ''%s'' have different field names: %s vs %s. Will not compare further.', struct1Name, struct2Name, field1Name{k}, field2Name{k});
+            result{resultIndex} = sprintf('''%s'' and ''%s'' have different field names: ''%s'' vs ''%s''. Will not compare further.', struct1Name, struct2Name, struct1FieldNames{k}, struct2FieldNames{k});
             return;
        end
     
