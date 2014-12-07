@@ -1,4 +1,4 @@
-function varargout = v_PTB_vs_ISETBIO_IrradianceIsomerizations(varargin)
+function varargout = v_IrradianceIsomerizations(varargin)
 %
 % Validate ISETBIO-based irradiance/isomerization computations by comparing
 % to PTB-based irradiance/isomerization computations.
