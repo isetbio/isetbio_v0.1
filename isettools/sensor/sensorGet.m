@@ -68,6 +68,7 @@ function val = sensorGet(sensor,param,varargin)
 %
 % Sensor array data
 %      {'volts'}          - Sensor output in volts
+%      {'photons'}        - Sensor output in number of photons
 %      {'photon rate'}    - Photons captured per second
 %      {'digital values'} - Sensor output in digital units
 %      {'electrons'}      - Sensor output in electrons

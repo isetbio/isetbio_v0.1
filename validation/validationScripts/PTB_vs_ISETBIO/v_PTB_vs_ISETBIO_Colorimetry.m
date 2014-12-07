@@ -1,4 +1,4 @@
-function varargout = PTB_vs_ISETBIO_Colorimetry(varargin)
+function varargout = v_PTB_vs_ISETBIO_Colorimetry(varargin)
 %
 %  Validate ISETBIO-based colorimetric computations by comparing to PTB-based colorimetric computations.
 %
@@ -14,9 +14,11 @@ function varargout = PTB_vs_ISETBIO_Colorimetry(varargin)
     
     %% Reporting and return params
     if (nargout > 0)
-        [validationReport, validationFailedFlag] = UnitTest.validationRecord('command', 'return');
-        validationData = UnitTest.validationData('command', 'return');
-        varargout = {validationReport, validationFailedFlag, validationData};
+        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
+                          UnitTest.validationRecord('command', 'return');
+        validationData  = UnitTest.validationData('command', 'return');
+        extraData       = UnitTest.extraData('command', 'return');
+        varargout       = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData, extraData};
     else
         if (runTimeParams.printValidationReport)
             [validationReport, ~] = UnitTest.validationRecord('command', 'return');
@@ -44,6 +46,7 @@ function ValidationScript(runTimeParams)
     
     %% XYZ-related colorimetry
     UnitTest.validationRecord('message', '***** Basic XYZ *****');
+    
     
     testXYZs = [[1 2 1]' [2 1 0.5]' [1 1 1]' [0.6 2.3 4]'];
     ptbxyYs = XYZToxyY(testXYZs);

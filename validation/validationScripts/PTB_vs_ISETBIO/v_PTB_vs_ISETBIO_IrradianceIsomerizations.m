@@ -38,9 +38,11 @@ function varargout = v_PTB_vs_ISETBIO_IrradianceIsomerizations(varargin)
     
     %% Reporting and return params
     if (nargout > 0)
-        [validationReport, validationFailedFlag] = UnitTest.validationRecord('command', 'return');
-        validationData = UnitTest.validationData('command', 'return');
-        varargout = {validationReport, validationFailedFlag, validationData};
+        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
+                          UnitTest.validationRecord('command', 'return');
+        validationData  = UnitTest.validationData('command', 'return');
+        extraData       = UnitTest.extraData('command', 'return');
+        varargout       = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData, extraData};
     else
         if (runTimeParams.printValidationReport)
             [validationReport, ~] = UnitTest.validationRecord('command', 'return');
@@ -187,14 +189,17 @@ function ValidationScript(runTimeParams)
         message = sprintf('PTB and isetbio agree about irradiance to %0.1f%%',100*tolerance);
         UnitTest.validationRecord('PASSED', message);
     end
+    % Add validation data
     UnitTest.validationData('fov', fov);
     UnitTest.validationData('roiSize', roiSize);
     UnitTest.validationData('tolerance', tolerance);
-    UnitTest.validationData('scene', scene);
-    UnitTest.validationData('oi', oi);
     UnitTest.validationData('magCorrectionFactor',m);
     UnitTest.validationData('ptbMagCorrectIrradiance', ptbMagCorrectIrradiance);
     UnitTest.validationData('isetbioIrradianceEnergy',isetbioIrradianceEnergy);
+    
+    % Add extra data
+    UnitTest.extraData('scene', scene);
+    UnitTest.extraData('oi', oi);
     
     %% Compare spectral sensitivities used by ISETBIO and PTB.
     %
@@ -293,6 +298,8 @@ function ValidationScript(runTimeParams)
         message = sprintf('Difference between PTB and isetbio isomerizatoins good to %0.1f%%',100*isomerizationTolerance);
         UnitTest.validationRecord('PASSED', message);
     end
+    
+    % Add validation data
     UnitTest.validationData('isomerizationTolerance',isomerizationTolerance);
     UnitTest.validationData('isetIsomerizatoins',isetbioIsomerizations);
     UnitTest.validationData('ptbIsomerizatoins',ptbIsomerizations);
@@ -301,7 +308,9 @@ function ValidationScript(runTimeParams)
     UnitTest.validationData('ptbConeArea',ptbConeArea);
     UnitTest.validationData('isetbioConeArea',ptbConeArea);
     UnitTest.validationData('ptbPhotoreceptors',ptbPhotoreceptors);
-    UnitTest.validationData('sensor',sensor);    
+    
+    % Add extra data
+    UnitTest.extraData('sensor',sensor);    
  
     %% Plotting
     if (runTimeParams.generatePlots)

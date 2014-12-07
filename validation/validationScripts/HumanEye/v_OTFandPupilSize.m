@@ -1,4 +1,4 @@
-function varargout =  validateOTFandPupilSize(varargin)
+function varargout =  v_OTFandPupilSize(varargin)
 %
 % Validate the ISETBIO's OTF as a function of pupil size by comparing it to the Watson (2013) OTF model.
 % "A formula for the mean human optical modulation transfer function as a function of pupil size".
@@ -16,9 +16,11 @@ function varargout =  validateOTFandPupilSize(varargin)
     
     %% Reporting and return params
     if (nargout > 0)
-        [validationReport, validationFailedFlag] = UnitTest.validationRecord('command', 'return');
-        validationData = UnitTest.validationData('command', 'return');
-        varargout = {validationReport, validationFailedFlag, validationData};
+        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
+                          UnitTest.validationRecord('command', 'return');
+        validationData  = UnitTest.validationData('command', 'return');
+        extraData       = UnitTest.extraData('command', 'return');
+        varargout       = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData, extraData};
     else
         if (runTimeParams.printValidationReport)
             [validationReport, ~] = UnitTest.validationRecord('command', 'return');

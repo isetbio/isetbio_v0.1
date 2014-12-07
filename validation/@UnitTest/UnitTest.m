@@ -17,7 +17,6 @@ classdef UnitTest < handle
         
         % Path to directory where all validation data will be stored
         validationDataDir;
-        
     end
     
     % Private properties
@@ -31,13 +30,17 @@ classdef UnitTest < handle
         % List of scripts to validate. Each entry contains a cell array with a
         % script name and an optional params struct.
         vScriptsList = {};
+        
+        % Starting figure number for figures showing mismatched data.
+        % These figures should remain open
+        dataMismatchFigNumber;
     end
     
     % Constant properties. These are the only properties that can be
     % accessed by Static methods
     properties (Constant) 
-        runTimeOptionNames              = {'generatePlots', 'printValidationReport'};
-        runTimeOptionDefaultValues      = {false false};
+        runTimeOptionNames              = {'generatePlots', 'closeFigsOnInit', 'printValidationReport'};
+        runTimeOptionDefaultValues      = {false true false};
         
         validationOptionNames           = {'type',                'verbosity', 'onRunTimeErrorBehavior',      'updateGroundTruth', 'updateValidationHistory', 'numericTolerance', 'graphMismatchedData'}
         validationOptionDefaultValues   = {'RUNTIME_ERRORS_ONLY', 'low',       'rethrowExemptionAndAbort',    false,               false,                     500*eps,             true};
@@ -45,6 +48,14 @@ classdef UnitTest < handle
         validValidationTypes            = {'RUNTIME_ERRORS_ONLY', 'FAST', 'FULL', 'PUBLISH'};
         validOnRunTimeErrorValues       = {'rethrowExemptionAndAbort', 'catchExemptionAndContinue'};
         validVerbosityLevels            = {'none', 'min', 'low', 'med', 'high', 'max'};
+        
+        minFigureNoForMistmatchedData   = 10000;
+        
+        % number of decimal digits for rounding off data for hash computation 
+        % we have found that when data are truncated to 12 decimal digits
+        % the data hash keys across different computers are identical.
+        % 13 and higher decimal digits lead to different hash keys
+        decimalDigitNumRoundingForHashComputation = 12;
     end
     
     % Public methods (This is the public API)
@@ -84,13 +95,13 @@ classdef UnitTest < handle
         vScriptsList = parseScriptsList(obj, vScriptsToRunList);
     
         % Method to recursively compare two struct for equality
-        result = structsAreSimilar(obj, groundTruthData, validationData);
+        [structsAreSimilarWithinSpecifiedTolerance, result] = structsAreSimilar(obj, groundTruthData, validationData);
         
         % Method to import a ground truth data entry
-        [validationData, validationTime] = importGroundTruthData(obj, dataFileName);
+        [validationData, extraData, validationTime] = importGroundTruthData(obj, dataFileName);
         
         % Method to export a validation entry to a validation file
-        exportData(obj, dataFileName, validationData);
+        exportData(obj, dataFileName, validationData, extraData);
         
         % Method to generate a hash0256 key based on the passed validationData
         hashSHA25 = generateSHA256Hash(obj,validationData);
@@ -102,6 +113,9 @@ classdef UnitTest < handle
     methods (Static)
         % Method to remove all generated directories and files
         cleanUp();
+        
+        % Method to close all non-data mismatch figures
+        closeAllNonDataMismatchFigures()
         
         % Executive method to run a validation session
         runValidationSession(vScriptsList, desiredMode, verbosity);
@@ -126,10 +140,13 @@ classdef UnitTest < handle
         describeValidationOptions();
         
         % Method to append messages to the validationReport
-        [report, validationFailedFlag] = validationRecord(varargin);
+        [report, validationFailedFlag, validationFundametalFailureFlag] = validationRecord(varargin);
         
-        % Method to add validation data
+        % Method to add new data to the validation data struct
         data = validationData(varargin);
+        
+        % Method to add new data to the extra data struct
+        data = extraData(varargin);
         
         % Method to print the validationReport
         printValidationReport(validationReport);
