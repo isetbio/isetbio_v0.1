@@ -31,7 +31,6 @@ function varargout = v_PTB_vs_ISETBIO_IrradianceIsomerizations(varargin)
     % Initialize validation run and return params
     runTimeParams = UnitTest.initializeValidationRun(varargin{:});
     if (nargout > 0) varargout = {'', false, []}; end
-    close all;
     
     %% Validation - Call validation script
     ValidationScript(runTimeParams);
@@ -94,7 +93,8 @@ function ValidationScript(runTimeParams)
     radianceData = vcGetROIData(scene,sceneRoiLocs,'energy');
     radianceEnergyCheck = mean(radianceData,1);
     if (any(radianceEnergy ~= radianceEnergyCheck))
-        error('Two ways of extracting mean scene radiance in isetbio do not agree');
+        UnitTest.validationRecord('FUNDAMENTAL_CHECK_FAILED', 'Two ways of extracting mean scene radiance in isetbio do not agree.');
+        return;
     end
     radianceUniformityErr = (max(radianceData(:)) - min(radianceData(:)))/mean(radianceData(:));
     uniformityRadianceTolerance = 0.00001;
@@ -113,7 +113,8 @@ function ValidationScript(runTimeParams)
     rect       = [sz(2)/2,sz(1)/2,roiSize,roiSize];
     oiRoiLocs  = ieRoi2Locs(rect);
     if (any(wave-oiGet(scene,'wave')))
-        error('Wavelength sampling changed between scene and optical image');
+        UnitTest.validationRecord('FUNDAMENTAL_CHECK_FAILED', 'Wavelength sampling changed between scene and optical image.');
+        return;
     end
     isetbioIrradianceEnergy = oiGet(oi,'roi mean energy', oiRoiLocs);
     
@@ -127,7 +128,8 @@ function ValidationScript(runTimeParams)
     irradianceData = vcGetROIData(oi,oiRoiLocs,'energy');
     irradianceEnergyCheck = mean(irradianceData,1);
     if (any(isetbioIrradianceEnergy ~= irradianceEnergyCheck))
-        error('Two ways of extracting mean optical image irradiance in isetbio do not agree');
+        UnitTest.validationRecord('FUNDAMENTAL_CHECK_FAILED', 'Two ways of extracting mean optical image irradiance in isetbio do not agree.');
+        return;
     end
     irradianceUniformityErr = (max(irradianceData(:)) - min(irradianceData(:)))/mean(irradianceData(:));
     uniformityIrradianceTolerance = 0.01;
@@ -138,8 +140,8 @@ function ValidationScript(runTimeParams)
         message = sprintf('Spatial uniformity of optical image irradiance is good to %0.1f%%',100*uniformityIrradianceTolerance);
         UnitTest.validationRecord('PASSED', message);
     end
-    UnitTest.validationData('irradianceData',irradianceData);
-    UnitTest.validationData('irradianceUniformityErr',irradianceUniformityErr);
+    UnitTest.extraData('irradianceData',irradianceData);
+    UnitTest.extraData('irradianceUniformityErr',irradianceUniformityErr);
      
     %% Get the underlying parameters that are needed from the ISETBIO structures.
     optics = oiGet(oi,'optics');
@@ -190,12 +192,12 @@ function ValidationScript(runTimeParams)
         UnitTest.validationRecord('PASSED', message);
     end
     % Add validation data
-    UnitTest.validationData('fov', fov);
-    UnitTest.validationData('roiSize', roiSize);
-    UnitTest.validationData('tolerance', tolerance);
-    UnitTest.validationData('magCorrectionFactor',m);
-    UnitTest.validationData('ptbMagCorrectIrradiance', ptbMagCorrectIrradiance);
-    UnitTest.validationData('isetbioIrradianceEnergy',isetbioIrradianceEnergy);
+    UnitTest.extraData('fov', fov);
+    UnitTest.extraData('roiSize', roiSize);
+    UnitTest.extraData('tolerance', tolerance);
+    UnitTest.extraData('magCorrectionFactor',m);
+    UnitTest.extraData('ptbMagCorrectIrradiance', ptbMagCorrectIrradiance);
+    UnitTest.extraData('isetbioIrradianceEnergy',isetbioIrradianceEnergy);
     
     % Add extra data
     UnitTest.extraData('scene', scene);
@@ -232,7 +234,7 @@ function ValidationScript(runTimeParams)
     end
     UnitTest.validationData('isetCones',isetbioCones);
     UnitTest.validationData('ptbCones',ptbCones);
-    UnitTest.validationData('coneTolerance',coneTolerance);
+    UnitTest.extraData('coneTolerance',coneTolerance);
    
     %% Compute quantal absorptions
     %  Still need to:
@@ -278,7 +280,8 @@ function ValidationScript(runTimeParams)
     % the two calculations match.
     ptbConeDiameter = mean(ptbPhotoreceptors.ISdiameter.value);
     if (any(ptbPhotoreceptors.ISdiameter.value ~= ptbConeDiameter))
-        error('This calculation assumes all entries for PTB ISDiameter the same, but they are not');
+        UnitTest.validationRecord('FUNDAMENTAL_CHECK_FAILED', 'This calculation assumes all entries for PTB ISDiameter the same, but they are not.');
+        return;
     end
     ptbConeArea = pi*((ptbConeDiameter/2)^2);
     pixel = sensorGet(sensor,'pixel');
@@ -300,14 +303,14 @@ function ValidationScript(runTimeParams)
     end
     
     % Add validation data
-    UnitTest.validationData('isomerizationTolerance',isomerizationTolerance);
-    UnitTest.validationData('isetIsomerizatoins',isetbioIsomerizations);
-    UnitTest.validationData('ptbIsomerizatoins',ptbIsomerizations);
-    UnitTest.validationData('ptbAreaCorrectedIsomerizatoins',ptbAreaCorrectedIsomerizations);
-    UnitTest.validationData('ptbCorrectedIsomerizatoins',ptbCorrectedIsomerizations);
-    UnitTest.validationData('ptbConeArea',ptbConeArea);
-    UnitTest.validationData('isetbioConeArea',ptbConeArea);
-    UnitTest.validationData('ptbPhotoreceptors',ptbPhotoreceptors);
+    UnitTest.extraData('isomerizationTolerance',isomerizationTolerance);
+    UnitTest.extraData('isetIsomerizations',isetbioIsomerizations);
+    UnitTest.extraData('ptbIsomerizations',ptbIsomerizations);
+    UnitTest.extraData('ptbAreaCorrectedIsomerizations',ptbAreaCorrectedIsomerizations);
+    UnitTest.extraData('ptbCorrectedIsomerizations',ptbCorrectedIsomerizations);
+    UnitTest.extraData('ptbConeArea',ptbConeArea);
+    UnitTest.extraData('isetbioConeArea',ptbConeArea);
+    UnitTest.extraData('ptbPhotoreceptors',ptbPhotoreceptors);
     
     % Add extra data
     UnitTest.extraData('sensor',sensor);    
