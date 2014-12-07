@@ -43,8 +43,6 @@ function validateDemo
     
     %% Print current values of isetbioValidation prefs
     UnitTest.listPrefs();
-    pause(1);
-    
     
     %% What to validate
     validateAllDirs = true;
