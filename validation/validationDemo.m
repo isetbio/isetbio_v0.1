@@ -20,8 +20,8 @@ function validateDemo
     UnitTest.setPref('updateGroundTruth', false);
     
     %% Run time error behavior
-    %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExemptionAndAbort');
-    UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
+    %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExceptionAndAbort');
+    UnitTest.setPref('onRunTimeErrorBehavior', 'catchExceptionAndContinue');
     
     %% Plot generation
     UnitTest.setPref('generatePlots',  true); 
@@ -29,8 +29,8 @@ function validateDemo
     
     %% Verbosity Level
     %UnitTest.setPref('verbosity', 'none');
-    UnitTest.setPref('verbosity', 'min');
-    %UnitTest.setPref('verbosity', 'low');
+    %UnitTest.setPref('verbosity', 'min');
+    UnitTest.setPref('verbosity', 'low');
     %UnitTest.setPref('verbosity', 'med');
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max');

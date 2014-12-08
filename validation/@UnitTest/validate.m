@@ -79,7 +79,7 @@ function validate(obj, vScriptsToRunList)
         validationReport        = '';
         validationFailedFlag    = true;
         validationFundamentalFailureFlag = true;
-        exemptionRaisedFlag     = true;
+        exceptionRaisedFlag     = true;
         validationData          = [];
         extraData               = [];
         
@@ -120,10 +120,10 @@ function validate(obj, vScriptsToRunList)
         end
         
         % Form the try-catch command 
-        if (strcmp(validationParams.onRunTimeError, 'catchExemptionAndContinue'))
-            command = sprintf('try \n\t%s \n\t exemptionRaisedFlag = false;  \ncatch err \n\t exemptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''Exemption raised (and caught). Exemption Message: %%s'', err.message), true, false};  \nend', commandString);
+        if (strcmp(validationParams.onRunTimeError, 'catchExceptionAndContinue'))
+            command = sprintf('try \n\t%s \n\t exceptionRaisedFlag = false;  \ncatch err \n\t exceptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''exception raised (and caught) with message: %%s'', err.message), true, false};  \nend', commandString);
         else
-            command = sprintf('try \n\t%s  \n\t exemptionRaisedFlag = false; \ncatch err \n\t exemptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''Exemption raised. Exemption Message: %%s'', err.message), true, false};  \n\t rethrow(err);  \nend', commandString);
+            command = sprintf('try \n\t%s  \n\t exceptionRaisedFlag = false; \ncatch err \n\t exceptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''exception raised with message: %%s'', err.message), true, false};  \n\t rethrow(err);  \nend', commandString);
         end
         
         if (obj.validationParams.verbosity > 3)
@@ -139,11 +139,11 @@ function validate(obj, vScriptsToRunList)
         T = evalc(command); 
         
         if (strcmp(validationParams.type, 'PUBLISH'))
-            if (exemptionRaisedFlag)
+            if (exceptionRaisedFlag)
                 validationFailedFlag = true;
                 validationFundamentalFailureFlag = false;
                 validationReport = '';
-                if (strcmp(validationParams.onRunTimeError,'rethrowExemptionAndAbort'))
+                if (strcmp(validationParams.onRunTimeError,'rethrowExceptionAndAbort'))
                     abortValidationSession = true;
                     break;
                 end
@@ -156,7 +156,7 @@ function validate(obj, vScriptsToRunList)
                 extraData                        = evalin('base', 'extraData');
             end
         else
-            if (exemptionRaisedFlag)
+            if (exceptionRaisedFlag)
                 validationFailedFlag             = validationReport{1}{2};
                 validationFundamentalFailureFlag = validationReport{1}{3};
             end
@@ -175,26 +175,26 @@ function validate(obj, vScriptsToRunList)
                fprintf('\tInternal validation  : PASSED\n'); 
             end
             
-            if (exemptionRaisedFlag)
-               fprintf(2, '\tRun-time status      : exemption raised\n');
+            if (exceptionRaisedFlag)
+               fprintf(2, '\tRun-time status      : exception raised\n');
             else
-               fprintf('\tRun-time status      : no exemption raised\n'); 
+               fprintf('\tRun-time status      : no exception raised\n'); 
             end
         end
         
         
         if (~strcmp(validationParams.type, 'RUNTIME_ERRORS_ONLY')) 
-            if ( (strcmp(validationParams.type, 'FAST'))  && (~validationFailedFlag) && (~exemptionRaisedFlag) )
+            if ( (strcmp(validationParams.type, 'FAST'))  && (~validationFailedFlag) && (~exceptionRaisedFlag) )
                 % 'FAST' mode validation
                 doFastValidation(obj, fastLocalGroundTruthHistoryDataFile, fastLocalValidationHistoryDataFile, validationParams, validationData);
             end
         
-            if ( (strcmp(validationParams.type, 'FULL')) && (~validationFailedFlag) && (~exemptionRaisedFlag) )
+            if ( (strcmp(validationParams.type, 'FULL')) && (~validationFailedFlag) && (~exceptionRaisedFlag) )
                 % 'FULL' mode validation
                 doFullValidation(obj, fullLocalGroundTruthHistoryDataFile, fullLocalValidationHistoryDataFile, validationParams, validationData, extraData);
             end
             
-            if ( (strcmp(validationParams.type, 'PUBLISH')) && (~validationFailedFlag) && (~exemptionRaisedFlag) )
+            if ( (strcmp(validationParams.type, 'PUBLISH')) && (~validationFailedFlag) && (~exceptionRaisedFlag) )
                 % 'FULL' mode validation
                 doFullValidation(obj, fullLocalGroundTruthHistoryDataFile, fullLocalValidationHistoryDataFile, validationParams, validationData, extraData); 
                 
