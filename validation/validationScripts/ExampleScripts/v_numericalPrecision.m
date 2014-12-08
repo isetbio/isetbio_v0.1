@@ -27,15 +27,13 @@ function varargout = v_numericalPrecision(varargin)
     end
 end
 
-%% Skeleton validation script
+%% Actual alidation script
 function ValidationScript(runTimeParams)
 
     
     %% Initialize ISETBIO
     s_initISET;
-    
-    %% Isetbio validation code goes here.  
-    
+        
     %% Internal validations
     % The result of a computation: a vector of doubles
     gain = 10E18;
@@ -48,9 +46,8 @@ function ValidationScript(runTimeParams)
     
     decimalDigits = [10:16];
     tolerance = 500*eps;
-    
-    % 
-    % Conversion to N- digit precision
+     
+    %% Conversion to N- digit precision
     for k = 1:numel(decimalDigits)
         nDigits = decimalDigits(k);
         largeResultRepresentations(k,:) = round(largeResult,nDigits);
@@ -74,7 +71,7 @@ function ValidationScript(runTimeParams)
 
     end
     
-    % append to extraData
+    %% Append to extraData
     UnitTest.extraData('largeResult', largeResult);
     UnitTest.extraData('resultRepresentations', largeResultRepresentations);
     UnitTest.extraData('smallResult', smallResult);
@@ -87,7 +84,6 @@ function ValidationScript(runTimeParams)
     end
     
 end
-
 
 %% Helper plotting function
 function plotResults(figNum, decimalDigits, result, resultRepresentations, figName)

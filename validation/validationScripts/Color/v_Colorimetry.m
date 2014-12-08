@@ -46,13 +46,10 @@ function ValidationScript(runTimeParams)
     
     %% XYZ-related colorimetry
     UnitTest.validationRecord('message', '***** Basic XYZ *****');
-    
-    
     testXYZs = [[1 2 1]' [2 1 0.5]' [1 1 1]' [0.6 2.3 4]'];
     ptbxyYs = XYZToxyY(testXYZs);
     ptbxys  = ptbxyYs(1:2,:);
     isetxys = chromaticity(testXYZs')';
-    
     if (any(abs(ptbxys-isetxys) > tolerance))
         message = sprintf('PTB-ISET DIFFERENCE for XYZ to xy (tolerance: %g)', tolerance);
         UnitTest.validationRecord('FAILED', message);
@@ -61,7 +58,7 @@ function ValidationScript(runTimeParams)
         UnitTest.validationRecord('PASSED', message);
     end
     
-    % append to validationData 
+    % Append to validationData 
     UnitTest.validationData('testXYZs', testXYZs);
     UnitTest.validationData('ptbxys', ptbxys);
     UnitTest.validationData('isetxys',isetxys);
