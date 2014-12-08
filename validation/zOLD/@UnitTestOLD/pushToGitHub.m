@@ -128,7 +128,7 @@ function pushToGitHub(obj)
     fclose(validationResultsCatalogFID);
         
    
-        % Now push stuff to git
+    % Now push stuff to git
     % ----------------- IMPORTANT NOTE REGARDING PUSHING TO GIT  FROM MATLAB -----------------
     % Note: to make push work from withing MATLAB, I had to change the
     % libcurl library found in /Applications/MATLAB_R2014a.app/bin/maci64
