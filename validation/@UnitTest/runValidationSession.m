@@ -55,12 +55,11 @@ function validateRunTimeErrors(vScriptsList)
             
     % ... and Go ! 
     UnitTestOBJ.validate(vScriptsList);
-    
 end
 
 
 function validateFast(vScriptsList)
-    
+
     % Instantiate a @UnitTest object
     UnitTestOBJ = UnitTest();   
     
@@ -114,7 +113,7 @@ function validatePublish(vScriptsList)
     % Set options for PUBLISH validation
     UnitTestOBJ.setValidationOptions(...
                 'type',                     'PUBLISH', ...
-                'onRunTimeError',           getpref('isetbioValidation', 'onRunTimeErrorBehavior'), ... % 'rethrowExemptionAndAbort', ...
+                'onRunTimeError',           getpref('isetbioValidation', 'onRunTimeErrorBehavior'), ... 
                 'updateGroundTruth',        getpref('isetbioValidation', 'updateGroundTruth'), ...
                 'updateValidationHistory',  getpref('isetbioValidation', 'updateValidationHistory') ...
                 );
@@ -122,9 +121,9 @@ function validatePublish(vScriptsList)
     % ... and Go ! 
     UnitTestOBJ.validate(vScriptsList);     
     
-    % Here we must push to github
+    % Push published HTML directories to github
+    UnitTestOBJ.pushToGithub(vScriptsList);
     
-    % Cleanup HTML directory
-    %UnitTestOBJ.removeHTMLDir();
-    
+    % Remove HTML directories
+    UnitTestOBJ.removeHTMLDir();
 end

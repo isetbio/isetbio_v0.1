@@ -24,14 +24,14 @@ function validateDemo
     UnitTest.setPref('onRunTimeErrorBehavior', 'catchExemptionAndContinue');
     
     %% Plot generation
-    UnitTest.setPref('generatePlots',  false); 
+    UnitTest.setPref('generatePlots',  true); 
     UnitTest.setPref('closeFigsOnInit', true);
     
     %% Verbosity Level
     %UnitTest.setPref('verbosity', 'none');
-    %UnitTest.setPref('verbosity', 'min');
+    UnitTest.setPref('verbosity', 'min');
     %UnitTest.setPref('verbosity', 'low');
-    UnitTest.setPref('verbosity', 'med');
+    %UnitTest.setPref('verbosity', 'med');
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max');
     
@@ -45,7 +45,7 @@ function validateDemo
     UnitTest.listPrefs();
     
     %% What to validate
-    validateAllDirs = true;
+    validateAllDirs = false;
     if (validateAllDirs)
         % List of script directories to validate. Each entry contains a cell array with 
         % with a validation script directory and an optional struct with
@@ -85,7 +85,7 @@ function validateDemo
     % Run a PUBLISH validation session (comparing actual data and update github wiki)
     % UnitTest.runValidationSession(vScriptsList, 'PUBLISH);
     
-    % Run a FULL validation session without a specified mode. You will be
+    % Run a validation session without a specified mode. You will be
     % promped to select one of the available modes.
     UnitTest.runValidationSession(vScriptsList);
 

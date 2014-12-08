@@ -195,8 +195,21 @@ function validate(obj, vScriptsToRunList)
             end
             
             if ( (strcmp(validationParams.type, 'PUBLISH')) && (~validationFailedFlag) && (~exemptionRaisedFlag) )
-                 % 'FULL' mode validation
+                % 'FULL' mode validation
                 doFullValidation(obj, fullLocalGroundTruthHistoryDataFile, fullLocalValidationHistoryDataFile, validationParams, validationData, extraData); 
+                
+                % Construct sectionData for github wiki
+                sectionName = functionSubDirectory;
+                % update sectionData map
+                s = {};
+                if (isKey(obj.sectionData,sectionName ))
+                    s = obj.sectionData(sectionName);
+                    s{numel(s)+1} = scriptName;
+                else
+                    s{1} = scriptName; 
+                end
+                obj.sectionData(sectionName) = s;
+                
                 if (obj.validationParams.verbosity > 1) 
                     fprintf('\tReport published in  : ''%s''\n', htmlDirectory);
                 end

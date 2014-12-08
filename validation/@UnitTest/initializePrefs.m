@@ -54,4 +54,28 @@ function initializePrefs(initMode)
         setpref('isetbioValidation', 'graphMismatchedData',  value); 
     end
     
+    if (~ispref('isetbioValidation', 'isetbioValidationRootDir'))  || (strcmp(initMode, 'reset'))
+        index = find(strcmp(UnitTest.validationOptionNames, 'isetbioValidationRootDir'));
+        value = UnitTest.validationOptionDefaultValues{index};
+        setpref('isetbioValidation', 'isetbioValidationRootDir',  value); 
+    end
+    
+    if (~ispref('isetbioValidation', 'clonedWikiLocation'))  || (strcmp(initMode, 'reset'))
+        index = find(strcmp(UnitTest.validationOptionNames, 'clonedWikiLocation'));
+        value = UnitTest.validationOptionDefaultValues{index};
+        setpref('isetbioValidation', 'clonedWikiLocation',  value); 
+    end
+    
+    if (~ispref('isetbioValidation', 'clonedGhPagesLocation'))  || (strcmp(initMode, 'reset'))
+        index = find(strcmp(UnitTest.validationOptionNames, 'clonedGhPagesLocation'));
+        value = UnitTest.validationOptionDefaultValues{index};
+        setpref('isetbioValidation', 'clonedGhPagesLocation',  value); 
+    end
+    
+    if (~ispref('isetbioValidation', 'githubRepoURL'))  || (strcmp(initMode, 'reset'))
+        index = find(strcmp(UnitTest.validationOptionNames, 'githubRepoURL'));
+        value = UnitTest.validationOptionDefaultValues{index};
+        setpref('isetbioValidation', 'githubRepoURL',  value); 
+    end
+    
 end

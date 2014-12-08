@@ -30,4 +30,8 @@ function initializeUnitTest(obj)
     obj.validationParams.graphMismatchedData = getpref('isetbioValidation', 'graphMismatchedData');
     
     obj.dataMismatchFigNumber = UnitTest.minFigureNoForMistmatchedData;
+    
+    % initialize section map (for github wiki)
+    obj.sectionData  = containers.Map();
+    
 end
