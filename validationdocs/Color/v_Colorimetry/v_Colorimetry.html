@@ -95,13 +95,10 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     curDir = pwd;
     tolerance = 1e-12;
 </pre><h2>XYZ-related colorimetry<a name="10"></a></h2><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'message'</span>, <span class="string">'***** Basic XYZ *****'</span>);
-
-
     testXYZs = [[1 2 1]' [2 1 0.5]' [1 1 1]' [0.6 2.3 4]'];
     ptbxyYs = XYZToxyY(testXYZs);
     ptbxys  = ptbxyYs(1:2,:);
     isetxys = chromaticity(testXYZs')';
-
     <span class="keyword">if</span> (any(abs(ptbxys-isetxys) &gt; tolerance))
         message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to xy (tolerance: %g)'</span>, tolerance);
         UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
@@ -110,7 +107,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
     <span class="keyword">end</span>
 
-    <span class="comment">% append to validationData</span>
+    <span class="comment">% Append to validationData</span>
     UnitTest.validationData(<span class="string">'testXYZs'</span>, testXYZs);
     UnitTest.validationData(<span class="string">'ptbxys'</span>, ptbxys);
     UnitTest.validationData(<span class="string">'isetxys'</span>,isetxys);
@@ -435,13 +432,10 @@ function ValidationScript(runTimeParams)
     
     %% XYZ-related colorimetry
     UnitTest.validationRecord('message', '***** Basic XYZ *****');
-    
-    
     testXYZs = [[1 2 1]' [2 1 0.5]' [1 1 1]' [0.6 2.3 4]'];
     ptbxyYs = XYZToxyY(testXYZs);
     ptbxys  = ptbxyYs(1:2,:);
     isetxys = chromaticity(testXYZs')';
-    
     if (any(abs(ptbxys-isetxys) > tolerance))
         message = sprintf('PTB-ISET DIFFERENCE for XYZ to xy (tolerance: %g)', tolerance);
         UnitTest.validationRecord('FAILED', message);
@@ -450,7 +444,7 @@ function ValidationScript(runTimeParams)
         UnitTest.validationRecord('PASSED', message);
     end
     
-    % append to validationData 
+    % Append to validationData 
     UnitTest.validationData('testXYZs', testXYZs);
     UnitTest.validationData('ptbxys', ptbxys);
     UnitTest.validationData('isetxys',isetxys);
