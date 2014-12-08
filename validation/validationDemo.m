@@ -51,7 +51,7 @@ function validateDemo
     UnitTest.listPrefs();
     
     %% What to validate
-    validateAllDirs = false;
+    validateAllDirs = true;
     if (validateAllDirs)
         % List of script directories to validate. Each entry contains a cell array with 
         % with a validation script directory and an optional struct with
