@@ -1,8 +1,12 @@
 % Method to push published HTML directories to github
 function pushToGithub(obj, vScriptsList)
   
+    fprintf('\n------------------------------------------------------------------------------------------------------------');
+    fprintf('\nPushing to hithub (%s)',  getpref('isetbioValidation', 'githubRepoURL'));
+    fprintf('\n------------------------------------------------------------------------------------------------------------\n\n');
+
     % isetbio location
-    validationRootDirectory = getpref('isetbioValidation', 'isetbioValidationRootDir');
+    validationRootDirectory = getpref('isetbioValidation', 'validationRootDir');
     
     % For this to work, we must clone a second version of ISETBIO
     % and check-out the gh-pages branch. 
@@ -38,7 +42,9 @@ function pushToGithub(obj, vScriptsList)
     % Do a git pull (so we can push later with no conflicts)
     obj.issueGitCommand('git pull');
     
-
+    % rm all current HTML directories
+    system('rm -r -f *');
+        
     % cd to wikiCloneDir and update it
     cd(wikiCloneDir);
     obj.issueGitCommand('git pull');

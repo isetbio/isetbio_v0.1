@@ -54,10 +54,10 @@ function initializePrefs(initMode)
         setpref('isetbioValidation', 'graphMismatchedData',  value); 
     end
     
-    if (~ispref('isetbioValidation', 'isetbioValidationRootDir'))  || (strcmp(initMode, 'reset'))
-        index = find(strcmp(UnitTest.validationOptionNames, 'isetbioValidationRootDir'));
+    if (~ispref('isetbioValidation', 'validationRootDir'))  || (strcmp(initMode, 'reset'))
+        index = find(strcmp(UnitTest.validationOptionNames, 'validationRootDir'));
         value = UnitTest.validationOptionDefaultValues{index};
-        setpref('isetbioValidation', 'isetbioValidationRootDir',  value); 
+        setpref('isetbioValidation', 'validationRootDir',  value); 
     end
     
     if (~ispref('isetbioValidation', 'clonedWikiLocation'))  || (strcmp(initMode, 'reset'))
