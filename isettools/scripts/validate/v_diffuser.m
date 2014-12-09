@@ -1,4 +1,4 @@
-%% s_Diffuser
+%% v_Diffuser
 %
 % See oiDiffuser for how to set up the 2D diffusing  An example from the
 % header to that file is here:
@@ -15,19 +15,22 @@
 %
 % Copyright ImagEval Consultants, LLC, 2009
 
-% Example of setting up the multi-dimensional diffusion calculation.  Build
-% a Macbeth color checker.
+%% Example of setting up the multi-dimensional diffusion calculation.
+
+% Build a Macbeth color checker.
 scene = sceneCreate;  scene = sceneSet(scene,'fov',1);
 oi = oiCreate;
 
+% oiDiffuser stuff.   Note that diffuser is anisotropic.
+% Units are in meters, hence the 10^-6 to convert to microns.
 oi = oiSet(oi,'diffuserMethod','blur');
-oi = oiSet(oi,'diffuserBlur',[6,2]*10^-6);  %Units are meters.
+oi = oiSet(oi,'diffuserBlur',[6,2]*10^-6); 
 oi = oiCompute(scene,oi); 
 vcReplaceAndSelectObject(oi);
 oiWindow;
 
-% Rotate the diffusing blur direction.
-oi = oiSet(oi,'diffuserBlur',[2,6]*10^-6);  %Units are meters.
+% Rotate the diffusing blur direction 90 degrees.
+oi = oiSet(oi,'diffuserBlur',[2,6]*10^-6);
 
 oi = oiCompute(scene,oi); 
 vcReplaceAndSelectObject(oi);
