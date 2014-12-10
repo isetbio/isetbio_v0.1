@@ -5,6 +5,10 @@ function initializePrefs(initMode)
         initMode = 'none';
     end
     
+    if (strcmp(initMode, 'reset'))
+        rmpref('isetbioValidation');
+    end
+    
     if ~(ispref('isetbioValidation', 'updateGroundTruth')) || (strcmp(initMode, 'reset'))
         index = find(strcmp(UnitTest.validationOptionNames, 'updateGroundTruth'));
         value = UnitTest.validationOptionDefaultValues{index};
