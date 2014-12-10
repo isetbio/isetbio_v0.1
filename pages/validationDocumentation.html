@@ -235,10 +235,50 @@ The following table provides some information about how the @UnitTest object rea
 	<tr><td><b class="mySmallBlackCode">'githubRepoURL'</b></td><td><b class="mySmallBlackCode">URL of isetbio githug repository.</b></td><td>set according to your local machine configuration (relevant only during sessions in 'PUBLISH' validation mode). </td></tr>
 
 </table>
+<br>
+The user can change any of these above preferences by the following call:
+<br>
+<p class="tab">
+<b class="myBlueCode">UnitTest.setPref(preferenceName, preferenceValue);</b>
+</p>
 
 <br>
+<strong> Example: </strong> First reset all isetbio validation preferences to their default values, then change some of them.
+<pre>
+<b class="myBlueCode">
+ %% Initialize ISETBIO preferences
+ UnitTest.initializePrefs();
+    
+ %% Optionally, reset ISETBIO prefs to the default values
+ UnitTest.initializePrefs('reset');
+    
+ %% Change some preferences
+ % Update the validation data history, 
+ % for example to include data from different machines
+ UnitTest.setPref('updateValidationHistory', true);
+  
+ % Run time error behavior
+ UnitTest.setPref('onRunTimeErrorBehavior','catchExceptionAndContinue');
+    
+ % Generate plots
+ UnitTest.setPref('generatePlots',  true); 
+ UnitTest.setPref('closeFigsOnInit', true);
+    
+ % Verbosity level to medium
+ UnitTest.setPref('verbosity', 'med');
+    
+ % Numeric tolerance for comparison to ground truth data
+ UnitTest.setPref('numericTolerance', 500*eps);
+    
+ % Do not plot data that do not agree with the ground truth
+ UnitTest.setPref('graphMismatchedData', false);
+</b>
+</pre>
 <br>
-
+The <b class="myBlueCode">validationDemo.m</b> executive script provides a template for running a validation session. The user should adapt this template to generate executive validation session scripts for different purposes.
+<br>
+<br>
+<br>
  <!-- ---------------------------------- -->  
  <!-- WRITING @UNIT_TEST ENABLED SCRIPTS --> 
  <!-- ---------------------------------- --> 
