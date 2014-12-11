@@ -72,7 +72,7 @@ pre {
 }
 
 .navbar-default {
-    background-color: #f8F8F8;
+    background-color: #CFCFCF;
     border-color: #E7E7E7;
 }
 
@@ -361,7 +361,13 @@ The <b class="myBlueCode">validationDemo.m</b> executive script provides a templ
 
 This section describes how to transform a regular isetbio script to a @UnitTest-enabled validation script.
 
+/* collapse navbar on click */
 
+<script>
+$(document).on('click',function(){
+  $('.navbar-collapse').collapse('hide');
+})
+</script>
 
 </body>
 </html>
