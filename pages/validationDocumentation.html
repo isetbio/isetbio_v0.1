@@ -70,6 +70,16 @@ pre {
 .nav-collapse  {
    background:rgba(0,0,0,1.0);   /* for latest browsers */
 }
+
+.navbar-default {
+    background-color: #f8F8F8;
+    border-color: #E7E7E7;
+}
+
+.navbar{ 
+    background-image: none;
+}
+
 -->
 
 
@@ -99,7 +109,7 @@ pre {
  <!--  Navigation bar --> 
  <!-- --------  --> 
  
- <nav id="navigationBar" role="navigation" class="nav-collapse navbar-inverse navbar-fixed-top">
+ <nav id="navigationBar" role="navigation" class="nav-collapse navbar-default navbar-fixed-top">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -121,7 +131,6 @@ pre {
 		            <ul class="dropdown-menu">
 		               <li><a href="#external validation" class="smoothScroll">external validation</a></li>
 		               <li><a href="#internal validation" class="smoothScroll">internal validation</a></li>
-		               <li class="divider"></li>
 		            </ul>
                 </li>
                 <li class="dropdown">
@@ -353,43 +362,6 @@ The <b class="myBlueCode">validationDemo.m</b> executive script provides a templ
 This section describes how to transform a regular isetbio script to a @UnitTest-enabled validation script.
 
 
-<script type='text/javascript'>
-
-
-
-
-$(document).ready(function(){
-  
-  /* this is called when a window is scrolled */
-  $(window).on('scroll',function() {
-  
-    var scrolltop = $(this).scrollTop();
-
-    if(scrolltop >= 215) {
-      $('#navigationBar').fadeIn(250);
-      myStopFunction();
-      myFunction();
-    }
-    
-    else if(scrolltop <= 210) {
-      $('#navigationBar').fadeOut(250);
-    }
-  });
- }); 
-
-function myFunction() {
-    myVar = setTimeout(function(){
-        $('#navigationBar').hide();
-    }, 1500);
-}
-
-function myStopFunction() {
-    if(typeof myVar != 'undefined'){
-        clearTimeout(myVar);
-    }
-}
-
-</script>
 
 </body>
 </html>
