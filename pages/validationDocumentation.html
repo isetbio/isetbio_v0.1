@@ -4,9 +4,12 @@
 <head>
 <meta charset='utf-8'>
 <meta http-equiv="X-UA-Compatible" content="chrome=1">
-<meta name="description" content="isetbioValidation: script validation">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
+
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css">
+
 
 <!-- CUSTOM style classes -->
 <style type="text/css">
@@ -44,14 +47,42 @@ pre {
 
 /*  Define the background color for all the ODD background rows  */
 .TFtable tr:nth-child(odd){ 
-		background: #dddddd;
+		background: #dddddd; 
 }
 
 /*  Define the background color for all the EVEN background rows  */
 .TFtable tr:nth-child(even){
 		background: #eeeeee;
 }
+
+
+ul#menu {
+    padding: 0;
+}
+
+ul#menu li {
+    display: inline;
+}
+
+ul#menu li a {
+    color: white;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 4px 4px 0 0;
+}
+
+ul#menu li a:hover {
+    color: yellow;
+}
+
+.navbar {
+   background:rgba(0,0,0,0.5);   /* for latest browsers */
+}
+
+ 
 -->
+
+
 </style>
 
 <title>isetbioValidation</title>
@@ -67,16 +98,39 @@ pre {
     </header>
 </div>
 
+
+    
 <!-- MAIN CONTENT -->
 <div id="main_content_wrap" class="outer">
   <section id="main_content" class="inner">
   
+
+ <!-- --------  -->  
+ <!--  Navigation bar --> 
+ <!-- --------  --> 
+ <nav id="navigationBar" class="navbar transparent navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container-fluid">
+    <div>
+      <ul id="menu" class="nav navbar-nav">
+        <li><a href="#overview" class="smoothScroll">overview</a></li>
+        <li><a href="#external validation" class="smoothScroll">external validation</a></li>
+        <li><a href="#internal validation" class="smoothScroll">internal validation</a></li>
+        <li><a href="#@UnitTest usage patterns-basic" class="smoothScroll">basic validation</a></li>
+        <li><a href="#@UnitTest usage patterns-tuning" class="smoothScroll">tuning the validation</a></li>
+        <li><a href="#Writing @UnitTest - enabled scripts" class="smoothScroll">writing @UnitTest - enabled scripts</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
  <!-- --------  -->  
  <!-- OVERVIEW  --> 
  <!-- --------  --> 
- 
+
+    
 <h2>
-<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>overview
+<a id="overview" class="anchor" href="#overview" aria-hidden="true"></a>overview
 </h2>
 
 
@@ -85,9 +139,8 @@ pre {
   <li><b class="magentaSystem">'RUNTIME_ERRORS_ONLY'</b>:  only checking for run-time exceptions.</li>
   <li><b class="magentaSystem">'FAST'</b>: run-time exceptions + SHA-256 signature validation of select data.</li>
   <li><b class="magentaSystem">'FULL'</b>: run-time exceptions + numerical validation of select data.</li>
-  <li><b class="magentaSystem">'PUBLISH'</b>: run-time exceptions + numerical validation + publication to <a href="https://github.com/isetbio/isetbio/wiki/ValidationResults" class="user-mention">github site</a>.
+  <li><b class="magentaSystem">'PUBLISH'</b>: run-time exceptions + numerical validation + publication to <a href="https://github.com/isetbio/isetbio/wiki/ValidationResults">github site</a>.</li>
 </ul>
-</p> 
 
 <p>
 The <b class="magentaSystem">'RUNTIME_ERRORS_ONLY'</b> validation mode is the quickest and may be useful to ensure the basic integrity of isetbio core methods, for example that calls to isetbio functions do not crash. 
@@ -96,21 +149,17 @@ The <b class="magentaSystem">'RUNTIME_ERRORS_ONLY'</b> validation mode is the qu
 
 <p>If any data inconsistencies are detected, the <b class="magentaSystem">'FULL'</b> validation run would be useful to identify the data fields whose values have changed and to provide quantitative descriptions of any differences. 
 
-<p>Finally, the <b class="magentaSystem">'PUBLISH'</b> validation mode is useful as it generates published reports of isetbio code with plots of thegenerated data, in addition to full data validation. These reports which are published <a href="https://github.com/isetbio/isetbio/wiki/ValidationResults" class="user-mention">on isetbio's github site</a>, can serve as tutorials for the various functionalities of isetbio.
+<p>Finally, the <b class="magentaSystem">'PUBLISH'</b> validation mode is useful as it generates published reports of isetbio code with plots of thegenerated data, in addition to full data validation. These reports which are published <a href="https://github.com/isetbio/isetbio/wiki/ValidationResults">on isetbio's github site</a>, can serve as tutorials for the various functionalities of isetbio.
 
 
  <!-- --------------------  -->  
  <!-- VALIDATION OPERATIONS --> 
  <!-- --------------------  --> 
  
- 
-<h2>
-<a id="validation operations" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>data validation operations
-</h2>
 
-<h5>
-    <a id="data validation class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a> &#x25cf external validation
-</h5>
+<h2>
+    <a id="external validation" class="anchor" href="#data validation: external2" aria-hidden="true"> </a> data validation: external operations
+</h2>
 The @UnitTest class provides methods that enable a validation script to select specific data for inclusion to a validation dataset that corresponds to that script. The first time that a validation script is run, the generated validation dataset becomes the 'ground truth' for this script. In subsequent runs, methods of the @UnitTest class compare the generated dataset to the corresponding 'ground truth' dataset to establish whether the current run produces data that are consistent with the 'ground truth'. User-settable preferences in @UnitTest allow a validation dataset to be added to the history of validation datasets and/or ground truth data sets.
  
 <p class="tab"><strong> 'FAST' validation mode: </strong>
@@ -119,9 +168,9 @@ In 'FAST' validations, all numerical fields of the validation dataset are trunca
 <p>
 <p class="tab"><strong> 'FULL' validation mode: </strong>In 'FULL' validations, all corresponding fields of the validation and ground truth data sets are compared numerically. A validation script passes 'FULL' data validation if the absolute differences between the corresponding fields in the two datasets do not exceed a numerical threshold, which is determinted by a user-setable @UnitTest preference.
 
-<h5>
-    <a id="internal validation class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a> &#x25cf internal  validation
-</h5>
+<h2>
+    <a id="internal validation" class="anchor" href="#data validation internal" aria-hidden="true"></a>  data validation: internal operations
+</h3>
 The @UnitTest class also provides methods that allow additional validations which are based on internal (to the script) consistency checks specified within the validation script itself. For example, a validation script may check the agreement between the result generated by an isetbio computation and the result generated by other means, for example psychtoolbox computations. If the agreement is not satisfactory, the validation script can use @UnitTest class methods to declare that it has failed to pass validation.
 <br>
 <br>
@@ -130,13 +179,10 @@ The @UnitTest class also provides methods that allow additional validations whic
  <!-- @UNIT_TEST USAGE PATTERNS:BASIC USAGE --> 
  <!-- ------------------------------------  --> 
  
-<h2>
-<a id="Usage patterns" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>@UnitTest usage patterns
-</h2>
 
-<h4>
-    <a id="basic usage="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a> - basic usage
-</h4>
+<h2>
+    <a id="@UnitTest usage patterns-basic" class="anchor" href="#@UnitTest usage patterns-basic" aria-hidden="true"></a> @UnitTest usage: basic validation
+</h2>
 
 A validation session can be conducted by calling:
 <br>
@@ -175,13 +221,14 @@ UnitTest.runValidationSession(vScriptsList,  <b class="magentaSystem">'FULL'</b>
 <br>
 <br>
 
- <!-- ---------------------------------------------------  -->  
- <!-- @UNIT_TEST USAGE PATTERNS:TUNING THE VALIADATION RUN --> 
- <!-- ---------------------------------------------------  --> 
+ <!-- ------------------------------------  -->  
+ <!-- @UNIT_TEST USAGE PATTERNS:BASIC USAGE --> 
+ <!-- ------------------------------------  --> 
  
-<h4>
-    <a id="tuning the validation run="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a> - tuning the validation run
-</h4>
+ 
+<h2>
+<a id="@UnitTest usage patterns-tuning" class="anchor" href="#@UnitTest usage patterns-tuning" aria-hidden="true"></a>  @UnitTest usage: tuning the validation
+</h2>
 
 The user can fine tune how validation runs are performed by setting various @UnitTest preferences. The available @UnitTest preferences and their current values can be obtained by the following call:
 <br>
@@ -279,14 +326,72 @@ The <b class="myBlueCode">validationDemo.m</b> executive script provides a templ
 <br>
 <br>
 <br>
- <!-- ---------------------------------- -->  
- <!-- WRITING @UNIT_TEST ENABLED SCRIPTS --> 
- <!-- ---------------------------------- --> 
+
  
 <h2>
-<a id="Writing @UnitTest enabled validation scripts" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Writing @UnitTest - enabled scripts
+<a id="Writing @UnitTest - enabled scripts" class="anchor" href="Writing @UnitTest - enabled scripts" aria-hidden="true"></a>writing @UnitTest - enabled scripts
 </h2>
 
 This section describes how to transform a regular isetbio script to a @UnitTest-enabled validation script.
+
+
+/* add smoothscroll.js javascript */
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript" src="../javascripts/smoothscroll.js"></script>
+
+
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  
+  /* this is called when a window is scrolled */
+  $(window).on('scroll',function() {
+  
+    var scrolltop = $(this).scrollTop();
+
+    if(scrolltop >= 215) {
+      $('#navigationBar').fadeIn(250);
+      myStopFunction();
+      myFunction();
+    }
+    
+    else if(scrolltop <= 210) {
+      $('#navigationBar').fadeOut(250);
+    }
+  });
+ }); 
+  
+  	
+$("html").mousemove(function( event ) {
+
+     var scrolltop = $(window).scrollTop();
+     if (scrolltop >= 215) {
+        $('#navigationBar').show();
+  	    myStopFunction();
+        myFunction();
+     }
+});
+  
+  
+
+
+function myFunction() {
+    myVar = setTimeout(function(){
+        $('#navigationBar').hide();
+    }, 1000);
+}
+
+function myStopFunction() {
+    if(typeof myVar != 'undefined'){
+        clearTimeout(myVar);
+    }
+}
+
+</script>
+
+
+
+
 </body>
 </html>
