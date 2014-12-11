@@ -372,34 +372,6 @@ This section describes how to transform a regular isetbio script to a @UnitTest-
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script type="text/javascript" src="../javascripts/smoothscroll.js"></script>
 
-<script type='text/javascript'>
-
-
-
-
-$("html").mousemove(function( event ) {
-
-     var scrolltop = $(window).scrollTop();
-     if (scrolltop >= 215) {
-        $('#navigationBar').show();
-        myStopFunction();
-        myFunction();
-     }
-});
-
-function myFunction() {
-    myVar = setTimeout(function(){
-        $('#navigationBar').hide();
-    }, 1500);
-}
-
-function myStopFunction() {
-    if(typeof myVar != 'undefined'){
-        clearTimeout(myVar);
-    }
-}
-
-</script>
 
 </body>
 </html>
