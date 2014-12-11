@@ -47,7 +47,7 @@ pre {
 
 /*  Define the background color for all the ODD background rows  */
 .TFtable tr:nth-child(odd){ 
-		background: #dddddd;
+		background: #dddddd; 
 }
 
 /*  Define the background color for all the EVEN background rows  */
@@ -91,12 +91,12 @@ body { padding-top: 50px; }
   <div class="container-fluid">
     <div>
       <ul class="nav navbar-nav">
-        <li><a href="#overview">overview</a></li>
-        <li><a href="#external validation">external validation</a></li>
-        <li><a href="#internal validation">internal validation</a></li>
-        <li><a href="#@UnitTest usage patterns-basic">basic validation</a></li>
-        <li><a href="#@UnitTest usage patterns-tuning">tuning the validation</a></li>
-        <li><a href="#Writing @UnitTest - enabled scripts">writing @UnitTest - enabled scripts</a></li>
+        <li><a href="#overview" class="smoothScroll">overview</a></li>
+        <li><a href="#external validation" class="smoothScroll">external validation</a></li>
+        <li><a href="#internal validation" class="smoothScroll">internal validation</a></li>
+        <li><a href="#@UnitTest usage patterns-basic" class="smoothScroll">basic validation</a></li>
+        <li><a href="#@UnitTest usage patterns-tuning" class="smoothScroll">tuning the validation</a></li>
+        <li><a href="#Writing @UnitTest - enabled scripts" class="smoothScroll">writing @UnitTest - enabled scripts</a></li>
       </ul>
     </div>
   </div>
@@ -312,5 +312,11 @@ The <b class="myBlueCode">validationDemo.m</b> executive script provides a templ
 </h2>
 
 This section describes how to transform a regular isetbio script to a @UnitTest-enabled validation script.
+
+
+/* add smoothscroll.js javascript */
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript" src="../javascripts/smoothscroll.js"></script>
+
 </body>
 </html>
