@@ -55,13 +55,34 @@ pre {
 		background: #eeeeee;
 }
 
-/* padding for navbar */
-body { padding-top: 50px; }
-@media screen and (max-width: 768px) {
-    body { padding-top: 0px; }
+
+ul#menu {
+    padding: 0;
 }
 
+ul#menu li {
+    display: inline;
+}
+
+ul#menu li a {
+    color: white;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 4px 4px 0 0;
+}
+
+ul#menu li a:hover {
+    color: yellow;
+}
+
+.navbar {
+   background:rgba(0,0,0,0.5);   /* for latest browsers */
+}
+
+ 
 -->
+
+
 </style>
 
 <title>isetbioValidation</title>
@@ -87,10 +108,10 @@ body { padding-top: 50px; }
  <!-- --------  -->  
  <!--  Navigation bar --> 
  <!-- --------  --> 
- <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+ <nav id="navigationBar" class="navbar transparent navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container-fluid">
     <div>
-      <ul class="nav navbar-nav">
+      <ul id="menu" class="nav navbar-nav">
         <li><a href="#overview" class="smoothScroll">overview</a></li>
         <li><a href="#external validation" class="smoothScroll">external validation</a></li>
         <li><a href="#internal validation" class="smoothScroll">internal validation</a></li>
@@ -106,7 +127,7 @@ body { padding-top: 50px; }
  <!-- --------  -->  
  <!-- OVERVIEW  --> 
  <!-- --------  --> 
- 
+
     
 <h2>
 <a id="overview" class="anchor" href="#overview" aria-hidden="true"></a>overview
@@ -317,6 +338,60 @@ This section describes how to transform a regular isetbio script to a @UnitTest-
 /* add smoothscroll.js javascript */
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script type="text/javascript" src="../javascripts/smoothscroll.js"></script>
+
+
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  
+  /* this is called when a window is scrolled */
+  $(window).on('scroll',function() {
+  
+    var scrolltop = $(this).scrollTop();
+
+    if(scrolltop >= 215) {
+      $('#navigationBar').fadeIn(250);
+      myStopFunction();
+      myFunction();
+    }
+    
+    else if(scrolltop <= 210) {
+      $('#navigationBar').fadeOut(250);
+    }
+  });
+ }); 
+  
+  	
+$("html").mousemove(function( event ) {
+
+     var scrolltop = $(window).scrollTop();
+     if (scrolltop >= 215) {
+        $('#navigationBar').show();
+  	    myStopFunction();
+        myFunction();
+     }
+});
+  
+  
+
+
+function myFunction() {
+    myVar = setTimeout(function(){
+        $('#navigationBar').hide();
+    }, 400);
+}
+
+function myStopFunction() {
+    if(typeof myVar != 'undefined'){
+        clearTimeout(myVar);
+    }
+}
+
+</script>
+
+
+
 
 </body>
 </html>
