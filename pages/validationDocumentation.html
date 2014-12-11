@@ -265,32 +265,33 @@ UnitTest.runValidationSession(vScriptsList,  <b class="magentaSystem">'FULL'</b>
 <a id="@UnitTest usage patterns-tuning" class="anchor" href="#@UnitTest usage patterns-tuning" aria-hidden="true"></a>  fine tuning for different types of validation
 </h3>
 
-The user can fine tune how validation runs are performed by setting various @UnitTest preferences. The available @UnitTest preferences and their current values can be obtained by the following call:
+The @UnitTest class provides several preferences that the user can set in order to fine tune how different types of validations are conducted. The available @UnitTest preferences and their current values can be obtained by the following call:
 <br>
 <p class="tab">
 <b class="myBlueCode">UnitTest.listPrefs();</b>
 </p>
 which, at the time that this document was last updated, produced the following output:
 <pre>
+<b class="mySmallBlackCode">
 Current isetbioValidation prefs:
- 'updateGroundTruth'            with value: false
- 'updateValidationHistory'      with value: false
- 'onRunTimeErrorBehavior'       with value: 'rethrowExceptionAndAbort'
- 'generatePlots'                with value: false
- 'closeFigsOnInit'              with value: true
- 'verbosity'                    with value: 'low'
- 'numericTolerance'             with value: 1.11022e-13
- 'graphMismatchedData'          with value: true
- 'validationRootDir'            with value: '/Users/Shared/Matlab/Toolboxes/ISETBIO/validation'
- 'clonedWikiLocation'           with value: '/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki'
- 'clonedGhPagesLocation'        with value: '/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio'
- 'githubRepoURL'                with value: 'http://isetbio.github.io/isetbio'
+'updateGroundTruth'     :<em>false</em>
+'updateValidationHistory':<em>false</em>
+'onRunTimeErrorBehavior':<em>'rethrowExceptionAndAbort'</em>
+'generatePlots'         :<em>false</em>
+'closeFigsOnInit'       :<em>true</em>
+'verbosity'             :<em>'low'</em>
+'numericTolerance'      :<em>1.11022e-13</em>
+'graphMismatchedData'   :<em>true</em>
+'validationRootDir'     :<em>'/Users/Shared/Matlab/Toolboxes/ISETBIO/validation'</em>
+'clonedWikiLocation'    :<em>'/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki'</em>
+'clonedGhPagesLocation' :<em>'/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio'</em>
+'githubRepoURL'         :<em>'http://isetbio.github.io/isetbio'</em>
+ </b>
 </pre>
 
 
 <br>
-The following table provides some information about how the @UnitTest object reacts according to the value of different preferences.
-<table class="TFtable">
+The way that these preferences determine the @UnitTest object operation is described below.<table class="TFtable">
 	
 	<tr><td><b class="mySmallBlackCode">'updateGroundTruth' <br> <em> true/false </em></b></td><td>if set to true, the @UnitTest object will append the current validation data to the history of ground truth data sets.</td></tr>
 	
