@@ -31,6 +31,7 @@
 .myBlackCode {font-family:menlo; font-size:15px}
 
 .mySmallBlackCode {font-family:menlo; font-size:13px}
+.mySmallBlueCode {font-family:menlo; font-size:14px; color:#4444bb;}
 
 pre {
     display: block;
@@ -140,7 +141,7 @@ pre {
 	               </a>
 		            <ul class="dropdown-menu">
 		               <li><a href="#@UnitTest usage patterns-basic" class="smoothScroll">basic validation</a></li>
-		               <li><a href="#@UnitTest usage patterns-tuning" class="smoothScroll">fine tuning for different types of validation</a></li>
+		               <li><a href="#@UnitTest usage patterns-tuning" class="smoothScroll">designing different types of validations</a></li>
 		            </ul>
                 </li>
         		<li><a href="#Writing @UnitTest - enabled scripts" class="smoothScroll">writing @UnitTest - enabled scripts</a></li>
@@ -219,7 +220,7 @@ The @UnitTest class also provides methods that allow a script to report whether 
     <a id="@UnitTest usage patterns-basic" class="anchor" href="#@UnitTest usage patterns-basic" aria-hidden="true"></a> basic validation
 </h3>
 
-A validation session can be conducted by calling:
+A validation session is conducted by calling the following method:
 <br>
 <p class="tab">
 <b class="myBlueCode">UnitTest.runValidationSession(vScriptsList, <b class="magentaSystem">validationMode</b>);</b>
@@ -230,7 +231,7 @@ where <b class="myBlackCode">vScriptsList</b> is a cell array containing the nam
 <br>
 <strong> Example 1: </strong> conduct a 'FAST' validation of scripts <b class="myBlackCode">'v_Colorimetry.m', 'v_IrradianceIsomerizations.m'</b>
 <pre>
-<b class="myBlueCode">
+<b class="mySmallBlueCode">
 vScriptsList = {...
    {'v_Colorimetry'} ...
    {'v_IrradianceIsomerizations'} ...
@@ -242,7 +243,7 @@ UnitTest.runValidationSession(vScriptsList, <b class="magentaSystem">'FAST'</b>)
 <br>
 <strong> Example 2: </strong> conduct a 'FULL' validation of all scripts contained in directories <b class="myBlackCode"> 'validationScripts/color', 'validationScripts/cones', 'validationScripts/human', and 'validationScripts/radiometry'</b>.
 <pre>
-<b class="myBlueCode">
+<b class="mySmallBlueCode">
 vScriptsList = {...
   {'validationScripts/color'} ...
   {'validationScripts/cones'} ...
@@ -262,10 +263,10 @@ UnitTest.runValidationSession(vScriptsList,  <b class="magentaSystem">'FULL'</b>
  
  
 <h3>
-<a id="@UnitTest usage patterns-tuning" class="anchor" href="#@UnitTest usage patterns-tuning" aria-hidden="true"></a>  fine tuning for different types of validation
+<a id="@UnitTest usage patterns-tuning" class="anchor" href="#@UnitTest usage patterns-tuning" aria-hidden="true"></a>  designing different types of validations
 </h3>
 
-The @UnitTest class provides several preferences that the user can set in order to fine tune how different types of validations are conducted. The available @UnitTest preferences and their current values can be obtained by the following call:
+The @UnitTest class provides several preferences that the user can set in order to perform different types of validations. The available @UnitTest preferences and their current values can be obtained by the following call:
 <br>
 <p class="tab">
 <b class="myBlueCode">UnitTest.listPrefs();</b>
@@ -274,61 +275,61 @@ which, at the time that this document was last updated, produced the following o
 <pre>
 <b class="mySmallBlackCode">
 Current isetbioValidation prefs:
-'updateGroundTruth'     :<em>false</em>
-'updateValidationHistory':<em>false</em>
-'onRunTimeErrorBehavior':<em>'rethrowExceptionAndAbort'</em>
-'generatePlots'         :<em>false</em>
-'closeFigsOnInit'       :<em>true</em>
-'verbosity'             :<em>'low'</em>
-'numericTolerance'      :<em>1.11022e-13</em>
-'graphMismatchedData'   :<em>true</em>
-'validationRootDir'     :<em>'/Users/Shared/Matlab/Toolboxes/ISETBIO/validation'</em>
-'clonedWikiLocation'    :<em>'/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki'</em>
-'clonedGhPagesLocation' :<em>'/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio'</em>
-'githubRepoURL'         :<em>'http://isetbio.github.io/isetbio'</em>
+<strong>'updateGroundTruth'</strong>     :<em>false</em>
+<strong>'updateValidationHistory'</strong>:<em>false</em>
+<strong>'onRunTimeErrorBehavior'</strong>:<em>'rethrowExceptionAndAbort'</em>
+<strong>'generatePlots'</strong>         :<em>false</em>
+<strong>'closeFigsOnInit'</strong>       :<em>true</em>
+<strong>'verbosity'</strong>             :<em>'low'</em>
+<strong>'numericTolerance'</strong>      :<em>1.11022e-13</em>
+<strong>'graphMismatchedData'</strong>   :<em>true</em>
+<strong>'validationRootDir'</strong>     :<em>'/Users/Shared/Matlab/Toolboxes/ISETBIO/validation'</em>
+<strong>'clonedWikiLocation'</strong>    :<em>'/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki'</em>
+<strong>'clonedGhPagesLocation'</strong> :<em>'/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio'</em>
+<strong>'githubRepoURL'</strong>         :<em>'http://isetbio.github.io/isetbio'</em>
  </b>
 </pre>
 
 
 <br>
-The way that these preferences determine the @UnitTest object operation is described below.<table class="TFtable">
+The functionality and possible values of these preferences are summarized below.<table class="TFtable">
 	
-	<tr><td><b class="mySmallBlackCode">'updateGroundTruth' <br> <em> true/false </em></b></td><td>if set to true, the @UnitTest object will append the current validation data to the history of ground truth data sets.</td></tr>
+	<tr><td><b class="mySmallBlackCode"><strong>'updateGroundTruth'</strong> <br> <em> true/false </em></b></td><td>if set to true, the @UnitTest object will append the current validation data to the history of ground truth data sets.</td></tr>
 	
-	<tr><td><b class="mySmallBlackCode">'updateValidationHistory' <br> <em> true/false </em></b></td><td>if set to true, the @UnitTest object will append the current validation data to the history of validation data sets. </td></tr>	
+	<tr><td><b class="mySmallBlackCode"><strong>'updateValidationHistory'</strong> <br> <em> true/false </em></b></td><td>if set to true, the @UnitTest object will append the current validation data to the history of validation data sets. </td></tr>	
 	
-	<tr><td><b class="mySmallBlackCode">'onRunTimeErrorBehavior' <br> <em>'catchExceptionAndContinue' 'rethrowExceptionAndAbort' </em></b></td><td> if set to 'catchExceptionAndContinue', and a validation script raises an exception at run time, the @UnitTest object will allow the validation session to continue with the remaining scripts, otherwise it will terminate it.</td></tr>
+	<tr><td><b class="mySmallBlackCode"><strong>'onRunTimeErrorBehavior'</strong> <br> <em>'catchExceptionAndContinue' 'rethrowExceptionAndAbort' </em></b></td><td> if set to 'catchExceptionAndContinue', and a validation script raises an exception at run time, the @UnitTest object will allow the validation session to continue with the remaining scripts, otherwise it will terminate it.</td></tr>
 	
-	<tr><td><b class="mySmallBlackCode">'generatePlots' <br> <em> true/false </em></b></td><td>if set to true, validation scripts are allowed to generate plots. For 'FAST' or 'RUN_TIME_ERRORS_ONLY' validation runs this is usually set to false.</td></tr>
+	<tr><td><b class="mySmallBlackCode"><strong>'generatePlots'</strong> <br> <em> true/false </em></b></td><td>if set to true, validation scripts are allowed to generate plots. For 'FAST' or 'RUN_TIME_ERRORS_ONLY' validation runs this is usually set to false.</td></tr>
 	
-	<tr><td><b class="mySmallBlackCode">'closeFigsOnInit' <br> <em> true/false </em></b></td><td>if set to true, the @UnitTest object will close all existing figs generated by previous scripts during the initialization phase of the current script. </td></tr>
+	<tr><td><b class="mySmallBlackCode"><strong>'closeFigsOnInit'</strong> <br> <em> true/false </em></b></td><td>if set to true, the @UnitTest object will close all existing figs generated by previous scripts during the initialization phase of the current script. </td></tr>
 	
-	<tr><td><b class="mySmallBlackCode">'verbosity' <br>  <em>'none', 'min', 'low', 'med', 'high', 'max' </em> </b></td><td>determines how much information is sent to the command window by the the @UnitTest object. </td></tr>
+	<tr><td><b class="mySmallBlackCode"><strong>'verbosity'</strong> <br>  <em>'none', 'min', 'low', 'med', 'high', 'max' </em> </b></td><td>determines how much information is sent to the command window by the the @UnitTest object. </td></tr>
 	
-	<tr><td><b class="mySmallBlackCode">'numericTolerance' <em> a multiple of EPS (usually 500*EPS)</em></b></td><td>determines the minimal difference in numerical value between validation and ground truth data in order for the @UnitTest object to trigger a failed validation flag. </td></tr>
+	<tr><td><b class="mySmallBlackCode"><strong>'numericTolerance'</strong> <em> a multiple of EPS (usually 500*EPS)</em></b></td><td>determines the minimal difference in numerical value between validation and ground truth data in order for the @UnitTest object to trigger a failed validation flag. </td></tr>
 	
-	<tr><td><b class="mySmallBlackCode">'graphMismatchedData', <em> true/false </em></b></td><td>if set to true, and a validation field differs from its corresponding ground truth field by more than the set 'numericTolerance', the @UnitTest object will generate plots of the validation data, the ground truth data, and their difference.</td></tr>
+	<tr><td><b class="mySmallBlackCode"><strong>'graphMismatchedData'</strong>, <em> true/false </em></b></td><td>if set to true, and a validation field differs from its corresponding ground truth field by more than the set 'numericTolerance', the @UnitTest object will generate plots of the validation data, the ground truth data, and their difference.</td></tr>
 	
-	<tr><td><b class="mySmallBlackCode">'validationRootDir' <br> <em>absolute path of the folder under which validation script directories live </em></b></td><td>set according to your local machine configuration</td></tr>
+	<tr><td><b class="mySmallBlackCode"><strong>'validationRootDir'</strong> <br> <em>absolute path of the folder under which validation script directories live </em></b></td><td>set according to your local machine configuration</td></tr>
 	
-	<tr><td><b class="mySmallBlackCode">'clonedWikiLocation' <br> <em> absolute path of the folder under which the isetbio.wiki is cloned.</em> </b></td><td>set according to your local machine configuration (relevant only during sessions in 'PUBLISH' validation mode). </td></tr>
+	<tr><td><b class="mySmallBlackCode"><strong>'clonedWikiLocation'</strong> <br> <em> absolute path of the folder under which the isetbio.wiki is cloned.</em> </b></td><td>set according to your local machine configuration (relevant only during sessions in 'PUBLISH' validation mode). </td></tr>
 
-	<tr><td><b class="mySmallBlackCode">'clonedGhPagesLocation' <br> <em> absolute path of the folder under which the 'gh-pages' branch of isetbio is cloned. </em></b></td><td>set according to your local machine configuration (relevant only during sessions in 'PUBLISH' validation mode). </td></tr>
+	<tr><td><b class="mySmallBlackCode"><strong>'clonedGhPagesLocation'</strong> <br> <em> absolute path of the folder under which the 'gh-pages' branch of isetbio is cloned. </em></b></td><td>set according to your local machine configuration (relevant only during sessions in 'PUBLISH' validation mode). </td></tr>
 
-	<tr><td><b class="mySmallBlackCode">'githubRepoURL', <br> <em> URL of isetbio githug repository. </em></b></td><td>set according to your local machine configuration (relevant only during sessions in 'PUBLISH' validation mode). </td></tr>
+	<tr><td><b class="mySmallBlackCode"><strong>'githubRepoURL'</strong>, <br> <em> URL of isetbio githug repository. </em></b></td><td>set according to your local machine configuration (relevant only during sessions in 'PUBLISH' validation mode). </td></tr>
 
 </table>
-<br>
-The user can change any of these above preferences by the following call:
+The user the values of the above preferences by calling:
 <br>
 <p class="tab">
 <b class="myBlueCode">UnitTest.setPref(preferenceName, preferenceValue);</b>
 </p>
-
+thus, designing customized validation sessions for different purposes.
+<br>
 <br>
 <strong> Example: </strong> First reset all isetbio validation preferences to their default values, then change some of them.
 <pre>
-<b class="myBlueCode">
+<b class="mySmallBlueCode">
  %% Initialize ISETBIO preferences
  UnitTest.initializePrefs();
     
