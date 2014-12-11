@@ -353,7 +353,43 @@ The <b class="myBlueCode">validationDemo.m</b> executive script provides a templ
 This section describes how to transform a regular isetbio script to a @UnitTest-enabled validation script.
 
 
+<script type='text/javascript'>
 
+
+
+
+$(document).ready(function(){
+  
+  /* this is called when a window is scrolled */
+  $(window).on('scroll',function() {
+  
+    var scrolltop = $(this).scrollTop();
+
+    if(scrolltop >= 215) {
+      $('#navigationBar').fadeIn(250);
+      myStopFunction();
+      myFunction();
+    }
+    
+    else if(scrolltop <= 210) {
+      $('#navigationBar').fadeOut(250);
+    }
+  });
+ }); 
+
+function myFunction() {
+    myVar = setTimeout(function(){
+        $('#navigationBar').hide();
+    }, 1500);
+}
+
+function myStopFunction() {
+    if(typeof myVar != 'undefined'){
+        clearTimeout(myVar);
+    }
+}
+
+</script>
 
 </body>
 </html>
