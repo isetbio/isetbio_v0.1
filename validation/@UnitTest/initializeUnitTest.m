@@ -25,4 +25,13 @@ function initializeUnitTest(obj)
         
     % initialize numeric tolerance based on isetbioValidation prefs
     obj.validationParams.numericTolerance = getpref('isetbioValidation', 'numericTolerance');
+    
+    % initialize mismatch data graphing
+    obj.validationParams.graphMismatchedData = getpref('isetbioValidation', 'graphMismatchedData');
+    
+    obj.dataMismatchFigNumber = UnitTest.minFigureNoForMistmatchedData;
+    
+    % initialize section map (for github wiki)
+    obj.sectionData  = containers.Map();
+    
 end

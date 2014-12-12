@@ -5,6 +5,10 @@ function initializePrefs(initMode)
         initMode = 'none';
     end
     
+    if (strcmp(initMode, 'reset'))
+        rmpref('isetbioValidation');
+    end
+    
     if ~(ispref('isetbioValidation', 'updateGroundTruth')) || (strcmp(initMode, 'reset'))
         index = find(strcmp(UnitTest.validationOptionNames, 'updateGroundTruth'));
         value = UnitTest.validationOptionDefaultValues{index};
@@ -29,6 +33,13 @@ function initializePrefs(initMode)
         setpref('isetbioValidation', 'generatePlots',  value); 
     end
     
+    if (~ispref('isetbioValidation', 'closeFigsOnInit'))  || (strcmp(initMode, 'reset'))
+        index = find(strcmp(UnitTest.runTimeOptionNames, 'closeFigsOnInit'));
+        value = UnitTest.runTimeOptionDefaultValues{index};
+        setpref('isetbioValidation', 'closeFigsOnInit',  value); 
+    end
+    
+    
     if (~ispref('isetbioValidation', 'verbosity'))  || (strcmp(initMode, 'reset'))
         index = find(strcmp(UnitTest.validationOptionNames, 'verbosity'));
         value = UnitTest.validationOptionDefaultValues{index};
@@ -45,6 +56,30 @@ function initializePrefs(initMode)
         index = find(strcmp(UnitTest.validationOptionNames, 'graphMismatchedData'));
         value = UnitTest.validationOptionDefaultValues{index};
         setpref('isetbioValidation', 'graphMismatchedData',  value); 
+    end
+    
+    if (~ispref('isetbioValidation', 'validationRootDir'))  || (strcmp(initMode, 'reset'))
+        index = find(strcmp(UnitTest.validationOptionNames, 'validationRootDir'));
+        value = UnitTest.validationOptionDefaultValues{index};
+        setpref('isetbioValidation', 'validationRootDir',  value); 
+    end
+    
+    if (~ispref('isetbioValidation', 'clonedWikiLocation'))  || (strcmp(initMode, 'reset'))
+        index = find(strcmp(UnitTest.validationOptionNames, 'clonedWikiLocation'));
+        value = UnitTest.validationOptionDefaultValues{index};
+        setpref('isetbioValidation', 'clonedWikiLocation',  value); 
+    end
+    
+    if (~ispref('isetbioValidation', 'clonedGhPagesLocation'))  || (strcmp(initMode, 'reset'))
+        index = find(strcmp(UnitTest.validationOptionNames, 'clonedGhPagesLocation'));
+        value = UnitTest.validationOptionDefaultValues{index};
+        setpref('isetbioValidation', 'clonedGhPagesLocation',  value); 
+    end
+    
+    if (~ispref('isetbioValidation', 'githubRepoURL'))  || (strcmp(initMode, 'reset'))
+        index = find(strcmp(UnitTest.validationOptionNames, 'githubRepoURL'));
+        value = UnitTest.validationOptionDefaultValues{index};
+        setpref('isetbioValidation', 'githubRepoURL',  value); 
     end
     
 end

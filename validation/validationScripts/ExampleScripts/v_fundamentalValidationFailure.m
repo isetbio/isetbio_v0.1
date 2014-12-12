@@ -1,6 +1,6 @@
-function varargout = validateSceneReIlluminationAndFail(varargin)
+function varargout = v_fundamentalValidationFailure(varargin)
 %
-% Skeleton validation script that raises a run-time excemption for testing. 
+% Example validation script that demonstrates usage of the fundemantal failure feature. 
 %
 
     %% Initialization
@@ -14,9 +14,11 @@ function varargout = validateSceneReIlluminationAndFail(varargin)
     
     %% Reporting and return params
     if (nargout > 0)
-        [validationReport, validationFailedFlag] = UnitTest.validationRecord('command', 'return');
-        validationData = UnitTest.validationData('command', 'return');
-        varargout = {validationReport, validationFailedFlag, validationData};
+        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
+                          UnitTest.validationRecord('command', 'return');
+        validationData  = UnitTest.validationData('command', 'return');
+        extraData       = UnitTest.extraData('command', 'return');
+        varargout       = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData, extraData};
     else
         if (runTimeParams.printValidationReport)
             [validationReport, ~] = UnitTest.validationRecord('command', 'return');
@@ -26,8 +28,12 @@ function varargout = validateSceneReIlluminationAndFail(varargin)
 end
 
 function ValidationScript(runTimeParams)
-    
-    error('Simulating runtime error');
+      
+    % Simulate fundamental failure here
+    if (true)
+        UnitTest.validationRecord('FUNDAMENTAL_CHECK_FAILED', 'Fundamental failure message goes here.');
+        return;
+    end
     
     UnitTest.validationRecord('PASSED',  'all right to here');
     UnitTest.validationData('dummyData', ones(100,10));

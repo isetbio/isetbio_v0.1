@@ -1,21 +1,24 @@
 % Method to append messages to the validationReport
-function [report, validationFailedFlag] = validationRecord(varargin)
+function [report, validationFailedFlag, validationFundamentalFailureFlag] = validationRecord(varargin)
     
     report = {};
     validationFailedFlag = false;
     
     persistent validationReport
     persistent validationFailedFlagVector
+    persistent validationFundamentalFailureVector
     
     % Parse inputs
-    self.message      = '';
-    self.FAILED       = '';
-    self.PASSED       = '';
-    self.command      = '';
+    self.message                    = '';
+    self.FUNDAMENTAL_CHECK_FAILED   = '';
+    self.FAILED                     = '';
+    self.PASSED                     = '';
+    self.command                    = '';
     
     parser = inputParser;
     parser.addParamValue('command', self.command,     @ischar);
     parser.addParamValue('message', self.message,     @ischar);
+    parser.addParamValue('FUNDAMENTAL_CHECK_FAILED',  self.FUNDAMENTAL_CHECK_FAILED, @ischar);
     parser.addParamValue('FAILED',  self.FAILED, @ischar);
     parser.addParamValue('PASSED',  self.PASSED, @ischar);
     
@@ -32,39 +35,54 @@ function [report, validationFailedFlag] = validationRecord(varargin)
     if (strcmp(self.command, 'init'))
        validationReport = {};
        validationFailedFlagVector = [];
+       validationFundamentalFailureVector = [];
        return;
     end
     
     if  (strcmp(self.command, 'return'))
         for k = 1:numel(validationReport)
-            report{k} = {validationReport{k}, validationFailedFlagVector(k)};
+            report{k} = {validationReport{k}, validationFailedFlagVector(k), validationFundamentalFailureVector(k)};
         end
         validationFailedFlag = any(validationFailedFlagVector);
+        validationFundamentalFailureFlag = any(validationFundamentalFailureVector);
         return;
     end
     
     % Add a simple message (no flag attached)
     if  (~isempty(self.message))
         index = numel(validationReport)+1;
-        validationReport{index} = self.message;
-        validationFailedFlagVector(index) = false;
+        validationReport{index}                  = self.message;
+        validationFailedFlagVector(index)        = false;
+        validationFundamentalFailureVector(index) = false;
         return;
     end
     
     % Add new PASS message
     if (~isempty(self.PASSED))
         index = numel(validationReport)+1;
-        validationReport{index} = self.PASSED;
-        validationFailedFlagVector(index) = false;
+        validationReport{index}                  = self.PASSED;
+        validationFailedFlagVector(index)        = false;
+        validationFundamentalFailureVector(index) = false;
         return;
     end
     
     % Add new FAIL message
     if (~isempty(self.FAILED))
         index = numel(validationReport)+1;
-        validationReport{index} = self.FAILED;
-        validationFailedFlagVector(index) = true;
+        validationReport{index}                  = self.FAILED;
+        validationFailedFlagVector(index)        = true;
+        validationFundamentalFailureVector(index) = false;
         return;
     end
+    
+    % Add new FUNDAMENTAL FAIL message
+    if (~isempty(self.FUNDAMENTAL_CHECK_FAILED))
+        index = numel(validationReport)+1;
+        validationReport{index}                  = self.FUNDAMENTAL_CHECK_FAILED;
+        validationFailedFlagVector(index)        = true;
+        validationFundamentalFailureVector(index) = true;
+        return;
+    end
+    
 end
 

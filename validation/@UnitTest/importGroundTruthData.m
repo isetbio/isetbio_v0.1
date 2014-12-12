@@ -1,5 +1,5 @@
 % Method to import a ground truth data entry
-function [validationData, validationTime] = importGroundTruthData(obj, dataFileName)
+function [validationData, extraData, validationTime] = importGroundTruthData(obj, dataFileName)
     % create a MAT-file object for read access
     matOBJ = matfile(dataFileName);
     
@@ -11,6 +11,7 @@ function [validationData, validationTime] = importGroundTruthData(obj, dataFileN
     eval(sprintf('runData = matOBJ.%s;', validationDataParamName));
     
     % return the validationData and time
-    validationData = runData.validationData;
-    validationTime = runData.validationTime;
+    validationData  = runData.validationData;
+    extraData       = runData.extraData;
+    validationTime  = runData.validationTime;
 end

@@ -1,7 +1,8 @@
 % Method to export a validation entry to a validation file
-function exportData(obj, dataFileName, validationData)
-    runData.validationData = validationData;
-    runData.validationTime = datestr(now);
+function exportData(obj, dataFileName, validationData, extraData)
+    runData.validationData  = validationData;
+    runData.extraData       = extraData;
+    runData.validationTime  = datestr(now);
     
     % create a MAT-file object for write access
     matOBJ = matfile(dataFileName, 'Writable', true);

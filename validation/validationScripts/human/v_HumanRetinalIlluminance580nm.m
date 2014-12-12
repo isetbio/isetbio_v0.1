@@ -1,4 +1,4 @@
-function varargout = validateHumanRetinalIlluminance580nm(varargin)
+function varargout = v_HumanRetinalIlluminance580nm(varargin)
 %
 % Validate that a photon flux of 10^15 photons/cm^2/sec at 580 nm corresponds to a retinal illuminance of 590,000 photopic trolands.  
 %
@@ -28,9 +28,11 @@ function varargout = validateHumanRetinalIlluminance580nm(varargin)
     
     %% Reporting and return params
     if (nargout > 0)
-        [validationReport, validationFailedFlag] = UnitTest.validationRecord('command', 'return');
-        validationData = UnitTest.validationData('command', 'return');
-        varargout = {validationReport, validationFailedFlag, validationData};
+        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
+                          UnitTest.validationRecord('command', 'return');
+        validationData  = UnitTest.validationData('command', 'return');
+        extraData       = UnitTest.extraData('command', 'return');
+        varargout       = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData, extraData};
     else
         if (runTimeParams.printValidationReport)
             [validationReport, ~] = UnitTest.validationRecord('command', 'return');
