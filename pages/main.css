@@ -1,0 +1,149 @@
+html {
+    background-color: #6e9e9;
+    background-image: -webkit-linear-gradient(270deg,rgb(230,233,233) 0%,rgb(216,221,221) 100%);
+    background-image: linear-gradient(270deg,rgb(230,233,233) 0%,rgb(216,221,221) 100%);
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    margin: 0 auto;
+    padding: 2em 2em 4em;
+    max-width: 800px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: #545454;
+    background-color: #f4f4f4;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.06);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #222;
+    font-weight: 600;
+    line-height: 1.3em;
+}
+
+h2 {
+    margin-top: 1.3em;
+}
+
+a {
+    color: #0083e8;
+}
+
+magenta {
+    font-family: Monaco; 
+    font-size:14px; 
+     color:#ff4477;
+}
+
+blueCode {
+    font-family: Monaco; 
+    font-size:14px; 
+    color:#4444bb;
+}
+
+
+greenCode {
+    font-family: Monaco; 
+    font-size:13px; 
+    color:#44bb55;
+}
+
+grayCode {
+    font-family: Monaco; 
+    font-size:14px; 
+    color:#8f8f8f;
+}
+
+blackCode {
+    font-family: Monaco; 
+    font-size:14px; 
+    color:#444444;
+}
+
+smallBlackCode {
+    font-family: Monaco; 
+    font-size:12px; 
+    color:#444444;
+}
+
+lightBlueCode {
+    font-size:15px; 
+    font-style:italic;
+    color: #4466ff
+}
+
+.navbar-default {
+    background:rgba(250,250,250, 0.93);   
+}
+
+.navbar-default{ 
+    background-image: none;
+}
+
+.tab { 
+    margin-left: 40px; 
+}
+
+b, strong {
+    font-weight: 600;
+}
+
+samp {
+    display: none;
+}
+
+.TFtable{
+		width:100; 
+		border-collapse:collapse; 
+}
+
+.TFtable td{ 
+		padding:5px; border:#aeaeae 1px solid;
+}
+
+.TFtable tr{
+		background: #b8d1f3;
+}
+
+/*  Define the background color for all the ODD background rows  */
+.TFtable tr:nth-child(odd){ 
+		background: #f0f0f0; 
+}
+
+/*  Define the background color for all the EVEN background rows  */
+.TFtable tr:nth-child(even){
+		background: #fafafa;
+}
+
+
+
+img {
+    -webkit-animation: colorize 2s cubic-bezier(0, 0, .78, .36) 1;
+    animation: colorize 2s cubic-bezier(0, 0, .78, .36) 1;
+    background: transparent;
+    border: 10px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    display: block;
+    margin: 1.3em auto;
+    max-width: 95%;
+}
+
+@-webkit-keyframes colorize {
+    0% {
+        -webkit-filter: grayscale(100%);
+    }
+    100% {
+        -webkit-filter: grayscale(0%);
+    }
+}
+
+@keyframes colorize {
+    0% {
+        filter: grayscale(100%);
+    }
+    100% {
+        filter: grayscale(0%);
+    }
+}

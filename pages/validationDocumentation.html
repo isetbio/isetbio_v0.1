@@ -1,391 +1,577 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-<meta charset='utf-8'>
-<meta http-equiv="X-UA-Compatible" content="chrome=1">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-<link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css">
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-
-<!-- add javascript for smooth scrolling   -->
-<script type="text/javascript" src="../javascripts/smoothscroll.js"></script>
-
-
-<!-- CUSTOM style classes -->
-<style type="text/css">
-
-.tab { margin-left: 20px; }
-
-.magentaSystem {font-family:menlo; color:#ff4477;}
-
-.myBlueCode {font-family:menlo; font-size:15px; color:#4444bb;}
-
-.myBlackCode {font-family:menlo; font-size:15px}
-
-.mySmallBlackCode {font-family:menlo; font-size:13px}
-.mySmallBlueCode {font-family:menlo; font-size:14px; color:#4444bb;}
-
-pre {
-    display: block;
-    font-family: menlo;
-    font-size:14px;
-    white-space: pre;
-    margin: 1em 0;
-}
-
-.TFtable{
-		width:100; 
-		border-collapse:collapse; 
-}
-
-.TFtable td{ 
-		padding:2px; border:#4e95f4 1px solid;
-}
-
-.TFtable tr{
-		background: #b8d1f3;
-}
-
-/*  Define the background color for all the ODD background rows  */
-.TFtable tr:nth-child(odd){ 
-		background: #dddddd; 
-}
-
-/*  Define the background color for all the EVEN background rows  */
-.TFtable tr:nth-child(even){
-		background: #eeeeee;
-}
-
-
-
-.nav-collapse  {
-   background:rgba(230,230,230, 0.95)
-}
-
-.navbar-default {
-    background:rgba(230,230,230, 0.95);   
-}
-
-.navbar-default{ 
-    background-image: none;
-}
-
-
-
-
-
-
-
     
-
-
-
-
-</style>
-
-<title>isetbioValidation</title>
-</head>
-
-<body>
-
-<!-- HEADER -->
-<div id="header_wrap" class="outer">
-    <header class="inner">
-      <h1 id="project_title">isetbio: script validation</h1>
-      <h2 id="project_tagline">documentation and usage of the @UnitTest class</h2>
-    </header>
-</div>
-
-
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>ISETBIO VALIDATION</title>
+        <meta name="description" content="An interactive getting started guide for Brackets.">
+        
+        <!-- STYLE FOR NAVIGATION BAR -->
+        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css"> -->
+        <link rel="stylesheet" href="../stylesheets/bootstrap/3.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../stylesheets/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+        
+        <!-- STYLE SPECIFIC TO THIS PAGE -->
+        <link rel="stylesheet" href="main.css">
+        
+        <!-- javascripts for navbar -->
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+        <script type="text/javascript" src="../javascripts/jquery/1.11.1/jquery.min.js"></script>
+        
+        <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script> -->
+        <script type="text/javascript" src="../javascripts/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        
+        <!-- add javascript for smooth scrolling   -->
+        <script type="text/javascript" src="../javascripts/smoothscroll.js"></script>
+        
+    </head>
     
-<!-- MAIN CONTENT -->
-<div id="main_content_wrap" class="outer">
-  <section id="main_content" class="inner">
-  
-
- <!-- --------  -->  
- <!--  Navigation bar --> 
- <!-- --------  --> 
- 
- <nav id="navigationBar" role="navigation" class="nav-collapse navbar-default navbar-fixed-top">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
-        <!-- Collection of nav links and other content for toggling -->
-        <div id="navbarCollapse" class="navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="#overview" class="smoothScroll">overview</a></li>
-                <li class="dropdown">
-	                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-	                data validation <b class="caret"></b>
-	               </a>
-		            <ul class="dropdown-menu">
-		               <li><a href="#data validation" class="smoothScroll"> approach</a></li>
-		               <li><a href="#external validation" class="smoothScroll"> ground truth comparisons</a></li>
-		               <li><a href="#internal validation" class="smoothScroll">internal tests</a></li>
-		            </ul>
-                </li>
-                <li class="dropdown">
-	                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-	                @UnitTest-based validations <b class="caret"></b>
-	               </a>
-		            <ul class="dropdown-menu">
-		               <li><a href="#@UnitTest usage patterns-basic" class="smoothScroll">basic validation</a></li>
-		               <li><a href="#@UnitTest usage patterns-tuning" class="smoothScroll">designing different types of validations</a></li>
-		            </ul>
-                </li>
-        		<li><a href="#Writing @UnitTest - enabled scripts" class="smoothScroll">writing @UnitTest - enabled scripts</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-
-
- <!-- --------  -->  
- <!-- OVERVIEW  --> 
- <!-- --------  --> 
-
     
-<h2>
-<a id="overview" class="anchor" href="#overview" aria-hidden="true"></a>overview
-</h2>
+    <body>    
+        <h1>isetbio: script validation</h1>
+        <h2>documentation and usage of the @UnitTest class</h2>
+        
+        <!--
+            NAVIGATION BAR ON TOP
+        -->
+        <nav id="navigationBar" role="navigation" class="nav-collapse navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                
+                <!-- Collection of nav links and other content for toggling -->
+                <div id="navbarCollapse" class="navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        
+                        <!-- First menu item -->
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                validation approach <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#overview" class="smoothScroll"> overview </a></li>
+                                <li><a href="#data validation" class="smoothScroll"> data validation</a></li>
+                                <li><a href="#data validation:external" class="smoothScroll"> external data validations </a></li>
+                                <li><a href="#data validation:internal" class="smoothScroll"> internal data validations</a></li>
+                            </ul>
+                        </li>
+                        
+                        <!-- Second menu item -->
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                conducting validation sessions <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#basic validation sessions" class="smoothScroll"> basic validation sessions</a></li>
+                                <li><a href="#customizing validation sessions" class="smoothScroll"> designing custom validation sessions</a></li>
+                            </ul>
+                        </li>
+                        
+                        <!-- Third menu item -->
+                        <li>
+                            <a href="#writing validation scripts" class="smoothScroll">
+                            writing validation scripts
+                            </a>
+                        </li>
+                        
+                        <!-- Fourth menu item -->
+                        <li>
+                            <a href="#end" class="smoothScroll">
+                            end
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!--
+            OVERVIEW
+        -->
+        
+        
+        <h7> 
+            <a id="overview" href="#overview"></a> <hr>
+        </h7>
+        <h3>
+           Overview
+        </h3>
+        
+        <p>
+             This document describes the capabilities and usage of the custom @UnitTest class for validating isetbio scripts. The class executes isetbio scripts, checks for runtime errors, manages data generated by these scripts, validates select data against a ground truth dataset, produces published reports of the isetbio code and the resulting output, and pushes these reports onto isetbio's wiki for use as isetbio tutorials. 
+        </p>
+        
+        <p>
+            In the @UnitTest-based validation framework, an executive script defines a <strong> validation session</strong> and instantiates a @UnitTest object to manage that validation session. A validation session is specified by 
+           <ul>
+               <li> a list of validation scripts, </li>
+               <li> a validation mode and, </li>
+               <li> a set of optional validation preferences, for fine tuning the validation.</li>
+           </ul>
+        </p>
+    
+        <p>
+           There are four types of validation modes.
+        </p>
+        
+        <p>
+        <ul>
+            <li><magenta> 'RUNTIME_ERRORS_ONLY'</magenta>,  only checking for run-time exceptions during script execution.</li>
+            <li><magenta> 'FAST' </magenta>, checking for run-time exceptions + SHA-256 signature validation of select data.</li>
+            <li><magenta>'FULL' </magenta>, checking for run-time exceptions + numerical validation of select data.</li>
+            <li><magenta>'PUBLISH'</magenta>, checking for run-time exceptions + numerical validation + publication to <a href="https://github.com/isetbio/isetbio/wiki/ValidationResults">github site.</a></li>
+        </ul>
+        </p>
+    
+        <p> 
+            The <magenta>'RUNTIME_ERRORS_ONLY'</magenta> validation mode is the quickest and may be useful to check the basic integrity of isetbio core methods, for example that calls to them do not crash. 
+        </p>
 
+        <p> 
+            The <magenta> 'FAST'</magenta> validation mode can be used to check that data generated by isetbio scripts agree across different versions of isetbio and/or across different machines/operating systems.
+        </p>
 
-<p>This document describes the capabilities and usage of the custom @UnitTest class for validating isetbio scripts. The class executes isetbio scripts, checks for runtime errors, manages data generated by these scripts, validates select data against a ground truth dataset, produces published reports of the executed scripts and their outputs, and pushes these reports onto isetbio's wiki for use as isetbio tutorials. Different functionalities can be trigerred by selecting the desired <b class="magentaSystem"> validation mode</b> from the following list.
-<ul>
-  <li><b class="magentaSystem">'RUNTIME_ERRORS_ONLY'</b>: only checking for run-time exceptions.</li>
-  <li><b class="magentaSystem">'FAST'</b>: run-time exceptions + SHA-256 signature validation of select data.</li>
-  <li><b class="magentaSystem">'FULL'</b>: run-time exceptions + numerical validation of select data.</li>
-  <li><b class="magentaSystem">'PUBLISH'</b>: run-time exceptions + numerical validation + publication to <a href="https://github.com/isetbio/isetbio/wiki/ValidationResults">github site</a>.</li>
-</ul>
+        <p>
+            If any data inconsistencies are detected during a <magenta>'FAST'</magenta> validation, the <magenta>'FULL'</magenta> validation mode is useful to identify the data fields whose values have changed from the ground truth and to provide quantitative descriptions of any differences. 
+        </p>
 
-<p>
-The <b class="magentaSystem">'RUNTIME_ERRORS_ONLY'</b> validation mode is the quickest and may be useful to check the basic integrity of isetbio core methods, for example that calls to them do not crash. 
+        <p> 
+            Finally, the <magenta>'PUBLISH'</magenta> validation mode is useful as it generates published reports of isetbio code with plots of thegenerated data, in addition to full data validation. These reports which are published <a href="https://github.com/isetbio/isetbio/wiki/ValidationResults">on isetbio's github site</a>, can serve as tutorials for the various functionalities of isetbio.
+        </p>
+        
+        <h7> 
+            <a id="data validation" href="#data validation"></a> <hr>
+        </h7>
+        <h3>
+           Data validation
+        </h3>
+        
+        <p>
+        For all validation modes other than <magenta>'RUNTIME_ERRORS_ONLY'</magenta>, the @UnitTest object enables two methods of data validation: external checks, in which data generated by validation scripts are contrasted to corresponding data in a ground truth dataset, and internal checks, in which validation scripts report their own validation status based on assessments conducted within the scripts themselves.  
+        </p>
 
-<p>The <b class="magentaSystem">'FAST'</b> validation mode can be used to check that data generated by isetbio scripts agree across different versions of isetbio and/or across different machines/operating systems.
+        <!--
+            Data validation: external checks
+        -->
+        <h7> 
+            <a id="data validation:external" href="#data validation:external"></a> <hr>
+        </h7>
+        <h3>
+           External data validations
+        </h3>
+        
+        <p>
+            The @UnitTest class provides methods that enable validation scripts to select which data are to be included in their the validation dataset. The first time that a validation script is executed by a @UnitTest object, the generated validation dataset becomes the <strong>ground truth </strong> for this script. In subsequent runs, methods of the @UnitTest class compare the generated dataset to the corresponding ground truth dataset and establish whether the current run produces data that are consistent with the ground truth. 
+        </p>
+        
+        <p>
+            The type of comparison between validation and ground truth data sets is determined by the selected <magenta> validation mode</magenta>.
+        </p>
+        
+        <p class="tab">
+        In <magenta> 'FAST'</magenta> validations, all numerical fields of the validation dataset are truncated to 12 decimal digits, and a SHA-256 hash key is generated based on the truncated data set. A validation script passes <magenta> 'FAST'</magenta> validation, if the hash key matches exactly the hash key stored in the ground truth dataset. We have found that data truncation to 12 decimal digits generate hash keys that match across different computers (three Mac dekstops and one laptop, all running OSX), whereas truncation to 13 or more decimal digits generate hash keys that do not match across these computers. We do not know the situation about Windows/Linux computers yet.
+        </p>
+        
+        <p class="tab">
+            In <magenta> 'FULL'</magenta> and <magenta> 'PUBLISH'</magenta> validations, all corresponding fields of the validation and ground truth data sets are compared. A validation script passes these validation modes, if the absolute differences between corresponding fields in the two datasets do not exceed a numerical threshold, which is determined by a user-adjustable @UnitTest preference.
+        </p>
+        
+        <!--
+            Data validation: internal checks
+        -->
+        <h7> 
+            <a id="data validation:internal" href="#data validation:internal"></a> <hr>
+        </h7>
+        <h3>
+          Internal data validations
+        </h3>
+        
+        <p>
+        The @UnitTest class also provides methods that allow a script to report whether it has pass any internal validation checks, based on consistency checks conducted within the validation script itself. For example, a validation script may check the agreement between results generated by isetbio computations and results generated by other means, for example psychtoolbox computations. If the agreement is not satisfactory, the validation script can convey to the @UnitTest object that it has failed to pass its internal checks.
+        </p>
+        
+        
+        <h7> 
+            <a id="basic validation sessions" href="#basic validation sessions"></a> <hr>
+        </h7>
+        <h3>
+           Basic validation sessions
+        </h3>
+        
 
-<p>If any data inconsistencies are detected during a <b class="magentaSystem">'FAST'</b> validation, the <b class="magentaSystem">'FULL'</b> validation mode would be useful to identify the data fields whose values have changed from the ground truth and to provide quantitative descriptions of any differences. 
+        <p>
+             A basic validation session is conducted by calling the following @UnitTest class method: 
+            <p class="tab">
+                <blackCode>UnitTest.runValidationSession(<blueCode>vScriptsList</blueCode>, <magenta>validationMode</magenta>);</blackCode>
+            </p>
+            where <blueCode>vScriptsList</blueCode> is a cell array containing the names of individual validation scripts or the names of directories containing validation scripts, and <magenta>validationMode</magenta> is one of the four validation modes discussed earlier. If no <magenta>validationMode</magenta> variable is passed, the user will be asked to provide one. 
+        </p>
 
-<p>Finally, the <b class="magentaSystem">'PUBLISH'</b> validation mode is useful as it generates published reports of isetbio code with plots of thegenerated data, in addition to full data validation. These reports which are published <a href="https://github.com/isetbio/isetbio/wiki/ValidationResults">on isetbio's github site</a>, can serve as tutorials for the various functionalities of isetbio.
-
-
- <!-- --------------------  -->  
- <!-- VALIDATION OPERATIONS --> 
- <!-- --------------------  --> 
- 
-
-<h2>
-    <a id="data validation" class="anchor" href="#data validation" aria-hidden="true"> </a> data validation approach
-</h2>
-The @UnitTest class enables two types of data validation checks. First, it contrasts data generated by validation scripts to  corresponding data in a ground truth dataset. Second, it enables validation scripts to report their own validation status based on checks conducted within the script.  
-<h3>
-    <a id="external validation" class="anchor" href="#data validation: external2" aria-hidden="true"> </a> data validation: ground truth comparisons
-</h3>
-The @UnitTest class provides methods that enable validation scripts to select which data are to be included in their the validation dataset. The first time that a validation script is run, the generated validation dataset becomes the 'ground truth' for this script. In subsequent runs, methods of the @UnitTest class compare the generated dataset to the corresponding 'ground truth' dataset and establish whether the current run produces data that are consistent with the 'ground truth'. User-settable preferences in @UnitTest allow a validation dataset to be added to the history of validation datasets and/or ground truth data sets.
- 
-<p class="tab"><strong> 'FAST' validation mode: </strong>
-In 'FAST' validations, all numerical fields of the validation dataset are truncated to 12 decimal digits, and a SHA-256 hash key is generated based on the truncated data set. A validation script passes 'FAST' validation, if the hash key matches exactly the hash key stored in the ground truth dataset. We have found that data truncation to 12 decimal digits generate hash keys that match across different computers (three Mac dekstops and one laptop, all running OSX), whereas truncation to 13 or more decimal digits generate hash keys that do not match across these computers. We do not know the situation about Windows/Linux computers yet.
-
-<p>
-<p class="tab"><strong> 'FULL' validation mode: </strong>In 'FULL' validations, all corresponding fields of the validation and ground truth data sets are compared numerically. A validation script passes 'FULL' data validation, if the absolute differences between corresponding fields in the two datasets do not exceed a numerical threshold, which is determinted by a user-settable @UnitTest preference.
-
-<h3>
-    <a id="internal validation" class="anchor" href="#data validation internal" aria-hidden="true"></a>  data validation: internal tests
-</h3>
-The @UnitTest class also provides methods that allow a script to report whether it has pass any internal validation checks, based on consistency checks conducted within the validation script itself. For example, a validation script may check the agreement between results generated by isetbio computations and results generated by other means, for example psychtoolbox computations. If the agreement is not satisfactory, the validation script can convey to the @UnitTest object that it has failed to pass its internal checks.
-<br>
-<br>
-
- <!-- ------------------------------------  -->  
- <!-- @UNIT_TEST USAGE PATTERNS:BASIC USAGE --> 
- <!-- ------------------------------------  --> 
- 
-
-<h2>
-    <a id="@UnitTest-based validations" class="anchor" href="#@UnitTest-based validations" aria-hidden="true"></a> @UnitTest-based validations
-</h2>
-<h3>
-    <a id="@UnitTest usage patterns-basic" class="anchor" href="#@UnitTest usage patterns-basic" aria-hidden="true"></a> basic validation
-</h3>
-
-A validation session is conducted by calling the following method:
-<br>
-<p class="tab">
-<b class="myBlueCode">UnitTest.runValidationSession(vScriptsList, <b class="magentaSystem">validationMode</b>);</b>
-</p>
-
-where <b class="myBlackCode">vScriptsList</b> is a cell array containing the names of individual validation scripts or the names of directories containing validation scripts, and <b class="magentaSystem">validationMode</b> is one of the four validation modes discussed earlier. If no <b class="magentaSystem">validationMode</b> variable is passed, the user will be asked to provide one.
-<br>
-<br>
-<strong> Example 1: </strong> conduct a 'FAST' validation of scripts <b class="myBlackCode">'v_Colorimetry.m', 'v_IrradianceIsomerizations.m'</b>
-<pre>
-<b class="mySmallBlueCode">
-vScriptsList = {...
-   {'v_Colorimetry'} ...
-   {'v_IrradianceIsomerizations'} ...
+        <p>
+            Examples of basic validation modes are shown below. The first example does a <magenta>FAST</magenta> validation followed by a <magenta>FULL</magenta> validation of a couple of scripts. This situation would be encountered when new validation scripts are introduced and we want to generate FAST AND FULL ground truth data sets for them.
+        </p>    
+<pre><greenCode>% Basic 'FULL' mode validation session of scripts 
+% v_Colorimetry.m and v_IrradianceIsomerizations.m 
+</greenCode>
+<blueCode>vScriptsList</blueCode> = {...
+  {'v_Colorimetry'} ...
+  {'v_IrradianceIsomerizations'} ...
 };
 
-UnitTest.runValidationSession(vScriptsList, <b class="magentaSystem">'FAST'</b>);
-</b>
+UnitTest.runValidationSession(<blueCode>vScriptsList</blueCode>, <magenta>'FAST'</magenta>);
+UnitTest.runValidationSession(<blueCode>vScriptsList</blueCode>, <magenta>'FULL'</magenta>);
 </pre>
-<br>
-<strong> Example 2: </strong> conduct a 'FULL' validation of all scripts contained in directories <b class="myBlackCode"> 'validationScripts/color', 'validationScripts/cones', 'validationScripts/human', and 'validationScripts/radiometry'</b>.
-<pre>
-<b class="mySmallBlueCode">
-vScriptsList = {...
-  {'validationScripts/color'} ...
-  {'validationScripts/cones'} ...
-  {'validationScripts/human'} ...
+
+        <p> The second example does a <magenta>RUN_TIME_ERRORS_ONLY</magenta> validation of a number of all scripts located in four different directories. This situation would be encountered when some basic core functionality in isetbio was changed and we want to quickly assert whether this change breaks fundamental isetbio operations.
+        </p> 
+<pre><greenCode>% Basic 'RUN_TIME_ERRORS_ONLY' mode validation session of all scripts in directories
+% validationScripts/scene 
+% validationScripts/opticalImage
+% validationScripts/sensor
+% validationScripts/radiometry
+</greenCode>
+<blueCode>vScriptsList</blueCode> = {...
+  {'validationScripts/scene'} ...
+  {'validationScripts/opticalImage'} ...
+  {'validationScripts/sensor'} ...
   {'validationScripts/radiometry'} ...
 };
 
-UnitTest.runValidationSession(vScriptsList,  <b class="magentaSystem">'FULL'</b>);
-</b>
+UnitTest.runValidationSession(<blueCode>vScriptsList</blueCode>, <magenta>'RUN_TIME_ERRORS_ONLY'</magenta>);
 </pre>
-<br>
-<br>
 
- <!-- ------------------------------------  -->  
- <!-- @UNIT_TEST USAGE PATTERNS:BASIC USAGE --> 
- <!-- ------------------------------------  --> 
- 
- 
-<h3>
-<a id="@UnitTest usage patterns-tuning" class="anchor" href="#@UnitTest usage patterns-tuning" aria-hidden="true"></a>  designing different types of validations
-</h3>
 
-The @UnitTest class provides several preferences that the user can set in order to perform different types of validations. The available @UnitTest preferences and their current values can be obtained by the following call:
-<br>
-<p class="tab">
-<b class="myBlueCode">UnitTest.listPrefs();</b>
-</p>
-which, at the time that this document was last updated, produced the following output:
+        <h7> 
+            <a id="customizing validation sessions" href="#customizing validation sessions"></a> <hr>
+        </h7>
+        <h3>
+           Designing custom validation sessions
+        </h3>
+
+        <p>
+            The @UnitTest class provides several preferences that the user can adjust in order to customize how validations are performed. The available preferences and their current values can be obtained by the following call:
+            <p class="tab">
+                <blackCode>UnitTest.listPrefs();</blackCode>
+            </p>
+            which, at the time that this document was last updated, produced the following output:
 <pre>
-<b class="mySmallBlackCode">
 Current isetbioValidation prefs:
-<strong>'updateGroundTruth'</strong>     :<em>false</em>
-<strong>'updateValidationHistory'</strong>:<em>false</em>
-<strong>'onRunTimeErrorBehavior'</strong>:<em>'rethrowExceptionAndAbort'</em>
-<strong>'generatePlots'</strong>         :<em>false</em>
-<strong>'closeFigsOnInit'</strong>       :<em>true</em>
-<strong>'verbosity'</strong>             :<em>'low'</em>
-<strong>'numericTolerance'</strong>      :<em>1.11022e-13</em>
-<strong>'graphMismatchedData'</strong>   :<em>true</em>
-<strong>'validationRootDir'</strong>     :<em>'/Users/Shared/Matlab/Toolboxes/ISETBIO/validation'</em>
-<strong>'clonedWikiLocation'</strong>    :<em>'/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki'</em>
-<strong>'clonedGhPagesLocation'</strong> :<em>'/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio'</em>
-<strong>'githubRepoURL'</strong>         :<em>'http://isetbio.github.io/isetbio'</em>
- </b>
+<strong>'updateGroundTruth'</strong>      : <em>false</em>
+<strong>'updateValidationHistory'</strong>: <em>false</em>
+<strong>'onRunTimeErrorBehavior'</strong> : <em>'rethrowExceptionAndAbort'</em>
+<strong>'generatePlots'</strong>          : <em>false</em>
+<strong>'closeFigsOnInit'</strong>        : <em>true</em>
+<strong>'verbosity'</strong>              : <em>'low'</em>
+<strong>'numericTolerance'</strong>       : <em>1.11022e-13</em>
+<strong>'graphMismatchedData'</strong>    : <em>true</em>
+<strong>'validationRootDir'</strong>      : <em>'/Users/Shared/Matlab/Toolboxes/ISETBIO/validation'</em>
+<strong>'clonedWikiLocation'</strong>     : <em>'/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki'</em>
+<strong>'clonedGhPagesLocation'</strong>  : <em>'/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio'</em>
+<strong>'githubRepoURL'</strong>          : <em>'http://isetbio.github.io/isetbio'</em>
 </pre>
+        </p>
+        
+        <p>
+            The functionality and possible values of these preferences are summarized below.
+            <table class="TFtable">
+                <tr>
+                    <td>
+                        <smallBlackCode><strong>'updateGroundTruth'</strong> </smallBlackCode>
+                        <br> 
+                        <lightBlueCode> true/false </lightBlueCode>
+                    </td>
+                    <td>
+                        if set to true, the @UnitTest object will append the current validation data to the history of ground truth data sets.
+                    </td>
+                </tr>
+	
+                <tr>
+                    <td>
+                        <smallBlackCode><strong>'updateValidationHistory'</strong> </smallBlackCode>
+                        <br> 
+                        <lightBlueCode> true/false </lightBlueCode>
+                    </td>
+                    <td>
+                        if set to true, the @UnitTest object will append the current validation data to the history of validation  data sets.
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <smallBlackCode><strong>'onRunTimeErrorBehavior'</strong> </smallBlackCode>
+                        <br> 
+                        <lightBlueCode>
+                        'catchExceptionAndContinue' 'rethrowExceptionAndAbort'
+                        </lightBlueCode>
+                    </td>
+                    <td>
+                        if set to <lightBlueCode>'catchExceptionAndContinue'</lightBlueCode>, and a validation script raises an exception at run time, the @UnitTest object will allow the validation session to continue with the remaining scripts, otherwise it will terminate it.
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <smallBlackCode><strong>'generatePlots'</strong> </smallBlackCode>
+                        <br> 
+                        <lightBlueCode> true/false </lightBlueCode>
+                    </td>
+                    <td>
+                        if set to true, validation scripts are allowed to generate plots. For 'FAST' or 'RUN_TIME_ERRORS_ONLY' validation runs this would usually set to false.
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <smallBlackCode><strong>'closeFigsOnInit'</strong> </smallBlackCode>
+                        <br> 
+                        <lightBlueCode> true/false </lightBlueCode>
+                    </td>
+                    <td>
+                        if set to true, the @UnitTest object will close any existing figures generated by previous scripts during the initialization phase of the current script.
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <smallBlackCode><strong>'verbosity'</strong> </smallBlackCode>
+                        <br> 
+                        <lightBlueCode> 'none', 'min', 'low', 'med', 'high', 'max' </lightBlueCode>
+                    </td>
+                    <td>
+                        determines how much information is sent to the command window by the the @UnitTest object. 
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <smallBlackCode><strong>'numericTolerance'</strong> </smallBlackCode>
+                        <br> 
+                        <lightBlueCode> multiple of EPS (usually 500*EPS) </lightBlueCode>
+                    </td>
+                    <td>
+                        determines the minimal difference in numerical value between validation and ground truth data in order for the @UnitTest object to trigger a validation FAILED flag.  
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <smallBlackCode><strong>'graphMismatchedData'</strong> </smallBlackCode>
+                        <br> 
+                        <lightBlueCode> true/false </lightBlueCode>
+                    </td>
+                    <td>
+                        if set to true, the value of a validation field differs from its corresponding ground truth value by more than the set 'numericTolerance', the @UnitTest object will generate plots of the validation data, the ground truth data, and their difference. Applies only to 'FULL' and 'PUBLISH' validation modes.
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <smallBlackCode><strong>'validationRootDir'</strong> </smallBlackCode>
+                        <br> 
+                        <lightBlueCode> absolute path of the folder under which validation script directories live  </lightBlueCode>
+                    </td>
+                    <td>
+                        must be set according to the user's local machine configuration.
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <smallBlackCode><strong>'clonedWikiLocation'</strong> </smallBlackCode>
+                        <br> 
+                        <lightBlueCode> absolute path of the folder under which the isetbio.wiki is cloned </lightBlueCode>
+                    </td>
+                    <td>
+                        must be set according to the user's local machine configuration. Applies only to 'PUBLISH' validation mode.
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <smallBlackCode><strong>'clonedGhPagesLocation'</strong> </smallBlackCode>
+                        <br> 
+                        <lightBlueCode> absolute path of the folder under which the 'gh-pages' branch of isetbio is cloned </lightBlueCode>
+                    </td>
+                    <td>
+                        must be set according to the user's local machine configuration. Applies only to 'PUBLISH' validation mode.
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <smallBlackCode><strong>'githubRepoURL'</strong> </smallBlackCode>
+                        <br> 
+                        <lightBlueCode> github URL of isetbio </lightBlueCode>
+                    </td>
+                    <td>
+                       currently: 'http://isetbio.github.io/isetbio'
+                    </td>
+                </tr>
+            </table>
+        </p>
+        
+        <p>
+            The user can change any of these preferences by the following call:
+            <p class="tab">
+                <blackCode>UnitTest.setPref(preferenceName, preferenceValue);</blackCode>
+            </p>
+            thus, designing customized validation sessions for different purposes. The following code shows an example of customizing a 'FULL' validation session.
+        </p> 
 
+<pre><greenCode>% Executive script for customized validation</greenCode>
+function validateDemo
 
-<br>
-The functionality and possible values of these preferences are summarized below.<table class="TFtable">
-	
-	<tr><td><b class="mySmallBlackCode"><strong>'updateGroundTruth'</strong> <br> <em> true/false </em></b></td><td>if set to true, the @UnitTest object will append the current validation data to the history of ground truth data sets.</td></tr>
-	
-	<tr><td><b class="mySmallBlackCode"><strong>'updateValidationHistory'</strong> <br> <em> true/false </em></b></td><td>if set to true, the @UnitTest object will append the current validation data to the history of validation data sets. </td></tr>	
-	
-	<tr><td><b class="mySmallBlackCode"><strong>'onRunTimeErrorBehavior'</strong> <br> <em>'catchExceptionAndContinue' 'rethrowExceptionAndAbort' </em></b></td><td> if set to 'catchExceptionAndContinue', and a validation script raises an exception at run time, the @UnitTest object will allow the validation session to continue with the remaining scripts, otherwise it will terminate it.</td></tr>
-	
-	<tr><td><b class="mySmallBlackCode"><strong>'generatePlots'</strong> <br> <em> true/false </em></b></td><td>if set to true, validation scripts are allowed to generate plots. For 'FAST' or 'RUN_TIME_ERRORS_ONLY' validation runs this is usually set to false.</td></tr>
-	
-	<tr><td><b class="mySmallBlackCode"><strong>'closeFigsOnInit'</strong> <br> <em> true/false </em></b></td><td>if set to true, the @UnitTest object will close all existing figs generated by previous scripts during the initialization phase of the current script. </td></tr>
-	
-	<tr><td><b class="mySmallBlackCode"><strong>'verbosity'</strong> <br>  <em>'none', 'min', 'low', 'med', 'high', 'max' </em> </b></td><td>determines how much information is sent to the command window by the the @UnitTest object. </td></tr>
-	
-	<tr><td><b class="mySmallBlackCode"><strong>'numericTolerance'</strong> <em> a multiple of EPS (usually 500*EPS)</em></b></td><td>determines the minimal difference in numerical value between validation and ground truth data in order for the @UnitTest object to trigger a failed validation flag. </td></tr>
-	
-	<tr><td><b class="mySmallBlackCode"><strong>'graphMismatchedData'</strong>, <em> true/false </em></b></td><td>if set to true, and a validation field differs from its corresponding ground truth field by more than the set 'numericTolerance', the @UnitTest object will generate plots of the validation data, the ground truth data, and their difference.</td></tr>
-	
-	<tr><td><b class="mySmallBlackCode"><strong>'validationRootDir'</strong> <br> <em>absolute path of the folder under which validation script directories live </em></b></td><td>set according to your local machine configuration</td></tr>
-	
-	<tr><td><b class="mySmallBlackCode"><strong>'clonedWikiLocation'</strong> <br> <em> absolute path of the folder under which the isetbio.wiki is cloned.</em> </b></td><td>set according to your local machine configuration (relevant only during sessions in 'PUBLISH' validation mode). </td></tr>
-
-	<tr><td><b class="mySmallBlackCode"><strong>'clonedGhPagesLocation'</strong> <br> <em> absolute path of the folder under which the 'gh-pages' branch of isetbio is cloned. </em></b></td><td>set according to your local machine configuration (relevant only during sessions in 'PUBLISH' validation mode). </td></tr>
-
-	<tr><td><b class="mySmallBlackCode"><strong>'githubRepoURL'</strong>, <br> <em> URL of isetbio githug repository. </em></b></td><td>set according to your local machine configuration (relevant only during sessions in 'PUBLISH' validation mode). </td></tr>
-
-</table>
-The user the values of the above preferences by calling:
-<br>
-<p class="tab">
-<b class="myBlueCode">UnitTest.setPref(preferenceName, preferenceValue);</b>
-</p>
-thus, designing customized validation sessions for different purposes.
-<br>
-<br>
-<strong> Example: </strong> First reset all isetbio validation preferences to their default values, then change some of them.
-<pre>
-<b class="mySmallBlueCode">
- %% Initialize ISETBIO preferences
+<greenCode> % Initialize @UnitTest preferences</greenCode>
  UnitTest.initializePrefs();
     
- %% Optionally, reset ISETBIO prefs to the default values
+<greenCode> % Optionally, reset prefs to the default values </greenCode>
  UnitTest.initializePrefs('reset');
     
- %% Change some preferences
- % Update the validation data history, 
- % for example to include data from different machines
+<greenCode> % Change some preferences:</greenCode>
+<greenCode> % Update the histories of validation data sets</greenCode>
  UnitTest.setPref('updateValidationHistory', true);
-  
- % Run time error behavior
- UnitTest.setPref('onRunTimeErrorBehavior','catchExceptionAndContinue');
-    
- % Generate plots
+ UnitTest.setPref('updateGroundTruth', false);
+
+<greenCode> % Run time error behavior </greenCode>
+ UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExceptionAndAbort');
+
+<greenCode> % Plot generation </greenCode>
  UnitTest.setPref('generatePlots',  true); 
  UnitTest.setPref('closeFigsOnInit', true);
-    
- % Verbosity level to medium
+
+<greenCode> % Give me some info </greenCode>
  UnitTest.setPref('verbosity', 'med');
-    
- % Numeric tolerance for comparison to ground truth data
+
+<greenCode> % Numeric tolerance for comparison to ground truth data </greenCode>
  UnitTest.setPref('numericTolerance', 500*eps);
     
- % Do not plot data that do not agree with the ground truth
+<greenCode> % Whether to plot data that do not agree with the ground truth </greenCode>
  UnitTest.setPref('graphMismatchedData', false);
-</b>
+
+<greenCode> % Print current values of isetbioValidation prefs</greenCode>
+ UnitTest.listPrefs();
+
+<greenCode>% What to validate </greenCode>
+ <blueCode>vScriptsList</blueCode> = {...
+  {'validationScripts/scene'} ...
+  {'validationScripts/opticalImage'} ...
+  {'validationScripts/sensor'} ...
+  {'validationScripts/radiometry'} ...
+};
+
+<greenCode> % Go !  </greenCode>
+ UnitTest.runValidationSession(<blueCode>vScriptsList</blueCode>, <magenta>'FULL'</magenta>);
+
+end
 </pre>
-<br>
-The <b class="myBlueCode">validationDemo.m</b> executive script provides a template for running a validation session. The user should adapt this template to generate executive validation session scripts for different purposes.
-<br>
-<br>
-<br>
+        
+        
+        <h7> 
+            <a id="writing validation scripts" href="#writing validation scripts"></a> <hr>
+        </h7>
+        <h3>
+           Writing validation scripts
+        </h3>
 
- 
-<h2>
-<a id="Writing @UnitTest - enabled scripts" class="anchor" href="Writing @UnitTest - enabled scripts" aria-hidden="true"></a>writing @UnitTest - enabled scripts
-</h2>
+        <p>
+            This section describes the structure of validation scripts suitable for management by @UnitTest. All @UnitTest-enabled validation scripts contain a wrapper function, followed by a validation function which contains the actual isetbio validation code. 
+        </p>
+        <p>
+        	The wrapper function is identical for all validation scripts and its only purpose is to call the validation function and to communicate results generated by the validation function back to the managing @UnitTest object. The wrapper function for the 'v_IrradianceIsomerizations.m' script is displayed below.
+        </p>
 
-This section describes how to transform a regular isetbio script to a @UnitTest-enabled validation script.
+<pre>
+<blackCode>function varargout = v_IrradianceIsomerizations(varargin)
+<grayCode><greenCode>%
+% Validate ISETBIO-based irradiance/isomerization computations by comparing to PTB-based irradiance/isomerization computations.
+%</greenCode>
 
+<greenCode>% Initialize validation run and return params</greenCode>
+ runTimeParams = UnitTest.initializeValidationRun(varargin{:});
+ if (nargout > 0) varargout = {'', false, []}; end
+    
+<greenCode>% Validation - Call validation script</greenCode>
+<blueCode> ValidationFunction(runTimeParams); </blueCode>
+    
+<greenCode>%  Reporting and return params</greenCode>
+ if (nargout > 0)
+    [validationReport, ...
+     validationFailedFlag, ...
+     validationFundametalFailureFlag] = ...
+                      UnitTest.validationRecord('command', 'return');
+    validationData  = UnitTest.validationData('command', 'return');
+    extraData       = UnitTest.extraData('command', 'return');
+    varargout       = {validationReport, validationFailedFlag, ...
+                       validationFundametalFailureFlag, validationData, ...
+                       extraData};
+ else
+    if (runTimeParams.printValidationReport)
+        [validationReport, ~] = UnitTest.validationRecord('command', 'return');
+        UnitTest.printValidationReport(validationReport);
+    end 
+ end
+</grayCode>end    
+</blackCode>
+</pre>
+		<p>
+			The wrapper function is named according to the isetbio functionality that is tested (irradiance isomerization computations, in this example), whereas the comment appearing in line #2 of the wrapper function is used to describe this validation script in isetbio's github wiki site.
+	</p>      	
+		<p>
+       The <blueCode>ValidationFunction</blueCode> contains the isetbio code to be tested. Interspersed amongst the evaluated code are calls to @UnitTest methods for logging <b>data</b> and <b>messages</b> to the managing @UnitTest object. 
+       </p>
+       <p>
+       Two types of <b>data</b> can be logged to the managing @UnitTest object: 
+       	<ul>
+        		<li> <strong> validation data</strong>, which are the data used during external validations and, </li>
+              <li> <strong> extra data </strong>, which are additional data, not used during the validation, but are stored nevertheless in the saved ground truth history as reference data</li>
+               
+           </ul>
+      	</p>
+		This is achieved by the following calls:
+		<p class="tab">
+         	<blackCode>UnitTest.validationData('fieldName', fieldValue);</blackCode><br>
+         	<blackCode>UnitTest.extraData('fieldName', fieldValue);</blackCode>
+      	</p>
+            
+		<p>
+       The following types of <b>messages</b> can be logged to the managing @UnitTest object: 
+       	<ul>
+        		<li> <b>simple messages</b> with no special status, </li>
+              <li> messages indicating that a <b>fundamental internal check failed</b></li>
+              <li> messages indicating that an <b>internal check failed</b></li>
+				<li> messages indicating that an <b>internal check passed</b></li>
+          </ul>
+      	</p>
+      	This is achieved by the following calls:
+		<p class="tab">
+		   <blackCode>UnitTest.validationRecord('SIMPLE_MESSAGE', messageString);</blackCode><br>
+		   <blackCode>UnitTest.validationRecord('FUNDAMENTAL_CHECK_FAILED', messageString);</blackCode><br>
+         	<blackCode>UnitTest.validationRecord('FAILED', messageString);</blackCode><br>
+         	<blackCode>UnitTest.validationRecord('PASSED', messageString);</blackCode><br>
+      	</p>
+      	
+		<p>
+		The validation function for the 'v_IrradianceIsomerizations.m' script is displayed below.
+		</p>
+        <!--
+         javascript script for collapsing the navbar on click 
+        -->
+        <script>
+            $(document).on('click',function(){
+                $('.navbar-collapse').collapse('hide');
+            })
+        </script>
 
-
-<!--
-/* javascript script for collapsing the navbar on click 
--->
-<script>
-$(document).on('click',function(){
-  $('.navbar-collapse').collapse('hide');
-})
-</script>
-
-</body>
+    </body>
 </html>
+
