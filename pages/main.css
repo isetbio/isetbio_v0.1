@@ -52,7 +52,7 @@ greenCode {
 
 grayCode {
     font-family: Monaco; 
-    font-size:14px; 
+    font-size:13px; 
     color:#8f8f8f;
 }
 
@@ -74,13 +74,15 @@ lightBlueCode {
     color: #4466ff
 }
 
+/* make navigation bar a little bit transparent */
 .navbar-default {
-    background:rgba(250,250,250, 0.93);   
+    background:rgba(210, 210, 210, 0.92);   
 }
 
 .navbar-default{ 
     background-image: none;
 }
+
 
 .tab { 
     margin-left: 40px; 

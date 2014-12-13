@@ -36,6 +36,7 @@
         <!--
             NAVIGATION BAR ON TOP
         -->
+ 
         <nav id="navigationBar" role="navigation" class="nav-collapse navbar-default navbar-fixed-top">
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
@@ -49,13 +50,13 @@
                 </div>
                 
                 <!-- Collection of nav links and other content for toggling -->
-                <div id="navbarCollapse" class="navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        
+                <div id="navbarCollapse" class="navbar-collapse" style="width:100%;float:none;position:relative;">
+                    <ul class="nav navbar-nav" role="navigation" style="width:auto;white-space: nowrap;">
+        
                         <!-- First menu item -->
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                @UnitTest-based validation approach <b class="caret"></b>
+                                @UnitTest-based validation <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a href="#overview" class="smoothScroll"> overview </a></li>
@@ -71,7 +72,7 @@
                                 conducting validation sessions <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="#basic validation sessions" class="smoothScroll"> basic validation session</a></li>
+                                <li><a href="#basic validation sessions" class="smoothScroll"> basic validation</a></li>
                                 <li><a href="#customizing validation sessions" class="smoothScroll"> customizing the validation</a></li>
                             </ul>
                         </li>
@@ -87,19 +88,11 @@
                             </ul>
                         </li>
                         
-                        <!-- Fourth menu item -->
-                        <li>
-                            <a href="#writing validation scripts" class="smoothScroll">
-                            end
-                            </a>
-                        </li>
-                        
                     </ul>
                 </div>
             </div>
         </nav>
-        
-        the validation function
+
         <!--
             OVERVIEW
         -->
@@ -508,7 +501,7 @@ end
             <a id="the wrapper function" href="#the wrapper function"></a> <hr>
         </h7>
         <h4>
-           The wrapper function        
+           the wrapper function        
         </h4>
         <p>
         <p>
@@ -554,7 +547,7 @@ end
             <a id="the validation function" href="#the validation function"></a> <hr>
         </h7>
         <h4>
-           The validation function        
+           the validation function        
         </h4>
      	
 		<p>
@@ -594,8 +587,208 @@ end
       	</p>
       	
 		<p>
-		A portion of the validation function for script <blackCode>v_IrradianceIsomerizations.m</blackCode> is shown below.
+		A portion of the validation function for script <blackCode>v_IrradianceIsomerizations.m</blackCode> is shown below. The interpersed @UnitTest calls for logging data and messages are outlined in black.
+<pre>
+function ValidationFunction(<blueCode>runTimeParams</blueCode>)
+<grayCode><greenCode>%% Initialize ISETBIO</greenCode>
+s_initISET;
+       
+<blackCode>UnitTest.validationRecord(<magenta>'SIMPLE_MESSAGE'</magenta>, '*** Evaluating isomerizations ***');</blackCode>
+
+<greenCode>%% Set computation params</greenCode>
+fov     = 20;  % need large field
+roiSize = 5;
+    
+<greenCode>%% Compute the irradiance in ISETBIO</greenCode>
+oi     = oiCreate('human');
+optics = oiGet(oi,'optics');
+optics = opticsSet(optics,'off axis method','skip');
+optics = opticsSet(optics,'otf method','skip otf');
+oi     = oiSet(oi,'optics',optics);
+oi     = oiCompute(oi,scene);
+
+<greenCode>%% Define a region of interest starting at the scene's center with size roiSize x roiSize</greenCode>
+sz = sceneGet(scene,'size');
+rect = [sz(2)/2,sz(1)/2,roiSize,roiSize];
+sceneRoiLocs = ieRoi2Locs(rect);
+    
+<greenCode>%% Get wavelength and spectral radiance spd data (averaged within the scene ROI)</greenCode> 
+wave  = sceneGet(scene,'wave');
+radiancePhotons = sceneGet(scene,'roi mean photons', sceneRoiLocs);
+radianceEnergy  = sceneGet(scene,'roi mean energy',  sceneRoiLocs); 
+    
+<greenCode>%% Check spatial uniformity of scene radiance data.
+% This also verifies that two ways of getting the same information out in isetbio give the same answer.</greenCode>
+radianceData = vcGetROIData(scene,sceneRoiLocs,'energy');
+radianceEnergyCheck = mean(radianceData,1);
+if (any(radianceEnergy ~= radianceEnergyCheck))
+   message='Two ways of extracting mean scene radiance in isetbio do not agree.';
+   <blackCode>UnitTest.validationRecord(<magenta>'FUNDAMENTAL_CHECK_FAILED'</magenta>, message);</blackCode>
+   return;
+end
+
+radianceUniformityErr = (max(radianceData(:))-min(radianceData(:)))/mean(radianceData(:));
+uniformityRadianceTolerance = 0.00001;
+if (radianceUniformityErr > uniformityRadianceTolerance)
+   message = sprintf('Spatial uniformity of scene radiance is worse than %0.3f%% !!!', 100*uniformityRadianceTolerance);
+   <blackCode>UnitTest.validationRecord(<magenta>'FAILED'</magenta>, message);</blackCode>
+else
+   message = sprintf('Spatial uniformity of scene radiance is good to at least %0.3f%%',100*uniformityRadianceTolerance);
+   <blackCode>UnitTest.validationRecord(<magenta>'PASSED'</magenta>, message);</blackCode>
+end
+
+<greenCode>%% Get wavelength and spectral irradiance spd data (averaged within the scene ROI).
+% Need to recenter roi when computing from the optical image, because the optical image is padded to deal with optical blurring at its edge.</greenCode>
+sz         = oiGet(oi,'size');
+rect       = [sz(2)/2,sz(1)/2,roiSize,roiSize];
+oiRoiLocs  = ieRoi2Locs(rect);
+if (any(wave-oiGet(scene,'wave')))
+   <blackCode>UnitTest.validationRecord(<magenta>'FUNDAMENTAL_CHECK_FAILED'</magenta>, 'Wavelength sampling changed between scene and optical image.');</blackCode>
+   return;
+end
+
+isetbioIrradianceEnergy = oiGet(oi,'roi mean energy', oiRoiLocs);
+
+<greenCode>%% Check spatial uniformity of optical image irradiance data.
+% With optics turned off, we think this should be perfect but it isn't.
+% It's good to 1%, but not to 0.1%.  This may be why PTB and isetbio only agree to about 1%
+% This also verifies that two ways of getting the same information out in isetbio give the same answer.</greenCode>
+irradianceData = vcGetROIData(oi,oiRoiLocs,'energy');
+irradianceEnergyCheck = mean(irradianceData,1);
+if (any(isetbioIrradianceEnergy ~= irradianceEnergyCheck))
+   message='Two ways of extracting mean optical image irradiance in isetbio do not agree.';
+   <blackCode>UnitTest.validationRecord(<magenta>'FUNDAMENTAL_CHECK_FAILED'</magenta>, message);</blackCode>
+   return;
+end
+
+irradianceUniformityErr = (max(irradianceData(:)) - min(irradianceData(:))) mean(irradianceData(:));
+uniformityIrradianceTolerance = 0.01;
+if (irradianceUniformityErr > uniformityIrradianceTolerance)
+   message = sprintf('Spatial uniformity of optical image irradiance is worse than %0.1f%% !!!', 100*uniformityIrradianceTolerance);
+   <blackCode>UnitTest.validationRecord(<magenta>'FAILED'</magenta>, message);</blackCode>
+else
+   message = sprintf('Spatial uniformity of optical image irradiance is good to %0.1f%%',100*uniformityIrradianceTolerance);
+   <blackCode>UnitTest.validationRecord(<magenta>'PASSED'</magenta>, message);</blackCode>
+end
+
+<greenCode>% Log some extra data </greenCode>
+<blackCode>UnitTest.extraData('irradianceData',irradianceData);</blackCode>
+<blackCode>UnitTest.extraData('irradianceUniformityErr',irradianceUniformityErr);</blackCode>
+    
+<greenCode>%% Get the underlying parameters that are needed from the ISETBIO structures.</greenCode>
+optics = oiGet(oi,'optics');
+pupilDiameterMm  = opticsGet(optics,'pupil diameter','mm');
+focalLengthMm    = opticsGet(optics,'focal length','mm');
+    
+<greenCode>%% Compute the irradiance in PTB
+% The PTB calculation is encapsulated in ptb.ConeIsomerizationsFromRadiance.
+% This routine also returns cone isomerizations, which we will use below to
+% to validate that computation as well.
+%
+% The macular pigment and integration time parameters affect the isomerizations,
+% but don't affect the irradiance returned by the PTB routine.
+% The integration time doesn't affect the irradiance, but we need to pass it </greenCode>
+macularPigmentOffset = 0;
+integrationTimeSec   = 0.05;
+[ptbIsomerizations, ~, ptbPhotoreceptors, ptbIrradiance] = ...
+    ptb.ConeIsomerizationsFromRadiance(radianceEnergy(:), wave(:),...
+    pupilDiameterMm, focalLengthMm, integrationTimeSec,macularPigmentOffset);
+    
+<greenCode>%% Compare irradiances computed by ISETBIO vs. PTB
+%
+% The comparison accounts for a magnification difference in the
+% computation of retinal irradiance.  The magnification difference
+% results from how Peter Catrysse implemented the radiance to
+% irradiance calculation in isetbio versus the simple trig formula used
+% in PTB. Correcting for this reduces the difference to about 1%
+% 
+% It might be useful here to explain how the correction factor is deterimend.
+% One assumes that the squaring deals with linear dimension to area.
+% Why the absolute value around the (m), however, is mysterious to DHB.</greenCode>
+m = opticsGet(optics,'magnification',sceneGet(scene,'distance'));
+ptbMagCorrectIrradiance = ptbIrradiance(:)/(1+abs(m))^2;
+
+<greenCode>%% Numerical check to decide whether we passed.
+% We are checking against a 1% error.  We alsovstore the computed values for future comparison via our validation and check mechanism.</greenCode>
+tolerance = 0.01;
+ptbMagCorrectIrradiance = ptbMagCorrectIrradiance(:);
+isetbioIrradianceEnergy = isetbioIrradianceEnergy(:);
+difference = ptbMagCorrectIrradiance-isetbioIrradianceEnergy;
+if (max(abs(difference./isetbioIrradianceEnergy)) > tolerance)
+    message = sprintf('Difference between PTB and isetbio irradiance exceeds tolerance of %0.1f%% !!!', 100*tolerance);
+    <blackCode>UnitTest.validationRecord(<magenta>'FAILED'</magenta>, message);</blackCode>
+else
+    message = sprintf('PTB and isetbio agree about irradiance to %0.1f%%',100*tolerance);
+    <blackCode>UnitTest.validationRecord(<magenta>'PASSED'</magenta>, message);</blackCode>
+end
+
+<greenCode>% Log validation data</greenCode><blackCode>
+UnitTest.extraData('fov', fov);
+UnitTest.extraData('roiSize', roiSize);
+UnitTest.extraData('tolerance', tolerance);
+UnitTest.extraData('magCorrectionFactor',m);
+UnitTest.extraData('ptbMagCorrectIrradiance', ptbMagCorrectIrradiance);
+UnitTest.extraData('isetbioIrradianceEnergy',isetbioIrradianceEnergy);
+</blackCode>
+<greenCode>% Log extra data</greenCode><blackCode>
+UnitTest.extraData('scene', scene);
+UnitTest.extraData('oi', oi);
+</blackCode>
+<greenCode>%% Compare spectral sensitivities used by ISETBIO and PTB.
+%
+% The PTB routine above uses the CIE 2-deg standard, which is the Stockman-Sharpe 2-degree fundamentals.  Apparently, so does ISETBIO.
+% The agreement is good to about a percent.
+% Get PTB cones spectral sensitivity, quantal units</greenCode>
+coneTolerance = 0.01;
+ptbCones = ptbPhotoreceptors.isomerizationAbsorptance';
+
+<greenCode>% Create isetbio sensor object with human cones, and pull out quantal efficiencies. </greenCode>
+sensor = sensorCreate('human');
+sensor = sensorSet(sensor,'size',oiGet(oi,'size'));
+sensor = sensorSet(sensor,'noise flag',0);
+isetbioCones = sensorGet(sensor,'spectral qe');
+isetbioCones = isetbioCones(:,2:4);
+
+<greenCode>% Compare with PTB</greenCode>
+coneDifference = ptbCones-isetbioCones;
+coneMean = mean(isetbioCones(:));
+if (max(abs(coneDifference/coneMean)) > coneTolerance)
+  message = sprintf('Difference between PTB and isetbio cone quantal efficiencies exceeds %0.1f%%!!!',100*coneTolerance);
+  <blackCode>UnitTest.validationRecord(<magenta>'FAILED'</magenta>, message);</blackCode>
+else
+  message = sprintf('PTB and isetbio agree about cone quantal efficiencies good to %0.1f%%',100*coneTolerance);
+  <blackCode>UnitTest.validationRecord(<magenta>'PASSED'</magenta>, message);</blackCode>
+end
+
+<greenCode>% Log validation data</greenCode>
+<blackCode>UnitTest.validationData('isetCones',isetbioCones);
+UnitTest.validationData('ptbCones',ptbCones);
+
+<greenCode>% Log extra data</greenCode>
+UnitTest.extraData('coneTolerance',coneTolerance);</blackCode>
+    
+<greenCode>% Check the 'generatePlots' preference and if it set to true, generate plots</greenCode>
+if (<blueCode>runTimeParams.generatePlots</blueCode>)
+  h = figure(500); clf;
+  plot(wave,ptbIrradiance,'ro','MarkerFaceColor',[1.0 0.8 0.8],'MarkerSize', 10);
+  hold on;
+  plot(wave,isetbioIrradianceEnergy,'bo','MarkerFaceColor',[0.8 0.8 1.0], 'MarkerSize',10);
+  hold off
+  set(gca,'ylim',[0 1.2*max([max(ptbIrradiance(:)) max(isetbioIrradianceEnergy(:))])]);
+  set(gca, 'FontName', 'Helvetica', 'FontSize', 14,  'FontWeight', 'bold');
+  legend({'PTB','ISETBIO'}, 'Location','SouthEast','FontSize',12);
+  xlabel('Wave (nm)', 'FontName', 'Helvetica', 'FontSize', 16); 
+  ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 16)  
+end
+        
+</grayCode>end
+</pre>
+
+
 		</p>
+		
+		
+		
         <!--
          javascript script for collapsing the navbar on click 
         -->
