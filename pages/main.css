@@ -76,11 +76,7 @@ lightBlueCode {
 
 /* make navigation bar a little bit transparent */
 .navbar-default {
-    background:rgba(210, 210, 210, 0.92);   
-}
-
-.navbar-default{ 
-    background-image: none;
+    background:rgba(250, 250, 250, 0.92);  
 }
 
 
