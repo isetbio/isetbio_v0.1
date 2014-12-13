@@ -8,7 +8,7 @@ function validateDemo
     close all
     clc
     
-    %% Initialize ISETBIO preferences
+    %% Initialize @UnitTest preferences
     UnitTest.initializePrefs();
     
     %% Optionally, reset prefs to the default values
