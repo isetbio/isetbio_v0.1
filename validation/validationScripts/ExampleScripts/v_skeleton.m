@@ -27,7 +27,7 @@ function varargout = v_skeleton(varargin)
     end
 end
 
-%% Skeleton validation script
+%% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
 
     

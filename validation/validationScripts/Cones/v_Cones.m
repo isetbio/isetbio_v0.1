@@ -32,7 +32,7 @@ else
 end
 end
 
-%% Actual script
+%% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
 
 %% Create appropriate structures

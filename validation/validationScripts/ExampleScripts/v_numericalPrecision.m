@@ -27,7 +27,7 @@ function varargout = v_numericalPrecision(varargin)
     end
 end
 
-%% Actual alidation script
+%% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
 
     

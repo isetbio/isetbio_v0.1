@@ -27,7 +27,7 @@ function varargout = v_Colorimetry(varargin)
     end
 end
 
-
+%% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
     
     %% Path stuff

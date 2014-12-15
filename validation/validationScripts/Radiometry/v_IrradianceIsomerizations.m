@@ -50,6 +50,7 @@ function varargout = v_IrradianceIsomerizations(varargin)
     end
 end
 
+%% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
     
     %% Initialize ISETBIO

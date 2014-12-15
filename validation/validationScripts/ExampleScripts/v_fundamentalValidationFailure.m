@@ -27,6 +27,7 @@ function varargout = v_fundamentalValidationFailure(varargin)
     end
 end
 
+%% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
       
     % Simulate fundamental failure here

@@ -27,6 +27,7 @@ function varargout = v_runTimeError(varargin)
     end
 end
 
+%% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
     
     error('Simulating runtime error');

@@ -30,7 +30,7 @@ function varargout = v_sceneReIllumination(varargin)
     end
 end
 
-
+%% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
 
     %% Initialize ISETBIO
