@@ -126,7 +126,7 @@ function validate(obj, vScriptsToRunList)
             command = sprintf('try \n\t%s  \n\t exceptionRaisedFlag = false; \ncatch err \n\t exceptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''exception raised with message: %%s'', err.message), true, false};  \n\t rethrow(err);  \nend', commandString);
         end
         
-        if (obj.validationParams.verbosity > 4)
+        if (obj.validationParams.verbosity > 5)
             fprintf('\nRunning with ');
             eval('scriptRunParams');
         end
