@@ -29,7 +29,8 @@ function varargout =  v_OTFandPupilSize(varargin)
     end
 end
 
-%% Validation script for OTF: contrasting to Watson's (2013) model.
+%% Function implementing the isetbio validation code
+% Contrasting isetbio's OTF to Watson's (2013) model.
 function ValidationFunction(runTimeParams)
     
     %% Initialize ISETBIO

@@ -41,7 +41,8 @@ function varargout = v_HumanRetinalIlluminance580nm(varargin)
     end
 end
 
-%% Validation script for human retinal irradiance at 580 nm.
+%% Function implementing the isetbio validation code
+% Validation script for human retinal irradiance at 580 nm.
 function ValidationFunction(runTimeParams)
 
     %% Initialize ISETBIO
