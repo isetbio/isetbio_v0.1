@@ -8,11 +8,11 @@ function listPrefs
     for k = 1:numel(preferenceNames)
         value = isetbioValidationPrefs.(preferenceNames{k});
         if ischar(value)
-            fprintf('\t %-30s with value: ''%s''\n', sprintf('''%s''', preferenceNames{k}), value);
+            fprintf('\t %-25s : ''%s''\n', sprintf('''%s''', preferenceNames{k}), value);
         elseif islogical(value)
-            fprintf('\t %-30s with value: %s\n', sprintf('''%s''', preferenceNames{k}), logicalToString(value));
+            fprintf('\t %-25s : %s\n', sprintf('''%s''', preferenceNames{k}), logicalToString(value));
         else
-            fprintf('\t %-30s with value: %g\n', sprintf('''%s''', preferenceNames{k}), value);
+            fprintf('\t %-25s : %g\n', sprintf('''%s''', preferenceNames{k}), value);
         end
     end
     fprintf('\n');

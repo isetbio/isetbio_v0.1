@@ -14,8 +14,8 @@ runTimeParams = UnitTest.initializeValidationRun(varargin{:});
 if (nargout > 0) varargout = {'', false, []}; end
 close all;
 
-%% Validation - Call validation script
-ValidationScript(runTimeParams);
+%% Call the validation function
+ValidationFunction(runTimeParams);
 
 %% Reporting and return params
 if (nargout > 0)
@@ -33,7 +33,7 @@ end
 end
 
 %% Actual script
-function ValidationScript(runTimeParams)
+function ValidationFunction(runTimeParams)
 
 %% Create appropriate structures
 sensor = sensorCreate('human');

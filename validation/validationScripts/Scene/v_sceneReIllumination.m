@@ -12,8 +12,8 @@ function varargout = v_sceneReIllumination(varargin)
     % Initialize return params
     if (nargout > 0) varargout = {'', false, []}; end
     
-    %% Validation - Call validation script
-    ValidationScript(runTimeParams);
+    %% Call the validation function
+    ValidationFunction(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -31,7 +31,7 @@ function varargout = v_sceneReIllumination(varargin)
 end
 
 
-function ValidationScript(runTimeParams)
+function ValidationFunction(runTimeParams)
 
     %% Initialize ISETBIO
     s_initISET;

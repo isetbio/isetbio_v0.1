@@ -32,8 +32,8 @@ function varargout = v_IrradianceIsomerizations(varargin)
     runTimeParams = UnitTest.initializeValidationRun(varargin{:});
     if (nargout > 0) varargout = {'', false, []}; end
     
-    %% Validation - Call validation script
-    ValidationScript(runTimeParams);
+    %% Call the validation function
+    ValidationFunction(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -50,7 +50,7 @@ function varargout = v_IrradianceIsomerizations(varargin)
     end
 end
 
-function ValidationScript(runTimeParams)
+function ValidationFunction(runTimeParams)
     
     %% Initialize ISETBIO
     s_initISET;

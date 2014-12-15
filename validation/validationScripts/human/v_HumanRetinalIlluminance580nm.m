@@ -23,8 +23,8 @@ function varargout = v_HumanRetinalIlluminance580nm(varargin)
     % Initialize return params
     if (nargout > 0) varargout = {'', false, []}; end
     
-    %% Validation - Call validation script
-    ValidationScript(runTimeParams);
+    %% Call the validation function
+    ValidationFunction(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -42,7 +42,7 @@ function varargout = v_HumanRetinalIlluminance580nm(varargin)
 end
 
 %% Validation script for human retinal irradiance at 580 nm.
-function ValidationScript(runTimeParams)
+function ValidationFunction(runTimeParams)
 
     %% Initialize ISETBIO
     s_initISET;

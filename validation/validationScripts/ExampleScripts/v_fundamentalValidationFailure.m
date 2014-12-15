@@ -9,8 +9,8 @@ function varargout = v_fundamentalValidationFailure(varargin)
     % Initialize return params
     if (nargout > 0) varargout = {'', false, []}; end
     
-    %% Validation - Call validation script
-    ValidationScript(runTimeParams);
+    %% Call the validation function
+    ValidationFunction(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -27,7 +27,7 @@ function varargout = v_fundamentalValidationFailure(varargin)
     end
 end
 
-function ValidationScript(runTimeParams)
+function ValidationFunction(runTimeParams)
       
     % Simulate fundamental failure here
     if (true)

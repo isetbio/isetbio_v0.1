@@ -9,8 +9,8 @@ function varargout = v_skeleton(varargin)
     % Initialize return params
     if (nargout > 0) varargout = {'', false, []}; end
     
-    %% Validation - Call validation script
-    ValidationScript(runTimeParams);
+    %% Call the validation function
+    ValidationFunction(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -28,7 +28,7 @@ function varargout = v_skeleton(varargin)
 end
 
 %% Skeleton validation script
-function ValidationScript(runTimeParams)
+function ValidationFunction(runTimeParams)
 
     
     %% Initialize ISETBIO
