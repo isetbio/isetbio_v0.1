@@ -45,7 +45,7 @@ function ValidationFunction(runTimeParams)
     tolerance = 1e-12;
     
     %% XYZ-related colorimetry
-    UnitTest.validationRecord('message', '***** Basic XYZ *****');
+    UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Basic XYZ *****');
     testXYZs = [[1 2 1]' [2 1 0.5]' [1 1 1]' [0.6 2.3 4]'];
     ptbxyYs = XYZToxyY(testXYZs);
     ptbxys  = ptbxyYs(1:2,:);
@@ -194,7 +194,7 @@ function ValidationFunction(runTimeParams)
     % One other convention difference is that the PTB routine rounds to
     % integers for the settings, while the iset routine leaves the rounding up
     % to the caller.
-    UnitTest.validationRecord('message', '***** sRGB *****');
+    UnitTest.validationRecord('SIMPLE_MESSAGE', '***** sRGB *****');
 
     % Create some test sRGB values and convert them in the PTB framework
     ptbSRGBs = [[188 188 188]' [124 218 89]' [255 149 203]' [255 3 203]'];
@@ -317,7 +317,7 @@ function ValidationFunction(runTimeParams)
     %
     % The ISET routines define c and h to more places than the PTB, so the
     % agreement is only good to about 5 significant places.  Seems OK to me.
-    UnitTest.validationRecord('message', '***** Energy/Quanta *****');
+    UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Energy/Quanta *****');
     
     load spd_D65
     spdEnergyTest = spd_D65;
@@ -361,7 +361,7 @@ function ValidationFunction(runTimeParams)
     %% CIE daylights
     % 
     % These routines are now running in ISET and everything agrees.
-    UnitTest.validationRecord('message', '***** CIE Daylights *****');
+    UnitTest.validationRecord('SIMPLE_MESSAGE', '***** CIE Daylights *****');
     
     load B_cieday
     testWls = SToWls(S_cieday);

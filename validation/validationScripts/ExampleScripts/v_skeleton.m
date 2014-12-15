@@ -38,7 +38,7 @@ function ValidationFunction(runTimeParams)
     
     
     %% Some informative text
-    UnitTest.validationRecord('message', 'Skeleton script. Copy and adapt to your needs.');
+    UnitTest.validationRecord('SIMPLE_MESSAGE', 'Skeleton script. Copy and adapt to your needs.');
     
     %% Internal validations
     quantityOfInterest = randn(100,1)*0.0000001;

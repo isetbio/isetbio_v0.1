@@ -53,9 +53,9 @@ function ValidationFunction(runTimeParams)
         largeResultRepresentations(k,:) = round(largeResult,nDigits);
         diff = abs(largeResult-squeeze(largeResultRepresentations(k,:)));
         if (any(diff >= tolerance ))
-            UnitTest.validationRecord('message', sprintf('large result is not represented accurately with %d decimal digits.', nDigits));
+            UnitTest.validationRecord('SIMPLE_MESSAGE', sprintf('large result is not represented accurately with %d decimal digits.', nDigits));
         else
-            UnitTest.validationRecord('message', sprintf('large result is represented accurately with %d decimal digits.', nDigits));
+            UnitTest.validationRecord('SIMPLE_MESSAGE', sprintf('large result is represented accurately with %d decimal digits.', nDigits));
         end
     end
     
@@ -64,9 +64,9 @@ function ValidationFunction(runTimeParams)
         smallResultRepresentations(k,:) = round(smallResult,nDigits);
         diff = abs(smallResult-squeeze(smallResultRepresentations(k,:)));
         if (any(diff >= tolerance ))
-            UnitTest.validationRecord('message', sprintf('small result is not represented accurately with %d decimal digits.', nDigits));
+            UnitTest.validationRecord('SIMPLE_MESSAGE', sprintf('small result is not represented accurately with %d decimal digits.', nDigits));
         else
-            UnitTest.validationRecord('message', sprintf('small result is represented accurately with %d decimal digits.', nDigits));
+            UnitTest.validationRecord('SIMPLE_MESSAGE', sprintf('small result is represented accurately with %d decimal digits.', nDigits));
         end
 
     end
