@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_OTFandPupilSize</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-12"><meta name="DC.source" content="v_OTFandPupilSize.m"><style type="text/css">
+      --><title>v_OTFandPupilSize</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-15"><meta name="DC.source" content="v_OTFandPupilSize.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Validation - Call validation script</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Validation script for OTF: contrasting to Watson's (2013) model.</a></li><li><a href="#9">Initialize ISETBIO</a></li><li><a href="#10">Set run parameters</a></li><li><a href="#11">Iterate over examined pupil sizes</a></li><li><a href="#13">Retrieve examined pupil radius</a></li><li><a href="#14">Create human optics with examined pupil radius</a></li><li><a href="#15">Initialize optical image with desired optics</a></li><li><a href="#16">Compute optical image for given scene</a></li><li><a href="#17">Set the scene's angular size = 1 deg and it's distance to the lens = 1.0 meter</a></li><li><a href="#18">Compute optical image</a></li><li><a href="#19">Retrieve the full OTF</a></li><li><a href="#20">Retrieve the wavelength axis</a></li><li><a href="#21">Retrieve the spatial frequency support in cycles/micron</a></li><li><a href="#22">Convert spatial frequency to cycles/deg.</a></li><li><a href="#23">Get 2D OTF slice at target wavelength</a></li><li><a href="#24">Unwrap spectrum</a></li><li><a href="#25">Get a 1D slice (sfY=0, sfX)</a></li><li><a href="#26">Generate modelOTF using Watson's (2013) model</a></li><li><a href="#28">Internal validation</a></li><li><a href="#29">Plotting</a></li><li><a href="#31">Plot of ISETBIO vs. Watson's OTF for different pupil sizes at OTFsliceWavelength</a></li><li><a href="#32">ISETBIO's OTF slices at the examined pupil sizes</a></li><li><a href="#33">Watson's OTF slices at the examined pupil sizes</a></li><li><a href="#34">ISETBIO's OTF slices at different wavelengths and a 4 mm pupil</a></li><li><a href="#35">Watson's OTF slices at different wavelengths and a 4mm pupil</a></li><li><a href="#38">Watson's model</a></li><li><a href="#39">Helper plotting funtions</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout =  v_OTFandPupilSize(varargin)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Validation script for OTF: contrasting to Watson's (2013) model.</a></li><li><a href="#9">Initialize ISETBIO</a></li><li><a href="#10">Set run parameters</a></li><li><a href="#11">Iterate over examined pupil sizes</a></li><li><a href="#13">Retrieve examined pupil radius</a></li><li><a href="#14">Create human optics with examined pupil radius</a></li><li><a href="#15">Initialize optical image with desired optics</a></li><li><a href="#16">Compute optical image for given scene</a></li><li><a href="#17">Set the scene's angular size = 1 deg and it's distance to the lens = 1.0 meter</a></li><li><a href="#18">Compute optical image</a></li><li><a href="#19">Retrieve the full OTF</a></li><li><a href="#20">Retrieve the wavelength axis</a></li><li><a href="#21">Retrieve the spatial frequency support in cycles/micron</a></li><li><a href="#22">Convert spatial frequency to cycles/deg.</a></li><li><a href="#23">Get 2D OTF slice at target wavelength</a></li><li><a href="#24">Unwrap spectrum</a></li><li><a href="#25">Get a 1D slice (sfY=0, sfX)</a></li><li><a href="#26">Generate modelOTF using Watson's (2013) model</a></li><li><a href="#28">Internal validation</a></li><li><a href="#29">Plotting</a></li><li><a href="#31">Plot of ISETBIO vs. Watson's OTF for different pupil sizes at OTFsliceWavelength</a></li><li><a href="#32">ISETBIO's OTF slices at the examined pupil sizes</a></li><li><a href="#33">Watson's OTF slices at the examined pupil sizes</a></li><li><a href="#34">ISETBIO's OTF slices at different wavelengths and a 4 mm pupil</a></li><li><a href="#35">Watson's OTF slices at different wavelengths and a 4mm pupil</a></li><li><a href="#38">Watson's model</a></li><li><a href="#39">Helper plotting funtions</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout =  v_OTFandPupilSize(varargin)
 </pre><pre class="codeinput"><span class="comment">%</span>
 <span class="comment">% Validate the ISETBIO's OTF as a function of pupil size by comparing it to the Watson (2013) OTF model.</span>
 <span class="comment">% "A formula for the mean human optical modulation transfer function as a function of pupil size".</span>
@@ -75,7 +75,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><h2>Initialization<a name="3"></a></h2><p>Initialize validation run</p><pre class="codeinput">    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
     <span class="comment">% Initialize return params</span>
     <span class="keyword">if</span> (nargout &gt; 0) varargout = {<span class="string">''</span>, false, []}; <span class="keyword">end</span>
-</pre><h2>Validation - Call validation script<a name="4"></a></h2><pre class="codeinput">    ValidationScript(runTimeParams);
+</pre><h2>Call the validation function<a name="4"></a></h2><pre class="codeinput">    ValidationFunction(runTimeParams);
 </pre><h2>Reporting and return params<a name="5"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (nargout &gt; 0)
         [validationReport, validationFailedFlag, validationFundametalFailureFlag] = <span class="keyword">...</span>
                           UnitTest.validationRecord(<span class="string">'command'</span>, <span class="string">'return'</span>);
@@ -89,7 +89,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
-</pre><h2>Validation script for OTF: contrasting to Watson's (2013) model.<a name="7"></a></h2><pre class="codeinput"><span class="keyword">function</span> ValidationScript(runTimeParams)
+</pre><h2>Validation script for OTF: contrasting to Watson's (2013) model.<a name="7"></a></h2><pre class="codeinput"><span class="keyword">function</span> ValidationFunction(runTimeParams)
 </pre><h2>Initialize ISETBIO<a name="9"></a></h2><pre class="codeinput">    s_initISET;
 </pre><h2>Set run parameters<a name="10"></a></h2><pre class="codeinput">    <span class="comment">% Pupil diameters to test</span>
     examinedPupilDiametersInMillimeters = (2:0.5:6.0);
@@ -373,8 +373,8 @@ function varargout =  v_OTFandPupilSize(varargin)
     % Initialize return params
     if (nargout > 0) varargout = {'', false, []}; end
     
-    %% Validation - Call validation script
-    ValidationScript(runTimeParams);
+    %% Call the validation function
+    ValidationFunction(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -392,7 +392,7 @@ function varargout =  v_OTFandPupilSize(varargin)
 end
 
 %% Validation script for OTF: contrasting to Watson's (2013) model.
-function ValidationScript(runTimeParams)
+function ValidationFunction(runTimeParams)
     
     %% Initialize ISETBIO
     s_initISET;

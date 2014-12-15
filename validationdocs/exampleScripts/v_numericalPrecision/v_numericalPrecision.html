@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_numericalPrecision</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-12"><meta name="DC.source" content="v_numericalPrecision.m"><style type="text/css">
+      --><title>v_numericalPrecision</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-15"><meta name="DC.source" content="v_numericalPrecision.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,14 +66,14 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Validation - Call validation script</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Actual alidation script</a></li><li><a href="#9">Initialize ISETBIO</a></li><li><a href="#10">Internal validations</a></li><li><a href="#11">Conversion to N- digit precision</a></li><li><a href="#12">Append to extraData</a></li><li><a href="#13">Plotting</a></li><li><a href="#15">Helper plotting function</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_numericalPrecision(varargin)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Actual alidation script</a></li><li><a href="#9">Initialize ISETBIO</a></li><li><a href="#10">Internal validations</a></li><li><a href="#11">Conversion to N- digit precision</a></li><li><a href="#12">Append to extraData</a></li><li><a href="#13">Plotting</a></li><li><a href="#15">Helper plotting function</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_numericalPrecision(varargin)
 </pre><pre class="codeinput"><span class="comment">%</span>
 <span class="comment">% Script assessing the effects of rounding at different numerical precisions.</span>
 <span class="comment">%</span>
 </pre><h2>Initialization<a name="3"></a></h2><p>Initialize validation run</p><pre class="codeinput">    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
     <span class="comment">% Initialize return params</span>
     <span class="keyword">if</span> (nargout &gt; 0) varargout = {<span class="string">''</span>, false, []}; <span class="keyword">end</span>
-</pre><h2>Validation - Call validation script<a name="4"></a></h2><pre class="codeinput">    ValidationScript(runTimeParams);
+</pre><h2>Call the validation function<a name="4"></a></h2><pre class="codeinput">    ValidationFunction(runTimeParams);
 </pre><h2>Reporting and return params<a name="5"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (nargout &gt; 0)
         [validationReport, validationFailedFlag, validationFundametalFailureFlag] = <span class="keyword">...</span>
                           UnitTest.validationRecord(<span class="string">'command'</span>, <span class="string">'return'</span>);
@@ -87,7 +87,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
-</pre><h2>Actual alidation script<a name="7"></a></h2><pre class="codeinput"><span class="keyword">function</span> ValidationScript(runTimeParams)
+</pre><h2>Actual alidation script<a name="7"></a></h2><pre class="codeinput"><span class="keyword">function</span> ValidationFunction(runTimeParams)
 </pre><h2>Initialize ISETBIO<a name="9"></a></h2><pre class="codeinput">    s_initISET;
 </pre><h2>Internal validations<a name="10"></a></h2><p>The result of a computation: a vector of doubles</p><pre class="codeinput">    gain = 10E18;
     largeResult = gain*eps*rand(1,100*1000);
@@ -104,9 +104,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         largeResultRepresentations(k,:) = round(largeResult,nDigits);
         diff = abs(largeResult-squeeze(largeResultRepresentations(k,:)));
         <span class="keyword">if</span> (any(diff &gt;= tolerance ))
-            UnitTest.validationRecord(<span class="string">'message'</span>, sprintf(<span class="string">'large result is not represented accurately with %d decimal digits.'</span>, nDigits));
+            UnitTest.validationRecord(<span class="string">'SIMPLE_MESSAGE'</span>, sprintf(<span class="string">'large result is not represented accurately with %d decimal digits.'</span>, nDigits));
         <span class="keyword">else</span>
-            UnitTest.validationRecord(<span class="string">'message'</span>, sprintf(<span class="string">'large result is represented accurately with %d decimal digits.'</span>, nDigits));
+            UnitTest.validationRecord(<span class="string">'SIMPLE_MESSAGE'</span>, sprintf(<span class="string">'large result is represented accurately with %d decimal digits.'</span>, nDigits));
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 
@@ -115,9 +115,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         smallResultRepresentations(k,:) = round(smallResult,nDigits);
         diff = abs(smallResult-squeeze(smallResultRepresentations(k,:)));
         <span class="keyword">if</span> (any(diff &gt;= tolerance ))
-            UnitTest.validationRecord(<span class="string">'message'</span>, sprintf(<span class="string">'small result is not represented accurately with %d decimal digits.'</span>, nDigits));
+            UnitTest.validationRecord(<span class="string">'SIMPLE_MESSAGE'</span>, sprintf(<span class="string">'small result is not represented accurately with %d decimal digits.'</span>, nDigits));
         <span class="keyword">else</span>
-            UnitTest.validationRecord(<span class="string">'message'</span>, sprintf(<span class="string">'small result is represented accurately with %d decimal digits.'</span>, nDigits));
+            UnitTest.validationRecord(<span class="string">'SIMPLE_MESSAGE'</span>, sprintf(<span class="string">'small result is represented accurately with %d decimal digits.'</span>, nDigits));
         <span class="keyword">end</span>
 
     <span class="keyword">end</span>
@@ -172,8 +172,8 @@ function varargout = v_numericalPrecision(varargin)
     % Initialize return params
     if (nargout > 0) varargout = {'', false, []}; end
     
-    %% Validation - Call validation script
-    ValidationScript(runTimeParams);
+    %% Call the validation function
+    ValidationFunction(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -191,7 +191,7 @@ function varargout = v_numericalPrecision(varargin)
 end
 
 %% Actual alidation script
-function ValidationScript(runTimeParams)
+function ValidationFunction(runTimeParams)
 
     
     %% Initialize ISETBIO
@@ -216,9 +216,9 @@ function ValidationScript(runTimeParams)
         largeResultRepresentations(k,:) = round(largeResult,nDigits);
         diff = abs(largeResult-squeeze(largeResultRepresentations(k,:)));
         if (any(diff >= tolerance ))
-            UnitTest.validationRecord('message', sprintf('large result is not represented accurately with %d decimal digits.', nDigits));
+            UnitTest.validationRecord('SIMPLE_MESSAGE', sprintf('large result is not represented accurately with %d decimal digits.', nDigits));
         else
-            UnitTest.validationRecord('message', sprintf('large result is represented accurately with %d decimal digits.', nDigits));
+            UnitTest.validationRecord('SIMPLE_MESSAGE', sprintf('large result is represented accurately with %d decimal digits.', nDigits));
         end
     end
     
@@ -227,9 +227,9 @@ function ValidationScript(runTimeParams)
         smallResultRepresentations(k,:) = round(smallResult,nDigits);
         diff = abs(smallResult-squeeze(smallResultRepresentations(k,:)));
         if (any(diff >= tolerance ))
-            UnitTest.validationRecord('message', sprintf('small result is not represented accurately with %d decimal digits.', nDigits));
+            UnitTest.validationRecord('SIMPLE_MESSAGE', sprintf('small result is not represented accurately with %d decimal digits.', nDigits));
         else
-            UnitTest.validationRecord('message', sprintf('small result is represented accurately with %d decimal digits.', nDigits));
+            UnitTest.validationRecord('SIMPLE_MESSAGE', sprintf('small result is represented accurately with %d decimal digits.', nDigits));
         end
 
     end

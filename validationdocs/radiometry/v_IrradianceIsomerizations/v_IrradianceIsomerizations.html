@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_IrradianceIsomerizations</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-12"><meta name="DC.source" content="v_IrradianceIsomerizations.m"><style type="text/css">
+      --><title>v_IrradianceIsomerizations</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-15"><meta name="DC.source" content="v_IrradianceIsomerizations.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,9 +66,10 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Validation - Call validation script</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#8">Initialize ISETBIO</a></li><li><a href="#9">Set computation params</a></li><li><a href="#10">Create a radiance image in ISETBIO</a></li><li><a href="#11">Compute the irradiance in ISETBIO</a></li><li><a href="#12">Define a region of interest starting at the scene's center with size</a></li><li><a href="#13">Get wavelength and spectral radiance spd data (averaged within the scene ROI)</a></li><li><a href="#14">Check spatial uniformity of scene radiance data.</a></li><li><a href="#15">Get wavelength and spectral irradiance spd data (averaged within the scene ROI)</a></li><li><a href="#16">Check spatial uniformity of optical image irradiance data.</a></li><li><a href="#17">Get the underlying parameters that are needed from the ISETBIO structures.</a></li><li><a href="#18">Compute the irradiance in PTB</a></li><li><a href="#19">Compare irradiances computed by ISETBIO vs. PTB</a></li><li><a href="#20">Numerical check to decide whether we passed.</a></li><li><a href="#21">Compare spectral sensitivities used by ISETBIO and PTB.</a></li><li><a href="#22">Compute quantal absorptions</a></li><li><a href="#23">Adjust answer for differences in collecting area in the two calculations</a></li><li><a href="#24">Also need to correct for magnification difference</a></li><li><a href="#25">Plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_IrradianceIsomerizations(varargin)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#8">Initialize ISETBIO</a></li><li><a href="#9">Set computation params</a></li><li><a href="#10">Create a radiance image in ISETBIO</a></li><li><a href="#11">Compute the irradiance in ISETBIO</a></li><li><a href="#12">Define a region of interest starting at the scene's center with size</a></li><li><a href="#13">Get wavelength and spectral radiance spd data (averaged within the scene ROI)</a></li><li><a href="#14">Check spatial uniformity of scene radiance data.</a></li><li><a href="#15">Get wavelength and spectral irradiance spd data (averaged within the scene ROI)</a></li><li><a href="#16">Check spatial uniformity of optical image irradiance data.</a></li><li><a href="#17">Get the underlying parameters that are needed from the ISETBIO structures.</a></li><li><a href="#18">Compute the irradiance in PTB</a></li><li><a href="#19">Compare irradiances computed by ISETBIO vs. PTB</a></li><li><a href="#20">Numerical check to decide whether we passed.</a></li><li><a href="#21">Compare spectral sensitivities used by ISETBIO and PTB.</a></li><li><a href="#22">Compute quantal absorptions</a></li><li><a href="#23">Adjust answer for differences in collecting area in the two calculations</a></li><li><a href="#24">Also need to correct for magnification difference</a></li><li><a href="#25">Plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_IrradianceIsomerizations(varargin)
 </pre><pre class="codeinput"><span class="comment">%</span>
-<span class="comment">% Validate ISETBIO-based irradiance/isomerization computations by comparing to PTB-based irradiance/isomerization computations.</span>
+<span class="comment">% Validate ISETBIO-based irradiance/isomerization computations by comparing</span>
+<span class="comment">% to PTB-based irradiance/isomerization computations.</span>
 <span class="comment">%</span>
 <span class="comment">% Minor issues:</span>
 <span class="comment">%</span>
@@ -95,7 +96,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <span class="comment">% lambda-max, cone aperature area, photopigment quantal efficiency.</span>
 </pre><h2>Initialization<a name="3"></a></h2><p>Initialize validation run and return params</p><pre class="codeinput">    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
     <span class="keyword">if</span> (nargout &gt; 0) varargout = {<span class="string">''</span>, false, []}; <span class="keyword">end</span>
-</pre><h2>Validation - Call validation script<a name="4"></a></h2><pre class="codeinput">    ValidationScript(runTimeParams);
+</pre><h2>Call the validation function<a name="4"></a></h2><pre class="codeinput">    ValidationFunction(runTimeParams);
 </pre><h2>Reporting and return params<a name="5"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (nargout &gt; 0)
         [validationReport, validationFailedFlag, validationFundametalFailureFlag] = <span class="keyword">...</span>
                           UnitTest.validationRecord(<span class="string">'command'</span>, <span class="string">'return'</span>);
@@ -110,7 +111,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
 
-<span class="keyword">function</span> ValidationScript(runTimeParams)
+<span class="keyword">function</span> ValidationFunction(runTimeParams)
 </pre><h2>Initialize ISETBIO<a name="8"></a></h2><pre class="codeinput">    s_initISET;
 </pre><h2>Set computation params<a name="9"></a></h2><pre class="codeinput">    fov     = 20;  <span class="comment">% need large field</span>
     roiSize = 5;
@@ -335,7 +336,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 ##### SOURCE BEGIN #####
 function varargout = v_IrradianceIsomerizations(varargin)
 %
-% Validate ISETBIO-based irradiance/isomerization computations by comparing to PTB-based irradiance/isomerization computations.
+% Validate ISETBIO-based irradiance/isomerization computations by comparing
+% to PTB-based irradiance/isomerization computations.
 %
 % Minor issues:
 %
@@ -366,8 +368,8 @@ function varargout = v_IrradianceIsomerizations(varargin)
     runTimeParams = UnitTest.initializeValidationRun(varargin{:});
     if (nargout > 0) varargout = {'', false, []}; end
     
-    %% Validation - Call validation script
-    ValidationScript(runTimeParams);
+    %% Call the validation function
+    ValidationFunction(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -384,7 +386,7 @@ function varargout = v_IrradianceIsomerizations(varargin)
     end
 end
 
-function ValidationScript(runTimeParams)
+function ValidationFunction(runTimeParams)
     
     %% Initialize ISETBIO
     s_initISET;

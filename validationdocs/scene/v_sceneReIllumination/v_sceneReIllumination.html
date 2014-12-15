@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_sceneReIllumination</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-12"><meta name="DC.source" content="v_sceneReIllumination.m"><style type="text/css">
+      --><title>v_sceneReIllumination</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-15"><meta name="DC.source" content="v_sceneReIllumination.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Validation - Call validation script</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#8">Initialize ISETBIO</a></li><li><a href="#9">Generate Macbeth scene with D65 illuminant</a></li><li><a href="#10">Extract various spectral parameters of the scene</a></li><li><a href="#11">Generate an RGB rendition of the scene</a></li><li><a href="#12">Compute scene reflectance functions at all (row,col) positions</a></li><li><a href="#13">Generate new illuminant: fluorescent light with a luminance equal to that of D65 above</a></li><li><a href="#14">Re-illuminate scene using the new illuminant</a></li><li><a href="#15">Extract various spectral parameters of the scene</a></li><li><a href="#16">Generate an RGB rendition of the scene</a></li><li><a href="#17">Compute scene reflectance functions at all (row,col) positions</a></li><li><a href="#18">Internal validation</a></li><li><a href="#19">Plotting</a></li><li><a href="#21">Helper plotting functions</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_sceneReIllumination(varargin)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#8">Initialize ISETBIO</a></li><li><a href="#9">Generate Macbeth scene with D65 illuminant</a></li><li><a href="#10">Extract various spectral parameters of the scene</a></li><li><a href="#11">Generate an RGB rendition of the scene</a></li><li><a href="#12">Compute scene reflectance functions at all (row,col) positions</a></li><li><a href="#13">Generate new illuminant: fluorescent light with a luminance equal to that of D65 above</a></li><li><a href="#14">Re-illuminate scene using the new illuminant</a></li><li><a href="#15">Extract various spectral parameters of the scene</a></li><li><a href="#16">Generate an RGB rendition of the scene</a></li><li><a href="#17">Compute scene reflectance functions at all (row,col) positions</a></li><li><a href="#18">Internal validation</a></li><li><a href="#19">Plotting</a></li><li><a href="#21">Helper plotting functions</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_sceneReIllumination(varargin)
 </pre><pre class="codeinput"><span class="comment">%</span>
 <span class="comment">% Validate changes in scene illuminant.</span>
 <span class="comment">%</span>
@@ -76,7 +76,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><h2>Initialization<a name="3"></a></h2><p>Initialize validation run</p><pre class="codeinput">    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
     <span class="comment">% Initialize return params</span>
     <span class="keyword">if</span> (nargout &gt; 0) varargout = {<span class="string">''</span>, false, []}; <span class="keyword">end</span>
-</pre><h2>Validation - Call validation script<a name="4"></a></h2><pre class="codeinput">    ValidationScript(runTimeParams);
+</pre><h2>Call the validation function<a name="4"></a></h2><pre class="codeinput">    ValidationFunction(runTimeParams);
 </pre><h2>Reporting and return params<a name="5"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (nargout &gt; 0)
         [validationReport, validationFailedFlag, validationFundametalFailureFlag] = <span class="keyword">...</span>
                           UnitTest.validationRecord(<span class="string">'command'</span>, <span class="string">'return'</span>);
@@ -92,7 +92,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><pre class="codeinput"><span class="keyword">end</span>
 
 
-<span class="keyword">function</span> ValidationScript(runTimeParams)
+<span class="keyword">function</span> ValidationFunction(runTimeParams)
 </pre><h2>Initialize ISETBIO<a name="8"></a></h2><pre class="codeinput">    s_initISET;
 </pre><h2>Generate Macbeth scene with D65 illuminant<a name="9"></a></h2><pre class="codeinput">    scene = sceneCreate(<span class="string">'macbethd65'</span>);
 </pre><h2>Extract various spectral parameters of the scene<a name="10"></a></h2><pre class="codeinput">    illuminantPhotons   = sceneGet(scene, <span class="string">'illuminantPhotons'</span>);
@@ -249,8 +249,8 @@ function varargout = v_sceneReIllumination(varargin)
     % Initialize return params
     if (nargout > 0) varargout = {'', false, []}; end
     
-    %% Validation - Call validation script
-    ValidationScript(runTimeParams);
+    %% Call the validation function
+    ValidationFunction(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -268,7 +268,7 @@ function varargout = v_sceneReIllumination(varargin)
 end
 
 
-function ValidationScript(runTimeParams)
+function ValidationFunction(runTimeParams)
 
     %% Initialize ISETBIO
     s_initISET;

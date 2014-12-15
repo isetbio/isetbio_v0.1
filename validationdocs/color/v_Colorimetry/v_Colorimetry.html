@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_Colorimetry</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-12"><meta name="DC.source" content="v_Colorimetry.m"><style type="text/css">
+      --><title>v_Colorimetry</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-15"><meta name="DC.source" content="v_Colorimetry.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,14 +66,14 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Validation - Call validation script</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#8">Path stuff</a></li><li><a href="#9">SETUP</a></li><li><a href="#10">XYZ-related colorimetry</a></li><li><a href="#11">xyY</a></li><li><a href="#12">CIE uv chromaticity</a></li><li><a href="#13">CIELUV</a></li><li><a href="#14">CIELAB</a></li><li><a href="#15">sRGB</a></li><li><a href="#16">Quanta/Energy</a></li><li><a href="#17">CIE daylights</a></li><li><a href="#18">Plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_Colorimetry(varargin)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#8">Path stuff</a></li><li><a href="#9">SETUP</a></li><li><a href="#10">XYZ-related colorimetry</a></li><li><a href="#11">xyY</a></li><li><a href="#12">CIE uv chromaticity</a></li><li><a href="#13">CIELUV</a></li><li><a href="#14">CIELAB</a></li><li><a href="#15">sRGB</a></li><li><a href="#16">Quanta/Energy</a></li><li><a href="#17">CIE daylights</a></li><li><a href="#18">Plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_Colorimetry(varargin)
 </pre><pre class="codeinput"><span class="comment">%</span>
 <span class="comment">%  Validate ISETBIO-based colorimetric computations by comparing to PTB-based colorimetric computations.</span>
 <span class="comment">%</span>
 </pre><h2>Initialization<a name="3"></a></h2><p>Initialize validation run</p><pre class="codeinput">    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
     <span class="comment">% Initialize return params</span>
     <span class="keyword">if</span> (nargout &gt; 0) varargout = {<span class="string">''</span>, false, []}; <span class="keyword">end</span>
-</pre><h2>Validation - Call validation script<a name="4"></a></h2><pre class="codeinput">    ValidationScript(runTimeParams);
+</pre><h2>Call the validation function<a name="4"></a></h2><pre class="codeinput">    ValidationFunction(runTimeParams);
 </pre><h2>Reporting and return params<a name="5"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (nargout &gt; 0)
         [validationReport, validationFailedFlag, validationFundametalFailureFlag] = <span class="keyword">...</span>
                           UnitTest.validationRecord(<span class="string">'command'</span>, <span class="string">'return'</span>);
@@ -89,12 +89,12 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><pre class="codeinput"><span class="keyword">end</span>
 
 
-<span class="keyword">function</span> ValidationScript(runTimeParams)
+<span class="keyword">function</span> ValidationFunction(runTimeParams)
 </pre><h2>Path stuff<a name="8"></a></h2><p>Use ISETBIO's version of lab2xyz, otherwise the new Matlab function of the same name clobbers this and we get screwy answers.</p><p>Probably in the longer run should just use Matlab's version if it gives the same answers.</p><pre class="codeinput">    lab2xyz = overrideBuiltInFunction(<span class="string">'lab2xyz'</span>, <span class="string">'isetbio'</span>);
 </pre><h2>SETUP<a name="9"></a></h2><pre class="codeinput">    isetbioPath = fileparts(which(<span class="string">'colorTransformMatrix'</span>));
     curDir = pwd;
     tolerance = 1e-12;
-</pre><h2>XYZ-related colorimetry<a name="10"></a></h2><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'message'</span>, <span class="string">'***** Basic XYZ *****'</span>);
+</pre><h2>XYZ-related colorimetry<a name="10"></a></h2><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'SIMPLE_MESSAGE'</span>, <span class="string">'***** Basic XYZ *****'</span>);
     testXYZs = [[1 2 1]' [2 1 0.5]' [1 1 1]' [0.6 2.3 4]'];
     ptbxyYs = XYZToxyY(testXYZs);
     ptbxys  = ptbxyYs(1:2,:);
@@ -200,7 +200,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="keyword">end</span>
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'isetXYZCheck'</span>, isetXYZCheck);
-</pre><h2>sRGB<a name="15"></a></h2><p>The iset routines seem to use a matrix that is 1/100 of the standard definition.  Or, at least, 1/100 of what the PTB routines use.  To account for this, I multiply XYZ values by 100 before passing them to the iset routines.</p><p>The iset routines take an exponent argument for the sRGB gamma transform. At <a href="http://www.w3.org/Graphics/Color/sRGB">http://www.w3.org/Graphics/Color/sRGB</a> this is specified as 2.4.  The iset routine xyz2srgb uses 2.2, with a comment that an update at www.srgb.com changed this from 2.4 to 2.2.  I think this is wrong, though.  The text I can find on the web says that the 2.4 exponent, plus the linear initial region, is designed to approximate a gamma of 2.2. That is, you want 2.4 in the formulae to approximate the 2.2 industry standard gamma.  Site www.srgb.com now appears gone, by the way, but all the other sites I find seem to be the same in this regard.</p><p>Also note that if you change the exponent in the iset sRGB formulae, you also should probably change the cutoff used at the low-end, where the sRGB standard special cases the functional form of the gamma curve.  Here the test is set for 2.4.</p><p>Finally,the default gamma used by iset lrgb2srgb and by xzy2srgb currently differ, so you really want to be careful using these.  The inverse routine srgb2lrgb doesn't allow passing of the exponent, and it is hard coded as 2.4.  This causes a failure of the iset sRGB gamma routines to self-invert for gamma other than 2.4, and with their defaults.</p><p>One other convention difference is that the PTB routine rounds to integers for the settings, while the iset routine leaves the rounding up to the caller.</p><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'message'</span>, <span class="string">'***** sRGB *****'</span>);
+</pre><h2>sRGB<a name="15"></a></h2><p>The iset routines seem to use a matrix that is 1/100 of the standard definition.  Or, at least, 1/100 of what the PTB routines use.  To account for this, I multiply XYZ values by 100 before passing them to the iset routines.</p><p>The iset routines take an exponent argument for the sRGB gamma transform. At <a href="http://www.w3.org/Graphics/Color/sRGB">http://www.w3.org/Graphics/Color/sRGB</a> this is specified as 2.4.  The iset routine xyz2srgb uses 2.2, with a comment that an update at www.srgb.com changed this from 2.4 to 2.2.  I think this is wrong, though.  The text I can find on the web says that the 2.4 exponent, plus the linear initial region, is designed to approximate a gamma of 2.2. That is, you want 2.4 in the formulae to approximate the 2.2 industry standard gamma.  Site www.srgb.com now appears gone, by the way, but all the other sites I find seem to be the same in this regard.</p><p>Also note that if you change the exponent in the iset sRGB formulae, you also should probably change the cutoff used at the low-end, where the sRGB standard special cases the functional form of the gamma curve.  Here the test is set for 2.4.</p><p>Finally,the default gamma used by iset lrgb2srgb and by xzy2srgb currently differ, so you really want to be careful using these.  The inverse routine srgb2lrgb doesn't allow passing of the exponent, and it is hard coded as 2.4.  This causes a failure of the iset sRGB gamma routines to self-invert for gamma other than 2.4, and with their defaults.</p><p>One other convention difference is that the PTB routine rounds to integers for the settings, while the iset routine leaves the rounding up to the caller.</p><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'SIMPLE_MESSAGE'</span>, <span class="string">'***** sRGB *****'</span>);
 
     <span class="comment">% Create some test sRGB values and convert them in the PTB framework</span>
     ptbSRGBs = [[188 188 188]' [124 218 89]' [255 149 203]' [255 3 203]'];
@@ -317,7 +317,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'isetSRGBPrimaryCheck'</span>, isetSRGBPrimaryCheck);
     UnitTest.validationData(<span class="string">'isetSRGBPrimary'</span>, isetSRGBPrimary);
-</pre><h2>Quanta/Energy<a name="16"></a></h2><p>The ISET routines define c and h to more places than the PTB, so the agreement is only good to about 5 significant places.  Seems OK to me.</p><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'message'</span>, <span class="string">'***** Energy/Quanta *****'</span>);
+</pre><h2>Quanta/Energy<a name="16"></a></h2><p>The ISET routines define c and h to more places than the PTB, so the agreement is only good to about 5 significant places.  Seems OK to me.</p><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'SIMPLE_MESSAGE'</span>, <span class="string">'***** Energy/Quanta *****'</span>);
 
     load <span class="string">spd_D65</span>
     spdEnergyTest = spd_D65;
@@ -357,7 +357,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="keyword">end</span>
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'isetEnergyFromQuanta'</span>, Quanta2Energy(wlsTest,isetQuanta')');
-</pre><h2>CIE daylights<a name="17"></a></h2><p>These routines are now running in ISET and everything agrees.</p><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'message'</span>, <span class="string">'***** CIE Daylights *****'</span>);
+</pre><h2>CIE daylights<a name="17"></a></h2><p>These routines are now running in ISET and everything agrees.</p><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'SIMPLE_MESSAGE'</span>, <span class="string">'***** CIE Daylights *****'</span>);
 
     load <span class="string">B_cieday</span>
     testWls = SToWls(S_cieday);
@@ -395,8 +395,8 @@ function varargout = v_Colorimetry(varargin)
     % Initialize return params
     if (nargout > 0) varargout = {'', false, []}; end
     
-    %% Validation - Call validation script
-    ValidationScript(runTimeParams);
+    %% Call the validation function
+    ValidationFunction(runTimeParams);
     
     %% Reporting and return params
     if (nargout > 0)
@@ -414,7 +414,7 @@ function varargout = v_Colorimetry(varargin)
 end
 
 
-function ValidationScript(runTimeParams)
+function ValidationFunction(runTimeParams)
     
     %% Path stuff
     % Use ISETBIO's version of lab2xyz, otherwise the new
@@ -431,7 +431,7 @@ function ValidationScript(runTimeParams)
     tolerance = 1e-12;
     
     %% XYZ-related colorimetry
-    UnitTest.validationRecord('message', '***** Basic XYZ *****');
+    UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Basic XYZ *****');
     testXYZs = [[1 2 1]' [2 1 0.5]' [1 1 1]' [0.6 2.3 4]'];
     ptbxyYs = XYZToxyY(testXYZs);
     ptbxys  = ptbxyYs(1:2,:);
@@ -580,7 +580,7 @@ function ValidationScript(runTimeParams)
     % One other convention difference is that the PTB routine rounds to
     % integers for the settings, while the iset routine leaves the rounding up
     % to the caller.
-    UnitTest.validationRecord('message', '***** sRGB *****');
+    UnitTest.validationRecord('SIMPLE_MESSAGE', '***** sRGB *****');
 
     % Create some test sRGB values and convert them in the PTB framework
     ptbSRGBs = [[188 188 188]' [124 218 89]' [255 149 203]' [255 3 203]'];
@@ -703,7 +703,7 @@ function ValidationScript(runTimeParams)
     %
     % The ISET routines define c and h to more places than the PTB, so the
     % agreement is only good to about 5 significant places.  Seems OK to me.
-    UnitTest.validationRecord('message', '***** Energy/Quanta *****');
+    UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Energy/Quanta *****');
     
     load spd_D65
     spdEnergyTest = spd_D65;
@@ -747,7 +747,7 @@ function ValidationScript(runTimeParams)
     %% CIE daylights
     % 
     % These routines are now running in ISET and everything agrees.
-    UnitTest.validationRecord('message', '***** CIE Daylights *****');
+    UnitTest.validationRecord('SIMPLE_MESSAGE', '***** CIE Daylights *****');
     
     load B_cieday
     testWls = SToWls(S_cieday);
