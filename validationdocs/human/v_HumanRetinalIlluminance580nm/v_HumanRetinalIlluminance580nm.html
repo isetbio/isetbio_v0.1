@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Validation script for human retinal irradiance at 580 nm.</a></li><li><a href="#9">Initialize ISETBIO</a></li><li><a href="#10">Set run parameters</a></li><li><a href="#11">Create a uniform monochromatic scene</a></li><li><a href="#12">Create human optics with desired pupil size</a></li><li><a href="#13">Compute optical image from the scene</a></li><li><a href="#14">Get irrandiance in the center</a></li><li><a href="#15">Compute difference from expected value</a></li><li><a href="#16">Validate against a 3% error</a></li><li><a href="#17">Plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_HumanRetinalIlluminance580nm(varargin)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Function implementing the isetbio validation code</a></li><li><a href="#9">Initialize ISETBIO</a></li><li><a href="#10">Set run parameters</a></li><li><a href="#11">Create a uniform monochromatic scene</a></li><li><a href="#12">Create human optics with desired pupil size</a></li><li><a href="#13">Compute optical image from the scene</a></li><li><a href="#14">Get irrandiance in the center</a></li><li><a href="#15">Compute difference from expected value</a></li><li><a href="#16">Validate against a 3% error</a></li><li><a href="#17">Plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_HumanRetinalIlluminance580nm(varargin)
 </pre><pre class="codeinput"><span class="comment">%</span>
 <span class="comment">% Validate that a photon flux of 10^15 photons/cm^2/sec at 580 nm corresponds to a retinal illuminance of 590,000 photopic trolands.</span>
 <span class="comment">%</span>
@@ -101,7 +101,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
-</pre><h2>Validation script for human retinal irradiance at 580 nm.<a name="7"></a></h2><pre class="codeinput"><span class="keyword">function</span> ValidationFunction(runTimeParams)
+</pre><h2>Function implementing the isetbio validation code<a name="7"></a></h2><p>Validation script for human retinal irradiance at 580 nm.</p><pre class="codeinput"><span class="keyword">function</span> ValidationFunction(runTimeParams)
 </pre><h2>Initialize ISETBIO<a name="9"></a></h2><pre class="codeinput">    s_initISET;
 </pre><h2>Set run parameters<a name="10"></a></h2><pre class="codeinput">    sceneFOV                = 20;      <span class="comment">% 20 degrees scene</span>
     sceneMeanLuminance      = 187800;  <span class="comment">% Cd/m2</span>
@@ -194,7 +194,8 @@ function varargout = v_HumanRetinalIlluminance580nm(varargin)
     end
 end
 
-%% Validation script for human retinal irradiance at 580 nm.
+%% Function implementing the isetbio validation code
+% Validation script for human retinal irradiance at 580 nm.
 function ValidationFunction(runTimeParams)
 
     %% Initialize ISETBIO

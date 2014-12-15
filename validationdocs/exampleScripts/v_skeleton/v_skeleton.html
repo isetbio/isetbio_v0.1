@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Skeleton validation script</a></li><li><a href="#9">Initialize ISETBIO</a></li><li><a href="#10">Isetbio validation code goes here.</a></li><li><a href="#11">Some informative text</a></li><li><a href="#12">Internal validations</a></li><li><a href="#13">Data for external validations</a></li><li><a href="#14">Data to keep just because it would be nice to have</a></li><li><a href="#15">Plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_skeleton(varargin)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Function implementing the isetbio validation code</a></li><li><a href="#9">Initialize ISETBIO</a></li><li><a href="#10">Isetbio validation code goes here.</a></li><li><a href="#11">Some informative text</a></li><li><a href="#12">Internal validations</a></li><li><a href="#13">Data for external validations</a></li><li><a href="#14">Data to keep just because it would be nice to have</a></li><li><a href="#15">Plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_skeleton(varargin)
 </pre><pre class="codeinput"><span class="comment">%</span>
 <span class="comment">% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code.</span>
 <span class="comment">%</span>
@@ -87,7 +87,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
-</pre><h2>Skeleton validation script<a name="7"></a></h2><pre class="codeinput"><span class="keyword">function</span> ValidationFunction(runTimeParams)
+</pre><h2>Function implementing the isetbio validation code<a name="7"></a></h2><pre class="codeinput"><span class="keyword">function</span> ValidationFunction(runTimeParams)
 </pre><h2>Initialize ISETBIO<a name="9"></a></h2><pre class="codeinput">    s_initISET;
 </pre><h2>Isetbio validation code goes here.<a name="10"></a></h2><h2>Some informative text<a name="11"></a></h2><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'SIMPLE_MESSAGE'</span>, <span class="string">'Skeleton script. Copy and adapt to your needs.'</span>);
 </pre><h2>Internal validations<a name="12"></a></h2><pre class="codeinput">    quantityOfInterest = randn(100,1)*0.0000001;
@@ -162,7 +162,7 @@ function varargout = v_skeleton(varargin)
     end
 end
 
-%% Skeleton validation script
+%% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
 
     

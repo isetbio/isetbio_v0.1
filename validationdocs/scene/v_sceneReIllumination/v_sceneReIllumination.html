@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#8">Initialize ISETBIO</a></li><li><a href="#9">Generate Macbeth scene with D65 illuminant</a></li><li><a href="#10">Extract various spectral parameters of the scene</a></li><li><a href="#11">Generate an RGB rendition of the scene</a></li><li><a href="#12">Compute scene reflectance functions at all (row,col) positions</a></li><li><a href="#13">Generate new illuminant: fluorescent light with a luminance equal to that of D65 above</a></li><li><a href="#14">Re-illuminate scene using the new illuminant</a></li><li><a href="#15">Extract various spectral parameters of the scene</a></li><li><a href="#16">Generate an RGB rendition of the scene</a></li><li><a href="#17">Compute scene reflectance functions at all (row,col) positions</a></li><li><a href="#18">Internal validation</a></li><li><a href="#19">Plotting</a></li><li><a href="#21">Helper plotting functions</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_sceneReIllumination(varargin)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Function implementing the isetbio validation code</a></li><li><a href="#9">Initialize ISETBIO</a></li><li><a href="#10">Generate Macbeth scene with D65 illuminant</a></li><li><a href="#11">Extract various spectral parameters of the scene</a></li><li><a href="#12">Generate an RGB rendition of the scene</a></li><li><a href="#13">Compute scene reflectance functions at all (row,col) positions</a></li><li><a href="#14">Generate new illuminant: fluorescent light with a luminance equal to that of D65 above</a></li><li><a href="#15">Re-illuminate scene using the new illuminant</a></li><li><a href="#16">Extract various spectral parameters of the scene</a></li><li><a href="#17">Generate an RGB rendition of the scene</a></li><li><a href="#18">Compute scene reflectance functions at all (row,col) positions</a></li><li><a href="#19">Internal validation</a></li><li><a href="#20">Plotting</a></li><li><a href="#22">Helper plotting functions</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_sceneReIllumination(varargin)
 </pre><pre class="codeinput"><span class="comment">%</span>
 <span class="comment">% Validate changes in scene illuminant.</span>
 <span class="comment">%</span>
@@ -90,18 +90,16 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
-
-
-<span class="keyword">function</span> ValidationFunction(runTimeParams)
-</pre><h2>Initialize ISETBIO<a name="8"></a></h2><pre class="codeinput">    s_initISET;
-</pre><h2>Generate Macbeth scene with D65 illuminant<a name="9"></a></h2><pre class="codeinput">    scene = sceneCreate(<span class="string">'macbethd65'</span>);
-</pre><h2>Extract various spectral parameters of the scene<a name="10"></a></h2><pre class="codeinput">    illuminantPhotons   = sceneGet(scene, <span class="string">'illuminantPhotons'</span>);
+</pre><h2>Function implementing the isetbio validation code<a name="7"></a></h2><pre class="codeinput"><span class="keyword">function</span> ValidationFunction(runTimeParams)
+</pre><h2>Initialize ISETBIO<a name="9"></a></h2><pre class="codeinput">    s_initISET;
+</pre><h2>Generate Macbeth scene with D65 illuminant<a name="10"></a></h2><pre class="codeinput">    scene = sceneCreate(<span class="string">'macbethd65'</span>);
+</pre><h2>Extract various spectral parameters of the scene<a name="11"></a></h2><pre class="codeinput">    illuminantPhotons   = sceneGet(scene, <span class="string">'illuminantPhotons'</span>);
     peakRadiance        = sceneGet(scene, <span class="string">'peakRadiance'</span>);
     photonRadianceMap   = sceneGet(scene, <span class="string">'photons'</span>);
     wavelengthSampling  = sceneGet(scene, <span class="string">'wave'</span>);
     illuminantXYZ       = sceneGet(scene,<span class="string">'illuminant xyz'</span>);
-</pre><h2>Generate an RGB rendition of the scene<a name="11"></a></h2><pre class="codeinput">    rgbImage = sceneGet(scene,<span class="string">'rgb image'</span>);
-</pre><h2>Compute scene reflectance functions at all (row,col) positions<a name="12"></a></h2><pre class="codeinput">    samplingGridPositions = sceneGet(scene,<span class="string">'size'</span>);
+</pre><h2>Generate an RGB rendition of the scene<a name="12"></a></h2><pre class="codeinput">    rgbImage = sceneGet(scene,<span class="string">'rgb image'</span>);
+</pre><h2>Compute scene reflectance functions at all (row,col) positions<a name="13"></a></h2><pre class="codeinput">    samplingGridPositions = sceneGet(scene,<span class="string">'size'</span>);
     reflectanceMap = zeros(size(photonRadianceMap));
     <span class="keyword">for</span> row = 1:samplingGridPositions(1)
         <span class="keyword">for</span> col = 1:samplingGridPositions(2)
@@ -111,20 +109,20 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
     <span class="comment">% keep a copy of the original scene to save later on</span>
     originalScene = scene;
-</pre><h2>Generate new illuminant: fluorescent light with a luminance equal to that of D65 above<a name="13"></a></h2><pre class="codeinput">    il                  = illuminantCreate(<span class="string">'fluorescent'</span>,[],illuminantXYZ(2));
+</pre><h2>Generate new illuminant: fluorescent light with a luminance equal to that of D65 above<a name="14"></a></h2><pre class="codeinput">    il                  = illuminantCreate(<span class="string">'fluorescent'</span>,[],illuminantXYZ(2));
     illuminantEnergy    = illuminantGet(il,<span class="string">'energy'</span>);
-</pre><h2>Re-illuminate scene using the new illuminant<a name="14"></a></h2><pre class="codeinput">    scene = sceneAdjustIlluminant(scene,illuminantEnergy);
-</pre><h2>Extract various spectral parameters of the scene<a name="15"></a></h2><pre class="codeinput">    illuminantPhotons2  = sceneGet(scene, <span class="string">'illuminantPhotons'</span>);
+</pre><h2>Re-illuminate scene using the new illuminant<a name="15"></a></h2><pre class="codeinput">    scene = sceneAdjustIlluminant(scene,illuminantEnergy);
+</pre><h2>Extract various spectral parameters of the scene<a name="16"></a></h2><pre class="codeinput">    illuminantPhotons2  = sceneGet(scene, <span class="string">'illuminantPhotons'</span>);
     peakRadiance2       = sceneGet(scene, <span class="string">'peakRadiance'</span>);
     photonRadianceMap2  = sceneGet(scene, <span class="string">'photons'</span>);
-</pre><h2>Generate an RGB rendition of the scene<a name="16"></a></h2><pre class="codeinput">    rgbImage2 = sceneGet(scene,<span class="string">'rgb image'</span>);
-</pre><h2>Compute scene reflectance functions at all (row,col) positions<a name="17"></a></h2><pre class="codeinput">    reflectanceMap2 = zeros(size(photonRadianceMap2));
+</pre><h2>Generate an RGB rendition of the scene<a name="17"></a></h2><pre class="codeinput">    rgbImage2 = sceneGet(scene,<span class="string">'rgb image'</span>);
+</pre><h2>Compute scene reflectance functions at all (row,col) positions<a name="18"></a></h2><pre class="codeinput">    reflectanceMap2 = zeros(size(photonRadianceMap2));
     <span class="keyword">for</span> row = 1:samplingGridPositions(1)
         <span class="keyword">for</span> col = 1:samplingGridPositions(2)
             reflectanceMap2(row,col,:) = squeeze(photonRadianceMap2(row,col,:)) ./ illuminantPhotons2;
         <span class="keyword">end</span>
     <span class="keyword">end</span>
-</pre><h2>Internal validation<a name="18"></a></h2><p>Reflectance range is [0 .. 1]. Specify tolerance as 0.1%</p><pre class="codeinput">    tolerance = 1E-6;
+</pre><h2>Internal validation<a name="19"></a></h2><p>Reflectance range is [0 .. 1]. Specify tolerance as 0.1%</p><pre class="codeinput">    tolerance = 1E-6;
     maxDiff = max(abs(reflectanceMap2(:)-reflectanceMap(:)));
     <span class="keyword">if</span> (maxDiff &gt; tolerance)
         message = sprintf(<span class="string">'Scene reflectance before and after re-illumination do not agree to %g. Max diff: %g'</span>, tolerance, maxDiff);
@@ -136,13 +134,13 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'originalScene'</span>, originalScene);
     UnitTest.validationData(<span class="string">'scene'</span>, scene);
-</pre><h2>Plotting<a name="19"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (runTimeParams.generatePlots)
+</pre><h2>Plotting<a name="20"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (runTimeParams.generatePlots)
         plotResults(wavelengthSampling, <span class="keyword">...</span>
             rgbImage, illuminantPhotons, peakRadiance, photonRadianceMap, reflectanceMap, <span class="keyword">...</span>
             rgbImage2, illuminantPhotons2, peakRadiance2, photonRadianceMap2, reflectanceMap2);
     <span class="keyword">end</span>
 </pre><img vspace="5" hspace="5" src="v_sceneReIllumination_01.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
-</pre><h2>Helper plotting functions<a name="21"></a></h2><pre class="codeinput"><span class="keyword">function</span> plotResults(wavelengthSampling, <span class="keyword">...</span>
+</pre><h2>Helper plotting functions<a name="22"></a></h2><pre class="codeinput"><span class="keyword">function</span> plotResults(wavelengthSampling, <span class="keyword">...</span>
             rgbImage, illuminantPhotons, peakRadiance, photonRadianceMap, reflectanceMap, <span class="keyword">...</span>
             rgbImage2, illuminantPhotons2, peakRadiance2, photonRadianceMap2, reflectanceMap2);
 
@@ -267,7 +265,7 @@ function varargout = v_sceneReIllumination(varargin)
     end
 end
 
-
+%% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
 
     %% Initialize ISETBIO

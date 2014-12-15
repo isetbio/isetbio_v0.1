@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Actual alidation script</a></li><li><a href="#9">Initialize ISETBIO</a></li><li><a href="#10">Internal validations</a></li><li><a href="#11">Conversion to N- digit precision</a></li><li><a href="#12">Append to extraData</a></li><li><a href="#13">Plotting</a></li><li><a href="#15">Helper plotting function</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_numericalPrecision(varargin)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Function implementing the isetbio validation code</a></li><li><a href="#9">Initialize ISETBIO</a></li><li><a href="#10">Internal validations</a></li><li><a href="#11">Conversion to N- digit precision</a></li><li><a href="#12">Append to extraData</a></li><li><a href="#13">Plotting</a></li><li><a href="#15">Helper plotting function</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_numericalPrecision(varargin)
 </pre><pre class="codeinput"><span class="comment">%</span>
 <span class="comment">% Script assessing the effects of rounding at different numerical precisions.</span>
 <span class="comment">%</span>
@@ -87,7 +87,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
-</pre><h2>Actual alidation script<a name="7"></a></h2><pre class="codeinput"><span class="keyword">function</span> ValidationFunction(runTimeParams)
+</pre><h2>Function implementing the isetbio validation code<a name="7"></a></h2><pre class="codeinput"><span class="keyword">function</span> ValidationFunction(runTimeParams)
 </pre><h2>Initialize ISETBIO<a name="9"></a></h2><pre class="codeinput">    s_initISET;
 </pre><h2>Internal validations<a name="10"></a></h2><p>The result of a computation: a vector of doubles</p><pre class="codeinput">    gain = 10E18;
     largeResult = gain*eps*rand(1,100*1000);
@@ -190,7 +190,7 @@ function varargout = v_numericalPrecision(varargin)
     end
 end
 
-%% Actual alidation script
+%% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
 
     
