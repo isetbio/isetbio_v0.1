@@ -34,4 +34,10 @@ function initializeUnitTest(obj)
     % initialize section map (for github wiki)
     obj.sectionData  = containers.Map();
     
+    % get info about host computer
+    obj.hostInfo = struct();
+    obj.hostInfo.matlabVersion    = version;
+    obj.hostInfo.computer         = computer;
+    obj.hostInfo.computerAddress  = char(java.net.InetAddress.getLocalHost.getHostName);
+    obj.hostInfo.userName         = char(java.lang.System.getProperty('user.name'));
 end

@@ -30,8 +30,8 @@ function validateDemo
     %% Verbosity Level
     %UnitTest.setPref('verbosity', 'none');
     %UnitTest.setPref('verbosity', 'min');
-    UnitTest.setPref('verbosity', 'low');
-    %UnitTest.setPref('verbosity', 'med');
+    %UnitTest.setPref('verbosity', 'low');
+    UnitTest.setPref('verbosity', 'med');
     %UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max');
     

@@ -40,6 +40,9 @@ classdef UnitTest < handle
         % Starting figure number for figures showing mismatched data.
         % These figures should remain open
         dataMismatchFigNumber;
+        
+        % struct with various info on the host computer configuration
+        hostInfo;
     end
     
     % Constant properties. These are the only properties that can be
@@ -131,7 +134,7 @@ classdef UnitTest < handle
         [structsAreSimilarWithinSpecifiedTolerance, result] = structsAreSimilar(obj, groundTruthData, validationData);
         
         % Method to import a ground truth data entry
-        [validationData, extraData, validationTime] = importGroundTruthData(obj, dataFileName);
+        [validationData, extraData, validationTime, hostInfo] = importGroundTruthData(obj, dataFileName);
         
         % Method to export a validation entry to a validation file
         exportData(obj, dataFileName, validationData, extraData);
