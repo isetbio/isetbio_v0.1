@@ -33,10 +33,17 @@
         <h1>isetbio: script validation</h1>
         <h2>documentation and usage of the @UnitTest class</h2>
         
+        
+        
+        
+        
+        
+        
         <!--
             NAVIGATION BAR ON TOP
         -->
- 
+        <div class="navbar-wrapper">
+        <div class="container">
         <nav id="navigationBar" role="navigation" class="nav-collapse navbar-default navbar-fixed-top">
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
@@ -88,11 +95,23 @@
                             </ul>
                         </li>
                         
+                        <! -- Fourth menu item -->
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                miscellaneous information<b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#feedback emitted under different verbosity levels" class="smoothScroll">feedback emitted under different verbosity levels</a></li>
+                            </ul>
+                        </li>
+                        
+                        
                     </ul>
                 </div>
             </div>
         </nav>
-
+        </div>
+        </div>
         <!--
             OVERVIEW
         -->
@@ -483,7 +502,6 @@ function validateDemo
 end
 </pre>
         
-        
 <!--
 		WRITING VALIDATION SCRIPTS
 -->        
@@ -514,7 +532,8 @@ end
 <pre>
 <blackCode>function varargout = v_IrradianceIsomerizations(varargin)
 <grayCode><greenCode>%
-% Validate ISETBIO-based irradiance/isomerization computations by comparing to PTB-based irradiance/isomerization computations.
+% Validate ISETBIO-based irradiance/isomerization computations by comparing to PTB-based
+% irradiance/isomerization computations.
 %</greenCode>
 
 <greenCode>% Initialize validation run and return params</greenCode>
@@ -786,11 +805,205 @@ end
         
 </grayCode>end
 </pre>
-
-
 		</p>
 		
-		
+	
+<!--
+		MISCELLANEOUS INFO
+-->  
+
+        <h7> 
+            <a id="miscellaneous" href="#miscellaneous"></a> <hr>
+        </h7>
+        <h3>
+           Miscellaneous information
+        </h3>
+
+        <h7> 
+            <a id="feedback emitted under different verbosity levels" href="#feedback emitted under different verbosity levels"></a> <hr>
+        </h7>
+        <h4>
+           feedback emitted under different verbosity levels
+        </h4>
+        <p>
+        This section shows examples of feecback information emitted by the @UnitTest object under different settings of the verbosity preference. The validation session contains one script, <blackCode>'v_Colorimetry.m'.</blackCode>
+        <h5>
+            &bull; verbosity = 'none'
+        </h5>
+<pre><smallBlackCode>-------------------------------------------------------------------------------------
+'FAST' mode with 'catchExceptionAndContinue' hehavior and verbosity level = 'none'.
+-------------------------------------------------------------------------------------</smallBlackCode>
+</pre>
+         <h5>
+            &bull; verbosity = 'min'
+        </h5>
+<pre><smallBlackCode><smallGrayCode>-------------------------------------------------------------------------------------
+'FAST' mode with 'catchExceptionAndContinue' hehavior and verbosity level = 'none'.
+-------------------------------------------------------------------------------------</smallGrayCode>
+[  1] 'v_Colorimetry.m'
+    Internal validation  : PASSED
+    Run-time status      : no exception raised
+    Fast validation      : PASSED against ground truth data of 15-Dec-2014 16:41:53.
+</smallBlackCode></pre>
+         <h5>
+            &bull; verbosity = 'low'
+        </h5>
+<pre><smallBlackCode><smallGrayCode>-------------------------------------------------------------------------------------
+'FAST' mode with 'catchExceptionAndContinue' hehavior and verbosity level = 'low'.
+-------------------------------------------------------------------------------------
+[  1] 'v_Colorimetry.m'
+    Internal validation  : PASSED
+    Run-time status      : no exception raised
+    Fast validation      : PASSED against ground truth data of 15-Dec-2014 16:41:53.</smallGrayCode>
+    Validation report    : 
+		***** Basic XYZ *****
+		PTB-ISET AGREE for XYZ to xy (tolerance: 1e-12)
+		PTB PASSES XYZ to xyY to XYZ (tolerance: 1e-12)
+		PTB-ISET AGREE for xyY to XYZ (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to uv (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to Luv (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to Luv (tolerance: 1e-12)
+		PTB PASSES XYZ to Lab to XYZ (tolerance: 1e-12)
+		ISET PASSES XYZ to Lab to XYZ (tolerance: 1e-12)
+		***** sRGB *****
+		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-12)
+		PTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: 1e-12)
+		PTB PASSES sRGB to linear sRGB to sRGB (tolerance: 1e-12)
+		PTB-ISET AGREE for sRGB transform matrix (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to linear sRGB (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-12)
+		ISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: 1e-12)
+		***** Energy/Quanta *****
+		PTB-ISET AGREE for energy to quanta conversion to 5 significant places (tolerance: 1e+15 quanta)
+		PTB PASSES energy to quanta to energy (tolerance: 1e-12)
+		ISET PASSES energy to quanta to energy (tolerance: 1e-12)
+		***** CIE Daylights *****
+		PTB-ISET AGREE for for daylight (tolerance: 1e-12)
+</smallBlackCode></pre>
+        <h5>
+            &bull; verbosity = 'med'
+        </h5>
+<pre><smallBlackCode><smallGrayCode>-------------------------------------------------------------------------------------
+'FAST' mode with 'catchExceptionAndContinue' hehavior and verbosity level = 'medium'.
+-------------------------------------------------------------------------------------
+[  1] 'v_Colorimetry.m'
+    Internal validation  : PASSED
+    Run-time status      : no exception raised
+    Fast validation      : PASSED against ground truth data of 15-Dec-2014 16:41:53.</smallGrayCode><smallBlackCode>
+    Data hash key        : 21d6825974ed81bc3251a60bcacdaa9094f2a70d398ee1553a464a4dbe1be33b</smallBlackCode><smallGrayCode>
+    Validation report    : 
+		***** Basic XYZ *****
+		PTB-ISET AGREE for XYZ to xy (tolerance: 1e-12)
+		PTB PASSES XYZ to xyY to XYZ (tolerance: 1e-12)
+		PTB-ISET AGREE for xyY to XYZ (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to uv (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to Luv (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to Luv (tolerance: 1e-12)
+		PTB PASSES XYZ to Lab to XYZ (tolerance: 1e-12)
+		ISET PASSES XYZ to Lab to XYZ (tolerance: 1e-12)
+		***** sRGB *****
+		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-12)
+		PTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: 1e-12)
+		PTB PASSES sRGB to linear sRGB to sRGB (tolerance: 1e-12)
+		PTB-ISET AGREE for sRGB transform matrix (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to linear sRGB (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-12)
+		ISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: 1e-12)
+		***** Energy/Quanta *****
+		PTB-ISET AGREE for energy to quanta conversion to 5 significant places (tolerance: 1e+15 quanta)
+		PTB PASSES energy to quanta to energy (tolerance: 1e-12)
+		ISET PASSES energy to quanta to energy (tolerance: 1e-12)
+		***** CIE Daylights *****
+		PTB-ISET AGREE for for daylight (tolerance: 1e-12)</smallGrayCode>
+</pre>
+        <h5>
+            &bull; verbosity = 'high'
+        </h5>
+<pre><smallBlackCode><smallGrayCode>-------------------------------------------------------------------------------------
+'FAST' mode with 'catchExceptionAndContinue' hehavior and verbosity level = 'high'.
+-------------------------------------------------------------------------------------
+[  1] 'v_Colorimetry.m'
+    Internal validation  : PASSED
+    Run-time status      : no exception raised
+    Fast validation      : PASSED against ground truth data of 15-Dec-2014 16:41:53.</smallGrayCode><smallBlackCode>
+    Ground truth info    : computed on manta.PSYCH.UPENN.EDU (MACI64) with MATLAB 8.4.0.150421 (R2014b) by user 'nicolas'
+    Local host info      :                      Ithaka.local (MACI64)      MATLAB 8.4.0.150421 (R2014b)    user 'nicolas'</smallBlackCode><smallGrayCode>
+    Data hash key        : 21d6825974ed81bc3251a60bcacdaa9094f2a70d398ee1553a464a4dbe1be33b>
+    Validation report    : 
+		***** Basic XYZ *****
+		PTB-ISET AGREE for XYZ to xy (tolerance: 1e-12)
+		PTB PASSES XYZ to xyY to XYZ (tolerance: 1e-12)
+		PTB-ISET AGREE for xyY to XYZ (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to uv (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to Luv (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to Luv (tolerance: 1e-12)
+		PTB PASSES XYZ to Lab to XYZ (tolerance: 1e-12)
+		ISET PASSES XYZ to Lab to XYZ (tolerance: 1e-12)
+		***** sRGB *****
+		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-12)
+		PTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: 1e-12)
+		PTB PASSES sRGB to linear sRGB to sRGB (tolerance: 1e-12)
+		PTB-ISET AGREE for sRGB transform matrix (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to linear sRGB (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-12)
+		ISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: 1e-12)
+		***** Energy/Quanta *****
+		PTB-ISET AGREE for energy to quanta conversion to 5 significant places (tolerance: 1e+15 quanta)
+		PTB PASSES energy to quanta to energy (tolerance: 1e-12)
+		ISET PASSES energy to quanta to energy (tolerance: 1e-12)
+		***** CIE Daylights *****
+		PTB-ISET AGREE for for daylight (tolerance: 1e-12)</smallGrayCode>
+</pre>
+
+        <h5>
+            &bull; verbosity = 'max'
+        </h5>
+<pre><smallBlackCode><smallGrayCode>-------------------------------------------------------------------------------------
+'FAST' mode with 'catchExceptionAndContinue' hehavior and verbosity level = 'max'.
+-------------------------------------------------------------------------------------
+[  1] 'v_Colorimetry.m'</smallGrayCode>
+Executing:
+try 
+	 [validationReport, validationFailedFlag, validationFundamentalFailureFlag, validationData, extraData] = v_Colorimetry(scriptRunParams); 
+	 exceptionRaisedFlag = false;  
+catch err 
+	 exceptionRaisedFlag = true;
+	 validationReport{1} = {sprintf('exception raised (and caught) with message: %s', err.message), true, false};  
+end<smallGrayCode>
+    Internal validation  : PASSED
+    Run-time status      : no exception raised
+    Fast validation      : PASSED against ground truth data of 15-Dec-2014 16:41:53.
+    Ground truth info    : computed on manta.PSYCH.UPENN.EDU (MACI64) with MATLAB 8.4.0.150421 (R2014b) by user 'nicolas'
+    Local host info      :                      Ithaka.local (MACI64)      MATLAB 8.4.0.150421 (R2014b)    user 'nicolas'
+    Data hash key        : 21d6825974ed81bc3251a60bcacdaa9094f2a70d398ee1553a464a4dbe1be33b>
+    Validation report    : 
+		***** Basic XYZ *****
+		PTB-ISET AGREE for XYZ to xy (tolerance: 1e-12)
+		PTB PASSES XYZ to xyY to XYZ (tolerance: 1e-12)
+		PTB-ISET AGREE for xyY to XYZ (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to uv (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to Luv (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to Luv (tolerance: 1e-12)
+		PTB PASSES XYZ to Lab to XYZ (tolerance: 1e-12)
+		ISET PASSES XYZ to Lab to XYZ (tolerance: 1e-12)
+		***** sRGB *****
+		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-12)
+		PTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: 1e-12)
+		PTB PASSES sRGB to linear sRGB to sRGB (tolerance: 1e-12)
+		PTB-ISET AGREE for sRGB transform matrix (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to linear sRGB (tolerance: 1e-12)
+		PTB-ISET AGREE for XYZ to sRGB (tolerance: 1e-12)
+		ISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: 1e-12)
+		***** Energy/Quanta *****
+		PTB-ISET AGREE for energy to quanta conversion to 5 significant places (tolerance: 1e+15 quanta)
+		PTB PASSES energy to quanta to energy (tolerance: 1e-12)
+		ISET PASSES energy to quanta to energy (tolerance: 1e-12)
+		***** CIE Daylights *****
+		PTB-ISET AGREE for for daylight (tolerance: 1e-12)</smallGrayCode>
+</pre>
+        </p>
+        
+        
 		
         <!--
          javascript script for collapsing the navbar on click 
