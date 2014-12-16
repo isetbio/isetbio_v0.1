@@ -73,7 +73,7 @@ function ValidationFunction(runTimeParams)
         UnitTest.validationRecord('PASSED', message);
     end
     % append to validationData 
-    UnitTest.validationData('ptbXYZs', ptbXYZs);
+    UnitTest.validationData('ptbXYZs', 2*ptbXYZs);
     
     
     isetXYZs = xyy2xyz(ptbxyYs')';
