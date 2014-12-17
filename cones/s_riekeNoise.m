@@ -70,6 +70,18 @@ subplot(1, 2, 2);
 
 % Plot power spectral density
 
+% Fit ARIMA model to the noise
+mdl = arima(3, 0, 2);
+mdl = estimate(mdl, noise);
 
+res = infer(mdl, noise);
+
+% see how good the fit is
+vcNewGraphWin;
+subplot(2,2,1); plot(res ./ sqrt(mdl.Variance)); 
+title('standardized residual');
+subplot(2,2,2);  qqplot(res);   % check normality, should fall along a line
+subplot(2,2,3);  autocorr(res); % independence, should be small
+subplot(2,2,4);  parcorr(res);  % independence, should be small
 
 %% END
