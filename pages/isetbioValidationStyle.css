@@ -20,6 +20,12 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.3em;
 }
 
+/* indent first line of a paragraph by 30 px*/
+.indent {
+    text-indent: 30px;
+}
+
+
 
 /* yellow-ish code background */
 pre {
@@ -89,7 +95,7 @@ lightBlueCode {
 
 /* how much indentation to have for the tab */
 .tab { 
-    margin-left: 15px; 
+    margin-left: 80px; 
 }
 
 
