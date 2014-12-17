@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Function implementing the isetbio validation code</a></li><li><a href="#9">Diffraction limited simulation properties</a></li><li><a href="#10">Human optics</a></li><li><a href="#11">Make a scene and show some oiGets and oiCompute work</a></li><li><a href="#12">Check GUI control</a></li><li><a href="#13">End</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_oi(varargin)
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Initialization</a></li><li><a href="#4">Call the validation function</a></li><li><a href="#5">Reporting and return params</a></li><li><a href="#7">Function implementing the isetbio validation code</a></li><li><a href="#9">Initialize ISETBIO</a></li><li><a href="#10">Diffraction limited simulation properties</a></li><li><a href="#11">Human optics</a></li><li><a href="#12">Make a scene and show some oiGets and oiCompute work</a></li><li><a href="#13">Check GUI control</a></li><li><a href="#14">End</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_oi(varargin)
 </pre><pre class="codeinput"><span class="comment">%</span>
 <span class="comment">% Test optical image functions</span>
 <span class="comment">%</span>
@@ -90,31 +90,32 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="keyword">end</span>
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><h2>Function implementing the isetbio validation code<a name="7"></a></h2><pre class="codeinput"><span class="keyword">function</span> ValidationFunction(runTimeParams)
-</pre><h2>Diffraction limited simulation properties<a name="9"></a></h2><pre class="codeinput">oi = oiCreate;
+</pre><h2>Initialize ISETBIO<a name="9"></a></h2><pre class="codeinput">s_initISET;
+</pre><h2>Diffraction limited simulation properties<a name="10"></a></h2><pre class="codeinput">oi = oiCreate;
 <span class="keyword">if</span> (runTimeParams.generatePlots)
     plotOI(oi,<span class="string">'otf'</span>,[],550);
     plotOI(oi,<span class="string">'otf'</span>,[],450);
 <span class="keyword">end</span>
 UnitTest.validationData(<span class="string">'diffractionOI'</span>, oi);
-</pre><img vspace="5" hspace="5" src="v_oi_01.png" alt=""> <img vspace="5" hspace="5" src="v_oi_02.png" alt=""> <h2>Human optics<a name="10"></a></h2><pre class="codeinput">oi = oiCreate(<span class="string">'human'</span>);
+</pre><img vspace="5" hspace="5" src="v_oi_01.png" alt=""> <img vspace="5" hspace="5" src="v_oi_02.png" alt=""> <h2>Human optics<a name="11"></a></h2><pre class="codeinput">oi = oiCreate(<span class="string">'human'</span>);
 <span class="keyword">if</span> (runTimeParams.generatePlots)
     plotOI(oi,<span class="string">'psf'</span>,[],420);
     plotOI(oi,<span class="string">'psf'</span>,[],550);
 <span class="keyword">end</span>
 UnitTest.validationData(<span class="string">'humanOI'</span>, oi);
-</pre><img vspace="5" hspace="5" src="v_oi_03.png" alt=""> <img vspace="5" hspace="5" src="v_oi_04.png" alt=""> <h2>Make a scene and show some oiGets and oiCompute work<a name="11"></a></h2><pre class="codeinput">scene = sceneCreate;
+</pre><img vspace="5" hspace="5" src="v_oi_03.png" alt=""> <img vspace="5" hspace="5" src="v_oi_04.png" alt=""> <h2>Make a scene and show some oiGets and oiCompute work<a name="12"></a></h2><pre class="codeinput">scene = sceneCreate;
 oi = oiCompute(oi,scene);
 <span class="keyword">if</span> (runTimeParams.generatePlots)
     plotOI(oi,<span class="string">'illuminance mesh linear'</span>);
 <span class="keyword">end</span>
 UnitTest.validationData(<span class="string">'theScene'</span>,scene);
 UnitTest.validationData(<span class="string">'humanOIFromScene'</span>, oi);
-</pre><img vspace="5" hspace="5" src="v_oi_05.png" alt=""> <h2>Check GUI control<a name="12"></a></h2><pre class="codeinput"><span class="keyword">if</span> (runTimeParams.generatePlots)
-    oiWindow;
+</pre><img vspace="5" hspace="5" src="v_oi_05.png" alt=""> <h2>Check GUI control<a name="13"></a></h2><pre class="codeinput"><span class="keyword">if</span> (runTimeParams.generatePlots)
     vcAddAndSelectObject(oi);
+    oiWindow;
     oiSet([],<span class="string">'gamma'</span>,1);
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="v_oi_06.png" alt=""> <h2>End<a name="13"></a></h2><pre class="codeinput"><span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="v_oi_06.png" alt=""> <h2>End<a name="14"></a></h2><pre class="codeinput"><span class="keyword">end</span>
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 function varargout = v_oi(varargin)
@@ -151,6 +152,9 @@ end
 %% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
 
+%% Initialize ISETBIO
+s_initISET;
+
 %% Diffraction limited simulation properties
 oi = oiCreate;
 if (runTimeParams.generatePlots)
@@ -179,8 +183,8 @@ UnitTest.validationData('humanOIFromScene', oi);
 
 %% Check GUI control
 if (runTimeParams.generatePlots)
-    oiWindow;
     vcAddAndSelectObject(oi);
+    oiWindow;
     oiSet([],'gamma',1);
 end
 
