@@ -1,9 +1,6 @@
-function validationDemo
+function validateAndPublishAll
 %
-% Validation demo illustrating how to 
-% - set various validation preferences
-% - validate a list of scripts or a list of script directories. 
-% - conduct a validationSession with different modes
+% Validation and publish our full list of validation programs
 
     close all
     clc
@@ -51,38 +48,7 @@ function validationDemo
     UnitTest.listPrefs();
     
     %% What to validate
-    validateAllDirs = true;
-    if (validateAllDirs)
-        % List of script directories to validate. Each entry contains a cell array with 
-        % with a validation script directory and an optional struct with
-        % prefs that override the corresponding isetbioValidation prefs.
-        % At the moment only the 'generatePlots' pref can be overriden.
-        %
-        % We have functions that generate various stock vScriptsList, but
-        % here we do it out explcitly.
-        % 
-        % Note that the exampleScripts directory contains some scripts that
-        % intentionally fail in various ways.
-        vScriptsList = {...
-            {'validationScripts/color', struct('generatePlots', true) } ...
-            {'validationScripts/cones', struct('generatePlots', true) } ...
-            {'validationScripts/human',       } ...
-            {'validationScripts/radiometry', } ...    
-            {'validationScripts/scene',          } ...    
-            {'validationScripts/exampleScripts', struct('generatePlots', true) } ...
-        };
-    else
-        % Alternatively, you can provide a list of scripts to validate. 
-        % In this case each entry contains a cell array with 
-        % with a script name and an optional struct with
-        % prefs that override the corresponding isetbioValidation prefs.
-        % At the moment only the generatePlots pref can be overriden.
-        vScriptsList = {...
-            {'v_Colorimetry'} ...
-            {'v_IrradianceIsomerizations', struct('generatePlots', true)}  ...
-            {'v_skeleton'}
-        };
-    end
+    vScriptsList = validateListAllValidationDirs;
     
     %% How to validate
     % Run a RUN_TIME_ERRORS_ONLY validation session
@@ -95,10 +61,10 @@ function validationDemo
     % UnitTest.runValidationSession(vScriptsList, 'FULL');
     
     % Run a PUBLISH validation session (comparing actual data and update github wiki)
-    % UnitTest.runValidationSession(vScriptsList, 'PUBLISH);
+    UnitTest.runValidationSession(vScriptsList, 'PUBLISH');
     
     % Run a validation session without a specified mode. You will be
     % promped to select one of the available modes.
-    UnitTest.runValidationSession(vScriptsList);
+    %UnitTest.runValidationSession(vScriptsList);
 
 end

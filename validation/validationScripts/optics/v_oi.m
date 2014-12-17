@@ -32,9 +32,6 @@ end
 %% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
 
-%% Initialize ISETBIO
-s_initISET;
-    
 %% Diffraction limited simulation properties
 oi = oiCreate;
 if (runTimeParams.generatePlots)

@@ -1,4 +1,4 @@
-function validationDemo
+function validateDemo
 %
 % Validation demo illustrating how to 
 % - set various validation preferences
@@ -57,12 +57,6 @@ function validationDemo
         % with a validation script directory and an optional struct with
         % prefs that override the corresponding isetbioValidation prefs.
         % At the moment only the 'generatePlots' pref can be overriden.
-        %
-        % We have functions that generate various stock vScriptsList, but
-        % here we do it out explcitly.
-        % 
-        % Note that the exampleScripts directory contains some scripts that
-        % intentionally fail in various ways.
         vScriptsList = {...
             {'validationScripts/color', struct('generatePlots', true) } ...
             {'validationScripts/cones', struct('generatePlots', true) } ...
