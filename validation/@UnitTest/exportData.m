@@ -16,9 +16,9 @@ function exportData(obj, dataFileName, validationData, extraData)
     eval(sprintf('matOBJ.%s = runData;', validationDataParamName));
     if (obj.validationParams.verbosity > 3) 
         if (length(varList)+1 == 1)
-            fprintf('\tFull validation file : now contains %d instant of historical data.\n', length(varList)+1);
+            fprintf('\tFull validation file : now contains %d instance of historical data.\n', length(varList)+1);
         else
-            fprintf('\tFull validation file : now contains %d instants of historical data.\n', length(varList)+1);
+            fprintf('\tFull validation file : now contains %d instances of historical data.\n', length(varList)+1);
         end
     end
 
