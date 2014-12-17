@@ -6,13 +6,11 @@ function [validationData, extraData, validationTime, hostInfo] = importGroundTru
     % get current variables
     varList = who(matOBJ);
     
-    if (obj.validationParams.verbosity > 2) 
+    if (obj.validationParams.verbosity > 3) 
         if (length(varList) == 1)
             fprintf('\tFull validation file : contains %d instant of historical data.\n', length(varList));
         else
             fprintf('\tFull validation file : contains %d instants of historical data. Retrieving latest one.\n', length(varList));
-            matOBJ
-            matOBJ.run00001
         end
     end
     
