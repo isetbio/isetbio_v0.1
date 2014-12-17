@@ -904,8 +904,12 @@ Running in 'RUNTIME_ERRORS_ONLY' mode with 'catchExceptionAndContinue' and verbo
         </p>
 
         <h4><hr>
-            verbosity = 'none' (only the validation mode is printed)
+            verbosity = 'none'
         </h4>
+        Information emitted: 
+        <ul>
+            <li>the current validation mode and verbosity level</li>
+        </ul>
         
 <pre><smallBlackCode>-------------------------------------------------------------------------------------
 <magenta>'FAST'</magenta> mode with 'catchExceptionAndContinue' hehavior and verbosity level = 'none'.
@@ -917,8 +921,12 @@ Running in 'RUNTIME_ERRORS_ONLY' mode with 'catchExceptionAndContinue' and verbo
 </pre>
 
          <h4><hr>
-            verbosity = 'min' (additional info: results of external validation)
+            verbosity = 'min'
         </h4>
+        Additional information emitted: 
+        <ul>
+            <li>results of external checks which contrast validation data to ground truth data</li>
+        </ul>
 <pre><smallBlackCode><smallGrayCode>-------------------------------------------------------------------------------------
 <magenta>'FAST'</magenta> mode with 'catchExceptionAndContinue' hehavior and verbosity level = 'min'.
 -------------------------------------------------------------------------------------</smallGrayCode>
@@ -940,8 +948,12 @@ Running in 'RUNTIME_ERRORS_ONLY' mode with 'catchExceptionAndContinue' and verbo
 </smallBlackCode></pre>
 
          <h4><hr>
-            verbosity = 'low' (additional info: results of internal validation )
+            verbosity = 'low'
         </h4>
+        Additional information emitted: 
+        <ul>
+            <li>results of all internal checks defined in a validation script</li>
+        </ul>
 <pre><smallBlackCode><smallGrayCode>-------------------------------------------------------------------------------------
 <magenta>'FAST'</magenta> mode with 'catchExceptionAndContinue' hehavior and verbosity level = 'low'.
 -------------------------------------------------------------------------------------
@@ -1012,9 +1024,14 @@ Running in 'RUNTIME_ERRORS_ONLY' mode with 'catchExceptionAndContinue' and verbo
 </smallBlackCode></pre>
 
 
-         <h4>
-            - verbosity = 'med' (additional info: host on which the ground truth was generated)
+         <h4><hr>
+            - verbosity = 'med'
         </h4>
+        Additional information emitted: 
+        <ul>
+            <li>data regarding the host computer on which the ground truth was generated</li>
+            <li>data regarding the local host, on which the current validation run is being executed</li>
+        </ul>
 <pre><smallBlackCode><smallGrayCode>-------------------------------------------------------------------------------------
 <magenta>'FAST'</magenta> mode with 'catchExceptionAndContinue' hehavior and verbosity level = 'med'.
 -------------------------------------------------------------------------------------
@@ -1089,15 +1106,22 @@ Running in 'RUNTIME_ERRORS_ONLY' mode with 'catchExceptionAndContinue' and verbo
 </smallBlackCode></pre>
 
 
-         <h4>
-            - verbosity = 'high' (additional info: in 'FULL' mode, feedback on any 'extra data')
+         <h4><hr>
+            - verbosity = 'high'
         </h4>
+        Additional information emitted: 
+        <ul>
+            <li>number of data instances stored in validation data history</li>
+            <li>in 'FULL' mode, feedback on any 'extra data' stored</li>
+        </ul>
+            
 <pre><smallBlackCode><smallGrayCode>-------------------------------------------------------------------------------------
 <magenta>'FAST'</magenta> mode with 'catchExceptionAndContinue' hehavior and verbosity level = 'high'.
 -------------------------------------------------------------------------------------
 [  1] 'v_Colorimetry.m'
     Internal validation  : PASSED
-    Run-time status      : no exception raised
+    Run-time status      : no exception raised</smallGrayCode>
+    Fast validation file : contains 1 instant of historical data.<smallGrayCode>
     Fast validation      : FAILED against ground truth data of 15-Dec-2014 16:41:53. 
      > Ground truth info : manta.PSYCH.UPENN.EDU/MACI64, MATLAB 8.4.0.150421 (R2014b) by 'nicolas'
      > Local host info   :          ioneanPelagos.local, MATLAB 8.4.0.150421 (R2014b) by 'nicolas' 
@@ -1134,7 +1158,8 @@ Running in 'RUNTIME_ERRORS_ONLY' mode with 'catchExceptionAndContinue' and verbo
 -------------------------------------------------------------------------------------
 [  1] 'v_Colorimetry.m'
     Internal validation  : PASSED
-    Run-time status      : no exception raised
+    Run-time status      : no exception raised</smallGrayCode>
+    Full validation file : contains 1 instant of historical data.<smallGrayCode>
     Full validation      : FAILED against ground truth data of 15-Dec-2014 16:45:34.
      > Ground truth info : manta.PSYCH.UPENN.EDU/MACI64, MATLAB 8.4.0.150421 (R2014b) by 'nicolas'
      > Local host info   :          ioneanPelagos.local, MATLAB 8.4.0.150421 (R2014b) by 'nicolas'
@@ -1168,9 +1193,13 @@ Running in 'RUNTIME_ERRORS_ONLY' mode with 'catchExceptionAndContinue' and verbo
 </smallBlackCode></pre>
 
 
-         <h4>
-            - verbosity = 'max' (additional info: useful only for debugging the @UnitTest class)
+         <h4><hr>
+            - verbosity = 'max'
         </h4>
+        Additional information emitted: 
+        <ul>
+            <li>statements helpful only in debugging development of the @UnitTest class</li>
+        </ul>
 <pre>
 <smallBlackCode>not shown</smallBlackCode>
 </pre>
