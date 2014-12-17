@@ -834,15 +834,63 @@ end
         <h3>
            Miscellaneous information
         </h3>
-
-        <h7> 
-            <a id="feedback emitted under different verbosity levels" href="#feedback emitted under different verbosity levels"></a> <hr>
-        </h7>
-        <h3>
-           (i) feedback emitted under different verbosity levels
-        </h3>
+        This section shows examples of feecback information emitted by the @UnitTest object under different modes and verbosity levels.
+        <h4><hr>
+        (i) 'RUNTIME_ERRORS_ONLY' validation mode
+        </h4>
         <p>
-        This section shows examples of feecback information emitted by the @UnitTest object under different settings of the verbosity preference. The validation session contains one script, <blackCode>'v_Colorimetry.m'.</blackCode>. For illustration purposes, one datum of the validation data was altered so as to generate a validation failure. 
+        This section shows examples of feecback information emitted by the @UnitTest object in 'RUNTIME_ERRORS_ONLY' validation mode during validation of a collection of scripts. The information emitted in this validation mode is the same for verbosity levels 'min', 'low', 'med', and 'high'.
+        </p>
+<pre>
+<smallBlackCode>---------------------------------------------------------------------------------------------------
+Running in 'RUNTIME_ERRORS_ONLY' mode with 'catchExceptionAndContinue' and verbosity level = 'min'.
+---------------------------------------------------------------------------------------------------
+
+[  1] <smallBlueCode>'v_Colorimetry.m'</smallBlueCode>
+   Internal validation  : PASSED
+   Run-time status      : no exception raised
+
+[  2] <smallBlueCode>'v_Cones.m'</smallBlueCode>
+   Internal validation  : PASSED
+   Run-time status      : no exception raised
+
+[  3] <smallBlueCode>'v_HumanRetinalIlluminance580nm.m'</smallBlueCode>
+   Internal validation  : PASSED
+   Run-time status      : no exception raised
+
+[  4] <smallBlueCode>'v_OTFandPupilSize.m'</smallBlueCode>
+   Internal validation  : PASSED
+   Run-time status      : no exception raised
+
+[  5] <smallBlueCode>'v_IrradianceIsomerizations.m'</smallBlueCode>
+   Internal validation  : PASSED
+   Run-time status      : no exception raised
+
+[  6] <smallBlueCode>'v_sceneReIllumination.m'</smallBlueCode>
+   Internal validation  : PASSED
+   Run-time status      : no exception raised
+
+[  7] <smallBlueCode>'v_fundamentalValidationFailure.m'</smallBlueCode>
+   <smallRedCode>Internal validation  : FUNDAMENTAL FAILURE !!</smallRedCode>
+   Run-time status      : no exception raised
+
+[  8] <smallBlueCode>'v_numericalPrecision.m'</smallBlueCode>
+   Internal validation  : PASSED
+   Run-time status      : no exception raised
+
+[  9] <smallBlueCode>'v_runTimeError.m'</smallBlueCode>
+   <smallRedCode>Internal validation  : FAILED
+   Run-time status      : exception raised</smallRedCode>
+
+[ 10] <smallBlueCode>'v_skeleton.m'</smallBlueCode>
+   Internal validation  : PASSED
+   Run-time status      : no exception raised</smallBlackCode>
+</pre>
+        <h4><hr>
+           (ii) 'FAST' and 'FULL' validation modes
+        </h4>
+        <p>
+        This section shows examples of feecback information emitted by the @UnitTest object in 'FAST' and 'FULL' validation modes during validation of one script, <blackCode>'v_Colorimetry.m'</blackCode>. For illustration purposes, one datum of the validation data was altered so as to generate an external data validation failure - a mismatch with the ground truth data set. 
         </p>
 
         <h4><hr>
