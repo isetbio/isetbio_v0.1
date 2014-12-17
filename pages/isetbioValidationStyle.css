@@ -129,14 +129,19 @@ lightBlueCode {
     .navbar-header  {
         float: none;
     }
+    
+    body {
+       padding: 100;
+    }
+  
     .navbar-toggle {
         display: block;
     }
     /* make navigation bar a little bit transparent */
     .navbar-inverse{
-        background:rgba(50, 50, 50, 0.92);  
+        background:rgba(50, 50, 50, 0.90);  
     }
-    
+
     .navbar-collapse {
         border-top: 1px solid transparent;
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
@@ -147,12 +152,14 @@ lightBlueCode {
     }
     .navbar-nav {
         float: none!important;
-        margin: 7.5px -15px;
     }
     .navbar-nav>li {
         float: none 
     }
+    
     .navbar-nav>li>a {
         padding-top: 10px;
         padding-bottom: 10px;
     }
+    
+
