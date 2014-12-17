@@ -32,6 +32,9 @@ end
 %% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
 
+%% Initialize ISETBIO
+s_initISET;
+
 %% Diffraction limited simulation properties
 oi = oiCreate;
 if (runTimeParams.generatePlots)
@@ -60,8 +63,8 @@ UnitTest.validationData('humanOIFromScene', oi);
 
 %% Check GUI control
 if (runTimeParams.generatePlots)
-    oiWindow;
     vcAddAndSelectObject(oi);
+    oiWindow;
     oiSet([],'gamma',1);
 end
 
