@@ -124,8 +124,8 @@ lightBlueCode {
 }
 
 
-/* collapse at 1000 pixels wide */
-@media (max-width: 1075px) {
+/* collapse at 1080 pixels wide */
+@media (max-width: 1080px) {
     .navbar-header  {
         float: none;
     }
