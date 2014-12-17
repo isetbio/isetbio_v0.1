@@ -7,6 +7,11 @@ function vScriptsList = validateListAllValidationDirs
 %
 % ISETBIO Team (c) 2014
 
+% List of script directories to validate. Each entry contains a cell array with 
+% with a validation script directory and an optional struct with
+% prefs that override the corresponding isetbioValidation prefs.
+% At the moment only the 'generatePlots' pref can be overriden.
+%        
 vScriptsList = {...
             {'validationScripts/color' } ...
             {'validationScripts/cones'} ...
