@@ -267,7 +267,7 @@ function doFastValidation(obj, fastLocalGroundTruthHistoryDataFile, fastLocalVal
                 fprintf('\tFast validation      : PASSED against ground truth data of %s.\n', groundTruthTime);
                 if (obj.validationParams.verbosity > 2) 
                     fprintf('\t > Ground truth info : %30s / %s, MATLAB %s by ''%s''\n', hostInfo.computerAddress, hostInfo.computer, hostInfo.matlabVersion, hostInfo.userName);
-                    fprintf('\t > Local host info   : %30s / %s, MATLAB %s    ''%s''\n', obj.hostInfo.computerAddress, obj.hostInfo.computer, obj.hostInfo.matlabVersion, obj.hostInfo.userName);
+                    fprintf('\t > Local host info   : %30s / %s, MATLAB %s by ''%s''\n', obj.hostInfo.computerAddress, obj.hostInfo.computer, obj.hostInfo.matlabVersion, obj.hostInfo.userName);
                 end
             end
             if (obj.validationParams.verbosity > 2) 
@@ -280,7 +280,7 @@ function doFastValidation(obj, fastLocalGroundTruthHistoryDataFile, fastLocalVal
                 fprintf(2,'\tFast validation      : FAILED against ground truth data of %s.\n', groundTruthTime);
                 if (obj.validationParams.verbosity > 2) 
                     fprintf(2,'\t > Ground truth info : %30s / %s, MATLAB %s by ''%s''\n', hostInfo.computerAddress, hostInfo.computer, hostInfo.matlabVersion, hostInfo.userName);
-                    fprintf(2,'\t > Local host info   : %30s / %s, MATLAB %s    ''%s''\n', obj.hostInfo.computerAddress, obj.hostInfo.computer, obj.hostInfo.matlabVersion, obj.hostInfo.userName);
+                    fprintf(2,'\t > Local host info   : %30s / %s, MATLAB %s by ''%s''\n', obj.hostInfo.computerAddress, obj.hostInfo.computer, obj.hostInfo.matlabVersion, obj.hostInfo.userName);
                 end
                 fprintf(2,'\tDataHash-this run    : %s\n', hashSHA25);
                 fprintf(2,'\tDataHash-groundTruth : %s\n', groundTruthValidationData);
@@ -360,7 +360,7 @@ function doFullValidation(obj, fullLocalGroundTruthHistoryDataFile, fullLocalVal
                 fprintf('\tFull validation      : PASSED against ground truth data of %s.\n', groundTruthTime);
                 if (obj.validationParams.verbosity > 2) 
                     fprintf('\t > Ground truth info : %30s / %s, MATLAB %s by ''%s''\n', hostInfo.computerAddress, hostInfo.computer, hostInfo.matlabVersion, hostInfo.userName);
-                    fprintf('\t > Local host info   : %30s / %s, MATLAB %s    ''%s''\n', obj.hostInfo.computerAddress, obj.hostInfo.computer, obj.hostInfo.matlabVersion, obj.hostInfo.userName);
+                    fprintf('\t > Local host info   : %30s / %s, MATLAB %s by ''%s''\n', obj.hostInfo.computerAddress, obj.hostInfo.computer, obj.hostInfo.matlabVersion, obj.hostInfo.userName);
                 end
             end
             groundTruthFullValidationFailed = false;
@@ -369,7 +369,7 @@ function doFullValidation(obj, fullLocalGroundTruthHistoryDataFile, fullLocalVal
                 fprintf(2,'\tFull validation      : FAILED against ground truth data of %s.\n', groundTruthTime);
                 if (obj.validationParams.verbosity > 2) 
                     fprintf(2,'\t > Ground truth info : %-30s / %s, MATLAB %s by ''%s''\n', hostInfo.computerAddress, hostInfo.computer, hostInfo.matlabVersion, hostInfo.userName);
-                    fprintf(2,'\t > Local host info   : %-30s / %s, MATLAB %s    ''%s''\n', obj.hostInfo.computerAddress, obj.hostInfo.computer, obj.hostInfo.matlabVersion, obj.hostInfo.userName);
+                    fprintf(2,'\t > Local host info   : %-30s / %s, MATLAB %s by ''%s''\n', obj.hostInfo.computerAddress, obj.hostInfo.computer, obj.hostInfo.matlabVersion, obj.hostInfo.userName);
                 end
             end
             groundTruthFullValidationFailed = true;
