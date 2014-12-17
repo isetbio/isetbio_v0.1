@@ -13,5 +13,13 @@ function exportData(obj, dataFileName, validationData, extraData)
     
     % add new variable with new validation data
     validationDataParamName = sprintf('run%05d', length(varList)+1);
-    eval(sprintf('matOBJ.%s = runData;', validationDataParamName));     
+    eval(sprintf('matOBJ.%s = runData;', validationDataParamName));
+    if (obj.validationParams.verbosity > 2) 
+        if (length(varList)+1 == 1)
+            fprintf('\tFull validation file : now contains %d instant of historical data.\n', length(varList)+1);
+        else
+            fprintf('\tFull validation file : now contains %d instants of historical data.\n', length(varList)+1);
+        end
+    end
+
 end
