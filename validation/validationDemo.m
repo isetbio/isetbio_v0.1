@@ -1,4 +1,4 @@
-function validateDemo
+function validationDemo
 %
 % Validation demo illustrating how to 
 % - set various validation preferences
