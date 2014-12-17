@@ -61,12 +61,9 @@ vcNewGraphWin; plot(adaptedCur(:), measuredCur(1,:), '.');
 noise = measuredCur - adaptedCur;
 
 %  Plot ACF and PACF
-acf  = autocorr(noise); % autocorrelation function
-pacf = parcorr(noise);  % partial autocorrelation function
-
 vcNewGraphWin; 
-subplot(1, 2, 1);
-subplot(1, 2, 2);
+subplot(1, 2, 1); autocorr(noise);
+subplot(1, 2, 2); parcorr(noise);
 
 % Plot power spectral density
 
@@ -83,5 +80,9 @@ title('standardized residual');
 subplot(2,2,2);  qqplot(res);   % check normality, should fall along a line
 subplot(2,2,3);  autocorr(res); % independence, should be small
 subplot(2,2,4);  parcorr(res);  % independence, should be small
+
+%% Generate noise to simulation data
+%  add noise
+adaptedCur = riekeAddNoise(adaptedCur);
 
 %% END
