@@ -99,6 +99,7 @@ function ValidationFunction(runTimeParams)
     %% Plotting
     if (runTimeParams.generatePlots)
         h = figure(500);
+        set(h, 'Position', [100 100 840 430]);
         clf;
         
         bar([1 2], [expectedPhotonIrradiance  photonIrradiance], 'r');
