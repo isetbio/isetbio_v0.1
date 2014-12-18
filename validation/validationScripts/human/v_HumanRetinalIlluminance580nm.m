@@ -103,7 +103,7 @@ function ValidationFunction(runTimeParams)
         
         bar([1 2], [expectedPhotonIrradiance  photonIrradiance], 'r');
         set(gca, 'XTick', [1 2], 'XLim', [0.5 2.5], 'YLim', [0 max([expectedPhotonIrradiance  photonIrradiance])*1.1]);
-        set(gca, 'XTickLabel', {'Expected Photon Irradiance (Ed Pugh)','Photon Irradiance'});
+        set(gca, 'XTickLabel', {'Expected Photon Irradiance (Ed Pugh)','Photon Irradiance (isetbio)'});
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
         xlabel('', 'FontName', 'Helvetica', 'FontSize', 14); 
         ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 14)
