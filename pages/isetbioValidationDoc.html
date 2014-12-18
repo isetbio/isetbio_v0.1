@@ -96,7 +96,7 @@
                                 Miscellaneous information<b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="#feedback emitted under different verbosity levels" class="smoothScroll">feedback emitted under different verbosity levels</a></li>
+                                <li><a href="#feedback emitted under different verbosity levels" class="smoothScroll">Feedback emitted under different verbosity levels / valdidation modes</a></li>
                             </ul>
                         </li>
                         
@@ -839,17 +839,17 @@ end
             <a id="feedback emitted under different verbosity levels" href="#feedback emitted under different verbosity levels"></a> <hr>
         </h7>
         <h4>
-           Feedback emitted under different verbosity levels
+           Feedback emitted under different verbosity levels / valdidation modes
         </h4>
         
         
-        <p class="indent">
+        <p>
         This section shows examples of feecback information emitted by the @UnitTest object under different verbosity levels and validation modes.
         </p>
         <h4><hr>
-        (i) 'RUNTIME_ERRORS_ONLY' validation mode
+        &#8226; validation mode = 'RUNTIME_ERRORS_ONLY'
         </h4>
-        <p class="indent">
+        <p>
         In 'RUNTIME_ERRORS_ONLY' validation mode, the information emitted by the managing @UnitTest object is the same for verbosity levels 'min', 'low', 'med', and 'high'.
         </p>
 <pre>
@@ -898,9 +898,9 @@ Running in 'RUNTIME_ERRORS_ONLY' mode with 'catchExceptionAndContinue' and verbo
    Run-time status      : no exception raised</smallBlackCode>
 </pre>
         <h4><hr>
-           (ii) 'FAST' and 'FULL' validation modes
+            &#8226; validation mode = 'FAST' / 'FULL'
         </h4>
-        <p class="indent">
+        <p>
         Here, we show examples of feecback information emitted by the managing @UnitTest object in 'FAST' and 'FULL' validation modes during validation of a single script, <blackCode>'v_Colorimetry.m'</blackCode>. For illustration purposes, one datum of the validation data was altered so as to generate an external data validation failure - a mismatch with the ground truth data set. 
         </p>
 
