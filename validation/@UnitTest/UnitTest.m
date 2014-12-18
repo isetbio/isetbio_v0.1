@@ -187,6 +187,9 @@ classdef UnitTest < handle
         % Method to add new data to the extra data struct
         data = extraData(varargin);
         
+        % Method to round numeric values to N decimal digits
+         roundedValue = roundToNdigits(numericValue, decimalDigits);
+        
         % Method to print the validationReport
         printValidationReport(validationReport);
     end

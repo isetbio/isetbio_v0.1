@@ -28,7 +28,7 @@ function data = validationData(varargin)
         
         % save truncated data in hashData.(fieldName)
         if (isnumeric(fieldValue))
-            validationData.hashData.(fieldName) = round(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
+            validationData.hashData.(fieldName) = UnitTest.roundToNdigits(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
         elseif (isstruct(fieldValue))
             validationData.hashData.(fieldName) = roundStruct(fieldValue);
         elseif (iscell(fieldValue))
@@ -61,7 +61,7 @@ function s = roundStruct(oldStruct)
         elseif ischar(fieldValue)
             s.(structFieldNames{k}) = fieldValue;
         elseif isnumeric(fieldValue)
-            s.(structFieldNames{k}) = round(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
+            s.(structFieldNames{k}) = UnitTest.roundToNdigits(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
         elseif iscell(fieldValue)
             s.(structFieldNames{k}) = roundCellArray(fieldValue);
         else
@@ -85,7 +85,7 @@ function cellArray = roundCellArray(oldCellArray)
              
         % Numeric values
         elseif (isnumeric(fieldValue))
-            cellArray{k} = round(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
+            cellArray{k} = UnitTest.roundToNdigits(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
         
         % Cells
         elseif (iscell(fieldValue))
