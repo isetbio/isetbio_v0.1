@@ -296,10 +296,10 @@ function ValidationFunction(runTimeParams)
     isomerizationTolerance = 0.01;
     isomerizationDifference = ptbCorrectedIsomerizations-isetbioIsomerizations;
     if (max(abs(isomerizationDifference./ptbCorrectedIsomerizations)) > isomerizationTolerance)
-        message = sprintf('Difference between PTB and isetbio isomerizatoins exceeds %0.1f%%!!!',100*isomerizationTolerance);
+        message = sprintf('Difference between PTB and isetbio isomerizations exceeds %0.1f%%!!!',100*isomerizationTolerance);
         UnitTest.validationRecord('FAILED', message);
     else
-        message = sprintf('Difference between PTB and isetbio isomerizatoins good to %0.1f%%',100*isomerizationTolerance);
+        message = sprintf('Difference between PTB and isetbio isomerizations good to %0.1f%%',100*isomerizationTolerance);
         UnitTest.validationRecord('PASSED', message);
     end
     
