@@ -25,8 +25,6 @@ h1, h2, h3, h4, h5, h6 {
     text-indent: 30px;
 }
 
-
-
 /* yellow-ish code background */
 pre {
     background-color: #fcfcf0;
@@ -136,23 +134,44 @@ lightBlueCode {
   
     .navbar-toggle {
         display: block;
+        float: left;
+        margin-left: 15px;
     }
+
     /* make navigation bar a little bit transparent */
     .navbar-inverse{
         background:rgba(50, 50, 50, 0.90);  
     }
+
+    /* settings for collapsed dropdown menus */
+    .dropdown-menu{background:rgba(50, 50, 50, 0.97); color:white; }
+
+    .dropdown-menu li>a{
+        color:white; 
+    }
+
+    .dropdown-menu>li{
+        padding:5px; 
+        border-bottom:1px solid rgba(50, 50, 50, 0.97);
+        border-left:1px solid rgba(50, 50, 50, 0.97);
+        border-right:1px solid rgba(50, 50, 50, 0.97);
+    }
+    .dropdown-menu li>a:hover{
+        background:yellow;
+    }
+
 
     .navbar-collapse {
         border-top: 1px solid transparent;
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
         background:rgba(50, 50, 50, 0.8); 
     }
+
     .navbar-collapse.collapse {
         display: none!important;
     }
-    .navbar-nav {
-        float: none!important;
-    }
+
+
     .navbar-nav>li {
         float: none 
     }
@@ -161,5 +180,3 @@ lightBlueCode {
         padding-top: 10px;
         padding-bottom: 10px;
     }
-    
-
