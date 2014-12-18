@@ -139,11 +139,12 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     UnitTest.validationData(<span class="string">'oi'</span>, oi);
 </pre><h2>Plotting<a name="17"></a></h2><pre class="codeinput">    <span class="keyword">if</span> (runTimeParams.generatePlots)
         h = figure(500);
+        set(h, <span class="string">'Position'</span>, [100 100 840 430]);
         clf;
 
         bar([1 2], [expectedPhotonIrradiance  photonIrradiance], <span class="string">'r'</span>);
         set(gca, <span class="string">'XTick'</span>, [1 2], <span class="string">'XLim'</span>, [0.5 2.5], <span class="string">'YLim'</span>, [0 max([expectedPhotonIrradiance  photonIrradiance])*1.1]);
-        set(gca, <span class="string">'XTickLabel'</span>, {<span class="string">'Expected Photon Irradiance (Ed Pugh)'</span>,<span class="string">'Photon Irradiance'</span>});
+        set(gca, <span class="string">'XTickLabel'</span>, {<span class="string">'Expected Photon Irradiance (Ed Pugh)'</span>,<span class="string">'Photon Irradiance (isetbio)'</span>});
         set(gca, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14, <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
         xlabel(<span class="string">''</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14);
         ylabel(<span class="string">'Irradiance (q/s/nm/m^2)'</span>, <span class="string">'FontName'</span>, <span class="string">'Helvetica'</span>, <span class="string">'FontSize'</span>, 14)
@@ -252,11 +253,12 @@ function ValidationFunction(runTimeParams)
     %% Plotting
     if (runTimeParams.generatePlots)
         h = figure(500);
+        set(h, 'Position', [100 100 840 430]);
         clf;
         
         bar([1 2], [expectedPhotonIrradiance  photonIrradiance], 'r');
         set(gca, 'XTick', [1 2], 'XLim', [0.5 2.5], 'YLim', [0 max([expectedPhotonIrradiance  photonIrradiance])*1.1]);
-        set(gca, 'XTickLabel', {'Expected Photon Irradiance (Ed Pugh)','Photon Irradiance'});
+        set(gca, 'XTickLabel', {'Expected Photon Irradiance (Ed Pugh)','Photon Irradiance (isetbio)'});
         set(gca, 'FontName', 'Helvetica', 'FontSize', 14, 'FontWeight', 'bold');
         xlabel('', 'FontName', 'Helvetica', 'FontSize', 14); 
         ylabel('Irradiance (q/s/nm/m^2)', 'FontName', 'Helvetica', 'FontSize', 14)
