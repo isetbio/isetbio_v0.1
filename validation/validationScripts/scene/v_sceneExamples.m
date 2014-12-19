@@ -45,6 +45,11 @@ UnitTest.validationRecord('SIMPLE_MESSAGE','Testing scene creation.  Some scenes
 %% Rings and Rays
 radF = 24; imSize = 512;
 scene = sceneCreate('mackay',radF,imSize);
+if (runTimeParams.generatePlots)
+    vcAddAndSelectObject(scene); sceneWindow;
+end
+UnitTest.validationData('makay', makay);
+
 scene = sceneCreate('rings rays');
 if (runTimeParams.generatePlots)
     vcAddAndSelectObject(scene); sceneWindow;
