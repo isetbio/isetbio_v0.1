@@ -171,8 +171,11 @@ classdef UnitTest < handle
         % Method to list the current isetbioValidation preferences
         listPrefs();
         
+        % Method to run a validation run.
+        % Every validation script must call this method in its wrapper function
+        varargout = runValidationRun(functionHandle, varargin);
+        
         % Method to initalize a validation run.
-        % Every validation script must call this method first thing.
         runTimeParams = initializeValidationRun(varargin);
         
         % Method to print what runtime options are available and their default values

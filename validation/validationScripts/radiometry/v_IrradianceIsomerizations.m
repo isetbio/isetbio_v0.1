@@ -27,27 +27,7 @@ function varargout = v_IrradianceIsomerizations(varargin)
 % macular pigment density, pigment optical density, photopigment
 % lambda-max, cone aperature area, photopigment quantal efficiency.
 
-    %% Initialization
-    % Initialize validation run and return params
-    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
-    if (nargout > 0) varargout = {'', false, []}; end
-    
-    %% Call the validation function
-    ValidationFunction(runTimeParams);
-    
-    %% Reporting and return params
-    if (nargout > 0)
-        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
-                          UnitTest.validationRecord('command', 'return');
-        validationData  = UnitTest.validationData('command', 'return');
-        extraData       = UnitTest.extraData('command', 'return');
-        varargout       = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData, extraData};
-    else
-        if (runTimeParams.printValidationReport)
-            [validationReport, ~] = UnitTest.validationRecord('command', 'return');
-            UnitTest.printValidationReport(validationReport);
-        end 
-    end
+    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
 end
 
 %% Function implementing the isetbio validation code

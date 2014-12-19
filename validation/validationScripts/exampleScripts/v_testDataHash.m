@@ -2,35 +2,12 @@ function varargout = v_testDataHash(varargin)
 %
 % Script to test the SHA-256 data hash.
 %
-
-    %% Initialization
-    % Initialize validation run
-    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
-    % Initialize return params
-    if (nargout > 0) varargout = {'', false, []}; end
-    
-    %% Call the validation function
-    ValidationFunction(runTimeParams);
-    
-    %% Reporting and return params
-    if (nargout > 0)
-        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
-                          UnitTest.validationRecord('command', 'return');
-        validationData  = UnitTest.validationData('command', 'return');
-        extraData       = UnitTest.extraData('command', 'return');
-        varargout       = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData, extraData};
-    else
-        if (runTimeParams.printValidationReport)
-            [validationReport, ~] = UnitTest.validationRecord('command', 'return');
-            UnitTest.printValidationReport(validationReport);
-        end 
-    end
+    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
 end
 
 %% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
 
-    
     %% Some informative text
     UnitTest.validationRecord('SIMPLE_MESSAGE', 'Testing data hash.');
     
@@ -46,7 +23,6 @@ function ValidationFunction(runTimeParams)
     end
     UnitTest.validationData('probe2', probe2);
     
-    
     probe3 = aNumber * ones(30,64,64);
     % introduce difference
     for k = 10:20
@@ -54,6 +30,10 @@ function ValidationFunction(runTimeParams)
     end
     UnitTest.validationData('probe3', probe3);
     
-    
-    
+    if (runTimeParams.generatePlots) 
+       figure(1);
+       imagesc(rand(20,30));
+       colormap(cool);
+       drawnow;
+    end
 end

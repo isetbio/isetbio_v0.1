@@ -17,29 +17,9 @@ function varargout = v_HumanRetinalIlluminance580nm(varargin)
 %   590,000 Trolands at the retina at 580nm is supposed to be 187,800
 %   cd/m2 at the scene
 
-    %% Initialization
-    % Initialize validation run
-    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
-    % Initialize return params
-    if (nargout > 0) varargout = {'', false, []}; end
-    
-    %% Call the validation function
-    ValidationFunction(runTimeParams);
-    
-    %% Reporting and return params
-    if (nargout > 0)
-        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
-                          UnitTest.validationRecord('command', 'return');
-        validationData  = UnitTest.validationData('command', 'return');
-        extraData       = UnitTest.extraData('command', 'return');
-        varargout       = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData, extraData};
-    else
-        if (runTimeParams.printValidationReport)
-            [validationReport, ~] = UnitTest.validationRecord('command', 'return');
-            UnitTest.printValidationReport(validationReport);
-        end 
-    end
+    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
 end
+
 
 %% Function implementing the isetbio validation code
 % Validation script for human retinal irradiance at 580 nm.
