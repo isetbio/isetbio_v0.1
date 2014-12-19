@@ -1,7 +1,7 @@
 function varargout = v_skeleton(varargin)
 %
 % Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code. 
-%
+% [DOES THIS NEED TO BE ONE LINE.]
 
     %% Initialization
     % Initialize validation run
