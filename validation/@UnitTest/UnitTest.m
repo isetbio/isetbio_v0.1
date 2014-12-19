@@ -133,6 +133,9 @@ classdef UnitTest < handle
         % Method to recursively compare two struct for equality
         [structsAreSimilarWithinSpecifiedTolerance, result] = structsAreSimilar(obj, groundTruthData, validationData);
         
+        % Method to plot mistmatched validation data and their difference
+        figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name, field2Name);
+        
         % Method to import a ground truth data entry
         [validationData, extraData, validationTime, hostInfo] = importGroundTruthData(obj, dataFileName);
         
