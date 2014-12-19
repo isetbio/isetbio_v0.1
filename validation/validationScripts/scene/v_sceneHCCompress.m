@@ -1,25 +1,55 @@
-%% s_sceneCompress
+function varargout = v_sceneCompress(varargin)
 %
-% Read in hyperspectral scene data and compress the data using linear model 
-% (svd to get spectral bases)
+% Validate hyperspectral scene data and compression
 %
-% See also: s_Scene2ImageData; s_Scene2SampledScene, s_renderScene
+% Uses linear model compression.
 %
 % Copyright ImagEval Consultants, LLC, 2012
 
+    %% Initialization
+    % Initialize validation run
+    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
+    % Initialize return params
+    if (nargout > 0) varargout = {'', false, []}; end
+    
+    %% Call the validation function
+    ValidationFunction(runTimeParams);
+    
+    %% Reporting and return params
+    if (nargout > 0)
+        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
+                          UnitTest.validationRecord('command', 'return');
+        validationData  = UnitTest.validationData('command', 'return');
+        extraData       = UnitTest.extraData('command', 'return');
+        varargout       = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData, extraData};
+    else
+        if (runTimeParams.printValidationReport)
+            [validationReport, ~] = UnitTest.validationRecord('command', 'return');
+            UnitTest.printValidationReport(validationReport);
+        end 
+    end
+end
 
-%%
-s_initISET
+
+%% Here is the actual code
+function ValidationFunction(runTimeParams)
+
+%% Initialize
+s_initISET;
 
 %% Read in the scene
 fName = fullfile(isetRootPath,'data','images','multispectral','StuffedAnimals_tungsten-hdrs');
 scene = sceneFromFile(fName,'multispectral');
-
+UnitTest.validationData('sceneA', scene);
+    
 % Have a look at the image
-vcAddAndSelectObject(scene); sceneWindow;
-
-% Plot the illuminant
-plotScene(scene,'illuminant photons');
+if (runTimeParams.generatePlots)
+    % Show scene in window
+    vcAddAndSelectObject(scene); sceneWindow;
+    
+    % Plot the illuminant
+    plotScene(scene,'illuminant photons');
+end
 
 %% Compress the hypercube requiring only 95% of the var explained
 vExplained = 0.95;
@@ -43,7 +73,9 @@ wList = 400:5:700;
 scene2 = sceneFromFile(oFile ,'multispectral',[],[],wList);
 
 % It is very desaturated
-vcAddAndSelectObject(scene2); sceneWindow;
+if (runTimeParams.generatePlots)
+    vcAddAndSelectObject(scene2); sceneWindow;
+end
 
 %% Now require that most of the variance be plained
 vExplained = 0.99;
@@ -71,3 +103,4 @@ vcAddAndSelectObject(scene2); sceneWindow;
 delete(oFile);
 
 %% End
+end
