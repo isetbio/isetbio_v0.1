@@ -48,7 +48,7 @@ scene = sceneCreate('mackay',radF,imSize);
 if (runTimeParams.generatePlots)
     vcAddAndSelectObject(scene); sceneWindow;
 end
-UnitTest.validationData('makay', makay);
+UnitTest.validationData('makay', scene);
 
 scene = sceneCreate('rings rays');
 if (runTimeParams.generatePlots)
