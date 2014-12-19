@@ -6,28 +6,7 @@ function varargout = v_sceneCompress(varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2012
 
-    %% Initialization
-    % Initialize validation run
-    runTimeParams = UnitTest.initializeValidationRun(varargin{:});
-    % Initialize return params
-    if (nargout > 0) varargout = {'', false, []}; end
-    
-    %% Call the validation function
-    ValidationFunction(runTimeParams);
-    
-    %% Reporting and return params
-    if (nargout > 0)
-        [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
-                          UnitTest.validationRecord('command', 'return');
-        validationData  = UnitTest.validationData('command', 'return');
-        extraData       = UnitTest.extraData('command', 'return');
-        varargout       = {validationReport, validationFailedFlag, validationFundametalFailureFlag, validationData, extraData};
-    else
-        if (runTimeParams.printValidationReport)
-            [validationReport, ~] = UnitTest.validationRecord('command', 'return');
-            UnitTest.printValidationReport(validationReport);
-        end 
-    end
+    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
 end
 
 
