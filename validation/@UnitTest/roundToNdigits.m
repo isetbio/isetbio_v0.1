@@ -7,7 +7,7 @@ function roundedValue = roundToNdigits(numericValue, decimalDigits)
     end
     
     truncator = 10^(-decimalDigits);
-    roundedValue  = round(numericValue/truncator) * truncator;
+    roundedValue = sign(numericValue) .* round(abs(numericValue/truncator)) * truncator;
 end
 
 %

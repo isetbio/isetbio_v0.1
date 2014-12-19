@@ -27,7 +27,8 @@ function validationDemo
     UnitTest.setPref('generatePlots',  true); 
     UnitTest.setPref('closeFigsOnInit', true);
     
-    %% Verbosity Level
+    %% Verbosity Level3
+    
     %UnitTest.setPref('verbosity', 'none');
     %UnitTest.setPref('verbosity', 'min');
     %UnitTest.setPref('verbosity', 'low');
@@ -39,7 +40,7 @@ function validationDemo
     UnitTest.setPref('numericTolerance', 500*eps);
     
     %% Whether to plot data that do not agree with the ground truth
-    UnitTest.setPref('graphMismatchedData', false);
+    UnitTest.setPref('graphMismatchedData', true);
     
     %% Path preferences (these are only relevant to github integration)
     % Change to match configuration on the host machine
@@ -51,7 +52,7 @@ function validationDemo
     UnitTest.listPrefs();
     
     %% What to validate
-    validateAllDirs = true;
+    validateAllDirs = false;
     if (validateAllDirs)
         % List of script directories to validate. Each entry contains a cell array with 
         % with a validation script directory and an optional struct with
@@ -79,9 +80,10 @@ function validationDemo
         % prefs that override the corresponding isetbioValidation prefs.
         % At the moment only the generatePlots pref can be overriden.
         vScriptsList = {...
-            {'v_Colorimetry'} ...
-            {'v_IrradianceIsomerizations', struct('generatePlots', true)}  ...
-            {'v_skeleton'}
+            {'v_testDataHash'} ...
+           % {'v_Colorimetry'} ...
+           % {'v_IrradianceIsomerizations', struct('generatePlots', true)}  ...
+           % {'v_skeleton'}
         };
     end
     
