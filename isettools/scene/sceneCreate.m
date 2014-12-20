@@ -367,13 +367,14 @@ switch sceneName
         if length(varargin) >=2, width = varargin{2};   end
         scene = sceneBar(scene,sz,width);
     case {'vernier'}
-        % sceneCreate('vernier',size,width,offset)
-        sz = 65; width = 3; offset = 3;
-        if length(varargin) >=1, sz     = varargin{1};   end
-        if length(varargin) >=2, width  = varargin{2};   end
-        if length(varargin) ==3, offset = varargin{3};   end
-        
-        scene = sceneVernier(scene,sz,width,offset);
+        % sceneCreate('vernier', type, params)
+        if ~isempty(varargin), type = varargin{1}; else type = object; end
+        if length(varargin) > 1, 
+            params = varargin{2};
+        else
+            params = [];
+        end
+        scene = sceneVernier(scene, type, params);
     case {'whitenoise','noise'}
         % sceneCreate('noise',[128 128])
         sz = 128; contrast = 20;
@@ -1008,7 +1009,11 @@ switch type
         scene = sceneSet(scene,'name',sprintf('vernier-%d',offset));
         
         %% We make the image square
-        r = sz; c = sz;
+        if isscalar(sz)
+            r = sz; c = sz;
+        else
+            r = sz(1);  c = sz(2);
+        end
         
         % Make the column number odd so we can really center the top line
         if ~isodd(c), c = c+1; end
@@ -1043,13 +1048,15 @@ switch type
         scene = sceneSet(scene,'illuminant',il);
         illP  = sceneGet(scene,'illuminant photons');
         
-        photons = ones(r,c,nWave);
-        for ii=1:nWave
-            photons(:,:,ii)     = backReflectance*photons(:,:,ii)*illP(ii);
-            photons(topRows,topCols,ii)  = lineReflectance / ...
-                backReflectance*photons(topRows,topCols,ii);
-            photons(botRows,botCols,ii)  = lineReflectance / ...
-                backReflectance*photons(botRows,botCols,ii);
+        photons = ones(r, c, nWave);
+        for ii = 1 : nWave
+            topBar = lineReflectance * illP(ii) * ...
+                        photons(topRows, topCols, ii);
+            botBar = lineReflectance * illP(ii) * ...
+                        photons(botRows, botCols, ii);
+            photons(:,:,ii) = backReflectance * photons(:,:,ii) * illP(ii);
+            photons(topRows, topCols, ii)  = topBar;
+            photons(botRows, botCols, ii)  = botBar;
         end
         
         scene = sceneSet(scene,'photons',photons);
