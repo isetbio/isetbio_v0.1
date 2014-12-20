@@ -790,6 +790,9 @@ img = img*diag(illP);
 img = XW2RGBFormat(img,r,c);
 scene = sceneSet(scene,'photons',img);
 
+% set scene field of view
+scene = sceneSet(scene, 'h fov', 1);
+
 end
 
 %--------------------------------------------------
@@ -830,6 +833,7 @@ if notDefined('scene'), error('Scene required.'); end
 if notDefined('spectralType'), spectralType = 'ep'; end
 if notDefined('sz'), sz = [32 32]; end
 if isscalar(sz), sz = [sz sz]; end
+assert(numel(sz) == 2, 'sz should be 2 element vector');
 sz = sz(:)'; % make sure sz is a row vector
 
 scene = sceneSet(scene,'name',sprintf('uniform-%s',spectralType));
