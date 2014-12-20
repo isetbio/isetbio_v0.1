@@ -46,6 +46,9 @@ elseif ischar(illEnergy)
     if ~exist(fullName,'file'), error('No file %s\n',fullName);
     else  illEnergy = ieReadSpectra(fullName,wave);
     end
+elseif isstruct(illEnergy) % illuminant structure passed in
+    fullName = illuminantGet(illEnergy, 'name');
+    illEnergy = illuminantGet(illEnergy, 'energy', wave);
 else
     % User sent numbers and we check that the vector is the right length
     fullName = '';
