@@ -828,7 +828,10 @@ function scene = sceneUniform(scene,spectralType,sz,varargin)
 
 if notDefined('scene'), error('Scene required.'); end
 if notDefined('spectralType'), spectralType = 'ep'; end
-if notDefined('sz'), sz = 32; end
+if notDefined('sz'), sz = [32 32]; end
+if isscalar(sz), sz = [sz sz]; end
+sz = sz(:)'; % make sure sz is a row vector
+
 scene = sceneSet(scene,'name',sprintf('uniform-%s',spectralType));
 
 if isempty(varargin)
@@ -840,7 +843,7 @@ wave  = sceneGet(scene,'wave');
 nWave = sceneGet(scene,'nwave');
 
 % 100% reflectance
-d = ones(sz,sz,nWave);
+d = ones([sz nWave]);
 
 spectralType = ieParamFormat(spectralType);
 switch lower(spectralType)
