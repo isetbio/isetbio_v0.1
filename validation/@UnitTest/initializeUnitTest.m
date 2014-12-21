@@ -10,7 +10,7 @@ function initializeUnitTest(obj)
     indices     = strfind(pathToUnitTestDir, '/');
     obj.rootDir = pathToUnitTestDir(1:indices(end)-1);
     obj.htmlDir = sprintf('%s/HTMLpublishedData', obj.rootDir);
-    obj.validationDataDir = sprintf('%s/validationData', obj.rootDir);
+    obj.validationDataDir = sprintf('%s/validationdata', obj.rootDir);
     
     % initialize validation params to default params
     obj.validationParams = obj.defaultValidationParams;
