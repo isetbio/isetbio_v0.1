@@ -33,6 +33,12 @@ function data = validationData(varargin)
             validationData.hashData.(fieldName) = roundStruct(fieldValue);
         elseif (iscell(fieldValue))
             validationData.hashData.(fieldName) = roundCellArray(fieldValue);
+        elseif (ischar(fieldValue))
+            % only add string field if we are comparing them
+            compareStringFields = getpref('isetbioValidation', 'compareStringFields');
+            if (compareStringFields)
+                validationData.hashData.(fieldName) = fieldValue;
+            end
         else
             validationData.hashData.(fieldName) = fieldValue;
         end
@@ -59,7 +65,11 @@ function s = roundStruct(oldStruct)
         if isstruct(fieldValue)
             s.(structFieldNames{k}) = roundStruct(fieldValue);
         elseif ischar(fieldValue)
-            s.(structFieldNames{k}) = fieldValue;
+            % only add string field if we are comparing them
+            compareStringFields = getpref('isetbioValidation', 'compareStringFields');
+            if (compareStringFields)
+                s.(structFieldNames{k}) = fieldValue;
+            end
         elseif isnumeric(fieldValue)
             s.(structFieldNames{k}) = UnitTest.roundToNdigits(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
         elseif iscell(fieldValue)
@@ -80,7 +90,7 @@ function cellArray = roundCellArray(oldCellArray)
         fieldValue = cellArray{k};
         
         % Char values
-        if ischar(fieldValue )
+        if ischar(fieldValue)
              % do nothing
              
         % Numeric values

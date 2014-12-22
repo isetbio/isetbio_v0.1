@@ -58,6 +58,13 @@ function initializePrefs(initMode)
         setpref('isetbioValidation', 'graphMismatchedData',  value); 
     end
     
+    if (~ispref('isetbioValidation', 'compareStringFields'))  || (strcmp(initMode, 'reset'))
+        index = find(strcmp(UnitTest.validationOptionNames, 'compareStringFields'));
+        value = UnitTest.validationOptionDefaultValues{index};
+        setpref('isetbioValidation', 'compareStringFields',  value); 
+    end
+    
+    
     if (~ispref('isetbioValidation', 'validationRootDir'))  || (strcmp(initMode, 'reset'))
         index = find(strcmp(UnitTest.validationOptionNames, 'validationRootDir'));
         value = UnitTest.validationOptionDefaultValues{index};

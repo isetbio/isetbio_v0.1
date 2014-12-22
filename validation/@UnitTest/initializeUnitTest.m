@@ -6,9 +6,7 @@ function initializeUnitTest(obj)
     end
 
     % setup default directories
-    pathToUnitTestDir = fileparts(which('UnitTest'));
-    indices  = strfind(pathToUnitTestDir, filesep);
-    obj.rootDir             = pathToUnitTestDir(1:indices(end)-1);
+    obj.rootDir             = getpref('isetbioValidation', 'validationRootDir');
     obj.htmlDir             = fullfile(obj.rootDir, 'HTMLpublishedData', filesep);
     obj.validationDataDir   = fullfile(obj.rootDir, 'validationdata', filesep);
     
@@ -28,6 +26,9 @@ function initializeUnitTest(obj)
     
     % initialize mismatch data graphing
     obj.validationParams.graphMismatchedData = getpref('isetbioValidation', 'graphMismatchedData');
+    
+    % initialize compareStringFields
+    obj.validationParams.compareStringFields = getpref('isetbioValidation', 'compareStringFields');
     
     obj.dataMismatchFigNumber = UnitTest.minFigureNoForMistmatchedData;
     

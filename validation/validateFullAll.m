@@ -14,8 +14,8 @@ function validateFullAll
     
     %% Change some preferences:
     %% Whether to update the histories of validation and ground truth data sets
-    UnitTest.setPref('updateValidationHistory', true);
-    UnitTest.setPref('updateGroundTruth', true);
+    UnitTest.setPref('updateValidationHistory', false);
+    UnitTest.setPref('updateGroundTruth', false);
     
     %% Run time error behavior
     %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExceptionAndAbort');
