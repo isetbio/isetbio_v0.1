@@ -62,14 +62,14 @@ function validate(obj, vScriptsToRunList)
         if (exist(scriptName, 'file') == 2)
             % Determine function sub-directory
             [functionDirectory, ~, ~] = fileparts(which(sprintf('%s.m',scriptName)));
-            indices              = strfind(functionDirectory, '/');
+            indices              = strfind(functionDirectory, filesep);
             functionSubDirectory = functionDirectory(indices(end)+1:end);
             % Construct path strings
-            htmlDirectory                       = sprintf('%s/%s/%s_HTML',                           obj.htmlDir,           functionSubDirectory, scriptName);
-            fullLocalValidationHistoryDataFile  = sprintf('%s/%s/%s_FullValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
-            fastLocalValidationHistoryDataFile  = sprintf('%s/%s/%s_FastValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
-            fullLocalGroundTruthHistoryDataFile = sprintf('%s/%s/%s_FullGroundTruthDataHistory.mat', obj.validationDataDir, functionSubDirectory, scriptName);
-            fastLocalGroundTruthHistoryDataFile = sprintf('%s/%s/%s_FastGroundTruthDataHistory.mat', obj.validationDataDir, functionSubDirectory, scriptName);
+            htmlDirectory                       = fullfile(obj.htmlDir, functionSubDirectory, sprintf('%s_HTML', scriptName), filesep);  % sprintf('%s/%s/%s_HTML',                           obj.htmlDir,           functionSubDirectory, scriptName);
+            fullLocalValidationHistoryDataFile  = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FullValidationDataHistory.mat', scriptName), filesep); %sprintf('%s/%s/%s_FullValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
+            fastLocalValidationHistoryDataFile  = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FastValidationDataHistory.mat', scriptName), filesep); % ) sprintf('%s/%s/%s_FastValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
+            fullLocalGroundTruthHistoryDataFile = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FullGroundTruthDataHistory.mat', scriptName), filesep); % sprintf('%s/%s/%s_FullGroundTruthDataHistory.mat', obj.validationDataDir, obj.validationDataDir, scriptName);
+            fastLocalGroundTruthHistoryDataFile = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FastGroundTruthDataHistory.mat', scriptName), filesep); % sprintf('%s/%s/%s_FastGroundTruthDataHistory.mat', obj.validationDataDir, functionSubDirectory, scriptName);
         else
             error('A file named ''%s'' does not exist in the path.', scriptName);
         end

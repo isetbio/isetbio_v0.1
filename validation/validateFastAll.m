@@ -41,9 +41,10 @@ function validateFastAll
     
     %% Path preferences (these are only relevant to github integration)
     % Change to match configuration on the host machine
-    %UnitTest.setPref('validationRootDir',       '/Users/Shared/Matlab/Toolboxes/ISETBIO/validation');
-    %UnitTest.setPref('clonedWikiLocation',      '/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki');
-    %UnitTest.setPref('clonedGhPagesLocation',   '/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio');
+    %UnitTest.setPref('validationRootDir',       fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'isetbio', 'validation', filesep));
+    %UnitTest.setPref('clonedWikiLocation',      fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_Wiki', 'isetbio.wiki', filesep));
+    %UnitTest.setPref('clonedGhPagesLocation',   fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_GhPages', 'isetbio', filesep));
+
 
     %% Print current values of isetbioValidation prefs
     UnitTest.listPrefs();

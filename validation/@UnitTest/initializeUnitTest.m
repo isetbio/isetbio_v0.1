@@ -7,10 +7,10 @@ function initializeUnitTest(obj)
 
     % setup default directories
     pathToUnitTestDir = fileparts(which('UnitTest'));
-    indices     = strfind(pathToUnitTestDir, '/');
-    obj.rootDir = pathToUnitTestDir(1:indices(end)-1);
-    obj.htmlDir = sprintf('%s/HTMLpublishedData', obj.rootDir);
-    obj.validationDataDir = sprintf('%s/validationdata', obj.rootDir);
+    indices  = strfind(pathToUnitTestDir, filesep);
+    obj.rootDir             = pathToUnitTestDir(1:indices(end)-1);
+    obj.htmlDir             = fullfile(obj.rootDir, 'HTMLpublishedData', filesep);
+    obj.validationDataDir   = fullfile(obj.rootDir, 'validationdata', filesep);
     
     % initialize validation params to default params
     obj.validationParams = obj.defaultValidationParams;
