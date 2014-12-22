@@ -3,6 +3,7 @@ function vScriptsList = parseScriptsList(obj, vScriptsToRunList)
 
     scriptListEntry = vScriptsToRunList{1};
     
+
     if (exist(scriptListEntry{1}, 'file')==2)
        % List of files, each with an optional runtime option
        vScriptsList = vScriptsToRunList;
