@@ -25,7 +25,7 @@ function data = validationData(varargin)
         
         % save the full data
         validationData.(fieldName) = fieldValue;
-        
+       
         % save truncated data in hashData.(fieldName)
         if (isnumeric(fieldValue))
             validationData.hashData.(fieldName) = UnitTest.roundToNdigits(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
@@ -38,6 +38,9 @@ function data = validationData(varargin)
             compareStringFields = getpref('isetbioValidation', 'compareStringFields');
             if (compareStringFields)
                 validationData.hashData.(fieldName) = fieldValue;
+                fprintf('ADDING CHAR FIELD %s TO HASH DATA', fieldName); 
+            else
+                fprintf('NOT ADDING CHAR FIELD %s TO HASH DATA', fieldName); 
             end
         else
             validationData.hashData.(fieldName) = fieldValue;
@@ -69,6 +72,9 @@ function s = roundStruct(oldStruct)
             compareStringFields = getpref('isetbioValidation', 'compareStringFields');
             if (compareStringFields)
                 s.(structFieldNames{k}) = fieldValue;
+                fprintf('ADDING CHAR FIELD %s TO HASH DATA', structFieldNames{k}); 
+            else
+                fprintf('NOT ADDING CHAR FIELD %s TO HASH DATA', structFieldNames{k}); 
             end
         elseif isnumeric(fieldValue)
             s.(structFieldNames{k}) = UnitTest.roundToNdigits(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
@@ -91,7 +97,13 @@ function cellArray = roundCellArray(oldCellArray)
         
         % Char values
         if ischar(fieldValue)
-             % do nothing
+            % only add string field if we are comparing them
+            compareStringFields = getpref('isetbioValidation', 'compareStringFields');
+            if (compareStringFields)
+            else
+                cellArray{k} = '';
+                fprintf('NOT ADDING CHAR FIELD TO HASH DATA'); 
+            end
              
         % Numeric values
         elseif (isnumeric(fieldValue))
