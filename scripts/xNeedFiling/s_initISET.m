@@ -1,6 +1,6 @@
-%s_initISET
+%$ s_initISET
 %
-% It is often convenient to use ISET at the head of a script, even though
+% It is often convenient to use s_initISET at the head of a script, even though
 % it is not required.  This script 
 %   * Closes down previous instantiations of ISET
 %   * Clears the workspace
@@ -17,6 +17,7 @@ if exist('vcSESSION','var')
   ieMainClose;
   clx
 end
+
 %% Initialize variables
 % If the user already has a vcSESSION, clear it.  We are going to load the
 % new one from the isetSession file.
