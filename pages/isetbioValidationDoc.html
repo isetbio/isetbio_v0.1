@@ -540,7 +540,7 @@ end
          The main purpose of the wrapper function is to call the validation function and to communicate information between the validation function and the managing @UnitTest object. This function also ensures that the script can be run in stand-alone mode, i.e., without being called by the managing @UnitTest object. 
         </p>    
         <p>
-            The wrapper function is named according to the isetbio functionality that is tested (irradiance isomerization computations, in the following example). The body of the wrapper function must contain a docstring in line #2 which is used to describe this purpose of this validation script in isetbio's validation <a href="https://github.com/isetbio/isetbio/wiki/ValidationResults">github site</a>. The remaining of this function is identical across all validation scripts. 
+            The wrapper function is named according to the isetbio functionality that is tested (irradiance isomerization computations, in the following example). The body of the wrapper function must contain a <b><i>single line</i></b> documentation string in line #2. This string should describe the functionality of the validation script and it will appear in isetbio's validation <a href="https://github.com/isetbio/isetbio/wiki/ValidationResults">github site</a>. The remaining of this function is identical across all validation scripts. 
 		 </p>
 		<p> The wrapper function for script <blackCode>v_IrradianceIsomerizations.m</blackCode> is shown below.
 		 </p>
@@ -548,34 +548,11 @@ end
 <pre>
 <blackCode>function varargout = v_IrradianceIsomerizations(varargin)
 <grayCode><greenCode>%
-% Validate ISETBIO-based irradiance/isomerization computations by comparing to PTB-based
-% irradiance/isomerization computations.
-%</greenCode>
+% Validate ISETBIO-based irradiance/isomerization computations by comparing to PTB-based irradiance/isomerization computations.
+%
 
-<greenCode>% Initialize validation run and return params</greenCode>
- runTimeParams = UnitTest.initializeValidationRun(varargin{:});
- if (nargout > 0) varargout = {'', false, []}; end
-    
-<greenCode>% Validation - Call validation script</greenCode>
-<blueCode> ValidationFunction(runTimeParams); </blueCode>
-    
-<greenCode>%  Reporting and return params</greenCode>
- if (nargout > 0)
-    [validationReport, ...
-     validationFailedFlag, ...
-     validationFundametalFailureFlag] = ...
-                      UnitTest.validationRecord('command', 'return');
-    validationData  = UnitTest.validationData('command', 'return');
-    extraData       = UnitTest.extraData('command', 'return');
-    varargout       = {validationReport, validationFailedFlag, ...
-                       validationFundametalFailureFlag, validationData, ...
-                       extraData};
- else
-    if (runTimeParams.printValidationReport)
-        [validationReport, ~] = UnitTest.validationRecord('command', 'return');
-        UnitTest.printValidationReport(validationReport);
-    end 
- end
+%  Execute the validationFunction under @UnitTest I/O control</greenCode>
+   varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
 </grayCode>end    
 </blackCode>
 </pre>
