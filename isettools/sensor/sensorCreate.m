@@ -247,7 +247,11 @@ end
 if sensorCheckHuman(sensor)
     sensor = sensorSet(sensor, 'exp time', 0.05); % 50 ms
     sensor = sensorSet(sensor, 'noise flag', 1); % photons noise only
+<<<<<<< HEAD
+    sensor = sensorSet(sensor, 'time interval', 0.001);
+=======
     sensor = sensorSet(sensor, 'time interval', 0.001); % 1 ms
+>>>>>>> dev
 else
     sensor = sensorSet(sensor,'integrationTime',0);
     sensor = sensorSet(sensor,'autoexposure',1);
