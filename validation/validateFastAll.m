@@ -30,7 +30,7 @@ function validateFastAll
     UnitTest.setPref('verbosity', 'min');
     %UnitTest.setPref('verbosity', 'low');
     %UnitTest.setPref('verbosity', 'med');
-    %UnitTest.setPref('verbosity', 'high');
+    UnitTest.setPref('verbosity', 'high');
     %UnitTest.setPref('verbosity', 'max');
     
     %% Numeric tolerance for comparison to ground truth data
