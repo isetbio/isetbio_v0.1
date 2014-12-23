@@ -66,10 +66,10 @@ function validate(obj, vScriptsToRunList)
             functionSubDirectory = functionDirectory(indices(end)+1:end);
             % Construct path strings
             htmlDirectory                       = fullfile(obj.htmlDir, functionSubDirectory, sprintf('%s_HTML', scriptName), filesep);  % sprintf('%s/%s/%s_HTML',                           obj.htmlDir,           functionSubDirectory, scriptName);
-            fullLocalValidationHistoryDataFile  = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FullValidationDataHistory.mat', scriptName), filesep); %sprintf('%s/%s/%s_FullValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
-            fastLocalValidationHistoryDataFile  = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FastValidationDataHistory.mat', scriptName), filesep); % ) sprintf('%s/%s/%s_FastValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
-            fullLocalGroundTruthHistoryDataFile = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FullGroundTruthDataHistory.mat', scriptName), filesep); % sprintf('%s/%s/%s_FullGroundTruthDataHistory.mat', obj.validationDataDir, obj.validationDataDir, scriptName);
-            fastLocalGroundTruthHistoryDataFile = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FastGroundTruthDataHistory.mat', scriptName), filesep); % sprintf('%s/%s/%s_FastGroundTruthDataHistory.mat', obj.validationDataDir, functionSubDirectory, scriptName);
+            fullLocalValidationHistoryDataFile  = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FullValidationDataHistory.mat', scriptName)); %sprintf('%s/%s/%s_FullValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
+            fastLocalValidationHistoryDataFile  = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FastValidationDataHistory.mat', scriptName)); % ) sprintf('%s/%s/%s_FastValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
+            fullLocalGroundTruthHistoryDataFile = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FullGroundTruthDataHistory.mat', scriptName)); % sprintf('%s/%s/%s_FullGroundTruthDataHistory.mat', obj.validationDataDir, obj.validationDataDir, scriptName);
+            fastLocalGroundTruthHistoryDataFile = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FastGroundTruthDataHistory.mat', scriptName)); % sprintf('%s/%s/%s_FastGroundTruthDataHistory.mat', obj.validationDataDir, functionSubDirectory, scriptName);
         else
             error('A file named ''%s'' does not exist in the path.', scriptName);
         end
@@ -252,6 +252,8 @@ function doFastValidation(obj, fastLocalGroundTruthHistoryDataFile, fastLocalVal
         validationData.hashData = struct();
     end
     
+    
+    
     % Generate SHA256 hash from the validationData.hashData
     % substruct, which is a truncated copy of the data to 12-decimal digits
     hashSHA25 = obj.generateSHA256Hash(validationData.hashData);
@@ -262,6 +264,9 @@ function doFastValidation(obj, fastLocalGroundTruthHistoryDataFile, fastLocalVal
             
     if (exist(dataFileName, 'file') == 2)
         [groundTruthValidationData, ~, groundTruthTime, hostInfo] = obj.importGroundTruthData(dataFileName);
+        if (obj.validationParams.verbosity > 3)
+           fprintf('\tGround truth  file   : %s\n', dataFileName); 
+        end
         if (strcmp(groundTruthValidationData, hashSHA25))
             if (obj.validationParams.verbosity > 0) 
                 fprintf('\tFast validation      : PASSED against ground truth data of %s.\n', groundTruthTime);
@@ -350,7 +355,9 @@ function doFullValidation(obj, fullLocalGroundTruthHistoryDataFile, fullLocalVal
                 
     if (exist(dataFileName, 'file') == 2)
         [groundTruthValidationData, groundTruthExtraData, groundTruthTime, hostInfo] = obj.importGroundTruthData(dataFileName);
-
+        if (obj.validationParams.verbosity > 3)
+           fprintf('\tGround truth  file   : %s\n', dataFileName); 
+        end
         % Compare validation data
         [structsAreSimilarWithinSpecifiedTolerance, mismatchReport] = ...
             obj.structsAreSimilar(groundTruthValidationData, validationData);
