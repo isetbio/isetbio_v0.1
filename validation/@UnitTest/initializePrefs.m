@@ -69,11 +69,7 @@ function initializePrefs(initMode)
         index = find(strcmp(UnitTest.validationOptionNames, 'validationRootDir'));
         value = UnitTest.validationOptionDefaultValues{index};
         % automatically set RootDir
-        currDir = pwd; 
-        cd ..
-        rootDir = pwd;
-        cd(currDir);
-        value = fullfile(rootDir, 'validation');
+        value = fullfile(isetbioRootPath, 'validation');
         setpref('isetbioValidation', 'validationRootDir',  value); 
     end
     
