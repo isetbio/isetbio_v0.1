@@ -1,4 +1,4 @@
- % Method to plot mistmatched validation data and their difference
+% Method to plot mistmatched validation data and their difference
 function figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name, field2Name)
   
     obj.dataMismatchFigNumber = obj.dataMismatchFigNumber + 1;
@@ -7,26 +7,58 @@ function figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name
     set(h, 'Name', figureName);
     clf;
     
-    if (ndims(field1) == 2)
+    
+    if (ndims(field1) == 2) && (all(size(field1) > 1))
+        
+        diff = field1 - field2;
+        minAll = min([min(field1(:)) min(field2(:))]);
+        maxAll = max([max(field1(:)) max(field2(:))]);
+        maxDiff = max(abs(diff(:)));
+        
         set(h, 'Position', [100 100 1400 380]);
         subplot(1,3,1);
         imagesc(field1);
+        colorbar
+        set(gca, 'CLim', [minAll maxAll]);
         title(sprintf('''%s''', field1Name));
 
         subplot(1,3,2);
         imagesc(field2);
+        set(gca, 'CLim', [minAll maxAll]);
+        colorbar
         title(sprintf('''%s''', field2Name));
 
         subplot(1,3,3);
-        imagesc(field1-field2);
+        imagesc(diff);
+        set(gca, 'CLim', maxDiff*[-1 1]);
+        colorbar
         title(sprintf('''%s'' - \n''%s''', field1Name, field2Name));
         colormap(gray(256));
         
-    elseif (ndims(field1) == 1)   
-        set(h, 'Position', [100 100 600 600]);
-        plot(field1, field2, 'ks');
-        xlabel(field1Name);
-        ylabel(field2Name);
+    elseif (ndims(field1) == 1) || ((ndims(field1)==2) && (any(size(field1)==1)))  
+        
+        diff = field1 - field2;
+        minAll = min([min(field1(:)) min(field2(:))]);
+        maxAll = max([max(field1(:)) max(field2(:))]);
+        maxDiff = max(abs(diff(:)));
+        delta = (maxAll-minAll)/10;
+        
+        set(h, 'Position', [100 100 1400 380]);
+        subplot(1,3,1);
+        plot(field1, 'bs-', 'MarkerFaceColor', [0.8 0.8 1]);
+        set(gca, 'YLim', [minAll-delta maxAll+delta]);
+        title(sprintf('''%s''', field1Name));
+        
+        subplot(1,3,2);
+        plot(field2, 'bs-',  'MarkerFaceColor', [0.8 0.8 1]);
+        set(gca, 'YLim', [minAll-delta maxAll+delta]);
+        title(sprintf('''%s''', field2Name));
+        
+        subplot(1,3,3);
+        plot(field1 - field2, 'bs-',  'MarkerFaceColor', [0.8 0.8 1]);
+        set(gca, 'YLim', maxDiff*[-1.1 1.1]);
+        title(sprintf('''%s'' - \n''%s''', field1Name, field2Name));
+
         
     elseif (ndims(field1) == 3)
         
@@ -35,9 +67,8 @@ function figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name
         maxAll = max([max(field1(:)) max(field2(:))]);
         maxDiff = max(abs(diff(:)));
         
-        
         [d1, d2, d3] = size(field1);
-        if (d1 > 50)
+        if (d3 > 50)
             figSize = [2350 810];
             showTicks = false;
             wMargin = 0.005;
@@ -48,18 +79,18 @@ function figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name
         end
         set(h, 'Position', [100 100  figSize(1)  figSize(2)]);
         
-        d11 = round(d1/2);
+        halfD = round(d3/2);
         posVectors = getSubPlotPosVectors(...
-            'rowsNum', 6, 'colsNum', d11, ...
+            'rowsNum', 6, 'colsNum', halfD, ...
             'widthMargin', wMargin, 'heightMargin', 0.01, ...
             'leftMargin', 0.02', ...
             'bottomMargin', 0.01, 'topMargin', 0.01);
 
-        for k = 1:d11
+        for k = 1:halfD
            row = 1;
            col = k;
            subplot('Position', posVectors(row,col).v);
-           imagesc(squeeze(field1(k,:,:)));
+           imagesc(squeeze(field1(:,:,k)));
            if (k == 1)
                ylabel(field1Name, 'Color', [1 0 0]);
            end
@@ -75,7 +106,7 @@ function figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name
            row = 2;
            col = k;
            subplot('Position', posVectors(row,col).v);
-           imagesc(squeeze(field2(k,:,:)));
+           imagesc(squeeze(field2(:,:,k)));
            if (k == 1)
                ylabel(field2Name, 'Color', [0 0 1]);
            end
@@ -91,7 +122,7 @@ function figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name
            row = 3;
            col = k;
            subplot('Position', posVectors(row,col).v);
-           imagesc(squeeze(diff(k,:,:)));
+           imagesc(squeeze(diff(:,:,k)));
            if (k == 1)
                ylabel(sprintf('groundTruthData\n - validationData'));
            end
@@ -105,12 +136,12 @@ function figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name
            
         end
         
-        for k = d11+1:d1
+        for k = halfD+1:d3
            row = 4;
-           col = k-d11;
+           col = k-halfD;
            subplot('Position', posVectors(row,col).v);
-           imagesc(squeeze(field1(k,:,:)));
-           if (k == d11+1)
+           imagesc(squeeze(field1(:,:,k)));
+           if (k == halfD+1)
                ylabel(field1Name, 'Color', [1 0 0]);
            end
            axis 'image'
@@ -123,10 +154,10 @@ function figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name
            
            
            row = 5;
-           col = k-d11;
+           col = k-halfD;
            subplot('Position', posVectors(row,col).v);
-           imagesc(squeeze(field2(k,:,:)));
-           if (k == d11+1)
+           imagesc(squeeze(field2(:,:,k)));
+           if (k == halfD+1)
                ylabel(field2Name, 'Color', [0 0 1]);
            end
            axis 'image'
@@ -138,10 +169,10 @@ function figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name
            %colorbar('horiz');
            
            row = 6;
-           col = k-d11;
+           col = k-halfD;
            subplot('Position', posVectors(row,col).v);
-           imagesc(squeeze(diff(k,:,:)));
-           if (k == d11+1)
+           imagesc(squeeze(diff(:,:,k)));
+           if (k == halfD+1)
                ylabel(sprintf('groundTruthData\n - validationData'));
            end
            axis 'image'
@@ -200,5 +231,4 @@ function posVectors = getSubPlotPosVectors(varargin)
         end
     end
  end
-
     
