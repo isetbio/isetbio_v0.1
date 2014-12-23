@@ -987,7 +987,7 @@ switch param
         end
 
         % Display image
-    case {'rgb'}
+    case {'rgb', 'rgbimage'}
         % sensorGet(sensor,'rgb',dataType,gam,scaleMax)
         dataType = 'volts';
         gam = 1;

@@ -3,6 +3,7 @@ function vScriptsList = parseScriptsList(obj, vScriptsToRunList)
 
     scriptListEntry = vScriptsToRunList{1};
     
+
     if (exist(scriptListEntry{1}, 'file')==2)
        % List of files, each with an optional runtime option
        vScriptsList = vScriptsToRunList;
@@ -30,7 +31,7 @@ function vScriptsList = parseScriptsList(obj, vScriptsToRunList)
             end
             
             % get the contents of the directory
-            dirToList = sprintf('%s/%s/*.m',obj.rootDir,scriptDirectoryName);
+            dirToList = fullfile(obj.rootDir, scriptDirectoryName, '*.m', filesep);
             scriptsListInCurrentDirectory = dir(dirToList);
             
             % add all the scripts to the vScriptsList

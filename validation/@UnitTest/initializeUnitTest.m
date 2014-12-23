@@ -6,11 +6,9 @@ function initializeUnitTest(obj)
     end
 
     % setup default directories
-    pathToUnitTestDir = fileparts(which('UnitTest'));
-    indices     = strfind(pathToUnitTestDir, '/');
-    obj.rootDir = pathToUnitTestDir(1:indices(end)-1);
-    obj.htmlDir = sprintf('%s/HTMLpublishedData', obj.rootDir);
-    obj.validationDataDir = sprintf('%s/validationData', obj.rootDir);
+    obj.rootDir             = getpref('isetbioValidation', 'validationRootDir');
+    obj.htmlDir             = fullfile(obj.rootDir, 'HTMLpublishedData', filesep);
+    obj.validationDataDir   = fullfile(obj.rootDir, 'validationdata', filesep);
     
     % initialize validation params to default params
     obj.validationParams = obj.defaultValidationParams;
@@ -29,9 +27,18 @@ function initializeUnitTest(obj)
     % initialize mismatch data graphing
     obj.validationParams.graphMismatchedData = getpref('isetbioValidation', 'graphMismatchedData');
     
+    % initialize compareStringFields
+    obj.validationParams.compareStringFields = getpref('isetbioValidation', 'compareStringFields');
+    
     obj.dataMismatchFigNumber = UnitTest.minFigureNoForMistmatchedData;
     
     % initialize section map (for github wiki)
     obj.sectionData  = containers.Map();
     
+    % get info about host computer
+    obj.hostInfo = struct();
+    obj.hostInfo.matlabVersion    = version;
+    obj.hostInfo.computer         = computer;
+    obj.hostInfo.computerAddress  = char(java.net.InetAddress.getLocalHost.getHostName);
+    obj.hostInfo.userName         = char(java.lang.System.getProperty('user.name'));
 end

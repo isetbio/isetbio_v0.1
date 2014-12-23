@@ -62,14 +62,14 @@ function validate(obj, vScriptsToRunList)
         if (exist(scriptName, 'file') == 2)
             % Determine function sub-directory
             [functionDirectory, ~, ~] = fileparts(which(sprintf('%s.m',scriptName)));
-            indices              = strfind(functionDirectory, '/');
+            indices              = strfind(functionDirectory, filesep);
             functionSubDirectory = functionDirectory(indices(end)+1:end);
             % Construct path strings
-            htmlDirectory                       = sprintf('%s/%s/%s_HTML',                           obj.htmlDir,           functionSubDirectory, scriptName);
-            fullLocalValidationHistoryDataFile  = sprintf('%s/%s/%s_FullValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
-            fastLocalValidationHistoryDataFile  = sprintf('%s/%s/%s_FastValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
-            fullLocalGroundTruthHistoryDataFile = sprintf('%s/%s/%s_FullGroundTruthDataHistory.mat', obj.validationDataDir, functionSubDirectory, scriptName);
-            fastLocalGroundTruthHistoryDataFile = sprintf('%s/%s/%s_FastGroundTruthDataHistory.mat', obj.validationDataDir, functionSubDirectory, scriptName);
+            htmlDirectory                       = fullfile(obj.htmlDir, functionSubDirectory, sprintf('%s_HTML', scriptName), filesep);  % sprintf('%s/%s/%s_HTML',                           obj.htmlDir,           functionSubDirectory, scriptName);
+            fullLocalValidationHistoryDataFile  = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FullValidationDataHistory.mat', scriptName)); %sprintf('%s/%s/%s_FullValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
+            fastLocalValidationHistoryDataFile  = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FastValidationDataHistory.mat', scriptName)); % ) sprintf('%s/%s/%s_FastValidationDataHistory.mat',  obj.validationDataDir, functionSubDirectory, scriptName);
+            fullLocalGroundTruthHistoryDataFile = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FullGroundTruthDataHistory.mat', scriptName)); % sprintf('%s/%s/%s_FullGroundTruthDataHistory.mat', obj.validationDataDir, obj.validationDataDir, scriptName);
+            fastLocalGroundTruthHistoryDataFile = fullfile(obj.validationDataDir, functionSubDirectory, sprintf('%s_FastGroundTruthDataHistory.mat', scriptName)); % sprintf('%s/%s/%s_FastGroundTruthDataHistory.mat', obj.validationDataDir, functionSubDirectory, scriptName);
         else
             error('A file named ''%s'' does not exist in the path.', scriptName);
         end
@@ -126,12 +126,12 @@ function validate(obj, vScriptsToRunList)
             command = sprintf('try \n\t%s  \n\t exceptionRaisedFlag = false; \ncatch err \n\t exceptionRaisedFlag = true;\n\t validationReport{1} = {sprintf(''exception raised with message: %%s'', err.message), true, false};  \n\t rethrow(err);  \nend', commandString);
         end
         
-        if (obj.validationParams.verbosity > 3)
+        if (obj.validationParams.verbosity > 5)
             fprintf('\nRunning with ');
             eval('scriptRunParams');
         end
         
-        if (obj.validationParams.verbosity == 5)
+        if (obj.validationParams.verbosity > 4)
            fprintf('\nExecuting:\n%s\n', command); 
         end
         
@@ -252,6 +252,8 @@ function doFastValidation(obj, fastLocalGroundTruthHistoryDataFile, fastLocalVal
         validationData.hashData = struct();
     end
     
+    
+    
     % Generate SHA256 hash from the validationData.hashData
     % substruct, which is a truncated copy of the data to 12-decimal digits
     hashSHA25 = obj.generateSHA256Hash(validationData.hashData);
@@ -261,10 +263,17 @@ function doFastValidation(obj, fastLocalGroundTruthHistoryDataFile, fastLocalVal
     forceUpdateGroundTruth = false;
             
     if (exist(dataFileName, 'file') == 2)
-        [groundTruthValidationData, ~, groundTruthTime] = obj.importGroundTruthData(dataFileName);
+        [groundTruthValidationData, ~, groundTruthTime, hostInfo] = obj.importGroundTruthData(dataFileName);
+        if (obj.validationParams.verbosity > 3)
+           fprintf('\tGround truth  file   : %s\n', dataFileName); 
+        end
         if (strcmp(groundTruthValidationData, hashSHA25))
             if (obj.validationParams.verbosity > 0) 
                 fprintf('\tFast validation      : PASSED against ground truth data of %s.\n', groundTruthTime);
+                if (obj.validationParams.verbosity > 2) 
+                    fprintf('\t > Ground truth info : %30s / %s, MATLAB %s by ''%s''\n', hostInfo.computerAddress, hostInfo.computer, hostInfo.matlabVersion, hostInfo.userName);
+                    fprintf('\t > Local host info   : %30s / %s, MATLAB %s by ''%s''\n', obj.hostInfo.computerAddress, obj.hostInfo.computer, obj.hostInfo.matlabVersion, obj.hostInfo.userName);
+                end
             end
             if (obj.validationParams.verbosity > 2) 
                 fprintf('\tData hash key        : %s\n', hashSHA25);
@@ -274,6 +283,10 @@ function doFastValidation(obj, fastLocalGroundTruthHistoryDataFile, fastLocalVal
         else
             if (obj.validationParams.verbosity > 0) 
                 fprintf(2,'\tFast validation      : FAILED against ground truth data of %s.\n', groundTruthTime);
+                if (obj.validationParams.verbosity > 2) 
+                    fprintf(2,'\t > Ground truth info : %30s / %s, MATLAB %s by ''%s''\n', hostInfo.computerAddress, hostInfo.computer, hostInfo.matlabVersion, hostInfo.userName);
+                    fprintf(2,'\t > Local host info   : %30s / %s, MATLAB %s by ''%s''\n', obj.hostInfo.computerAddress, obj.hostInfo.computer, obj.hostInfo.matlabVersion, obj.hostInfo.userName);
+                end
                 fprintf(2,'\tDataHash-this run    : %s\n', hashSHA25);
                 fprintf(2,'\tDataHash-groundTruth : %s\n', groundTruthValidationData);
             end
@@ -341,8 +354,10 @@ function doFullValidation(obj, fullLocalGroundTruthHistoryDataFile, fullLocalVal
     end
                 
     if (exist(dataFileName, 'file') == 2)
-        [groundTruthValidationData, groundTruthExtraData, groundTruthTime] = obj.importGroundTruthData(dataFileName);
-
+        [groundTruthValidationData, groundTruthExtraData, groundTruthTime, hostInfo] = obj.importGroundTruthData(dataFileName);
+        if (obj.validationParams.verbosity > 3)
+           fprintf('\tGround truth  file   : %s\n', dataFileName); 
+        end
         % Compare validation data
         [structsAreSimilarWithinSpecifiedTolerance, mismatchReport] = ...
             obj.structsAreSimilar(groundTruthValidationData, validationData);
@@ -350,11 +365,19 @@ function doFullValidation(obj, fullLocalGroundTruthHistoryDataFile, fullLocalVal
         if (structsAreSimilarWithinSpecifiedTolerance)
             if (obj.validationParams.verbosity > 0) 
                 fprintf('\tFull validation      : PASSED against ground truth data of %s.\n', groundTruthTime);
+                if (obj.validationParams.verbosity > 2) 
+                    fprintf('\t > Ground truth info : %30s / %s, MATLAB %s by ''%s''\n', hostInfo.computerAddress, hostInfo.computer, hostInfo.matlabVersion, hostInfo.userName);
+                    fprintf('\t > Local host info   : %30s / %s, MATLAB %s by ''%s''\n', obj.hostInfo.computerAddress, obj.hostInfo.computer, obj.hostInfo.matlabVersion, obj.hostInfo.userName);
+                end
             end
             groundTruthFullValidationFailed = false;
         else
             if (obj.validationParams.verbosity > 0) 
-                fprintf(2,'\tFull validation      : FAILED against ground truth data of %.s\n', groundTruthTime);
+                fprintf(2,'\tFull validation      : FAILED against ground truth data of %s.\n', groundTruthTime);
+                if (obj.validationParams.verbosity > 2) 
+                    fprintf(2,'\t > Ground truth info : %-30s / %s, MATLAB %s by ''%s''\n', hostInfo.computerAddress, hostInfo.computer, hostInfo.matlabVersion, hostInfo.userName);
+                    fprintf(2,'\t > Local host info   : %-30s / %s, MATLAB %s by ''%s''\n', obj.hostInfo.computerAddress, obj.hostInfo.computer, obj.hostInfo.matlabVersion, obj.hostInfo.userName);
+                end
             end
             groundTruthFullValidationFailed = true;
 
@@ -367,9 +390,9 @@ function doFullValidation(obj, fullLocalGroundTruthHistoryDataFile, fullLocalVal
         end
 
         % extra data
-        if (obj.validationParams.verbosity > 2) 
+        if (obj.validationParams.verbosity > 3) 
             if (isempty(fieldnames(extraData)))
-                fprintf('\tNote (*)             : scipt does not store any extra data.\n');
+                fprintf('\tNote (*)             : script does not store any extra data.\n');
             end
 
             [structsAreSimilarWithinSpecifiedTolerance, mismatchReport] = ...
@@ -392,7 +415,7 @@ function doFullValidation(obj, fullLocalGroundTruthHistoryDataFile, fullLocalVal
             fprintf('\tFull validation      : no ground truth dataset exists. Generating one. \n');
         end
 
-        if (obj.validationParams.verbosity > 2) 
+        if (obj.validationParams.verbosity > 3) 
             if (isempty(fieldnames(extraData)))
                 fprintf('\tNote (*)             : script does not store any extra data.\n');
             end

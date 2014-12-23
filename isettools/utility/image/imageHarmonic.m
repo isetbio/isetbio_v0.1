@@ -5,7 +5,7 @@ function [img, parms] = imageHarmonic(parms)
 %
 % Creates a windowed, oriented, spatial harmonic
 %
-%      contrast*window.*cos(2*pi*f([cos(ang)*X + sin(ang)*Y] + ph) + 1
+%      contrast*window.*cos(2*pi*f*([cos(ang)*X + sin(ang)*Y] + ph)) + 1
 %
 % The parameters are  in the structure parms. See the fields in the
 % example, below. 

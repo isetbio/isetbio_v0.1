@@ -1,7 +1,7 @@
-function runTimeParams = initalizeValidationRun(varargin)
+function runTimeParams = initializeValidationRun(varargin)
 
     % Initialize run params
-    runTimeParams = initializeRunTimeParams(varargin{:});
+    runTimeParams = initializeRunTimeParams(varargin);
     
     % Initialize validation record
     UnitTest.validationRecord('command', 'init');  
@@ -24,9 +24,13 @@ function runParams = initializeRunTimeParams(varargin)
         assert(nargin == 1);
         
         runParamsPassed = varargin{1};
-        
+        runParamsPassed = runParamsPassed{1};
         % If the passed argument is an empty array, use the isetbio prefs
-        if (isempty(runParamsPassed))
+        while (iscell(runParamsPassed{1}) && (~isempty(runParamsPassed{1})))
+            runParamsPassed = runParamsPassed{1};
+        end
+        
+        if (isempty(runParamsPassed{1}))
             runParams = defaultParams;
             runParams.generatePlots   = getpref('isetbioValidation', 'generatePlots');
             runParams.closeFigsOnInit = getpref('isetbioValidation', 'closeFigsOnInit');
@@ -36,6 +40,8 @@ function runParams = initializeRunTimeParams(varargin)
             return;
         end
         
+        runParamsPassed = runParamsPassed{1};
+
         % Make sure passed argument is a struct
         assert(isstruct(runParamsPassed));
         

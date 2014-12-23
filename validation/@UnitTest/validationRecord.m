@@ -9,16 +9,16 @@ function [report, validationFailedFlag, validationFundamentalFailureFlag] = vali
     persistent validationFundamentalFailureVector
     
     % Parse inputs
-    self.message                    = '';
+    self.SIMPLE_MESSAGE             = '';
     self.FUNDAMENTAL_CHECK_FAILED   = '';
     self.FAILED                     = '';
     self.PASSED                     = '';
     self.command                    = '';
     
     parser = inputParser;
-    parser.addParamValue('command', self.command,     @ischar);
-    parser.addParamValue('message', self.message,     @ischar);
-    parser.addParamValue('FUNDAMENTAL_CHECK_FAILED',  self.FUNDAMENTAL_CHECK_FAILED, @ischar);
+    parser.addParamValue('command', self.command, @ischar);
+    parser.addParamValue('SIMPLE_MESSAGE', self.SIMPLE_MESSAGE, @ischar);
+    parser.addParamValue('FUNDAMENTAL_CHECK_FAILED', self.FUNDAMENTAL_CHECK_FAILED, @ischar);
     parser.addParamValue('FAILED',  self.FAILED, @ischar);
     parser.addParamValue('PASSED',  self.PASSED, @ischar);
     
@@ -49,9 +49,9 @@ function [report, validationFailedFlag, validationFundamentalFailureFlag] = vali
     end
     
     % Add a simple message (no flag attached)
-    if  (~isempty(self.message))
+    if  (~isempty(self.SIMPLE_MESSAGE))
         index = numel(validationReport)+1;
-        validationReport{index}                  = self.message;
+        validationReport{index}                  = self.SIMPLE_MESSAGE;
         validationFailedFlagVector(index)        = false;
         validationFundamentalFailureVector(index) = false;
         return;

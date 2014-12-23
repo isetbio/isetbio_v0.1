@@ -25,14 +25,23 @@ function data = validationData(varargin)
         
         % save the full data
         validationData.(fieldName) = fieldValue;
-        
+       
         % save truncated data in hashData.(fieldName)
         if (isnumeric(fieldValue))
-            validationData.hashData.(fieldName) = round(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
+            validationData.hashData.(fieldName) = UnitTest.roundToNdigits(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
         elseif (isstruct(fieldValue))
             validationData.hashData.(fieldName) = roundStruct(fieldValue);
         elseif (iscell(fieldValue))
             validationData.hashData.(fieldName) = roundCellArray(fieldValue);
+        elseif (ischar(fieldValue))
+            % only add string field if we are comparing them
+            compareStringFields = getpref('isetbioValidation', 'compareStringFields');
+            if (compareStringFields)
+                validationData.hashData.(fieldName) = fieldValue;
+                fprintf('ADDING CHAR FIELD %s TO HASH DATA', fieldName); 
+            else
+                fprintf('NOT ADDING CHAR FIELD %s TO HASH DATA', fieldName); 
+            end
         else
             validationData.hashData.(fieldName) = fieldValue;
         end
@@ -59,9 +68,16 @@ function s = roundStruct(oldStruct)
         if isstruct(fieldValue)
             s.(structFieldNames{k}) = roundStruct(fieldValue);
         elseif ischar(fieldValue)
-            s.(structFieldNames{k}) = fieldValue;
+            % only add string field if we are comparing them
+            compareStringFields = getpref('isetbioValidation', 'compareStringFields');
+            if (compareStringFields)
+                s.(structFieldNames{k}) = fieldValue;
+                fprintf('ADDING CHAR FIELD %s TO HASH DATA', structFieldNames{k}); 
+            else
+                fprintf('NOT ADDING CHAR FIELD %s TO HASH DATA', structFieldNames{k}); 
+            end
         elseif isnumeric(fieldValue)
-            s.(structFieldNames{k}) = round(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
+            s.(structFieldNames{k}) = UnitTest.roundToNdigits(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
         elseif iscell(fieldValue)
             s.(structFieldNames{k}) = roundCellArray(fieldValue);
         else
@@ -80,12 +96,18 @@ function cellArray = roundCellArray(oldCellArray)
         fieldValue = cellArray{k};
         
         % Char values
-        if ischar(fieldValue )
-             % do nothing
+        if ischar(fieldValue)
+            % only add string field if we are comparing them
+            compareStringFields = getpref('isetbioValidation', 'compareStringFields');
+            if (compareStringFields)
+            else
+                cellArray{k} = '';
+                fprintf('NOT ADDING CHAR FIELD TO HASH DATA'); 
+            end
              
         % Numeric values
         elseif (isnumeric(fieldValue))
-            cellArray{k} = round(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
+            cellArray{k} = UnitTest.roundToNdigits(fieldValue, UnitTest.decimalDigitNumRoundingForHashComputation);
         
         % Cells
         elseif (iscell(fieldValue))

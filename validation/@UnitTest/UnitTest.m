@@ -40,6 +40,9 @@ classdef UnitTest < handle
         % Starting figure number for figures showing mismatched data.
         % These figures should remain open
         dataMismatchFigNumber;
+        
+        % struct with various info on the host computer configuration
+        hostInfo;
     end
     
     % Constant properties. These are the only properties that can be
@@ -55,6 +58,7 @@ classdef UnitTest < handle
                                            'updateValidationHistory', ...
                                            'numericTolerance', ...
                                            'graphMismatchedData', ...
+                                           'compareStringFields', ...
                                            'validationRootDir', ...
                                            'clonedWikiLocation', ...
                                            'clonedGhPagesLocation', ...
@@ -68,9 +72,10 @@ classdef UnitTest < handle
                                            false, ...
                                            500*eps, ...
                                            true,  ...
-                                           '/Users/Shared/Matlab/Toolboxes/ISETBIO/validation', ...
-                                           '/Users/Shared/Matlab/Toolboxes/ISETBIO_Wiki/isetbio.wiki', ...
-                                           '/Users/Shared/Matlab/Toolboxes/ISETBIO_GhPages/isetbio', ...
+                                           false, ...
+                                           fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'isetbio', 'validation'), ...
+                                           fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_Wiki', 'isetbio.wiki'), ...
+                                           fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_GhPages', 'isetbio'), ...
                                            'http://isetbio.github.io/isetbio' ...
                                            };
         
@@ -130,8 +135,11 @@ classdef UnitTest < handle
         % Method to recursively compare two struct for equality
         [structsAreSimilarWithinSpecifiedTolerance, result] = structsAreSimilar(obj, groundTruthData, validationData);
         
+        % Method to plot mistmatched validation data and their difference
+        figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name, field2Name);
+        
         % Method to import a ground truth data entry
-        [validationData, extraData, validationTime] = importGroundTruthData(obj, dataFileName);
+        [validationData, extraData, validationTime, hostInfo] = importGroundTruthData(obj, dataFileName);
         
         % Method to export a validation entry to a validation file
         exportData(obj, dataFileName, validationData, extraData);
@@ -165,8 +173,11 @@ classdef UnitTest < handle
         % Method to list the current isetbioValidation preferences
         listPrefs();
         
+        % Method to run a validation run.
+        % Every validation script must call this method in its wrapper function
+        varargout = runValidationRun(functionHandle, varargin);
+        
         % Method to initalize a validation run.
-        % Every validation script must call this method first thing.
         runTimeParams = initializeValidationRun(varargin);
         
         % Method to print what runtime options are available and their default values
@@ -183,6 +194,9 @@ classdef UnitTest < handle
         
         % Method to add new data to the extra data struct
         data = extraData(varargin);
+        
+        % Method to round numeric values to N decimal digits
+         roundedValue = roundToNdigits(numericValue, decimalDigits);
         
         % Method to print the validationReport
         printValidationReport(validationReport);

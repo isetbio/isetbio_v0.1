@@ -2,12 +2,13 @@ function [structsAreSimilarWithinSpecifiedTolerance, result] = structsAreSimilar
 
     tolerance           = obj.validationParams.numericTolerance;
     graphMismatchedData = obj.validationParams.graphMismatchedData;
-
+    compareStringFields = obj.validationParams.compareStringFields;
+    
     result = {};
     result = recursivelyCompareStructs(obj, ...
         'groundTruthData', groundTruthData, ...
         'validationData', validationData, ...
-        tolerance, graphMismatchedData, result);
+        tolerance, graphMismatchedData, compareStringFields, result);
                                    
     if (isempty(result))
         structsAreSimilarWithinSpecifiedTolerance = true;
@@ -18,10 +19,11 @@ function [structsAreSimilarWithinSpecifiedTolerance, result] = structsAreSimilar
     
 end
 
-function result = recursivelyCompareStructs(obj, struct1Name, struct1, struct2Name, struct2, tolerance, graphMismatchedData, oldResult)
+function result = recursivelyCompareStructs(obj, struct1Name, struct1, struct2Name, struct2, tolerance, graphMismatchedData, compareStringFields, oldResult)
 
     result = oldResult;
-    
+
+
     if (isempty(struct1)) && (isempty(struct2))
         return;
     elseif (isempty(struct1)) && (~isempty(struct2))
@@ -79,7 +81,7 @@ function result = recursivelyCompareStructs(obj, struct1Name, struct1, struct2Na
        % compare structs
        if isstruct(field1)
            if isstruct(field2)
-                result = recursivelyCompareStructs(obj, field1Name, field1, field2Name, field2, tolerance, graphMismatchedData, result);
+                result = recursivelyCompareStructs(obj, field1Name, field1, field2Name, field2, tolerance, graphMismatchedData, compareStringFields, result);
            else
                 resultIndex = numel(result)+1;
                 result{resultIndex} = sprintf('''%s'' is a struct but ''%s'' is not.', field1Name, field2Name);
@@ -88,10 +90,13 @@ function result = recursivelyCompareStructs(obj, struct1Name, struct1, struct2Na
        % compare strings
        elseif ischar(field1)
            if ischar(field2)
-               if (~strcmp(field1, field2))
-                    resultIndex = numel(result)+1;
-                    result{resultIndex} = sprintf('''%s'' and ''%s'' are different: ''%s'' vs. ''%s''.', field1Name, field2Name, field1, field2);
+               if (compareStringFields)
+                   if (~strcmp(field1, field2))
+                        resultIndex = numel(result)+1;
+                        result{resultIndex} = sprintf('''%s'' and ''%s'' are different: ''%s'' vs. ''%s''.', field1Name, field2Name, field1, field2);
+                   end
                end
+               
            else
                 resultIndex = numel(result)+1;
                 result{resultIndex} = sprintf('''%s'' is a char string but ''%s'' is not.\n', field1Name, field2Name);
@@ -145,7 +150,7 @@ function result = recursivelyCompareStructs(obj, struct1Name, struct1, struct2Na
                         result{resultIndex} = sprintf('''%s'' is a [%s] matrix whereas ''%s'' is a [%s] matrix.', field1Name, sizeField1String, field2Name, sizeField2String);
                    else
                         % equal size numerics
-                        result = CompareCellArrays(field1, field2, result);
+                        result = CompareCellArrays(field1, field2, compareStringFields, result);
                    end
                end
            else
@@ -162,16 +167,18 @@ function result = recursivelyCompareStructs(obj, struct1Name, struct1, struct2Na
 end
 
 
-function result = CompareCellArrays(field1, field2, result)
+function result = CompareCellArrays(field1, field2, compareStringFields, result)
 
    for k = 1:numel(field1) 
        
        % Char values
        if (ischar(field1{k}))
            if (ischar(field2{k}))
-               if (~strcmp(field1{k}, field2{k}))
-                   resultIndex = numel(result)+1;
-                   result{resultIndex} = sprintf('Corresponding cell fields have different string values: ''%s'' vs. ''%s''.', field1{k}, field2{k});
+               if (compareStringFields)
+                   if (~strcmp(field1{k}, field2{k}))
+                       resultIndex = numel(result)+1;
+                       result{resultIndex} = sprintf('Corresponding cell fields have different string values: ''%s'' vs. ''%s''.', field1{k}, field2{k});
+                   end
                end
            else
               resultIndex = numel(result)+1;
@@ -191,7 +198,7 @@ function result = CompareCellArrays(field1, field2, result)
        elseif (iscell(field1{k}))
            if (iscell(field2{k}))
                resultIndex = numel(result)+1;
-               result{resultIndex} = CompareCellArrays(field1, field2, result);
+               result{resultIndex} = CompareCellArrays(field1, field2, compareStringFields, result);
            else
               resultIndex = numel(result)+1;
               result{resultIndex} = sprintf('Corresponding cell fields have different types');
@@ -200,42 +207,5 @@ function result = CompareCellArrays(field1, field2, result)
           fprintf(2,'UnitTest.structsAreSimilar.CompareCellArrays. non-char, non-numeric comparison not implemented\n');
        end
    end
-    
-end
-     
-
-function figureName = plotDataAndTheirDifference(obj, field1, field2, field1Name, field2Name)
-  
-    obj.dataMismatchFigNumber = obj.dataMismatchFigNumber + 1;
-    h = figure(obj.dataMismatchFigNumber);
-    figureName = sprintf('''%s'' vs. ''%s''', field1Name, field2Name);
-    set(h, 'Name', figureName);
-    clf;
-    
-    if (ndims(field1) == 2)
-        set(h, 'Position', [100 100 1400 380]);
-        subplot(1,3,1);
-        imagesc(field1);
-        title(sprintf('''%s''', field1Name));
-
-        subplot(1,3,2);
-        imagesc(field2);
-        title(sprintf('''%s''', field2Name));
-
-        subplot(1,3,3);
-        imagesc(field1-field2);
-        title(sprintf('''%s'' - \n''%s''', field1Name, field2Name));
-        colormap(gray(256));
-        
-    elseif (ndims(field1) == 1)   
-        set(h, 'Position', [100 100 600 600]);
-        plot(field1, field2, 'ks');
-        xlabel(field1Name);
-        ylabel(field2Name);
-        
-    elseif (ndims(field1) == 3)
-        fprintf(2, '\nUnitTest.structsAreSimilar: 3D data comparison plot not implemented yet\n');
-        figureName = '';
-    end
     
 end

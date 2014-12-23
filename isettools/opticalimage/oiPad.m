@@ -35,38 +35,34 @@ if ismatrix(padSize), padSize(3) = 0; end
 
 photons = oiGet(oi,'photons');
 % To prevent ieCompressData error, we set the surrounding region as the
-% mean of the data
+% mean of the data at each wavelength samples. In this way, we will have
+% the mean luminance matched.
 if isa(photons, 'gpuArray')
-    padval = gather(mean(photons(:)));
+    padval = gather(mean(mean(photons)));
 else
-    padval = mean(photons(:));
+    padval = mean(mean(photons));
 end
 
-try
-    photons = padarray(photons,padSize,padval,direction);
-catch
-    % Memory problem.  Try it one one wavelength at a time at single
-    % precision.
-    
-    % First, figure out the size of the new, padded array.
-    photons = single(photons);
-    [r,c] = size(padarray(photons(:,:,1),padSize,padval,direction));   
 
-    % Figure out the number of wavebands
-    w = size(photons,3);
-    
-    % Now, use single instead of double precision.
-    newPhotons = zeros(r, c , w,'single');
-    for ii=1:w
-        newPhotons(:,:,ii) = ...
-            padarray(photons(:,:,ii),padSize,padval,direction);
-    end
-    
-    % Clear unused stuff ... probably not necessary.
-    clear photons;    
-    photons = newPhotons;
-    clear newPhotons;
+% Pad one wavelength at a time at single
+% Compute the size of the new, padded array.
+photons = single(photons);
+[r,c] = size(padarray(photons(:,:,1), padSize, padval(1), direction));
+
+% Figure out the number of wavebands
+nwave = size(photons,3);
+
+% Now, use single instead of double precision.
+newPhotons = zeros(r, c , nwave, 'single');
+for ii = 1 : nwave
+    newPhotons(:,:,ii) = ...
+        padarray(photons(:,:,ii), padSize, padval(ii), direction);
 end
+
+% Clear unused stuff
+clear photons;
+photons = newPhotons;
+clear newPhotons;
 
 % The sample spacing of the optical image at the surface of the sensor must
 % be adjusted for the padding.  We must make this adjustment before putting

@@ -512,3 +512,14 @@ d = displaySet(d, 'psfs', imresize(psfs, [answer answer]));
 vcDeleteSelectedObject('display');
 vcAddAndSelectObject('display', d);
 displayRefresh(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function menuPlotGamut3D_Callback(~, ~, ~)
+% hObject    handle to menuPlotGamut3D (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+ind = vcGetSelectedObject('display');
+if isempty(ind), disp('no display selected'); end
+d = vcGetObject('display', ind);
+displayPlot(d, 'gamut3d');
