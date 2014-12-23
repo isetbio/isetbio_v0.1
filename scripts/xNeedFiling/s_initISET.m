@@ -13,6 +13,7 @@
 % Copyright ImagEval Consultants, LLC, 2011.
 
 %%
+global vcSESSION; %#ok<NUSED>
 if exist('vcSESSION','var')
   ieMainClose;
   clx
@@ -22,9 +23,6 @@ end
 % If the user already has a vcSESSION, clear it.  We are going to load the
 % new one from the isetSession file.
 clear vcSESSION;
-
-% Define vc global variables and structures.  vc[UPPERCASE] are globals.
-global vcSESSION; %#ok<NUSED>
 
 % thisVersion =  1.001;    % Until October 11, 2005
 % this Version = 1.01;     % Started Feb. 20, 2006
@@ -71,9 +69,6 @@ ieSessionSet('name',sessionFileName);
 % wp = ieSessionGet('whitePoint');
 % fprintf('White point for Scene/OI rendering set to %s\n',wp);
 
-clear sessionFileName
-clear thisVersion
-clear sessionDir
-clear v
+clear sessionFileName thisVersion sessionDir v d
 
 % ---
