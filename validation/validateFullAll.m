@@ -37,7 +37,7 @@ function validateFullAll
     UnitTest.setPref('numericTolerance', 500*eps);
     
     %% Whether to plot data that do not agree with the ground truth
-    UnitTest.setPref('graphMismatchedData', false);
+    UnitTest.setPref('graphMismatchedData', true);
     
     %% Path preferences (these are only relevant to github integration)
     % Change to match configuration on the host machine

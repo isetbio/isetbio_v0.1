@@ -395,18 +395,22 @@ function doFullValidation(obj, fullLocalGroundTruthHistoryDataFile, fullLocalVal
                 fprintf('\tNote (*)             : script does not store any extra data.\n');
             end
 
-            [structsAreSimilarWithinSpecifiedTolerance, mismatchReport] = ...
-                obj.structsAreSimilar(groundTruthExtraData, extraData);
+            % Do not check extra data here
+            if (1==2)
+                [structsAreSimilarWithinSpecifiedTolerance, mismatchReport] = ...
+                    obj.structsAreSimilar(groundTruthExtraData, extraData);
 
-            if (structsAreSimilarWithinSpecifiedTolerance) 
-                fprintf('\tExtra data           : MATCH with extra data of %s.\n', groundTruthTime);
-            else
-                fprintf('\tExtra data           : NO MATCH with extra data of %s.\n', groundTruthTime);
-                % print info about mismatched fields
-                for k = 1:numel(mismatchReport)
-                    fprintf('\t[extra data mismatch]: %s\n ', char(mismatchReport{k}));
+                if (structsAreSimilarWithinSpecifiedTolerance) 
+                    fprintf('\tExtra data           : MATCH with extra data of %s.\n', groundTruthTime);
+                else
+                    fprintf('\tExtra data           : NO MATCH with extra data of %s.\n', groundTruthTime);
+                    % print info about mismatched fields
+                    for k = 1:numel(mismatchReport)
+                        fprintf('\t[extra data mismatch]: %s\n ', char(mismatchReport{k}));
+                    end
                 end
             end
+            
         end
 
     else
