@@ -30,8 +30,8 @@ function vScriptsList = parseScriptsList(obj, vScriptsToRunList)
                 scriptRunParams = [];
             end
             
-            % get the contents of the directory
-            dirToList = fullfile(obj.rootDir, scriptDirectoryName, '*.m', filesep);
+            % get the contents of the directory - REMOVED final filesep (BW)
+            dirToList = fullfile(obj.rootDir, scriptDirectoryName, '*.m');
             scriptsListInCurrentDirectory = dir(dirToList);
             
             % add all the scripts to the vScriptsList
