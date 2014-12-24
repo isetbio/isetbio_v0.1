@@ -15,8 +15,9 @@ function ValidationFunction(runTimeParams)
     % get screwy answers.
     %
     % Probably in the longer run should just use Matlab's version if it gives
-    % the same answers.
-    lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');
+    % the same answers. 
+    % (Changed isetbio to ieLAB2XYZ).
+    % lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');
     
     %% SETUP
     isetbioPath = fileparts(which('colorTransformMatrix'));
@@ -106,7 +107,7 @@ function ValidationFunction(runTimeParams)
     whiteXYZ = [3,4,3]';
     ptbLabs = XYZToLab(testXYZs,whiteXYZ);
     cd(isetbioPath);
-    isetLabs = xyz2lab(testXYZs',whiteXYZ')';
+    isetLabs = ieXYZ2LAB(testXYZs',whiteXYZ')';
     cd(curDir);
     if (any(abs(ptbLabs-isetLabs) > tolerance))
         message = sprintf('PTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)', tolerance);
@@ -119,7 +120,7 @@ function ValidationFunction(runTimeParams)
     UnitTest.validationData('isetLabs', isetLabs);
     
     ptbXYZCheck = LabToXYZ(ptbLabs,whiteXYZ);
-    isetXYZCheck = lab2xyz(isetLabs',whiteXYZ')';
+    isetXYZCheck = ieLAB2XYZ(isetLabs',whiteXYZ')';
     if (any(abs(testXYZs-ptbXYZCheck) > tolerance ))
         message = sprintf('PTB FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
         UnitTest.validationRecord('FAILED', message);

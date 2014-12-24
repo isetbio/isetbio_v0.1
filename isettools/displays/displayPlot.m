@@ -90,7 +90,7 @@ switch param
         
         % convert rgb to Lab
         XYZ = rgb * displayGet(d, 'rgb2xyz');
-        Lab = xyz2lab(XYZ, displayGet(d, 'white xyz'));
+        Lab = ieXYZ2LAB(XYZ, displayGet(d, 'white xyz'));
         
         % generate delaunayTriangle
         delTri  = delaunayTriangulation(Lab);

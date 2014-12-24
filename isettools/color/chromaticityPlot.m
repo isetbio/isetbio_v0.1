@@ -27,7 +27,7 @@ function g = chromaticityPlot(pts,background,nPix,newFig)
 %  chromaticityPlot(pts,'gray',256);
 %  hold on, plot(pts(1),pts(2),'.')
 %
-% See also:  ieXYZFromPhotons, ieXYZFromEnergy, chromaticity, xyz2lab
+% See also:  ieXYZFromPhotons, ieXYZFromEnergy, chromaticity, ieXYZ2LAB
 %
 % Copyright ImagEval LLC 2011
 

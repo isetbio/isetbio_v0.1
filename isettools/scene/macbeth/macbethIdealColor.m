@@ -74,7 +74,7 @@ switch lower(colorSpace)
         macbethXYZ = ieXYZFromEnergy(colorSignal',wave);
         macbethXYZ = 100*(macbethXYZ/max(macbethXYZ(:,2)));
         whiteXYZ   = macbethXYZ(whitePatch,:);
-        target     = xyz2lab(macbethXYZ,whiteXYZ);
+        target     = ieXYZ2LAB(macbethXYZ,whiteXYZ);
     case 'lrgb'
         % Linear RGB values from srgb space; these don't include gamma
         macbethXYZ = macbethIdealColor(illuminant,'xyz');

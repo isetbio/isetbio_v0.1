@@ -1,4 +1,6 @@
 function xyz = lab2xyz(lab,whitepoint,useOldCode,exp)
+% Deprecated.  Use ieLAB2XYZ
+%
 % Convert CIE LAB values to CIE XYZ values
 %
 %    xyz = vcLAB2xyz(lab,whitepoint,exp,useOldCode)
@@ -27,6 +29,8 @@ function xyz = lab2xyz(lab,whitepoint,useOldCode,exp)
 % See also:  xyz2lab
 %
 % Copyright ImagEval Consultants, LLC, 2009.
+
+warning('Use ieLAB2XYZ');
 
 if notDefined('lab'), error('No data.'); end
 if notDefined('whitepoint')

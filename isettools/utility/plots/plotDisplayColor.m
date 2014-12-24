@@ -109,7 +109,7 @@ switch lower(dataType)
         % Needs updating
         dataXYZ  = imageGet(ip,'roi xyz',roiLocs);
         whitepnt = imageGet(ip,'data or Display WhitePoint');
-        dataLAB = xyz2lab(dataXYZ,whitepnt);
+        dataLAB = ieXYZ2LAB(dataXYZ,whitepnt);
         plot3(dataLAB(:,2), dataLAB(:,3),dataLAB(:,1), 'o');
         set(gca,'xlim',[-50 50],'ylim',[-50 50],'zlim',[0,100]);
         grid on; axis square

@@ -1,4 +1,6 @@
 function lab = xyz2lab(xyz, whitepoint, useOldCode)
+% Deprecated.  Use ieXYZ2LAB
+%
 % Convert CIE XYZ values to CIE LAB values
 %
 %    lab = xyz2lab(xyz, whitepoint, useOldCode)
@@ -41,9 +43,12 @@ function lab = xyz2lab(xyz, whitepoint, useOldCode)
 % Or do we just specify in the methods
 % - BW ). 
 
+warning('Use ieXYZ2LAB');
+
+
 if notDefined('xyz'), error('No data.'); end
 if notDefined('whitepoint'), error('Whitepoint is required'); end
-if notDefined('useOldCode'), useOldCode = 0; end
+if notDefined('useOldCode'), useOldCode = false; end
 
 if (exist('makecform', 'file') == 2) &&  ~useOldCode
     % This is where we want to be, but it only exists in the relatively

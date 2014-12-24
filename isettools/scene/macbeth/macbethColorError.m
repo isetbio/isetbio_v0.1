@@ -77,8 +77,8 @@ set(gcf,'name',sprintf('VCIMAGE: %s',imageGet(vci,'name')))
 
 %% LAB positions of the patches
 subplot(2,2,1), 
-idealLAB   = xyz2lab(idealXYZ,whiteIdealXYZ);
-macbethLAB = xyz2lab(macbethXYZ,whiteMacbethXYZ);
+idealLAB   = ieXYZ2LAB(idealXYZ,whiteIdealXYZ);
+macbethLAB = ieXYZ2LAB(macbethXYZ,whiteMacbethXYZ);
 
 plot(macbethLAB(:,2),macbethLAB(:,3),'o')
 line([idealLAB(:,2),macbethLAB(:,2)]',...

@@ -59,7 +59,7 @@ function [mRGB, mLocs, pSize, cornerPoints, mccRectHandles] = ...
 %
 %  obj = vcGetObject('vcimage'); [rgb,locs] = macbethSelect(obj); 
 %  dataXYZ = imageRGB2xyz(obj,rgb); whiteXYZ = dataXYZ(1,:);
-%  lab = xyz2lab(dataXYZ,whiteXYZ);
+%  lab = ieXYZ2LAB(dataXYZ,whiteXYZ);
 %  plot3(lab(:,1),lab(:,2),lab(:,3),'o')
 %
 % This method is used to get the raw data of the gray series

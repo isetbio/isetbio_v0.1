@@ -25,7 +25,8 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
      end
      
      %% Use ISETBIO's version of lab2xyz.
-     lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');
+     % Changed to ieLAB2XYZ
+     % lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');
      
     %% Initialize return params
     validationReport = ''; 
@@ -125,7 +126,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     whiteXYZ = [3,4,3]';
     ptbLabs = XYZToLab(testXYZs,whiteXYZ);
     cd(isetbioPath);
-    isetLabs = xyz2lab(testXYZs',whiteXYZ')';
+    isetLabs = ieXYZ2LAB(testXYZs',whiteXYZ')';
     cd(curDir);
     if (any(abs(ptbLabs-isetLabs) > tolerance))
         message = sprintf('\n\t\tPTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)', tolerance);
@@ -139,7 +140,7 @@ function [validationReport, validationFailedFlag, validationDataToSave] = valida
     validationDataToSave.isetLabs = isetLabs;
     
     ptbXYZCheck = LabToXYZ(ptbLabs,whiteXYZ);
-    isetXYZCheck = lab2xyz(isetLabs',whiteXYZ')';
+    isetXYZCheck = ieLAB2XYZ(isetLabs',whiteXYZ')';
     if (any(abs(testXYZs-ptbXYZCheck) > tolerance ))
         message = sprintf('\n\t\tPTB FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
         validationFailedFlag = true;

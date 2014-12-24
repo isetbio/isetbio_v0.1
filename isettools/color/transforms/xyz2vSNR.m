@@ -23,7 +23,7 @@ if notDefined('params'), params = scParams; end
 % of CIELAB, this rolloff is very bad.  It is dominating other factors.
 % figure(1); Y=roiXYZ(:,:,2); mesh(Y); mean(Y(:))
 sLAB = scComputeSCIELAB(roiXYZ,whitePtXYZ,params);
-% xyz  = lab2xyz(sLAB,whitePtXYZ); % Might not be working right ... BW
+% xyz  = ieLAB2XYZ(sLAB,whitePtXYZ); % Might not be working right ... BW
 % figure(1); L = sLAB(:,:,1); mesh(L); mean(L(:))
 % xlabel('Display row'), ylabel('Display col'), zlabel('L*');
 % sRGB = xyz2srgb(xyz); mesh(sRGB(:,:,2)); % imagesc(sRGB/255);
@@ -33,7 +33,7 @@ sLAB = scComputeSCIELAB(roiXYZ,whitePtXYZ,params);
 [r,c,~] = size(sLAB);
 mid = round(0.8*[r,c]);
 sLAB = getMiddleMatrix(sLAB,mid);
-% xyz  = lab2xyz(sLAB,whitePtXYZ);
+% xyz  = ieLAB2XYZ(sLAB,whitePtXYZ);
 % figure(1); mesh(xyz(:,:,2));
 % sRGB = xyz2srgb(xyz); figure(1); imagesc(sRGB/255);
 
