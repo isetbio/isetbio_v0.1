@@ -44,15 +44,20 @@ function val = sceneGet(scene,parm,varargin)
 % Radiance and reflectance information
 %      {'data'}
 %        {'photons'}     - radiance data (photons)
-%        {'knownReflectance'} - 4-vector, reflectance, row, col, wave
-%        {'peakRadiance'} - peak radiance at specified (or all) wavelengths
-%        {'peakRadianceAndWave'} - peak radiance and its wavelength
+%        {'known reflectance'} - 4-vector, reflectance, row, col, wave
+%        {'peak radiance'} - peak radiance at specified (or all) wavelengths
+%        {'peak radiance and wave'} - peak radiance and its wavelength
 %        {'datamax'}     - max radiance value (across all waves)
 %        {'datamin'}     - min radiance value
 %        {'compressbitdepth'}  - 16 bits, usually, of compression
 %        {'energy'}         - radiance data (energy)
 %        {'mean energy spd'}  - mean spd in energy units
 %        {'mean photons spd'} - mean spd in photon units
+% 
+%     An roi can be Nx2 xy locs or a rect vector: [col, row, height, width]
+%     If a vector, the number of points is (height+1) * (width+1)
+%     So, [col,row,0,0] returns 1 point and [col,row,1,1] returns 4 points.
+%
 %        {'roi photons'}  - spd of the points in a region of interest
 %                               The region can be a rect or xy locs
 %        {'roi energy'}   - as above, but energy
