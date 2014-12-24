@@ -1276,9 +1276,9 @@ scene = initDefaultSpectrum(scene,'hyperspectral');
 wave  = sceneGet(scene,'wave');
 nWave = sceneGet(scene,'nwave');
 
-% The dynamic range of the checkerboard is kept to < 10^4 to prevent
-% problems with the rounding error
-d = checkerboard(checkPeriod,nCheckPairs);
+% Changed to Matlab checkerboard in image processing toolbox.  Forced the
+% output to double.
+d = checkerboard(checkPeriod,nCheckPairs); d = double((d > 0.5));
 d = d/max(d(:));
 
 % Prevent ieCompressData problem.
