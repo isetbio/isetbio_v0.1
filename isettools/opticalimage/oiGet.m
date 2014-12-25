@@ -317,7 +317,7 @@ switch parm
        
    case {'photons', 'cphotons'}
        % Read photon data.  
-       % Data are returned as doubles (uncompressed).
+       % Data are returned as doubles.
        if checkfields(oi,'data','photons')
            if isempty(varargin)
                % allPhotons = oiGet(oi,'photons')

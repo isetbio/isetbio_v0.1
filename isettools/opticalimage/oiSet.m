@@ -170,11 +170,16 @@ switch parm
     case {'data','datastructure'}
         oi.data = val;
 
-    case {'cphotons', 'compressedphotons', 'photons'}
+    case {'photons','cphotons', 'compressedphotons'}
+        % oiSet(oi,'photons',val)
+        % cphotons is obsolete and should not be used.  It will go away
+        % before long.
         if ~(isa(val, 'double') || isa(val, 'single') || isa(val, 'gpuArray')),
             error('Photons must be type double / single / gpuArray');
         end
         
+        % Perhaps this should go away, too.  We should just stick with
+        % single and gpuArray throughout.
         bitDepth = oiGet(oi, 'bitDepth');
         if isempty(bitDepth), error('Compression parameters not set'); end
         if ~isempty(varargin)
@@ -196,10 +201,8 @@ switch parm
                 else
                     oi.data.photons(:,:,idx) = single(val);
                 end
-            case 16 % unit16
-                error('16 bit data is not supported anymore');
             otherwise
-                error('Unknown data bit depth');
+                error('Unsupported bit depth %f',bitDepth);
         end
 
         % Clear out derivative luminance/illuminance computations

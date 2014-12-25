@@ -158,10 +158,8 @@ switch parm
                 else
                     scene.data.photons(:,:,idx) = single(val);
                 end
-            case 16 % unit16
-                error('16 bit data is not supported anymore');
             otherwise
-                error('Unknown data bit depth');
+                error('Unsupported data bit depth %f\n',bitDepth);
         end
 
         % Clear out derivative luminance/illuminance computations
