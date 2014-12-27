@@ -6,7 +6,7 @@ function varargout = v_sceneReIllumination(varargin)
 % Then re-illuminate using a flusorescent illuminant of equal luminance.
 %
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout,  varargin);
 end
 
 %% Function implementing the isetbio validation code

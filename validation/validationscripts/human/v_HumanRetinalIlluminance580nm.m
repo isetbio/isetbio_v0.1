@@ -17,7 +17,7 @@ function varargout = v_HumanRetinalIlluminance580nm(varargin)
 %   590,000 Trolands at the retina at 580nm is supposed to be 187,800
 %   cd/m2 at the scene
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 

@@ -6,7 +6,7 @@ function varargout = v_sceneCompress(varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2012
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 

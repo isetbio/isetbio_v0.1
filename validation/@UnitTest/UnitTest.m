@@ -175,7 +175,7 @@ classdef UnitTest < handle
         
         % Method to run a validation run.
         % Every validation script must call this method in its wrapper function
-        varargout = runValidationRun(functionHandle, varargin);
+        varargout = runValidationRun(functionHandle, originalNargout, varargin);
         
         % Method to initalize a validation run.
         runTimeParams = initializeValidationRun(varargin);

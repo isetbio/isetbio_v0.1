@@ -8,7 +8,7 @@ function varargout = v_Cones(varargin)
 %
 % ISETBIO Team Copyright 2013-14
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 %% Function implementing the isetbio validation code

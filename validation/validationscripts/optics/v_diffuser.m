@@ -2,7 +2,7 @@ function varargout = v_diffuser(varargin)
 %
 % Validate diffuser function of optical image calculations. 
 %
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 function ValidationFunction(runTimeParams)

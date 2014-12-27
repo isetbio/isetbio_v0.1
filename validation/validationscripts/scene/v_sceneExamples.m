@@ -7,7 +7,7 @@ function varargout = v_sceneExamples(varargin)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 %% Validate the scene examples

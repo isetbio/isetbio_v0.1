@@ -27,7 +27,7 @@ function varargout = v_IrradianceIsomerizations(varargin)
 % macular pigment density, pigment optical density, photopigment
 % lambda-max, cone aperature area, photopigment quantal efficiency.
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 %% Function implementing the isetbio validation code

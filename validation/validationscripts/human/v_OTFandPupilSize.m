@@ -5,7 +5,7 @@ function varargout =  v_OTFandPupilSize(varargin)
 % http://www.journalofvision.org/content/13/6/18.short?related-urls=yes&legid=jov;13/6/18)
 %
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 %% Function implementing the isetbio validation code

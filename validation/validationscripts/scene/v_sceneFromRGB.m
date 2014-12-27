@@ -25,7 +25,7 @@ function varargout = v_sceneFromRGB(varargin)
 %
 % Copyright ImagEval, 2011
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 %% Function implementing the isetbio validation code

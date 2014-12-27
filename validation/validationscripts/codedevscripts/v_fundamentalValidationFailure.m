@@ -3,7 +3,7 @@ function varargout = v_fundamentalValidationFailure(varargin)
 % Example validation script that demonstrates usage of the fundemantal failure feature. 
 %
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 %% Function implementing the isetbio validation code

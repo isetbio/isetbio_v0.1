@@ -3,7 +3,7 @@ function varargout = v_numericalPrecision(varargin)
 % Script assessing the effects of rounding at different numerical precisions.
 %
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 %% Function implementing the isetbio validation code

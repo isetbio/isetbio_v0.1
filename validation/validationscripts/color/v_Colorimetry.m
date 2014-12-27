@@ -3,7 +3,7 @@ function varargout = v_Colorimetry(varargin)
 %  Validate ISETBIO-based colorimetric computations by comparing to PTB-based colorimetric computations.
 %
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 %% Function implementing the isetbio validation code

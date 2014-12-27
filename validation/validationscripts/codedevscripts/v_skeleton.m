@@ -3,7 +3,7 @@ function varargout = v_skeleton(varargin)
 % Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code. 
 % [DOES THIS NEED TO BE ONE LINE.]
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 %% Function implementing the isetbio validation code
