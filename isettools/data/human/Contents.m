@@ -1,6 +1,6 @@
-% isetbio:data:human
+% isetbio, data:human
 %
-% Data related to human vision
+% Data related to human vision.
 %
 %     coneAbsorbance - Stockman-Sharpe (aka CIE) tabulated cone absorbtance.
 %                      In log units.  From T_log10coneabsorbance in PTB,
