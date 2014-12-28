@@ -114,7 +114,7 @@ classdef UnitTest < handle
         
     end % public methods
     
-    % On the object itself can call these methods
+    % Only the object itself can call these methods
     methods (Access = private)   
         
         % Method to generate the directory path/subDir, if this directory does not exist
@@ -194,11 +194,19 @@ classdef UnitTest < handle
         
         % Method to add new data to the extra data struct
         data = extraData(varargin);
-        
+
         % Method to round numeric values to N decimal digits
-         roundedValue = roundToNdigits(numericValue, decimalDigits);
+        roundedValue = roundToNdigits(numericValue, decimalDigits);
         
         % Method to print the validationReport
         printValidationReport(validationReport);
+        
+        % Method to implement an assert statement for things that should be
+        % almost the same.
+        assertIsZero(expression,msgString,tolerance);
+        
+        % Method to implement an assert statement for things that should be
+        % true
+        assert(expression,msgString);
     end
 end

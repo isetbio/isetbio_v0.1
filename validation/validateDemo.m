@@ -52,7 +52,7 @@ function validateDemo
     UnitTest.listPrefs();
     
     %% What to validate
-    validateAllDirs = true;
+    validateAllDirs = false;
     if (validateAllDirs)
         % List of script directories to validate. Each entry contains a cell array with 
         % with a validation script directory and an optional struct with
@@ -80,9 +80,9 @@ function validateDemo
         % prefs that override the corresponding isetbioValidation prefs.
         % At the moment only the generatePlots pref can be overriden.
         vScriptsList = {...
-            {'v_stockman2xyz'} ...
+           % {'v_stockman2xyz'} ...
            % {'v_IrradianceIsomerizations', struct('generatePlots', true)}  ...
-           % {'v_skeleton'}
+           {'v_skeleton'}
         };
     end
     

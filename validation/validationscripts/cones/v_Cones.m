@@ -19,32 +19,71 @@ function ValidationFunction(runTimeParams)
     wave   = sensorGet(sensor,'wave');
     human  = sensorGet(sensor,'human');
 
-    %% Absorbance.
-    % These are normalized to unity.
+    %% Human cone absorbance.
+    % These are the Stockman-Sharpe absorbance by default, and are
+    % normalized to unity as is standard.
     coneAbsorbance = coneGet(human.cone,'absorbance');
     wave = coneGet(human.cone,'wave');
+    UnitTest.validationData('wave',wave);
     UnitTest.validationData('coneAbsorbance', coneAbsorbance);
     temp = load('T_log10coneabsorbance_ss');
     ptbCompare.log10coneAbsorbance = SplineCmf(temp.S_log10coneabsorbance_ss,temp.T_log10coneabsorbance_ss,wave)';
     ptbCompare.coneAbsorbance = 10.^ptbCompare.log10coneAbsorbance;
-    max(abs(ptbCompare.coneAbsorbance-coneAbsorbance));
+    UnitTest.assertIsZero(max(abs(ptbCompare.coneAbsorbance-coneAbsorbance)),'Difference between PTB datafile and isetbio cone absorbance',1e-12);
+    
+    %% Now get the full PTB photoreceptors structure of CIE 2-deg
+    %
+    % This will let us compare absorbance in another way, as well as compare
+    % all sorts of other quantities.
+    ptbPhotoreceptors = ptb.StockmanSharpePhotoreceptors(wave);
+    UnitTest.assertIsZero(max(abs(ptbPhotoreceptors.absorbance'-coneAbsorbance)),'Difference between PTB photoreceptor structure and isetbio cone absorbance',1e-12);
+    
+    %% Peak optical density
+    %
+    % PTB values differ by a bit, e.g. 0.5000 in isetbio compared with
+    % 0.5004 in PTB.  This can be traced to an rounding difference in the CIE
+    % standard, which gives the OD by formula in equn 5.2 (which yields
+    % e.g. 0.5004 to three places for L cone OD) but which also gives the
+    % peak optical density for the L cones as 0.5.  
+    peakOpticalDensity = coneGet(human.cone,'pod');
+    UnitTest.assertIsZero(max(abs(ptbPhotoreceptors.axialDensity.value-peakOpticalDensity)),'Difference between PTB and isebio peak optical density',1e-3);
 
-    %% Plot scone spectral absorptance.
+    %% Get cone spectral absorptance.
+    %
     % These take optical density into account, but not anything about pre-retinal absorption.
-    coneSpectralAbsorptance = coneGet(human.cone,'cone spectral absorptance');
-    UnitTest.validationData('coneSpectralAbsorptance', coneSpectralAbsorptance);
+    % The PTB and isetbio values differ by about 0.001, wich I think has to
+    % do with the rounding difference in peak optical density (see above).
+    coneAbsorptance = coneGet(human.cone,'cone spectral absorptance');
+    UnitTest.validationData('coneSpectralAbsorptance', coneAbsorptance);
+    UnitTest.assertIsZero(max(abs(ptbPhotoreceptors.absorptance'-coneAbsorptance)),'Difference between PTB photoreceptor structure and isetbio cone absorbance',1e-03);
 
     %% Lens transmittance
+    %
+    % Not sure exactly which PTB file the isetbio lens transmittance
+    % was taken from, but the answer comes out very close to what PTB 
+    % uses for its CIE 2-deg case.
     lensTransmittance = lensGet(human.lens,'transmittance');
     UnitTest.validationData('lensTransmittance', lensTransmittance);
+    UnitTest.assertIsZero(max(abs(ptbPhotoreceptors.lensDensity.transmittance'-lensTransmittance)),'Difference between PTB and isetbio lens transmittance',1e-12);
 
     %% Macular transmittance
     macularTransmittance = macularGet(human.macular,'transmittance');
     UnitTest.validationData('macularTransmittance', macularTransmittance);
+    UnitTest.assertIsZero(max(abs(ptbPhotoreceptors.macularPigmentDensity.transmittance'-macularTransmittance)),'Difference between PTB and isetbio macular transmittance',0.005);
 
     %% Quantal efficiency of cones
+    %
+    % These are the actual probability that an incident quanta is absorbed,
+    % starting with irradiance.  They take into account lens and macular
+    % pigment, as well as inner segment diameter and pigment quantal
+    % efficiency.
     coneQE = sensorGet(sensor,'spectral qe');
     UnitTest.validationData('coneQE', coneQE);
+    UnitTest.assertIsZero(max(abs(ptbPhotoreceptors.isomerizationAbsorptance'-coneQE(:,2:4))),'Difference between PTB and isetbio cone quantal efficiency',1e-3);
+    
+    %% Tuck away other validation data
+    UnitTest.validationData('ptbCompare',ptbCompare);
+    UnitTest.validationData('ptbPhotorceptors',ptbPhotoreceptors);
 
     %% Plot
     if (runTimeParams.generatePlots)
@@ -55,7 +94,7 @@ function ValidationFunction(runTimeParams)
         title('Photopigment spectral absorbance');
 
         subplot(5,1,2)
-        plot(wave,coneSpectralAbsorptance);
+        plot(wave,coneAbsorptance);
         ylim([0 1]);
         title('Cone photopigment spectral absorptance')
 
