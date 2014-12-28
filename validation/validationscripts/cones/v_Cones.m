@@ -22,7 +22,12 @@ function ValidationFunction(runTimeParams)
     %% Absorbance.
     % These are normalized to unity.
     coneAbsorbance = coneGet(human.cone,'absorbance');
+    wave = coneGet(human.cone,'wave');
     UnitTest.validationData('coneAbsorbance', coneAbsorbance);
+    temp = load('T_log10coneabsorbance_ss');
+    ptbCompare.log10coneAbsorbance = SplineCmf(temp.S_log10coneabsorbance_ss,temp.T_log10coneabsorbance_ss,wave)';
+    ptbCompare.coneAbsorbance = 10.^ptbCompare.log10coneAbsorbance;
+    max(abs(ptbCompare.coneAbsorbance-coneAbsorbance));
 
     %% Plot scone spectral absorptance.
     % These take optical density into account, but not anything about pre-retinal absorption.
