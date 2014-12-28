@@ -131,7 +131,7 @@ switch lower(imType)
         scene = sceneSet(scene, 'distance', displayGet(d, 'distance'));
         
         % Set field of view
-        imgFov = size(I, 2)*displayGet(d, 'deg per dot');
+        imgFov = size(photons, 2)*displayGet(d, 'deg per dot');
         scene  = sceneSet(scene, 'h fov', imgFov);
         
     case {'multispectral','hyperspectral'}

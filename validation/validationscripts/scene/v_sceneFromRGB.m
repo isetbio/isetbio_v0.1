@@ -65,6 +65,30 @@ function ValidationFunction(runTimeParams)%% s_sceneFromRGB
         vcAddAndSelectObject(scene); sceneWindow;
     end
     UnitTest.validationData('scene', scene);
+    
+    %% Internal validation
+    %
+    % We are having cross-platform issues with the horizontal angular 
+    % extent of the scene varying.  So we'll compute it from first
+    % principles here.
+    testByHand.hFovDegreesFromScene = sceneGet(scene,'hfov');
+    testByHand.displayDPI = displayGet(d,'dpi');
+    testByHand.displayMetersPerDot = displayGet(d,'meters per dot');
+    testByHand.distance = sceneGet(scene,'distance');
+    testByHand.degreesPerDot = displayGet(d,'deg per dot');
+    testByHand.degreesPerDotCheck = 2*atand(testByHand.displayMetersPerDot/(2*testByHand.distance));
+    testByHand.hSceneDots = sceneGet(scene,'cols');
+    testByHand.hFovMeters = testByHand.displayMetersPerDot*testByHand.hSceneDots;
+    testByHand.hFovDegreeesCheck = testByHand.hSceneDots*testByHand.degreesPerDot;
+    tolerance = 1e-12;
+    if (max(abs(testByHand.hFovDegreesFromScene-testByHand.hFovDegreeesCheck) > tolerance))
+        message = sprintf('Hand check of h fov exceeds specified tolerance (%0.1g). !!!', tolerance);
+        UnitTest.validationRecord('FAILED', message);
+    else
+        message = sprintf('Hand check of h fov is within the specified tolerance (%0.1g).', tolerance);
+        UnitTest.validationRecord('PASSED', message);
+    end
+    UnitTest.validationData('testByHand', testByHand);
 
     %% Change the illuminant to 4000 K
     bb = blackbody(sceneGet(scene,'wave'),4000,'energy');
