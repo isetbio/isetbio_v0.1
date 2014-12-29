@@ -1,18 +1,10 @@
 %% Calculate the number of rod absorptions to a uniform scene 
 %
-% We simulate the rod absorptions to the LED device at its mean light
-% level. 
-%
-% We believe that there are about 750,000 absorptions per second per rod
-% for this spectral power distribution at this level.  Rod thresholds under
-% these conditions are probably far above 10% modulation.  So, we suspect
-% that the visibility of the 4th photopigment signal is not the rods.
+% Redraft - not checked yet - Wandell
 %
 % Hiroshi Horiguchi, 2012.
 
 %%
-if ~exist('ledSPD_pr715.mat','file'), error('Vistaproj colorTime must be on path'); end
-
 s_initISET
 
 %% Set variables
@@ -21,7 +13,7 @@ s_initISET
 rodpod = 0.05;
 
 RodinnerSegmentDiameter = 2.22; % 15 deg ecc. Curio 1993
-meanluminance = 2060; % cd/m2
+meanluminance  = 2060; % cd/m2
 pupilsize = 2; % mm 
 
 rodPeakAbsorptance = 0.66; % from Rodieck
@@ -34,10 +26,11 @@ wave  = sceneGet(scene,'wave');
 % fullpathname = ieSaveSpectralFile(wavelength,data,comment,[fullpathname]);
 % Or just load primaries.
 % Note that it requires a path to colorTime in vistaproj
-primaries = ieReadSpectra('ledSPD_pr715.mat',wave);
+d = displayCreate('lcdExample',wave);
+primaries = displayGet(d,'spd');
 
 % multiply your primaries by illEnergy
-illEnergy = primaries * ones(6,1);
+illEnergy = primaries * ones(size(primaries,2),1);
 
 % apply illuminant energy to scene
 scene = sceneAdjustIlluminant(scene,illEnergy);
@@ -55,9 +48,15 @@ oi = oiSet(oi,'optics',optics);
 
 % Calc rod responses
 % Note that it requires a path to colorTime in vistaproj
-rodabsorbance = ieReadSpectra('rodabsorbance.mat',wave);
-rods = cm_variableLMSI_PODandLambda(rodabsorbance, rodpod, [], LensTransmittance(wave));
-rods = rods * rodPeakAbsorptance;
+rodabsorbance = ieReadSpectra('rods',wave);
+r = coneCreate;
+r = coneSet(r,'absorbance',rodabsorbance);
+r = coneSet(r,'name','rod');
+r = coneSet(r,'peak efficiency',rodPeakAbsorptance);
+% r = coneSet(r,'spatial density',[0 1]);
+
+% rods = cm_variableLMSI_PODandLambda(rodabsorbance, rodpod, [], LensTransmittance(wave));
+% rods = rods * rodPeakAbsorptance;
 
 % or
 % rods = ieReadSpectra('scotopicLuminosity.mat',wave);
@@ -76,29 +75,26 @@ Rodpixels = sqrt(RodArea);
 
 % Peak sensitivity - includes lens and rod pigment
 pixSize = Rodpixels*1e-6;
-sensor = sensorCreateIdeal('monochrome',pixSize);
+sensor = sensorCreateIdeal('monochrome');
+sensor = sensorSet(sensor,'pixel size keep fill factor',pixSize);
 
-pixel = sensorGet(sensor,'pixel');
-% pixel = pixelSet(pixel,'width and height',    Rodpixels*1e-6);
-% pixel = pixelSet(pixel,'pd width and height', Rodpixels*1e-6);
-pixel = pixelSet(pixel,'voltageSwing',        300); % just for visualization
-% pixelGet(pixel,'fill factor')
+sensor = sensorSet(sensor,'pixel voltageSwing',        300); % just for visualization
 
-sensor = sensorSet(sensor,'pixel',pixel);
 sensor = sensorSet(sensor,'autoexposure',0);
 sensor = sensorSet(sensor,'exposureTime',1);
 
-sensor = sensorSet(sensor,'filter spectra',rods);
+sensor = sensorSet(sensor,'filter spectra',coneGet(r,'absorbance'));
 sensor = sensorSet(sensor,'filter names',{'wrod'});
 
 sensor = sensorCompute(sensor,oi);
 vcAddAndSelectObject(sensor); sensorImageWindow
 %% Calculate number of absorptions (electrons) per rod
 
-sensor = vcGetObject('sensor');
 roi    = sensorROI(sensor,'center');
 sensor = sensorSet(sensor,'roi',roi);
 elROI  = sensorGet(sensor,'roi electrons');
 
 % mean of electron
-mean(elROI)
+fprintf('Mean isomerizations per second per rod %f\n',mean(elROI));
+
+%% End

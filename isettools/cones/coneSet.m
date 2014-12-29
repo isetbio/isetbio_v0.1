@@ -121,7 +121,7 @@ switch param
         %         cone.absorbance = StockmanSharpeNomogram(cone.wave, val)';
         %         cone.absorbance = padarray(cone.absorbance,[0 1],'pre');
         %
-    case {'peak efficiency', 'qe', 'quantalefficiency'}
+    case {'peakefficiency', 'qe', 'quantalefficiency'}
         % Peak absorptance
         cone.peakEfficiency = val;
         
