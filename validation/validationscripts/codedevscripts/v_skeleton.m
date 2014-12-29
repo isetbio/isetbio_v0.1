@@ -1,7 +1,9 @@
 function varargout = v_skeleton(varargin)
 %
-% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code. 
-% [DOES THIS NEED TO BE ONE LINE.]
+% Skeleton script containing the minimally required code. Copy and add your ISETBIO validation code.
+%
+% [THE ONE LINE COMMENT ABOVE WILL GET AUTOPUBLISHED AS THE DESCRIPTION OF
+% THIS SCRIPT.]
 
     varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
@@ -20,23 +22,38 @@ function ValidationFunction(runTimeParams)
     UnitTest.validationRecord('SIMPLE_MESSAGE', 'Skeleton script. Copy and adapt to your needs.');
     
     %% Internal validations
+    %
+    % Check whether quantity is within tolerance of zero
     quantityOfInterest = randn(100,1)*0.0000001;
     tolerance = 0.000001;
-    if (max(abs(quantityOfInterest) > tolerance))
-        message = sprintf('Result exceeds specified tolerance (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Result is within the specified tolerance (%0.1g).', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    UnitTest.assertIsZero(quantityOfInterest,'Result',tolerance);
     
-    % Simulate fundamental failure here
-    funamentalCheckPassed = true;
-    if (~funamentalCheckPassed)
-        UnitTest.validationRecord('FUNDAMENTAL_CHECK_FAILED', 'An informative fundamental failure message goes here.');
-        % You can optionally abort the script at this point using a 'return' command:
-        % return;
-    end
+    % If you want to do a more complicated comparison, you could write
+    % things out more fully along the lines of the commented out code
+    % here:
+    %
+    % if (max(abs(quantityOfInterest) > tolerance))
+    %     message = sprintf('Result exceeds specified tolerance (%0.1g). !!!', tolerance);
+    %     UnitTest.validationRecord('FAILED', message);
+    % else
+    %     message = sprintf('Result is within the specified tolerance (%0.1g).', tolerance);
+    %     UnitTest.validationRecord('PASSED', message);
+    % end
+    
+    %% Simple assertion
+    fundamentalCheckPassed = true;
+    UnitTest.assert(fundamentalCheckPassed,'fundamental assertion');
+    
+    % You can also do a customized assert that only prints on failure
+    % as in the commented out code below.  This would also allow you to
+    % put a return after the check, to abort trying to go along further.
+    % This method produces a more agressive error message and should be
+    % reserved only for cases where something is very deeply wrong should
+    % the assertion fail.
+    % if (~fundamentalCheckPassed)
+    %     UnitTest.validationRecord('FUNDAMENTAL_CHECK_FAILED', 'A fundamental check failed');
+    % end
+        
     
     %% Data for external validations
     dataA = ones(10,20);

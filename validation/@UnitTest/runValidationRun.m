@@ -9,12 +9,12 @@ function returnItems = runValidationRun(functionHandle, originalNargout, varargi
     
     if (originalNargout == 0)
         runTimeParams.printValidationReport = true;
+        runTimeParams.generatePlots = true;
     end
     
     %% Call the validation function
     functionHandle(runTimeParams);
 
-    
     %% Reporting and return params
     if (originalNargout > 0)
         [validationReport, validationFailedFlag, validationFundametalFailureFlag] = ...
