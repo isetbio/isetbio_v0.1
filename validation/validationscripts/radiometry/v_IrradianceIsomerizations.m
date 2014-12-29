@@ -3,6 +3,8 @@ function varargout = v_IrradianceIsomerizations(varargin)
 % Validate ISETBIO-based irradiance/isomerization computations by comparing
 % to PTB-based irradiance/isomerization computations.
 %
+% See also: v_Cones
+%
 % Minor issues:
 %
 % 1) The irradiance calculations agree to about 1%, once the difference in
@@ -15,9 +17,9 @@ function varargout = v_IrradianceIsomerizations(varargin)
 % effect (since isomerizations are computed from the irradiance in each
 % case), or in the slight differences in spectral qe below.
 %
-% 2) Isetbio and PTB agree to about a percent or quantal efficiencies, but
+% 2) Isetbio and PTB agree to about a percent for quantal efficiencies, but
 % not exactly, about the CIE 2-deg cone fundamentals, when converted to
-% quantal efficiencies.
+% quantal efficiencies.  They agree better in v_Cones, I think.  Why?
 %
 % To do:
 %
@@ -25,7 +27,14 @@ function varargout = v_IrradianceIsomerizations(varargin)
 % calculational paths and make sure that all of the parameters are have
 % the expected and same effects in both cases.  Key parameters are lens and
 % macular pigment density, pigment optical density, photopigment
-% lambda-max, cone aperature area, photopigment quantal efficiency.
+% lambda-max, cone aperature area, photopigment quantal efficiency.  It is
+% possible this should be done in v_Cones rather than here.
+%
+% 2) Check that integration over wavelength is being done consistently in
+% isetbio and PTB.  PTB works by assuming that spectral power is per
+% wavelength band.  I am not sure about isetbio.  It may take irrandiance
+% in a per nm basis and explicitly include the wavelength sampling step in
+% its numerical integration.
 
     varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
