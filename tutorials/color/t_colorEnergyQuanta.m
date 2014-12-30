@@ -1,9 +1,9 @@
-%% t_EnergyQuanta - Planck's relation and the units
+%% t_EnergyQuanta
 %
-% Explain the relationship between units of energy and units of quanta.
+% Planck's relation and the units - explain the relationship between units of energy and units of quanta.
 %
 % These differences matter for  calculations involving the CIE functions
-% and human cone quantum absorptions
+% and human cone quantum absorptions.
 %
 % References:
 %  http://en.wikipedia.org/wiki/Planck%27s_relation
@@ -35,7 +35,7 @@ vcNewGraphWin; plot(wave,E); grid on
 xlabel('Wavelength (nm)');ylabel('Energy (watts/sr/nm/m2)')
 
 %% The spectral power distribution (SPD) in energy and quanta
-
+%
 % This is a standard Daylight 6500 light source.  We read it and set its
 % luminance to 100 cd/m2.
 d65Energy = ieReadSpectra('D65',wave);
@@ -55,13 +55,12 @@ d65Photons = Energy2Quanta(wave(:),d65Energy(:));
 % photons.  That is, the D65 light has about the same number of long
 % (650nm) and middle (550nm) wavelength photons.  But there is more energy
 % in the middle wavelength photons.
-% 
 vcNewGraphWin; plot(wave,d65Photons); grid on
 xlabel('Wavelength (nm)'); ylabel('Photons (q/sr/nm/m2)')
 
 
 %% t_EnergyQuanta - Energy, Photons, and the CIE XYZ functions
-
+%
 % The CIE 1931 standard curves for XYZ are defined assuming that the input
 % signal is specified in terms of energy.
 XYZEnergy = ieReadSpectra('XYZ',wave);
@@ -79,7 +78,7 @@ XYZPhotons = ieReadSpectra('XYZQuanta',wave);
 subplot(1,2,2), plot(wave,XYZPhotons); grid on; title('XYZ Photons')
 
 %% Calculating XYZ for a D65 light
-
+%
 % We read a standard light (Daylight 6500 K) and scale it to have a
 % luminance of 100 cd/m2.
 d65Energy = ieReadSpectra('D65',wave);
@@ -103,10 +102,16 @@ d65XYZ = ieXYZFromEnergy(d65Energy(:)',wave)
 %% CIE Luminance (Y)
 % For those of you interested, the relationship between the XYZ curves and
 % the luminance level (Y) is a simple relationship:
-
-dnm = wave(2)-wave(1);   % Wavelength step
+%
 % The 683 value is a constant used by the CIE having to do with certain
-% material standards.  The two formula return the same values
+% material standards.  The two formula return the same values.
+%
+% We take the size of the wavelength step into account in computing the
+% summation approximation to the integral over wavelength, since the
+% isetbio convention is to specify power on a per nm basis.  If you're
+% used to using PTB, this convention differs from PTB's.  PTB specifies
+% spectral power distributions on a power per wavelength sample basis.
+dnm = wave(2)-wave(1);   % Wavelength step
 d65XYZ = dnm*683*XYZPhotons'*d65Photons(:)
 d65XYZ = dnm*683*XYZEnergy'*d65Energy(:)
 
