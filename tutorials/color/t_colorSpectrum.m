@@ -10,7 +10,7 @@
 % Purpose:   An example calculation: making a desaturated rainbow. Date:
 % 01.12.98 Duration:  20 minutes
 %
-% 12/29/14  dhb  WORKING ON UPDATING THIS.  NOT QUITE DONE.
+% 12/29/14  dhb  Updated for isetbio, and cleaned a bit.
 
 %% Initialize
 clear; close all;
@@ -19,7 +19,7 @@ s_initISET;
 %% Get display primaries
 %
 % Let's suppose that we know the spectral power distributions of your
-% monitor's phosphors.  For this example, we will use the SPDs for a sample
+% monitor's primaries.  For this example, we will use the SPDs for a sample
 % display description provided with isetbio.
 displayCalFile = 'LCD-Apple.mat';
 d = displayCreate(displayCalFile);
@@ -31,6 +31,8 @@ figure;
 plot(wave,primaries(:,1),'r', ...
     wave,primaries(:,2),'g', ...
     wave,primaries(:,3),'b');
+xlabel('Wavelength (nm)');
+ylabel('Primary power');
 
 %% Get color matching functions
 %
@@ -93,16 +95,20 @@ rgbSpectrum = rgbSpectrum';
 figure;
 plot(wave,scaleFactors,'k')
 set(gca,'ylim',[0 2]), grid on
+xlabel('Wavelength (nm)');
+ylabel('Normalizing factors');
 
 % And here is a graph of the R,G and B values we need for each of the
-% individual wavelengths when they are presented at equal energy levels.
+% individual wavelengths when they are presented at approximately equal brightness.
 % The horizontal axis shows wavelength and the three colored curves show
-% the linear intensity values needed for the phoshors.
+% the linear intensity values needed for the primaries.
 figure;
 plot(wave,rgbSpectrum(:,1),'r', ...
     wave,rgbSpectrum(:,2),'g', ...
     wave,rgbSpectrum(:,3),'b')
 grid on
+xlabel('Wavelength (nm)');
+ylabel('Linear RGB values (scaled)');
 
 %% Those pesky negative values
 % As you can see in the figure, some of the RGB values are negative.  These
@@ -134,8 +140,10 @@ rgbSpectrum = (rgbSpectrum + grayLevel);
 rgbSpectrum = rgbSpectrum/max(rgbSpectrum(:));
 
 % Here is a plot of the RGB values scaled to be in range
-figure 
-plot(rgbSpectrum), grid on
+figure; 
+plot(rgbSpectrum); grid on
+xlabel('Wavelength (nm)');
+ylabel('Linear RGB values (scaled and normalized)');
 
 %% Display the RGB values.
 % Now, we correct for the display nonlinearities by presuming that we know
@@ -145,39 +153,40 @@ plot(rgbSpectrum), grid on
 %
 % Here is the function we use to convert the linear values in rgb to the
 % frame buffer (DAC) values. The call to displayGet returns a table of the
-% non-linearity, and the function ieLUTLinear inverts it to provide the
-% desired DAC values.
-gTable = displayGet(d,'gamma table');
-DAC = ieLUTLinear(rgbSpectrum, ieLUTInvert(gTable));
-
-%% GOT TO HERE.  NEED TO FIGURE OUT HOW ISETBIO INVERTS A DISPLAY LUT AND GET THE SCALE RIGHT.  -DHB
-
-%% Create image for display
-waveSamp = 1:2:361;
-mp = DAC(waveSamp,:);
-wavelengths = 360 + waveSamp;
-
-% Create a linear ramp to show the color map values.
-im = 1:size(DAC,1);
-mp = DAC/max(DAC(:));
-figure;
-colormap(mp);
-image(im);
-image(DAC)
-
-% and show 'em
-% 
-
-
-% Notice that the color start to fade towards the end.  Why do you think
-% that is?  Try varying some of the choices I made, such as the scaleFactor
-% and the intensity of the gray background.
+% non-linearity, and the function ieLUTInvert inverts it to provide the
+% inverse table, which is then used by ieLUTLinear to get the desired DAC
+% values.
+%
+% ieLUTLinear assumes a bit depth derived from the length of the table it is passed,
+% and this length in turn may be set by passing a bit depth argument to ieLUTInvert.
+% We normalize the DAC values to lie between 0 and 1, because that is what the image
+% show routines in Matlab want.
+bitDepth = 10;
+gammaTable = displayGet(d,'gamma table');
+invGammaTable = ieLUTInvert(gammaTable,bitDepth);
+DAC = ieLUTLinear(rgbSpectrum,invGammaTable);
+normalizedDAC = DAC/2^bitDepth;
 
 % Here is a plot of the DAC values we ended up with.
 figure;
-plot(wavelengths, DAC(waveSamp,1),'-r',...
-    wavelengths, DAC(waveSamp,2),'-g',...
-    wavelengths,DAC(waveSamp,3),'-b')
+plot(wave, normalizedDAC(:,1),'-r',...
+    wave, normalizedDAC(:,2),'-g',...
+    wave, normalizedDAC(:,3),'-b');
+xlabel('Wavelength (nm)');
+ylabel('DAC values (normalized)');
+
+%% Create image for display, and show it
+%
+% We create a horizontal linear ramp as the image 
+% and then display it through a lookup table created
+% from the computed normalized DAC values.
+im = 1:size(DAC,1);
+mp = normalizedDAC;
+figure;
+colormap(mp);
+image(im);
+
+
 
 % Notice that the overall saturation is quite limited by one part of the
 % spectrum.  Perhaps if we didn't try to reproduce just that part of the
