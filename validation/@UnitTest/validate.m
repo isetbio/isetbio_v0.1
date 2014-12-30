@@ -299,6 +299,7 @@ function doFastValidation(obj, fastLocalGroundTruthHistoryDataFile, fastLocalVal
         end
     end
            
+
     if (~groundTruthFastValidationFailed)
         if (validationParams.updateValidationHistory)
             % save/append to LocalValidationHistoryDataFile

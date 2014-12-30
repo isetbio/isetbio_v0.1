@@ -43,6 +43,11 @@ classdef UnitTest < handle
         
         % struct with various info on the host computer configuration
         hostInfo;
+        
+        % the matfile class was introduced in 2011b.
+        % for compatibility with eariler versions of matlab
+        % set useMatfile = false.
+        useMatfile = false;
     end
     
     % Constant properties. These are the only properties that can be
