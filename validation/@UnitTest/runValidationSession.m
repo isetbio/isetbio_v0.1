@@ -39,7 +39,7 @@ function runValidationSession(vScriptsList, desiredMode)
 end
 
 function validateRunTimeErrors(vScriptsList)
-     % Instantiate a @UnitTest object
+    % Instantiate a @UnitTest object
     UnitTestOBJ = UnitTest();
         
     % Print the available validation options and their default values

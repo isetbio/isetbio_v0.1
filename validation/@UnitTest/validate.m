@@ -1,10 +1,10 @@
 % Main validation engine
 function validate(obj, vScriptsToRunList)
     
-    
-    
-    fprintf('\n------------------------------------------------------------------------------------------------------------\n');
-    fprintf('Running in ''%s'' mode with ''%s'' runtime hehavior and verbosity level = ''%s''.', obj.validationParams.type, obj.validationParams.onRunTimeError, UnitTest.validVerbosityLevels{obj.validationParams.verbosity+1});
+    if (obj.validationParams.verbosity > -1)
+        fprintf('\n------------------------------------------------------------------------------------------------------------\n');
+        fprintf('Running in ''%s'' mode with ''%s'' runtime hehavior and verbosity level = ''%s''.', obj.validationParams.type, obj.validationParams.onRunTimeError, UnitTest.validVerbosityLevels{obj.validationParams.verbosity+1});
+    end
     
     % Parse the scripts list to ensure it is valid
     obj.vScriptsList = obj.parseScriptsList(vScriptsToRunList);
@@ -12,7 +12,10 @@ function validate(obj, vScriptsToRunList)
     if (obj.validationParams.verbosity > 1) 
         fprintf('\nWill validate %d scripts.', numel(obj.vScriptsList)); 
     end
-    fprintf('\n------------------------------------------------------------------------------------------------------------\n');
+    
+    if (obj.validationParams.verbosity > -1)
+        fprintf('\n------------------------------------------------------------------------------------------------------------\n');
+    end
     
     % get validation params
     validationParams = obj.validationParams;
@@ -20,10 +23,13 @@ function validate(obj, vScriptsToRunList)
     %Ensure that needed directories exist, and generates them if they do not
     obj.checkDirectories();
     
-
+    % reset currentValidationSessionResults
+    obj.validationSessionRunTimeExceptions = [];
+    
     % Go through each entry
     scriptIndex = 0;
     abortValidationSession = false;
+    
     
     while (scriptIndex < numel(obj.vScriptsList)) && (~abortValidationSession)
         
@@ -137,6 +143,9 @@ function validate(obj, vScriptsToRunList)
         
         % Run the try-catch command and capture the output in T
         T = evalc(command); 
+        
+        % Update currentValidationSeesionResults
+        obj.validationSessionRunTimeExceptions(scriptIndex) = exceptionRaisedFlag;
         
         if (strcmp(validationParams.type, 'PUBLISH'))
             if (exceptionRaisedFlag)

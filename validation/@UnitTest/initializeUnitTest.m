@@ -16,7 +16,7 @@ function initializeUnitTest(obj)
     % initialize verbosity based on isetbioValidation prefs
     verbosity = getpref('isetbioValidation', 'verbosity');
     if (ismember(verbosity, UnitTest.validVerbosityLevels))
-       obj.validationParams.verbosity = find(strcmp(verbosity,UnitTest.validVerbosityLevels)==1)-1;
+       obj.validationParams.verbosity = find(strcmp(verbosity,UnitTest.validVerbosityLevels)==1)-2;
     else
        error('Verbosity level ''%s'', not recognized', verbosity); 
     end

@@ -17,6 +17,9 @@ classdef UnitTest < handle
         
         % Path to directory where all validation data will be stored
         validationDataDir;
+        
+        % results of current validation session
+        validationSessionRunTimeExceptions;
     end
     
     % Private properties
@@ -86,7 +89,7 @@ classdef UnitTest < handle
         
         validValidationTypes            = {'RUNTIME_ERRORS_ONLY', 'FAST', 'FULL', 'PUBLISH'};
         validOnRunTimeErrorValues       = {'rethrowExceptionAndAbort', 'catchExceptionAndContinue'};
-        validVerbosityLevels            = {'none', 'min', 'low', 'med', 'high', 'max'};
+        validVerbosityLevels            = {'absolute zero', 'none', 'min', 'low', 'med', 'high', 'max'};
         
         minFigureNoForMistmatchedData   = 10000;
         
