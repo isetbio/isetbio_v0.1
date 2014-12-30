@@ -1,8 +1,6 @@
 function validateDependencies
 
-    % save original path
-    originalPath = addpath('');
-    
+  
     % list of scripts to run for dependency checking
     % just a few
     vScriptsList = {...
@@ -11,8 +9,17 @@ function validateDependencies
     % or all of them
     %vScriptsList = validateListAllValidationDirs;
        
+    % List of non-native toolboxes to remove from path
+    nonNativeToolboxesToRemove = { ...
+        '/Users/Shared/Matlab/Toolboxes/Psychtoolbox-3' ...
+    };
+
+    % save original path
+    originalPath = addpath('');
+    
+    
     % determine the required (native) matlab toolboxes
-    requiredToolboxNames = testDependencies(vScriptsList);
+    requiredToolboxNames = testDependencies(vScriptsList, nonNativeToolboxesToRemove);
     
     % print results
     if (numel(requiredToolboxNames) > 1)
@@ -31,10 +38,14 @@ function validateDependencies
     path(originalPath);
 end
 
-function names = testDependencies(vScriptsList)
+function names = testDependencies(vScriptsList, nonNativeToolboxesToRemove)
 
     UnitTest.setPref('verbosity', 'absolute zero');
 
+    for k = 1:numel(nonNativeToolboxesToRemove)
+        removeNonNativeToolboxes(nonNativeToolboxesToRemove{k});
+    end
+    
     s = getListOfInstalledToolboxes(0);
     
     % turn off warnings for dirs not found
@@ -166,4 +177,27 @@ function s = getListOfInstalledToolboxes(beVerbose)
     end
     
 end
+
+% Method to remove all non-native Matlab toolboxes from the current path
+function removeNonNativeToolboxes(toolboxPath)
+    fprintf('\nRemoving non-native toolboxes (%s). Be patient ...', toolboxPath);
+    
+    % turn off warnings for dirs not found
+    warning off MATLAB:rmpath:DirNotFound
+    
+    % remove paths
+    rmpath(genpath(toolboxPath));
+    
+%     pathAsCellArray = strread(genpath(toolboxPath),'%s','delimiter', pathsep);
+%     for k = 1:numel(pathAsCellArray)
+%             rmpath(pathAsCellArray{k});
+%     end
+    
+    addpath('/Users/Shared/Matlab/Toolboxes/BrainardLabToolbox/PathUtilities');
+    
+    % turn on warnings for dirs not found
+    warning on MATLAB:rmpath:DirNotFound
+    fprintf(' Done.\n');
+end
+
 
