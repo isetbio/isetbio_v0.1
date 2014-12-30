@@ -4,14 +4,14 @@ function validateDependencies
     % list of scripts to run for dependency checking
     % just a few
     vScriptsList = {...
-           {'v_sceneExamples'} ...
+           {'v_IrradianceIsomerizations'} ...
            };
     % or all of them
     %vScriptsList = validateListAllValidationDirs;
        
-    % List of non-native toolboxes to remove from path
-    nonNativeToolboxesToRemove = { ...
-        '/Users/Shared/Matlab/Toolboxes/Psychtoolbox-3' ...
+    % List of non-native toolboxes to test dependency on
+    nonNativeToolboxesToTest = { ...
+        'Users/Shared/Matlab/Toolboxes/Psychtoolbox-3/' ...
     };
 
     % save original path
@@ -19,7 +19,7 @@ function validateDependencies
     
     
     % determine the required (native) matlab toolboxes
-    requiredToolboxNames = testDependencies(vScriptsList, nonNativeToolboxesToRemove);
+    requiredToolboxNames = testDependencies(vScriptsList, nonNativeToolboxesToTest);
     
     % print results
     if (numel(requiredToolboxNames) > 1)
@@ -38,29 +38,46 @@ function validateDependencies
     path(originalPath);
 end
 
-function names = testDependencies(vScriptsList, nonNativeToolboxesToRemove)
+function names = testDependencies(vScriptsList, nonNativeToolboxesToTest)
 
     UnitTest.setPref('verbosity', 'absolute zero');
 
-    for k = 1:numel(nonNativeToolboxesToRemove)
-        removeNonNativeToolboxes(nonNativeToolboxesToRemove{k});
+    requiredToolboxesList = struct();
+    requiredToolboxesList.toolboxNames = {};
+    requiredToolboxesList.tooboxLocalDirs = {};
+    
+    % First, the non-native toolboxes
+    for k = 1:numel(nonNativeToolboxesToTest)
+        fprintf('\n [%2d] Running scripts without the %s toolbox. Please wait ... ', k, nonNativeToolboxesToTest{k});
+        rmpath(genpath(nonNativeToolboxesToTest{k}));
+        
+        exeptionsRaised = checkForRunTimeErrors(vScriptsList);
+        if (exeptionsRaised)
+           message = sprintf(' %s is required.', nonNativeToolboxesToTest{k});
+           fprintf(2, '%60s', message);
+           ix = numel(requiredToolboxesList.toolboxNames)+1;
+           requiredToolboxesList.toolboxNames{ix} = nonNativeToolboxesToTest{k};
+           requiredToolboxesList.tooboxLocalDirs{ix} = nonNativeToolboxesToTest{k};
+           addpath(genpath(requiredToolboxesList.tooboxLocalDirs{ix}));
+        else
+           message = sprintf(' %s is not required.', nonNativeToolboxesToTest{k});
+           fprintf('%60s', message);
+        end
+       
     end
     
+    
+    % Then, the native toolboxes
     s = getListOfInstalledToolboxes(0);
     
     % turn off warnings for dirs not found
     warning off MATLAB:rmpath:DirNotFound
     
-    requiredToolboxesList = struct();
-    requiredToolboxesList.toolboxNames = {};
-    requiredToolboxesList.tooboxLocalDirs = {};
-    
-    fprintf('\n There are %d toolboxes installed. Checking dependency on each one of them.\n', numel(s.tooboxLocalDirs));
+    fprintf('\n There are %d native toolboxes installed. Checking dependency on each one of them.\n', numel(s.tooboxLocalDirs));
     % Remove paths to all installed native toolboxes
     for k = 1:numel(s.tooboxLocalDirs)
-        fprintf('\n [%2d] Running scripts without the %s. Please wait ... ', k, s.toolboxNames{k});
-        rmpath(genpath(s.tooboxLocalDirs{k}));
-        
+       fprintf('\n [%2d] Running scripts without the %s. Please wait ... ', k, s.toolboxNames{k});
+       rmpath(genpath(s.tooboxLocalDirs{k}));
         
        exeptionsRaised = checkForRunTimeErrors(vScriptsList);
        if (exeptionsRaised)
