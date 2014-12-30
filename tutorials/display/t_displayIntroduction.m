@@ -1,6 +1,6 @@
 %% t_displayIntroduction
 %
-% Introduction to ISETBIO objects and functions:  display
+% Introduction to ISETBIO objects and functions: display
 %
 %  (HJ) ISETBIO TEAM
 
@@ -41,7 +41,7 @@ displayGet(d,'dpi')
 %  plot for display primaries spd, gamma table, etc.
 %
 %  More plot options can be found in displayPlot
-displayPlot(d, 'spd'); % spectral power distribution
+displayPlot(d, 'spd');   % spectral power distribution
 displayPlot(d, 'gamma'); % gamma table
 displayPlot(d, 'gamut');
 
@@ -53,7 +53,6 @@ displayPlot(d, 'gamut');
 %    ISETBIO_ROOT_PATH/isettools/data/images/rgb/
 I = im2double(imread('eagle.jpg'));
 scene = sceneFromFile(I, 'rgb', [], d);  % The display is included here
-
 vcAddObject(scene); sceneWindow;
 
 % Note that by default the spectral power distribution of the scene is

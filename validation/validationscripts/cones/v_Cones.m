@@ -1,10 +1,18 @@
 function varargout = v_Cones(varargin)
 %
-% Test cone, lens and macular function calls.
+% Test cone, lens and macular function calls.  Compare against PTB answers.
+%
+% See also v_IrradianceIsomerizations.
 %
 % Issues:
 %
-% 1) It would be clever to compare each piece to what PTB returns.
+% 1) It might be nice to test some sets as well as gets, and show how to
+% take a customized set of parameters from PTB and get these parameters to
+% show up in the isetbio structure.
+%
+% 2) Somewhere we should explain what units of retinal irradiance the
+% quantal efficiencies expect, and figure out how on earth these match the
+% PTB given that we didn't do any work to match the inner segment diameter.
 %
 % ISETBIO Team Copyright 2013-14
 

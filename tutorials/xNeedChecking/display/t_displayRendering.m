@@ -1,4 +1,5 @@
-%t_Rendering
+%% t_Rendering
+%
 % Review of rendering images on a display
 % 
 % Class:     Psych 221/EE 362
