@@ -1,4 +1,4 @@
-%% s_display2Scene
+%% t_display2Scene
 %
 % Convert an RGB image on a display into a radiometric scene (sceneWindow).
 %
@@ -7,8 +7,8 @@
 %
 % (BW) ISETBIO Team, May 2014
 
-%% 
-ieInit
+%% Initialize
+ieInit;
 
 %% Create a small test radiometric scene
 imSize = [32,32]; 
@@ -19,7 +19,7 @@ d = displayCreate('LCD-Apple');
 d = displaySet(d,'wave',sceneGet(scene,'wave'));
 
 %% Calculate display radiometric image
-
+%
 % Get the scene 'rgb' image and calculate an upsampled version for the
 % display. The upsampling is how many spatial samples per pixel
 fprintf('Spatial upsampling per pixel: %i\n',displayGet(d, 'over sample'))
@@ -37,7 +37,7 @@ p = Energy2Quanta(wave,energy);
 scene = sceneSet(scene,'cphotons',p);   % Compressed photons
 
 %% Adjust the scene to match the display resolution
-
+%
 % Adjust luminance to maximum Y value of display, but divided by 2 because
 % half the scene is black
 wp = displayGet(d,'white point');
@@ -58,7 +58,7 @@ sceneWindow;
 
 
 %%  Render the scene through human optics onto the cone photoreceptor mosaic
-
+%
 % Human optics
 oi = oiCreate('human');
 oi = oiCompute(oi,scene); 
