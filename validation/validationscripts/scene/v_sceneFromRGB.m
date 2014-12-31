@@ -1,11 +1,11 @@
 function varargout = v_sceneFromRGB(varargin)
+% Test how isetbio creates a scene from an rgb data using sceneFromFile
 %
-% Illustrates and test how isetbio can create a scene from an rgb data file using the sceneFromFile function.
-%
-% Functiion sceneFromFile uses 1) the rgb data and the spectral power distributions
-% (spds) of the display color primaries to calculate the spectral radiance
-% of the displayed image, and 2) the spectral power distribution of
-% the display white point as an estimate of the scene illuminant.
+% Function sceneFromFile uses 1) the rgb data and the spectral power
+% distributions (spds) of the display color primaries to calculate the
+% spectral radiance of the displayed image, and 2) the spectral power
+% distribution of the display white point as an estimate of the scene
+% illuminant.
 %
 % Notes about the method
 %     If we have display calibration data, we can accurately predict the
@@ -32,7 +32,7 @@ end
 function ValidationFunction(runTimeParams)%% s_sceneFromRGB
 
     %% Initialize
-    s_initISET
+    ieInit
 
     %% Load display calibration data
     displayCalFile = 'LCD-Apple.mat';
