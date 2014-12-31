@@ -13,7 +13,6 @@
 % 12/29/14  dhb  Updated for isetbio, and cleaned a bit.
 
 %% Initialize
-clear; close all;
 s_initISET;
 
 %% Get display primaries
@@ -21,13 +20,14 @@ s_initISET;
 % Let's suppose that we know the spectral power distributions of your
 % monitor's primaries.  For this example, we will use the SPDs for a sample
 % display description provided with isetbio.
+wave = 400:5:700;
 displayCalFile = 'LCD-Apple.mat';
-d = displayCreate(displayCalFile);
+d = displayCreate(displayCalFile, wave);
 wave = displayGet(d,'wave');
 primaries = displayGet(d,'spd primaries');
 
 % Here is a plot of the primaries.
-figure;
+vcNewGraphWin;
 plot(wave,primaries(:,1),'r', ...
     wave,primaries(:,2),'g', ...
     wave,primaries(:,3),'b');
@@ -63,7 +63,7 @@ xyz2rgb = inv(rgb2xyz)
 % Remember that the XYZ values of each spectral light are contained in the
 % rows of the XYZ matrix.  So, we need only to multiply the two matrices as
 % in:
-rgbSpectrum = xyz2rgb*XYZ';
+rgbSpectrum = xyz2rgb*XYZ'; %#ok<MINV>
 
 % This calculation would produce the rgbSpectrum for monochrome lights of
 % equal energy.  But, equal energy monochrome lights do not appear equally
@@ -92,7 +92,7 @@ rgbSpectrum = rgbSpectrum';
 
 % Here is a plot of the scale factors used to make the brightness of the
 % wavelengths more nearly equal.
-figure;
+vcNewGraphWin;
 plot(wave,scaleFactors,'k')
 set(gca,'ylim',[0 2]), grid on
 xlabel('Wavelength (nm)');
@@ -102,7 +102,7 @@ ylabel('Normalizing factors');
 % individual wavelengths when they are presented at approximately equal brightness.
 % The horizontal axis shows wavelength and the three colored curves show
 % the linear intensity values needed for the primaries.
-figure;
+vcNewGraphWin;
 plot(wave,rgbSpectrum(:,1),'r', ...
     wave,rgbSpectrum(:,2),'g', ...
     wave,rgbSpectrum(:,3),'b')
@@ -111,6 +111,7 @@ xlabel('Wavelength (nm)');
 ylabel('Linear RGB values (scaled)');
 
 %% Those pesky negative values
+
 % As you can see in the figure, some of the RGB values are negative.  These
 % are called "out of gamut" and cannot be displayed precisely.  There is no
 % getting around this problem either for this example or in many real world
@@ -121,9 +122,9 @@ ylabel('Linear RGB values (scaled)');
 % field.
 %
 % There are many different suggestions (hacks) that people use to overcome
-% the basic physical limitation of displays.  For our purposes, we can use
-% a fairly simple compromise -- some of you may like it, others may not.
-% That is the nature of this business.
+% the physical limitation of displays.  For our purposes, we can use a
+% fairly simple compromise -- some of you may like it, others may not. That
+% is the nature of this business.
 %
 % We can display these rgb values superimposed on a constant gray
 % background.  By superimposing the spectrum on a constant background, we
@@ -140,12 +141,13 @@ rgbSpectrum = (rgbSpectrum + grayLevel);
 rgbSpectrum = rgbSpectrum/max(rgbSpectrum(:));
 
 % Here is a plot of the RGB values scaled to be in range
-figure; 
+vcNewGraphWin; 
 plot(rgbSpectrum); grid on
 xlabel('Wavelength (nm)');
 ylabel('Linear RGB values (scaled and normalized)');
 
-%% Display the RGB values.
+%% Display the RGB values
+
 % Now, we correct for the display nonlinearities by presuming that we know
 % something (which we don't) about your display. Here is the display gamma
 % function relating a standard monitor frame buffer entries to the display
@@ -157,18 +159,18 @@ ylabel('Linear RGB values (scaled and normalized)');
 % inverse table, which is then used by ieLUTLinear to get the desired DAC
 % values.
 %
-% ieLUTLinear assumes a bit depth derived from the length of the table it is passed,
-% and this length in turn may be set by passing a bit depth argument to ieLUTInvert.
-% We normalize the DAC values to lie between 0 and 1, because that is what the image
-% show routines in Matlab want.
-bitDepth = 10;
-gammaTable = displayGet(d,'gamma table');
+% ieLUTLinear assumes a bit depth derived from the length of the table it
+% is passed, and this length in turn may be set by passing a bit depth
+% argument to ieLUTInvert. We normalize the DAC values to lie between 0 and
+% 1, because that is what the image show routines in Matlab want.
+bitDepth      = 10;
+gammaTable    = displayGet(d,'gamma table');
 invGammaTable = ieLUTInvert(gammaTable,bitDepth);
-DAC = ieLUTLinear(rgbSpectrum,invGammaTable);
-normalizedDAC = DAC/2^bitDepth;
+DAC           = ieLUTLinear(rgbSpectrum,invGammaTable);
+normalizedDAC = DAC/(2^bitDepth);
 
 % Here is a plot of the DAC values we ended up with.
-figure;
+vcNewGraphWin;
 plot(wave, normalizedDAC(:,1),'-r',...
     wave, normalizedDAC(:,2),'-g',...
     wave, normalizedDAC(:,3),'-b');
@@ -177,18 +179,20 @@ ylabel('DAC values (normalized)');
 
 %% Create image for display, and show it
 %
-% We create a horizontal linear ramp as the image 
-% and then display it through a lookup table created
-% from the computed normalized DAC values.
-im = 1:size(DAC,1);
-mp = normalizedDAC;
-figure;
+% We create a horizontal linear ramp as the image. Each x-value corresponds
+% to a single wavelength. We then use the lookup table created for each of
+% the wavelength values (computed normalized DAC) to show the appearance of
+% the spectrum.
+im = 1:size(DAC,1);  % One for each wave/DAC value
+mp = normalizedDAC;  % The DAC values for each wavelength
+
+vcNewGraphWin;
+image(wave,1,im);
 colormap(mp);
-image(im);
+xlabel('Wavelength (nm)');
+set(gca,'ytickLabel','');
 
-
-
-% Notice that the overall saturation is quite limited by one part of the
+% Notice that the overall saturation is limited by one part of the
 % spectrum.  Perhaps if we didn't try to reproduce just that part of the
 % image, or we adjusted just that part, we could obtain a more saturated
 % overall appearance. Again, a design decision.
