@@ -9,9 +9,10 @@
 %
 % Copyright ImagEval Consultants, LLC, 2009.
 
-%% The Gretag/Macbeth ColorChecker reflectance spectra
+%% Init
+s_initISET;
 
-% Read
+%% The Gretag/Macbeth ColorChecker reflectance spectra
 wave = 400:10:700;    % nanometers
 macbethReflectance = macbethReadReflectance(wave);
 
@@ -22,10 +23,10 @@ set(p,'linewidth',1);
 t = xlabel('Wavelength (nm)'); set(t,'fontname','Georgia')
 t = ylabel('Reflectance'); set(t,'fontname','Georgia')
 grid on
+title('Macbeth Color Checker Reflectances');
 
 %% We can obtain an SVD linear model decomposition from the spectra
 %
-
 % Build the linear model using the singular value decomposition
 [U S V] = svd(macbethReflectance);
 
@@ -40,18 +41,20 @@ grid on
 % positive than negative, on balance.  
 if sum(U(:,1)) < 0, U = -1*U; end
 
+% Plot the basis functions
 vcNewGraphWin;
 for ii=1:4
     subplot(2,2,ii)
     p = plot(wave,U(:,ii)); set(p,'linewidth',2)
     grid on;
+    ylim([-0.4 0.4]);
+    title(sprintf('Basis function %d',ii));
 end
 subplot(2,2,1)
 t = xlabel('Wavelength (nm)'); set(t,'fontname','Georgia')
 t = ylabel('Reflectance'); set(t,'fontname','Georgia')
 
 %% These graphis illustrate different approximations
-
 [U S V] = svd(macbethReflectance);
 W = S*V';
 hdl = vcNewGraphWin;
@@ -63,20 +66,20 @@ for nDims=1:3
     set(gca,'fontName','Georgia')
     grid on
     set(gca,'ylim',[-0.2 1.2])
+    title(sprintf('N = %d',nDims));
 end
-
 subplot(2,2,4)
 plot(wave,macbethReflectance);
 set(gca,'ylim',[-0.2 1.2])
 grid on
 set(gca,'fontName','Georgia')
+title('Full Spectra');
 
 subplot(2,2,1)
 t = xlabel('Wavelength (nm)'); set(t,'fontname','Georgia')
 t = ylabel('Reflectance'); set(t,'fontname','Georgia')
 
 %% Load XYZ nad choose a light for the rendering experiments
-
 XYZ = ieReadSpectra('XYZ',wave);
 lgt = ieReadSpectra('D65',wave);  
 
@@ -88,12 +91,10 @@ lgt = ieReadSpectra('D65',wave);
 % lgt  = ieReadSpectra('Fluorescent11',wave);
 
 %% Render the lower dimensional images for that light
-
 [U S V] = svd(macbethReflectance);
 W = S*V';
 vcNewGraphWin; 
 for nDims= 1:4  %5:8 %
-
     list = 1:nDims;
     
     % Render for this light, nDims, and set peak Y to 100
@@ -105,7 +106,7 @@ for nDims= 1:4  %5:8 %
     imRGB = imageFlip(imRGB,'updown');
     imRGB = imageFlip(imRGB,'leftright');
 
-    % 
+    % Show
     subplot(3,2,nDims)
     imagesc(imRGB); axis image
     set(gca,'xtick',[],'ytick',[])

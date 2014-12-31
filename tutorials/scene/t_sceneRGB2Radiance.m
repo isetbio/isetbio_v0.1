@@ -1,4 +1,4 @@
-%% t_sceneRGB2RadianceMap
+%% t_sceneRGB2Radiance
 %    
 % Tutorial for how to generate ISET scene for any given bitmap
 %
@@ -25,19 +25,19 @@ if ~exist(dispOLEDFile,'file'), error('OLED Display file not found.'); end
 if ~exist(dispLCDFile,'file'), error('LCDDisplay file not found.'); end
 if ~exist(dispCRTFile,'file'), error('CRTDisplay file not found.'); end
 
-%%  Create scene from file
+%% Create scene from file
 % Scene on OLED
 % The illuminant is set to be the white point of the monitor
 sceneA = sceneFromFile(imgFileName,'rgb',[],dispOLEDFile);
 sceneA = sceneSet(sceneA,'name','Scene on OLED');
 vcAddAndSelectObject(sceneA); sceneWindow;
 
-%%  Scene on LCD
+%% Scene on LCD
 sceneB = sceneFromFile(imgFileName,'rgb',[],dispLCDFile);
 sceneB = sceneSet(sceneB,'name','Scene on LCD');
 vcAddAndSelectObject('scene',sceneB); sceneWindow;
 
-%%  Scene on CRT
+%% Scene on CRT
 sceneC = sceneFromFile(imgFileName,'rgb',[],dispCRTFile);
 sceneC = sceneSet(sceneC,'name','Scene on CRT');
 vcAddAndSelectObject('scene',sceneC); sceneWindow;
