@@ -1,10 +1,15 @@
 % Method to import a ground truth data entry
 function [validationData, extraData, validationTime, hostInfo] = importGroundTruthData(obj, dataFileName)
-    % create a MAT-file object for read access
-    matOBJ = matfile(dataFileName);
     
-    % get current variables
-    varList = who(matOBJ);
+    if (obj.useMatfile)
+        % create a MAT-file object for read access
+        matOBJ = matfile(dataFileName);
+
+        % get current variables
+        varList = who(matOBJ);
+    else
+        varList = who('-file', dataFileName);
+    end
     
     if (obj.validationParams.verbosity > 3) 
         if (length(varList) == 1)
@@ -16,8 +21,13 @@ function [validationData, extraData, validationTime, hostInfo] = importGroundTru
     
     % get latest validation data entry
     validationDataParamName = sprintf('run%05d', length(varList));
-    eval(sprintf('runData = matOBJ.%s;', validationDataParamName));
     
+    if (obj.useMatfile)
+        eval(sprintf('runData = matOBJ.%s;', validationDataParamName));
+    else
+        eval(sprintf('load(''%s'', ''%s'');',dataFileName, validationDataParamName));
+        eval(sprintf('runData = %s;', validationDataParamName));
+    end
     % return the validationData and time
     hostInfo        = runData.hostInfo;
     validationTime  = runData.validationTime;

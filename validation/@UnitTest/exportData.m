@@ -5,15 +5,28 @@ function exportData(obj, dataFileName, validationData, extraData)
     runData.validationTime        = datestr(now);
     runData.hostInfo              = obj.hostInfo;
     
-    % create a MAT-file object for write access
-    matOBJ = matfile(dataFileName, 'Writable', true);
+    if (obj.useMatfile)
+        % create a MAT-file object for write access
+        matOBJ = matfile(dataFileName, 'Writable', true);
+
+        % get current variables
+        varList = who(matOBJ);
+
+        % add new variable with new validation data
+        validationDataParamName = sprintf('run%05d', length(varList)+1);
+        eval(sprintf('matOBJ.%s = runData;', validationDataParamName));
+    else
+        varList = who('-file', dataFileName);
+        validationDataParamName = sprintf('run%05d', length(varList)+1);
+        eval(sprintf('%s = runData;', validationDataParamName));
+        if (length(varList) == 0)
+            eval(sprintf('save(''%s'', ''%s'');',dataFileName, validationDataParamName));
+        else
+            eval(sprintf('save(''%s'', ''%s'', ''-append'');',dataFileName, validationDataParamName));
+            %save(dataFileName, validationDataParamName, '-append');
+        end
+    end
     
-    % get current variables
-    varList = who(matOBJ);
-    
-    % add new variable with new validation data
-    validationDataParamName = sprintf('run%05d', length(varList)+1);
-    eval(sprintf('matOBJ.%s = runData;', validationDataParamName));
     if (obj.validationParams.verbosity > 3) 
         if (length(varList)+1 == 1)
             fprintf('\tFull validation file : now contains %d instance of historical data.\n', length(varList)+1);

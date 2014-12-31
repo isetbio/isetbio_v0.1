@@ -17,6 +17,9 @@ classdef UnitTest < handle
         
         % Path to directory where all validation data will be stored
         validationDataDir;
+        
+        % results of current validation session
+        validationSessionRunTimeExceptions;
     end
     
     % Private properties
@@ -43,6 +46,11 @@ classdef UnitTest < handle
         
         % struct with various info on the host computer configuration
         hostInfo;
+        
+        % the matfile class was introduced in 2011b.
+        % for compatibility with eariler versions of matlab
+        % set useMatfile = false.
+        useMatfile = false;
     end
     
     % Constant properties. These are the only properties that can be
@@ -81,7 +89,7 @@ classdef UnitTest < handle
         
         validValidationTypes            = {'RUNTIME_ERRORS_ONLY', 'FAST', 'FULL', 'PUBLISH'};
         validOnRunTimeErrorValues       = {'rethrowExceptionAndAbort', 'catchExceptionAndContinue'};
-        validVerbosityLevels            = {'none', 'min', 'low', 'med', 'high', 'max'};
+        validVerbosityLevels            = {'absolute zero', 'none', 'min', 'low', 'med', 'high', 'max'};
         
         minFigureNoForMistmatchedData   = 10000;
         

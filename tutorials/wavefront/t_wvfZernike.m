@@ -42,12 +42,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % GENERAL
-%   This should be separated in several shorter tutorials.
 %
 % NOTES
-%   a) Add and call a pathdef file which includes the wavefront toolbox?
-%   See function AiryPattern in PTB, or perhaps function airy that comes
-%   with Matlab.
+%   a) This might usefully be separated in several shorter tutorials.
 %
 %   b) Introduce notion of a figure of merit for quality of PSF, and
 %   compute some explicitly for various cases considered.
@@ -56,7 +53,6 @@
 %   not occur when nominal defocus wl matches the calculated wavelength is
 %   not considered here, but can be quite important when thinking about
 %   real optical quality.
-%
 
 %% Zernike polynomials
 %
@@ -99,7 +95,7 @@
 %% Initialize
 s_initISET;
 
-% The tutorial only uses 1 wavelength at a time. So, for plotting, we use
+%% The tutorial only uses 1 wavelength at a time. So, for plotting, we use
 % this index.
 waveIdx = 1;
 maxMM = 2;
@@ -107,7 +103,7 @@ maxUM = 20;
 pupilfuncrangeMM = 5;
 
 %% Use Zernike polynomials to specify a diffraction limited PSF.
-
+%
 % Use wvfCreate to create a wavefront variable to explore with.
 %
 % This wavefront by default has the 0's for all zernike coeffs
@@ -128,7 +124,7 @@ wvfPrint(wvf0);
 % is representing the diffraction-limited PSF obtained when the Zernike
 % coefficients are all zero.
 wvf0 = wvfComputePSF(wvf0);
-wList = wvfGet(wvf0,'wave');
+wList = wvfGet(wvf0,'calc wave');
 wvfPlot(wvf0,'2dpsf space normalized','um',wList,maxUM);
 
 %% Examine how the first non-zero Zernike coefficient contributes to the PSF.
@@ -152,7 +148,7 @@ oblique_astig = 0.75;
 wvf3 = wvfSet(wvf0,'zcoeffs',oblique_astig,{'oblique_astigmatism'});
 wvfGet(wvf3,'zcoeffs',3)
 
-% Look at the pupil function for astigmatism with axis at 45 degrees.
+%% Look at the pupil function for astigmatism with axis at 45 degrees.
 %
 % We have used wvfComputePupilFunction separately here, but it is actually also
 % contained within wvfComputePSF, which we will use from now on.
@@ -295,7 +291,7 @@ wvf2 = wvfComputePSF(wvf2);
 [udataS, pData] = wvfPlot(wvf2,'1dpsf space normalized','mm',wList,maxMM,'no window');
 set(pData,'color','b','linewidth',2);
 
-%%  How cone geometry affects the PSF: the Stiles-Crawford effect (SCE)
+%% How cone geometry affects the PSF: the Stiles-Crawford effect (SCE)
 %
 % The cones that line our retinas are tall rod-shaped cells. They act like
 % waveguides, such that rays parallel to their long axis excite the photoreceptors
@@ -334,7 +330,7 @@ wvfPlot(wvf0,'1d psf space','mm',[],maxMM,'no window');
 % Compare the diffraction-limited PSF without SCE to the one with SCE. What
 % are the differences? Is the amplitude different? Why? Is the width of the
 % PSF different? Why?
-wvf0SCE = wvfSet(wvf0,'sceParams',sceCreate(wvfGet(wvf0,'wave'),'berendschot_data'));
+wvf0SCE = wvfSet(wvf0,'sceParams',sceCreate(wvfGet(wvf0,'calc wave'),'berendschot_data'));
 wvf0SCE = wvfComputePSF(wvf0SCE);
 vcNewGraphWin;
 subplot(2,2,1);
@@ -366,7 +362,7 @@ wvfPlot(wvf5,'1d psf space','mm',[],maxMM,'no window');
 % Compare the two aberrated PSFs. How do their peak amplitudes compare?
 % How do their widths compare? How did the symmetry of the PSF change?
 % Which PSF would create a "better image" on the retina?
-wvf5SCE = wvfSet(wvf5,'sceParams',sceCreate(wvfGet(wvf5,'wave'),'berendschot_data'));
+wvf5SCE = wvfSet(wvf5,'sceParams',sceCreate(wvfGet(wvf5,'calc wave'),'berendschot_data'));
 wvf5SCE = wvfComputePSF(wvf5SCE);
 vcNewGraphWin;
 subplot(2,2,1);
@@ -404,7 +400,7 @@ nRows = ceil(sqrt(nSubjects));
 nCols = ceil(nSubjects/nRows);
 
 % Stiles Crawford
-wvfHuman0 = wvfSet(wvfHuman0,'sceParams',sceCreate(wvfGet(wvfHuman0,'wave'),'berendschot_data'));
+wvfHuman0 = wvfSet(wvfHuman0,'sceParams',sceCreate(wvfGet(wvfHuman0,'calc wave'),'berendschot_data'));
 
 % Plot subject PSFs, one by one
 for ii = 1:nSubjects

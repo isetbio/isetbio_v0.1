@@ -1,16 +1,15 @@
-% v_wvfAstigmatism
+%% t_wvfAstigmatism
 %
-% Compute the PSF for various astigmatism and blur levels.  This
-% illustrates the effect of Zernicke coefficients 4 and 5
+% Compute the wavefront-based PSF for various astigmatism and blur levels.
 %
-% See also:  v_wvfDiffractionPSF, v_wvfWaveDefocus
+% This illustrates the effect of Zernicke coefficients 4 and 5.
 %
 % (c) Wavefront Toolbox Team, 2012
 
 %% Initialize and set parameters
-s_initISET
+s_initISET;
 
-% Ranges for plotting
+%% Ranges for plotting
 maxMIN = 2;
 maxMM  = 1;
 maxUM  = 20;
@@ -24,9 +23,11 @@ z4 = -0.5:0.5:0.5; z5 = -0.5:0.5:0.5;
 Zvals = [Z4(:), Z5(:)];
 
 %% Alter defocus and astigmatism
+%
 % Make a plot of the psf for each case.
-vcNewGraphWin;
-wList = wvfGet(wvfParams,'wave');
+h = vcNewGraphWin;
+set(h,'Position',[0.5 0.5 0.45 0.45]);
+wList = wvfGet(wvfParams,'calc wave');
 for ii=1:size(Zvals,1)
     wvfParams = wvfSet(wvfParams,'zcoeffs',Zvals(ii,:),{'defocus' 'vertical_astigmatism'});
     wvfParams = wvfComputePSF(wvfParams);
@@ -37,6 +38,8 @@ for ii=1:size(Zvals,1)
     wvfPlot(wvfParams,'2d psf space','um',wList,maxUM,'nowindow');
     title(sprintf('Defocus = %.1f Astig == %.1f\n',Zvals(ii,1),Zvals(ii,2)));
 end
+
+%% End
 
 
 
