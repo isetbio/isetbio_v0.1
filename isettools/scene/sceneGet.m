@@ -129,6 +129,11 @@ if ~exist('parm','var') || isempty(parm), error('Parameter must be defined.'); e
 % Default is empty when the parameter is not yet defined.
 val = [];
 
+% Why are we allowing empty scenes now?  validateFastAll doesn't run if we
+% don't allow them.  I catch that case here and return with val empty.  If
+% we don't catch the case here, closing windows becomes a problem. (BW).
+if isempty(scene), return; end
+
 parm = ieParamFormat(parm);
 
 switch parm
