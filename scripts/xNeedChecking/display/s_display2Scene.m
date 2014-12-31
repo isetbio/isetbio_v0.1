@@ -1,26 +1,31 @@
 %% s_display2Scene
 %
-% Convert a display image into an ISET scene
+% Convert an RGB image on a display into a radiometric scene (sceneWindow).
 %
-% HJ is updating the display structure calls to account for display point
-% spread functions.  The purpose of the updated structures is to allow us
-% to have more spatially accurate descriptions of the display spectral
-% radiance.
+% Then, render the scene through the human optics on to a human cone
+% photoreceptor array.
 %
-% (BW) May 2014
+% (BW) ISETBIO Team, May 2014
 
 %% 
-s_initISET
+ieInit
 
-%% Create a scene
-imSize = [32,32]; scene = sceneCreate('slanted bar',imSize);
+%% Create a small test radiometric scene
+imSize = [32,32]; 
+scene = sceneCreate('slanted edge',imSize);
 
 %% Initialize a display
-d  = displayCreate('LCD-Apple');
+d = displayCreate('LCD-Apple');
 d = displaySet(d,'wave',sceneGet(scene,'wave'));
 
-%% Compute the high resolution display image
+%% Calculate display radiometric image
+
+% Get the scene 'rgb' image and calculate an upsampled version for the
+% display. The upsampling is how many spatial samples per pixel
+fprintf('Spatial upsampling per pixel: %i\n',displayGet(d, 'over sample'))
 dRGB       = displayCompute(d, sceneGet(scene,'rgb'));
+
+% Convert the rgb into a form that lends itself for spectral calculations
 [dRGB,r,c] = RGB2XWFormat(dRGB);
 spd  = displayGet(d,'spd');
 wave = displayGet(d,'wave');
@@ -30,7 +35,6 @@ energy = dRGB*spd';
 energy = XW2RGBFormat(energy,r,c);
 p = Energy2Quanta(wave,energy);
 scene = sceneSet(scene,'cphotons',p);   % Compressed photons
-% vcAddObject(scene); sceneWindow;
 
 %% Adjust the scene to match the display resolution
 
@@ -48,12 +52,12 @@ sceneWidth = dpi2mperdot(dpi,'meters')*imSize(2);
 fov = rad2deg(atan2(sceneWidth,dist));
 scene = sceneSet(scene,'fov',fov);
 
-% Show it
+% Show the upsampled radiometric scene.
 vcAddObject(scene);
 sceneWindow;
 
 
-%%  Render the display on the cone photoreceptor mosaic
+%%  Render the scene through human optics onto the cone photoreceptor mosaic
 
 % Human optics
 oi = oiCreate('human');

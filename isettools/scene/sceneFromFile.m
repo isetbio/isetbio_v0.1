@@ -85,9 +85,7 @@ switch lower(imType)
         elseif isstruct(dispCal) && isequal(dispCal.type, 'display'),
             d = dispCal;
         end
-        
-        wave  = displayGet(d, 'wave');
-        
+                
         % get additional parameter values
         if ~isempty(varargin), doSub = varargin{1}; else doSub = false; end
         if length(varargin) > 2, sz = varargin{3};  else sz = []; end
@@ -96,14 +94,17 @@ switch lower(imType)
         photons = vcReadImage(I,imType,dispCal, doSub, sz);
         
         % Match the display wavelength and the scene wavelength
+        wave  = displayGet(d, 'wave');
         scene = sceneCreate('rgb');
         scene = sceneSet(scene, 'wave', wave);
         
-        % For emissive display, set the illuminant SPD to the white point
-        % of the display if ambient lighting is not set.
-        % 
-        % For reflective display, the illuminant is required and should be
-        % passed in in varargin{2}
+        % This code handles both emissive and reflective displays.  The
+        % white point is set a little differently.
+        %
+        % (a) For emissive display, set the illuminant SPD to the white
+        % point of the display if ambient lighting is not set.
+        % (b) For reflective display, the illuminant is required and should
+        % be passed in in varargin{2}
         
         if length(varargin) > 1, il = varargin{2}; else il = []; end
         
@@ -113,13 +114,13 @@ switch lower(imType)
         end
         if isempty(il)
             il    = illuminantCreate('d65', wave);
-            % Replace default with white point
+            % Replace default with display white point SPD
             il    = illuminantSet(il, 'energy', sum(d.spd,2));
         end
         scene = sceneSet(scene, 'illuminant', il);
         
-        % compute photons for reflective display
-        % for reflective display, the photons before this part actually
+        % Compute photons for reflective display
+        % For reflective display, until this step the photon variable 
         % stores reflectance information
         if ~displayGet(d, 'is emissive')
             il_photons = illuminantGet(il, 'photons', wave);
@@ -133,7 +134,8 @@ switch lower(imType)
         % Set field of view
         imgFov = size(photons, 2)*displayGet(d, 'deg per dot');
         scene  = sceneSet(scene, 'h fov', imgFov);
-        
+        scene  = sceneSet(scene,'distance',displayGet(d,'viewing distance'));
+
     case {'multispectral','hyperspectral'}
         if ~ischar(I), error('File name required for multispectral'); end
         if notDefined('wList'), wList = []; end
