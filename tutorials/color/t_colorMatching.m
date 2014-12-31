@@ -2,26 +2,28 @@
 %
 % Tutorial on color matching
 %
+% This tutorial  introduces several computational methods in color.  These are:
+%  * How to compute the XYZ values of a light source
+%  * How to set a monitor output to achieve these XYZ levels
+%  * How to manage the nonlinear relationship between frame buffer and emitted light output
+%  * How to compute and plot the xy chromaticity values of a display
+%
+% There are a set of questions at the end that can help you deepen your
+% understanding.
+%
 % Class:     Psych 221/EE 362
 % Tutorial:  Color Matching on Displays
 % Author:    Wandell
-% Purpose:   Introduce phosphor SPDs, XYZ functions, 
-% 	     gamma, matching calculations
+% Purpose:   Introduce phosphor SPDs, XYZ functions, gamma, matching calculations
 % Date:      01.02.96	
 % Duration:  45 minutes
 %	
-% Matlab 5:  Checked 01.06.98 BW
-% Matlab 7:  Checked 01.06.06 GN/BW 
-%% Purpose
-% This tutorial  introduces several computational methods in color.  These
-% are:
-%
-%  * How to compute the XYZ values of a light source
-%  * How to set a monitor output to achieve these XYZ levels
-%  * How to manage the nonlinear relationship between frame
-%    buffer and emitted light output
-%  * How to compute and plot the xy chromaticity values of a display
-%  
+% Matlab 5:     Checked 01.06.98 BW
+% Matlab 7:     Checked 01.06.06 GN/BW
+% R2014b:       Updated 12.31.14 to use display objects and ieReadSpectra etc. DHB
+
+%% Initialize
+s_initISET;
 
 %% Computing XYZ values of a monitor
 %
@@ -30,14 +32,14 @@
 % We measure these functions using a spectral radiometer, a device that
 % measures the power per nanometer emitted by the display.
 %
-% The spectral power distributions of a monitor in my lab, measured when
+% The spectral power distributions of a monitor in the Wandell lab, measured when
 % the monitor display intensity was set to full value, are stored in
-% columns of the matrix called "phosphors". This matrix is stored in the
-% data file below
-
-
-load cMatch/monitor; comment
-vcNewGraphWin
+% the corresponding display object.  We extract the phosphor spectral power
+% distributions.
+d = displayCreate('CRT-Dell');
+wavelength = displayGet(d,'wave');
+phosphors = displayGet(d,'spd primaries');
+vcNewGraphWin;
 plot(wavelength,phosphors(:,3:-1:1))
 xlabel('Wavelength (nm)'), ylabel('Intensity')
 title('Spectral Power Distribution of Example Monitor');
@@ -47,10 +49,8 @@ set(gca,'xlim',[350 750]), grid on
 %  zbar functions defined by the CIE.  These are also stored in the columns
 %  of a matrix, called xyz.  Because these functions are so widely used,
 %  they are stored in the main toolbox area.
-
-vcNewGraphWin
-load XYZ; comment
-XYZ = data; % Added 01-06-2005 PC 
+vcNewGraphWin;
+XYZ = ieReadSpectra('XYZ',wavelength);
 plot(wavelength, XYZ(:,3:-1:1))
 xlabel('Wavelength (nm)'), ylabel('Responsivity')
 legend('xbar','ybar','zbar');
@@ -61,18 +61,15 @@ set(gca,'xlim',[350 750]), grid on
 % multiplying the phosphor matrix times the xyz matrix. Notice that the
 % phosphors are in the columns of the matrix on the right, and the
 % xbar,ybar,zbar functions are in the rows of the matrix on the left.
-
 maxXYZ = XYZ'*phosphors;
 
 % The luminance of each phosphor is given by the Y values.  The
 % maximum value is when the phosphors are set to maximum intensity.
-
 maxXYZ(2,:)
 
 % The total luminance the display can reach, with all three phosphors on,
 % is given by the sum of these three values, 100 cd/m^2 is a typical
 % luminance level for monitors.
-
 sum(maxXYZ(2,:))
 
 %% Using the CMFs to Match a target (linear display, gamma = 1)
@@ -80,8 +77,11 @@ sum(maxXYZ(2,:))
 %  Suppose that you send a space ship to the surface of Mars. The spaceship
 %  sends back a measurement of a spectral power distribution.  Let's load
 %  it up.
-
-load cMatch/mars; comment
+%
+% ieReadSpectrum adjusts the wavelength sampling stored in the file to
+% match what we pass it.  In this case, it zero extends the measured
+% spectrum at the long end.
+marsSPD = ieReadSpectra('marsspectrum',wavelength);
 clf,plot(wavelength,marsSPD,'r-')
 set(gca,'ylim',[0 1])
 grid on, xlabel('wavelength (nm)'); ylabel('Intensity')
@@ -91,7 +91,6 @@ title('Spectral Power Distribution measurement from Mars');
 % display is a visual match to the spectrum measured on Mars?  We use the
 % XYZ color-matching functions.  First, measure the values for the Martian
 % spectrum
-
 marsXYZ = XYZ'*marsSPD;
 
 % Now, recall that the monitor color properties are determined by the
@@ -99,13 +98,11 @@ marsXYZ = XYZ'*marsSPD;
 % these intensities are [r,g,b]'.  Then the monitor output is
 % phosphors*[r,g,b]'.  For example, when the red phosphor only is on the
 % spectrum is
-
 plot(wavelength, phosphors*[1 0 0]', 'r-');
 xlabel('wavelength(nm)'); ylabel('Intensity')
 title('SPD of Red Phosphor');
 
 % When the red and blue are on, the output is
-
 plot(wavelength, phosphors*[1 0 1]','m-');
 xlabel('wavelength(nm)'); ylabel('Intensity')
 title('SPD of Red and Blue Phosphors combined');
@@ -114,8 +111,6 @@ title('SPD of Red and Blue Phosphors combined');
 % outputs, we only need to multiply the output times the XYZ functions.
 % Hence, there is a matrix that maps the linear monitor intensities into
 % the XYZ values.  This matrix is
-% 
-
 mon2XYZ = XYZ'*phosphors;
 
 % Take a look at this matrix and think about its entries.  Notice that the
@@ -132,14 +127,12 @@ mon2XYZ = XYZ'*phosphors;
 marsRGB = mon2XYZ\marsXYZ;
 
 % The spectrum we should display, therefore, is equal to 
-
 subplot(2,1,1)
 plot(wavelength,phosphors*marsRGB)
 title('Output SPD of the monitor');
 xlabel('wavelength(nm)');ylabel('Intensity')
 
 % This will be a visual match to the spectrum
-
 subplot(2,1,2) 
 plot(wavelength,marsSPD);
 title('SPD of original martian image');
@@ -157,11 +150,14 @@ xlabel('wavelength(nm)');ylabel('Intensity')
 % The relationship between the intensity emitted by a CRT phosphor and the
 % frame-buffer value is generally a nonlinear function. An example of the
 % function relating frame-buffer value to emitted light intensity is shown
-% here:
-
-load cMatch/monitorGam
+% here.
+%
+% We pull the measured gamma functions out of the display object.
+% This particular one was measured at a small number of levels.  Go figure.
+monitorGam = displayGet(d,'gamma');
+nLevels = size(monitorGam,1);
 vcNewGraphWin;
-plot(1:256,monitorGam(:,1)), grid on
+plot(1:nLevels,monitorGam(:,1)), grid on
 xlabel('Frame buffer'); 
 ylabel('Emitted intensity of red phoshor');
 title('Display "Gamma" function')
@@ -171,20 +167,18 @@ title('Display "Gamma" function')
 % exponent has historically been called "gamma." Here is a comparison of
 % the gamma function of the red phosphor and a power function with an
 % exponent of 2.2, the most common value.
-
-frameBuffer = 1:256;
-pred = ((frameBuffer)/256).^(2.2);
+frameBuffer = 1:nLevels;
+pred = ((frameBuffer)/nLevels).^(2.2);
 plot(frameBuffer,pred,'k-',frameBuffer,monitorGam(:,1),'r-')
 xlim([0 256]); xlabel('Frame buffer'); ylabel('Intensity');
 title('Comparison of Power function and red phosphor emission')
 legend('y = x^2^.^2', 'Red phosphor','Location', 'NorthWest');
 grid on
 
-% For this display, you can see that the fit is much better using a larger
-% exponent, namely
-
-frameBuffer = 1:256;
-pred = ((frameBuffer)/256).^(2.7);
+% For grins, you can see that the fit is different using a larger
+% exponent.
+frameBuffer = 1:nLevels;
+pred = ((frameBuffer)/nLevels).^(2.7);
 plot(frameBuffer,pred,'k-',frameBuffer,monitorGam(:,1),'r-')
 xlim([0 256]); xlabel('Frame buffer'); ylabel('Intensity');
 title('Comparison of Power function and red phosphor emission')
@@ -199,7 +193,6 @@ grid on
 % level, we can use the simple gamma function.  For example, the spectral
 % power distribution of the light emitted by the green phosphor at a frame
 % buffer level of 130 is
-
 emitted = phosphors(:,2)*monitorGam(130,2);
 plot(wavelength,emitted), grid on
 xlabel('Wavelength')
@@ -212,12 +205,10 @@ title('SPD of Green Phosphor at fb = 130');
 % function.  If we have fit a simple polynomial to the gamma
 % function, then we can calculate the frame-buffer setting by
 % inverting the function.  So that given a linear intensity, l,
-% we can calculate the frame-buffer value as frame-buffer =
-% l^(1/gamma).
-
+% we can calculate the frame-buffer value as frame-buffer = l^(1/gamma).
 vcNewGraphWin;
 intensity = 0:.001:1;
-predFB = intensity.^(1/2.7);
+predFB = intensity.^(1/2.2);
 plot(intensity,predFB)
 xlabel('Intensity')
 ylabel('Frame buffer level')
@@ -225,14 +216,11 @@ title('Gamma Function Inverse');
 grid on
 
 % Another way to perform this calculation is by creating a
-% look-up table that inverts the gamma function.  You should take
-% a look at the code in the function "mkInvGammaTable" to see how
-% Xuemei Zhang and I create inverse gamma look-up table
-% functions.  To see the code enter "type mkInvGammaTable"
-
-invGamTable = mkInvGammaTable(monitorGam,1000);
-% invGamTable = ieLUTInvert(monitorGam, 1000);
-plot((1:1000)/1000,invGamTable), grid on
+% look-up table that inverts the gamma function. Here is the ISETBIO way to
+% do this.
+invGamTable = ieLUTInvert(monitorGam);
+nTableLevels = size(invGamTable,1);
+plot((1:nTableLevels)/nTableLevels,invGamTable/max(invGamTable)); grid on
 xlabel('Relative intensity')
 ylabel('Frame buffer level')
 title('Inverse Gamma Table Values');
@@ -241,27 +229,23 @@ title('Inverse Gamma Table Values');
 % because some of the frame buffers we have in the lab are 10
 % bits.)
 
-% To look up the frame buffer value that will produce a
-% particular linear intensity, then, we round the intensity to 1
-% part in a thousand (because there are a 1000 levels in the
-% inverse table) and then use that as an index.  For example, to
-% calculate the frame buffer values that generate linear
-% intensities of [.1 .3 .5 .7 .9] we calculate as
-
+%% Invert the gamma table
+%
+% The function ieLUTLinear inverts the gamma table.
+% It produces its output in the integer range that
+% was specified at display calibration time, but doesn't
+% round.
 intensity = (.1:.2:.9);
-intensityX = round(intensity*1000);
-fb = round(invGamTable(intensityX,1));
+fb = round(ieLUTLinear(intensity,invGammaTable));
 
 % Now, let's see how well we did.  Here are the intensities we
 % will obtain with these frame buffer values.
-
 obtainedIntensity = monitorGam(fb,1);
 
 % We can plot the obtained and desired intensities in a graph
 % We are close, but because of the quantization of the device we
 % do not obtain the exact linear intensities.
-
-plot(intensity, obtainedIntensity, 'o', intensity, intensity,'-'), grid on
+plot(intensity, obtainedIntensity, 'o', intensity, intensity,'-'); grid on
 axis equal, axis square, axis tight
 set(gca,'xtick',(0:.2:1),'ytick',(0:.2:1))
 %identityLine = line([0 1],[0 1]);
@@ -276,12 +260,10 @@ title('Ideal vs Obtained Intensity');
 % the chromaticity coordinates of the display when all three
 % phosphors are set to maximum intensity.  These can be computed
 % as
-
 whitePoint = chromaticity(sum(maxXYZ,2)')';
 
 % The (x,y) chromaticity coordinates of the phosphors can be
 % computed individually as
-
 xyMonitor = chromaticity(maxXYZ')';
 
 % We can build a graph describing the chromaticity coordinates of
@@ -289,15 +271,12 @@ xyMonitor = chromaticity(maxXYZ')';
 % coordinates of the spectrum.  Remember that the rows of xyz
 % contain the XYZ values of each spectral light.  So, we can
 % compute the chromaticity of the spectral lights as
-
 xySpectrum = chromaticity(XYZ)';
-% Modified 01-06-2005 PC xySpectrum = chromaticity(XYZ');
 
 % Now, we plot these values and turn on hold.  Any light is a
 % mixture of spectral lights, so these values define an outer
 % boundary for where any physical light can fall.
-
-vcNewGraphWin
+vcNewGraphWin;
 plotSpectrumLocus;  % Read this routine
 axis equal, axis square
 grid on, xlabel('x-chromaticity'), ylabel('y-chromaticity')
@@ -306,19 +285,16 @@ hold on
 
 % Overlay the xy coordinates of the three monitor phosphors on
 % top of the graph
-
 plot(xyMonitor(1,1),xyMonitor(2,1),'ro');
 plot(xyMonitor(1,2),xyMonitor(2,2),'go');
 plot(xyMonitor(1,3),xyMonitor(2,3),'bo');
 
-% and place a patch over the region where sums of the phosphors
+% And place a patch over the region where sums of the phosphors
 % can fall.  This is called the "gamut" of the display
-
 p = patch(xyMonitor(1,:), xyMonitor(2,:), [.5 .5 .5]);
 
 % Finally, add in the chromaticity coordinate of the white point
 % and label the axes.
-
 plot(whitePoint(1),whitePoint(2),'wo');
 xlabel('x chromaticity'), ylabel('y chromaticity')
 hold off
@@ -328,7 +304,6 @@ hold off
 % sum of the (X,Y,Z) values from each of the phosphors.  These
 % are unequal, with the green and blue being the largest.  Hence,
 % the white point is closer to these two corners of the gamut 
-
 sum(maxXYZ)
 
 %% TUTORIAL QUESTIONS
@@ -349,7 +324,6 @@ sum(maxXYZ)
 % c) If you wanted to perform an experiment to test the predicted match,
 % what could you do to arrange the viewing conditions?
 %
-%
 % COLOR MONITOR CALIBRATION AND CHROMATICITY
 %
 % a) Let the SPDs of the three phosphors of a color monitor be R, G, and B.
@@ -359,7 +333,6 @@ sum(maxXYZ)
 % Write the matrix equation that expresses the SPD of a monitor pixel
 % displaying the pixel x.  (Ignore gamma correction)
 %
-% 
 % b) How do the set of spectral power distributions emitted from a pixel
 % compare with the spectral power distributions that are possible in the
 % environment?
