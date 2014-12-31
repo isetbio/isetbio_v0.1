@@ -16,7 +16,11 @@ function exportData(obj, dataFileName, validationData, extraData)
         validationDataParamName = sprintf('run%05d', length(varList)+1);
         eval(sprintf('matOBJ.%s = runData;', validationDataParamName));
     else
-        varList = who('-file', dataFileName);
+        if (exist(dataFileName, 'file'))
+            varList = who('-file', dataFileName);
+        else
+            varList = [];
+        end
         validationDataParamName = sprintf('run%05d', length(varList)+1);
         eval(sprintf('%s = runData;', validationDataParamName));
         if (length(varList) == 0)
