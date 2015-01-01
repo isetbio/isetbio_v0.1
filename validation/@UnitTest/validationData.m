@@ -74,6 +74,7 @@ function s = roundStruct(oldStruct)
                 s.(structFieldNames{k}) = fieldValue;
                 %fprintf('ADDING CHAR FIELD %s TO HASH DATA', structFieldNames{k}); 
             else
+                s.(structFieldNames{k}) = '';
                 %fprintf('NOT ADDING CHAR FIELD %s TO HASH DATA', structFieldNames{k}); 
             end
         elseif isnumeric(fieldValue)
