@@ -37,10 +37,11 @@ if isvector(curNF), curNF = reshape(curNF, [1 1 length(curNF)]); end
 % Generate the noise according to the noise spectral
 % distribution
 k = ceil((size(curNF, 3)-1)/2);
-freq = (0:k)/ sampTime / size(curNF, 3);
+params.freq = (0:k)/ sampTime / size(curNF, 3);
 
-LorentzCoeffs = [0.16 55 4 0.045 190 2.5];
-noiseSPD = lorentzsum_poles(LorentzCoeffs, freq);
+LorentzCoeffs = [0.16  55  4;
+                 0.045 190 2.5];
+noiseSPD = lorentzSum(LorentzCoeffs, params.freq);
 
 % make-up the negative frequency part
 noiseSPD = [noiseSPD noiseSPD(end:-1:1)];
@@ -60,11 +61,4 @@ noise = real(ifft(noiseFFT, [], 3)); % take real part
 % add to noise-free signal
 adaptedCur = curNF + noise;
 
-end
-
-%% Aux functions
-function fit = lorentzsum_poles(beta, x)
-
-fit = abs(beta(1)) ./ (1 + (x ./ abs(beta(2))).^2).^beta(3);
-fit = fit + abs(beta(4)) ./ (1 + (x ./ abs(beta(5))).^beta(6));
 end
