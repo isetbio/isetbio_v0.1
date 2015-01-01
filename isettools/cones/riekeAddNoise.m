@@ -16,6 +16,14 @@ function [adaptedCur, params] = riekeAddNoise(curNF, params)
 %  Outputs:
 %    adaptedCur - membrance current with noise added
 %
+%  Example:
+%    params.sampTime = 1/5000;
+%    [noise, params] = riekeAddNoise(zeros(10,10,10000), params);
+%    noiseF = squeeze(mean(mean(abs(fft(noise, [], 3)).^2)));
+%    vcNewGraphWin; loglog(params.freq, noiseF(1:length(params.freq)));
+%    xlabel('Frequency(Hz)'); ylabel('Power Spectrum (pA^2/Hz)'); 
+%    xlim([1 1e3]); ylim([1e-4 1]);
+%
 %  See also:
 %    coneAdapt, riekeAdaptSteadyState, riekeAdaptTemporal
 %
