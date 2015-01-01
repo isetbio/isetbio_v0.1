@@ -1,17 +1,18 @@
 %% t_ColorMetamerism
 %
-% Illustrate a metameric color match, simulating a uniform field with D65
-% spectral power distribution and a matching (metameric) LCD display.
+% Illustrate a metameric color match.
 %
-% Then use the two metamers to create a bar pattern. 
+% Simulate a uniform field with D65 spectral power distribution and a matching (metameric) LCD display.
 %
-% Show how the bar pattern is represented after optical blurring and then
-% captured by the human cone sensor array.
+% Then use the two metamers to create a bar pattern.
+%
+% Show how the bar pattern is represented after optical blurring and then captured by the human cone
+% sensor array.
 %
 % (c) Imageval Consulting, LLC 2012
 
-%%
-s_initISET
+%% Initialize
+ieInit;
 
 %% Create a uniform scene with a D65 spectral power distribution
 uSize = 64;
@@ -39,7 +40,7 @@ displaySPD = displayGet(d,'spd',wave);
 vcNewGraphWin; plot(wave,displaySPD)
 title('Display primaries')
 
-% Now read the Stockman cone wavelength sensitivities
+%% Now read the Stockman cone wavelength sensitivities
 S = ieReadSpectra('stockman',wave);
 dW = wave(2)-wave(1);   % Delta Wavelength
 
@@ -104,9 +105,8 @@ vcAddAndSelectObject(barS); sceneWindow;
 
 %% Compute the OI and show the SPD across a line in the image
 % Notice that the optical image spectral irradiance varies across the row.
-% The LCD spectra are clearly scene at the positive positions.  They are
+% The LCD spectra are clearly seen at the positive positions.  They are
 % blurred a little onto the left side by the optics.
-
 oi = oiCreate('human');
 oi = oiCompute(oi,barS); 
 vcNewGraphWin;
@@ -118,7 +118,6 @@ vcAddAndSelectObject(oi); oiWindow;
 %% Compute the sensor response for these half degree bars.
 % Notice that the cone absorptions are fairly constant across the
 % horizontal line at this spatial resolution.
-
 sensor = sensorCreate('human');
 sensor = sensorSet(sensor,'exp time',0.10);
 sensor = sensorSetSizeToFOV(sensor,1,uS,oi);
@@ -132,7 +131,6 @@ vcAddAndSelectObject(sensor); sensorWindow('scale',1);
 % Let's do it. S-cone response, higher on the left and lower
 % on the right.  We c
 barS = sceneSet(barS,'h fov',1/4);
-
 oi = oiCompute(oi,barS); 
 vcAddAndSelectObject(oi); oiWindow;
 
