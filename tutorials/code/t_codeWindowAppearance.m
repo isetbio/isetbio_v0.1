@@ -1,27 +1,23 @@
-% s_WindowAppearance
+%% t_coneWindowAppearance
+%
+% Controlling window properties in Matlab.
 %
 % It is possible to change some of the GUI appearance properties from the
 % command line.  Here we illustrate how to make windows invisible, change
 % the white point, and change the font size.
 %
+% NOTES:
+%   1) This might be elaborated a bit, to show explicitly more things that
+%   you might want to do.
+%
 % Copyright ImagEval Consultants, LLC, 2010
 
-%%
-s_initISET
+%% Initialize
+ieInit;
 
 %% Opening and closing windows from the command line
 
-% Let's start by running ISET
-ISET
-
-% Close the main window using a command that sets the window parameter
-% to off, as in 
-ieMainW('visible','off')
-
-% Or bring it back up
-ieMainW('visible','on')
-
-%% You can do the same with other windows 
+% Create an isetbio window
 scene = sceneCreate; vcAddAndSelectObject(scene);
 
 sceneWindow('visible','on')
@@ -33,7 +29,7 @@ drawnow
 pause(1)
 
 %% Interacting with the scene handles
-
+%
 % It is also possible to make adjustments to the display by interacting
 % with the Matlab handle graphics.  To get the handle to the scene figure,
 % you can run

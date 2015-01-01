@@ -1,11 +1,15 @@
-%% s_FFTinMatlab.m
+%% t_FFTinMatlab.m
+%
+% Explains the Matlab conventions for transforming from space to the frequency domain.  
 
-%% This file explains the Matlab conventions for transforming from space
-% to the frequency domain.  
+%% Initialize
+ieInit;
 
-% First an extremely small example
+%% First an extremely small example
 nSamples = 6;
 
+%% Inverse transform
+%
 % In the transform domain, t(1,1) represents the DC term.  You can prove
 % this by calculating the inverse FFT for all zeros except t(1,1)
 t = zeros(nSamples,nSamples);
@@ -13,6 +17,8 @@ t(1,1) = 1;
 ft = ifft2(t)
 isreal(ft)  % The entries are all 1/(6*6)
 
+%% FFT
+%
 % In the space domain, the s(1,1) position represents the center of the
 % image.  You can prove this by calculation
 s = zeros(nSamples,nSamples);
@@ -21,15 +27,11 @@ fft2(s)     % This produces the output for an impulse at the center
 isreal(s)
 
 
-%% The implications of these representations for using fft2 
+% The implications of these representations for using fft2 
 %
-% See Matlab work on fft2, ifft2, fftshift and ifftshift
-%
+% See Matlab documentation on fft2, ifft2, fftshift and ifftshift
 
-% img = ones(64,64); img = padarray(img,[32 32]);
-% g = zeros(128,128); g(65,65) = 1;
-
-%% Image centering
+% Image centering
 % The center of an image of size (N,N) is
 %  when N is odd,         ceil(N/2) + 1, 
 %      so if N = 5, center is (4,4)
@@ -49,11 +51,14 @@ isreal(s)
 %  If we pad an odd dimension, first pad the right and bottom
 %  If we pad an even dimension, first pad the left and top
 %
+% These commented out lines might be examples of ways to do things.
+%   img = ones(64,64); img = padarray(img,[32 32]);
+%   g = zeros(128,128); g(65,65) = 1;
 
-%%
+%% PSF/OTF example
+%
 % Suppose we create a PSF.  In most coding, the natural way to create a
 % PSF is as an image.  The center is not in (1,1), but in the center.  
-
 g = fspecial('gaussian',128,2); axis equal
 figure(1); colormap(gray); mesh(g)
 
@@ -63,8 +68,8 @@ figure(1); colormap(gray); mesh(g)
 gFT = fft2(fftshift(g));
 figure(1); mesh(abs(gFT))
 
-% Next, suppose we want to transform an image.  Again, the image center is
-% not in (1,1).  It is in the center.
+%% Image example
+% Again, the image center is not in (1,1).  It is in the center.
 tmp = load('trees');
 cmap = gray(128);
 img = cmap(tmp.X);
@@ -92,4 +97,4 @@ figure(1); colormap(gray); imagesc(imgConvG); axis image
 imgConvGCentered = ifftshift(imgConvG);
 figure(1); imagesc(imgConvGCentered); axis image
 
-% End ------------------
+%% End
