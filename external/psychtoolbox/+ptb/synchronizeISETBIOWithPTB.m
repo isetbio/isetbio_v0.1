@@ -1,6 +1,7 @@
 function synchronizeISETBIOWithPTB
 
-    dstDir = '/Users/Shared/Matlab/Toolboxes/isetbio/external/ptb';
+    % These are where the Brainard Lab keeps these folders.
+    dstDir = '/Users/Shared/Matlab/Toolboxes/isetbio/external/psychtoolbox';
     srcDir = '/Users/Shared/Matlab/Toolboxes/Psychtoolbox-3/Psychtoolbox';
     
     % Get names of sub-directories of $isetbio/external/ptb

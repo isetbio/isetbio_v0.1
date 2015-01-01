@@ -1,8 +1,9 @@
 %% t_humanLineSpread
 %
-% Illustrate the photon absorptions from a line stimulus. This is the
-% practical measurement of the human line spread function, including photon
-% noise, irregular spacing, and so forth.
+% Illustrate the photon absorptions from a line stimulus.
+%
+% This iillustrates the practical measurement of the human line spread
+% function, including photon noise, irregular spacing, and so forth.
 %
 % We illustrate the result for various spectral power distributions of the
 % line stimuli, as well as the sum of a few nearby lines.
@@ -11,8 +12,10 @@
 
 %% Initialize
 s_initISET
+
+% To achieve the same result each time
 try
-    rng('default');  % To achieve the same result each time
+    rng('default');  
 catch err
     randn('seed');
 end
@@ -26,7 +29,6 @@ end
 %
 % The sensor has an approximation to the human cones, with random positions
 % of the three cone types.
-
 lineS = sceneCreate('line d65');
 lineS = sceneSet(lineS,'h fov',1);
 oi = oiCreate('human');
@@ -97,7 +99,6 @@ sensorPlotLine(sensor,'h','photons','space',xy);
 
 %% Show the 450 nm version of the grid.  Surprising, hunh?
 % This version is very blurred, of course.  Surprisingly so.
-
 grid450S = sceneInterpolateW(gridS,450,preserveLuminance);
 oi = oiCompute(grid450S,oi);
 

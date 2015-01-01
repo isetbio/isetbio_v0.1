@@ -13,14 +13,9 @@
 % 
 % Matlab 5:  Checked 01.06.98 BW
 % Matlab 7:  Checked 01.04.08 BW
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
-% RENDER THE MACBETH SURFACES ON THE MONITOR, MATCHED FOR THE SCANNER
-% 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%% Initialize
+ieInit;
 
 % Load in the surface reflectances of the Macbeth ColorChecker.
 % Also, we know the color appearance of a few of them so let's
@@ -258,4 +253,4 @@ subplot(2,1,2)
 image(macbethImage+24); axis image
 title('Matches for Camera')
 
-%%%%%%END
+%%END
