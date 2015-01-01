@@ -27,7 +27,6 @@ function exportData(obj, dataFileName, validationData, extraData)
             eval(sprintf('save(''%s'', ''%s'');',dataFileName, validationDataParamName));
         else
             eval(sprintf('save(''%s'', ''%s'', ''-append'');',dataFileName, validationDataParamName));
-            %save(dataFileName, validationDataParamName, '-append');
         end
     end
     

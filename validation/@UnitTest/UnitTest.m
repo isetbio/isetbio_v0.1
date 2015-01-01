@@ -97,7 +97,7 @@ classdef UnitTest < handle
         % we have found that when data are truncated to 12 decimal digits
         % the data hash keys across different computers are identical.
         % 13 and higher decimal digits lead to different hash keys
-        decimalDigitNumRoundingForHashComputation = 11;
+        decimalDigitNumRoundingForHashComputation = 9;
     end
     
     % Public methods (This is the public API)
