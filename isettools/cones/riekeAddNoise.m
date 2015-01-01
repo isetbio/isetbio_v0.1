@@ -62,6 +62,33 @@ elseif sampTime > 0.005
     % when data sampling interval is greater than 5 ms, the noise can be
     % viewed as independent additive gaussian noise
     adaptedCur = curNF + randn(size(curNF)) * 4.5144;
+else
+    % We don't have an approximated model for the noise
+    % We just generate the noise according to the noise spectral
+    % distribution
+    k = ceil((size(curNF, 3)-1)/2);
+    freq = (0:k)/ sampTime / size(curNF, 3);
+    
+    LorentzCoeffs = [0.16 55 4 0.045 190 2.5];
+    noiseSPD = lorentzsum_poles(LorentzCoeffs, freq);
+    
+    % make-up the negative frequency part
+    noiseSPD = [noiseSPD noiseSPD(end:-1:1)];
+    noiseSPD = noiseSPD(1:size(curNF, 3));
+    noiseSPD = reshape(noiseSPD, [1 1 length(noiseSPD)]);
+    
+    % generate white gaussian noise
+    noise = randn(size(curNF));
+    noiseFFT = fft(noise, [], 3) / sqrt(size(noise, 3));
+    
+    % adjust the spectral power distribution of the noise
+    noiseFFT = bsxfun(@times, noiseFFT, sqrt(noiseSPD));
+    
+    % convert back to time domain to recover noise
+    noise = real(ifft(noiseFFT, [], 3)); % take real part
+    
+    % add to noise-free signal
+    adaptedCur = curNF + noise;
 end
 
 end
@@ -126,4 +153,10 @@ end
 % throw away the first 20 samples
 armaData = armaData(:,:, 21:end);
 
+end
+
+function fit = lorentzsum_poles(beta, x)
+
+fit = abs(beta(1)) ./ (1 + (x ./ abs(beta(2))).^2).^beta(3);
+fit = fit + abs(beta(4)) ./ (1 + (x ./ abs(beta(5))).^beta(6));
 end
