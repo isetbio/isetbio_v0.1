@@ -1,4 +1,4 @@
-function varargout = v_sceneCompress(varargin)
+function varargout = v_sceneHCCompress(varargin)
 %
 % Validate hyperspectral scene data and compression
 %
@@ -14,7 +14,7 @@ end
 function ValidationFunction(runTimeParams)
 
 %% Initialize
-s_initISET;
+ieInit;
 
 %% Read in the scene
 fName = fullfile(isetRootPath,'data','images','multispectral','StuffedAnimals_tungsten-hdrs');
