@@ -20,5 +20,8 @@ cd(fileparts(mfilename('fullpath')));
 load
 cd(curdir);
 
+%% Save it in the UnitTest object
+UnitTest.validationData('sceneA', scene);
+
 %% End
 end
