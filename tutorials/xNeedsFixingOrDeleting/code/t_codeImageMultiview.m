@@ -1,16 +1,17 @@
 %% t_imageMultiview
 %
-% Illustrate how to display multiple RGB images from the
-% scene/oi/sensor/vci objects.
+% Illustrate how to display multiple RGB images from the scene/oi/sensor/vci objects.
 %
 % We fill up the various GUI windows with several examples.  Then we show
 % how to bring up the RGB images into separate windows.
 %
+% NOTES:
+%  1) Broken because it runs a script that does not currently exist.
+%
 % Copyright Imageval LLC, 2013
 
-%% 
-s_initISET
-
+%% Initialize
+ieInit;
 
 %% To start debugging I ran s_imageIlluminantCorrection
 %
@@ -19,7 +20,6 @@ s_initISET
 s_imageIlluminantCorrection
 
 %%  Get a list of the objects
-%
 
 % This example shows several of the scene images.  No user interaction
 % required.
