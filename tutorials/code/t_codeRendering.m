@@ -1,7 +1,8 @@
 %% t_codeRendering
 %
-% The display windows show radiance and irradiance data as RGB
-% images.  ISET stores spectral power distributions of the radiance and
+% Show radiance and irradiance data as RGB images.
+%
+% ISETBIO stores spectral power distributions of the radiance and
 % irradiance images (and illuminants). The display rendering maps the
 % spectral data into RGB using a simple principle
 %
@@ -10,12 +11,17 @@
 %
 % This tutorial shows these functions in action.
 %
+% NOTES:
+%     sRGB coordinates are obtained from XYZ based on a "standard" model of typical monitor performance.
+%     Real monitors will deviate from the sRGB standard, and for real monitors you can do better if you use
+%     calibration data for that monitor. But this isn't illustrated here.
+%
 % Copyright Imageval Consulting, LLC 2013
 
-%%
-s_initISET
+%% Initialize
+ieInit;
 
-%%  Create a yellowsh blackbody spectrum
+%% Create a yellowsh blackbody spectrum
 
 % Here is a simple vector of a yellowsh SPD
 wave = 400:10:700;   % Specify the wavelength samples
@@ -26,7 +32,7 @@ xlabel('Wavelength (nm)');
 ylabel('Energy (watts/sr/m2/nm)');
 grid on;
 
-%% We convert the spd into an sRGB value
+%% C%%onvert the spd into an sRGB value
 
 % We calculate the XYZ values from the spd
 XYZ = ieXYZFromEnergy(spd',wave);
