@@ -219,7 +219,7 @@ grid on
 % look-up table that inverts the gamma function. Here is the ISETBIO way to
 % do this.
 invGamTable = ieLUTInvert(monitorGam);
-nTableLevels = size(invGamTable,1);
+nTableLevels = size(invGamTable, 1);
 plot((1:nTableLevels)/nTableLevels,invGamTable/max(invGamTable)); grid on
 xlabel('Relative intensity')
 ylabel('Frame buffer level')
@@ -236,7 +236,7 @@ title('Inverse Gamma Table Values');
 % was specified at display calibration time, but doesn't
 % round.
 intensity = (.1:.2:.9);
-fb = round(ieLUTLinear(intensity,invGammaTable));
+fb = round(ieLUTLinear(intensity, invGamTable));
 
 % Now, let's see how well we did.  Here are the intensities we
 % will obtain with these frame buffer values.

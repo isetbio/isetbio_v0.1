@@ -165,8 +165,8 @@ ylabel('Linear RGB values (scaled and normalized)');
 % 1, because that is what the image show routines in Matlab want.
 bitDepth      = 10;
 gammaTable    = displayGet(d,'gamma table');
-invGammaTable = ieLUTInvert(gammaTable,bitDepth);
-DAC           = ieLUTLinear(rgbSpectrum,invGammaTable);
+invGammaTable = ieLUTInvert(gammaTable);
+DAC           = ieLUTLinear(rgbSpectrum, invGammaTable);
 normalizedDAC = DAC/(2^bitDepth);
 
 % Here is a plot of the DAC values we ended up with.
