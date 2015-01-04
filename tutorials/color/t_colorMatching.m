@@ -2,10 +2,12 @@
 %
 % Tutorial on color matching
 %
-% This tutorial  introduces several computational methods in color.  These are:
+% This tutorial  introduces several computational methods in color. 
+% These are:
 %  * How to compute the XYZ values of a light source
 %  * How to set a monitor output to achieve these XYZ levels
-%  * How to manage the nonlinear relationship between frame buffer and emitted light output
+%  * How to manage the nonlinear relationship between frame buffer and
+%    emitted light output
 %  * How to compute and plot the xy chromaticity values of a display
 %
 % There are a set of questions at the end that can help you deepen your
@@ -14,7 +16,7 @@
 % Class:     Psych 221/EE 362
 % Tutorial:  Color Matching on Displays
 % Author:    Wandell
-% Purpose:   Introduce phosphor SPDs, XYZ functions, gamma, matching calculations
+% Purpose:   Introduce SPDs, XYZ functions, gamma, matching calculations
 % Date:      01.02.96	
 % Duration:  45 minutes
 %	
@@ -32,13 +34,13 @@ s_initISET;
 % We measure these functions using a spectral radiometer, a device that
 % measures the power per nanometer emitted by the display.
 %
-% The spectral power distributions of a monitor in the Wandell lab, measured when
-% the monitor display intensity was set to full value, are stored in
-% the corresponding display object.  We extract the phosphor spectral power
-% distributions.
+% The spectral power distributions of a monitor in the Wandell lab,
+% measured when the monitor display intensity was set to full value, are
+% stored in the corresponding display object.  We extract the phosphor
+% spectral power distributions.
 d = displayCreate('CRT-Dell');
-wavelength = displayGet(d,'wave');
-phosphors = displayGet(d,'spd primaries');
+wavelength = displayGet(d, 'wave');
+phosphors  = displayGet(d, 'spd primaries');
 vcNewGraphWin;
 plot(wavelength,phosphors(:,3:-1:1))
 xlabel('Wavelength (nm)'), ylabel('Intensity')

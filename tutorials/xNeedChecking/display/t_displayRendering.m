@@ -19,12 +19,14 @@
 ieInit;
 
 %% Load data for a default monitor and the XYZ functions
-d = displayCreate;
+d    = displayCreate('LCD-Apple');
 wave = displayGet(d,'wave');
+
 phosphors = displayGet(d,'spd');
 monitorGam = displayGet(d,'gamma');
-invGamTable = ieLUTInvert(monitorGam,8);
+invGamTable = ieLUTInvert(monitorGam);
 monitorInvGam = invGamTable;
+
 % load cmatch/monitorGam
 XYZ = ieReadSpectra('XYZ',wave);
 
