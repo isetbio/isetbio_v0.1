@@ -25,7 +25,7 @@
 % R2014b:       Updated 12.31.14 to use display objects and ieReadSpectra etc. DHB
 
 %% Initialize
-s_initISET;
+ieInit;
 
 %% Computing XYZ values of a monitor
 %
@@ -83,8 +83,9 @@ sum(maxXYZ(2,:))
 % ieReadSpectrum adjusts the wavelength sampling stored in the file to
 % match what we pass it.  In this case, it zero extends the measured
 % spectrum at the long end.
+vcNewGraphWin;
 marsSPD = ieReadSpectra('marsspectrum',wavelength);
-clf,plot(wavelength,marsSPD,'r-')
+plot(wavelength,marsSPD,'r-')
 set(gca,'ylim',[0 1])
 grid on, xlabel('wavelength (nm)'); ylabel('Intensity')
 title('Spectral Power Distribution measurement from Mars');
@@ -100,6 +101,7 @@ marsXYZ = XYZ'*marsSPD;
 % these intensities are [r,g,b]'.  Then the monitor output is
 % phosphors*[r,g,b]'.  For example, when the red phosphor only is on the
 % spectrum is
+vcNewGraphWin;
 plot(wavelength, phosphors*[1 0 0]', 'r-');
 xlabel('wavelength(nm)'); ylabel('Intensity')
 title('SPD of Red Phosphor');
@@ -107,7 +109,7 @@ title('SPD of Red Phosphor');
 % When the red and blue are on, the output is
 plot(wavelength, phosphors*[1 0 1]','m-');
 xlabel('wavelength(nm)'); ylabel('Intensity')
-title('SPD of Red and Blue Phosphors combined');
+title('SPD of Red and Blue Phosphors Combined');
 
 % To find the relationship between the [r,g,b] values and the monitor XYZ
 % outputs, we only need to multiply the output times the XYZ functions.
@@ -129,6 +131,7 @@ mon2XYZ = XYZ'*phosphors;
 marsRGB = mon2XYZ\marsXYZ;
 
 % The spectrum we should display, therefore, is equal to 
+vcNewGraphWin;
 subplot(2,1,1)
 plot(wavelength,phosphors*marsRGB)
 title('Output SPD of the monitor');
@@ -162,13 +165,14 @@ vcNewGraphWin;
 plot(1:nLevels,monitorGam(:,1)), grid on
 xlabel('Frame buffer'); 
 ylabel('Emitted intensity of red phoshor');
-title('Display "Gamma" function')
+title('Display Red "Gamma" function')
 
 % This is called the "gamma" function of the display.  The reason for this
 % title is that the function is roughly a simple power function and the
 % exponent has historically been called "gamma." Here is a comparison of
 % the gamma function of the red phosphor and a power function with an
 % exponent of 2.2, the most common value.
+vcNewGraphWin;
 frameBuffer = 1:nLevels;
 pred = ((frameBuffer)/nLevels).^(2.2);
 plot(frameBuffer,pred,'k-',frameBuffer,monitorGam(:,1),'r-')
@@ -179,6 +183,7 @@ grid on
 
 % For grins, you can see that the fit is different using a larger
 % exponent.
+vcNewGraphWin;
 frameBuffer = 1:nLevels;
 pred = ((frameBuffer)/nLevels).^(2.7);
 plot(frameBuffer,pred,'k-',frameBuffer,monitorGam(:,1),'r-')
@@ -195,6 +200,7 @@ grid on
 % level, we can use the simple gamma function.  For example, the spectral
 % power distribution of the light emitted by the green phosphor at a frame
 % buffer level of 130 is
+vcNewGraphWin;
 emitted = phosphors(:,2)*monitorGam(130,2);
 plot(wavelength,emitted), grid on
 xlabel('Wavelength')
@@ -214,18 +220,19 @@ predFB = intensity.^(1/2.2);
 plot(intensity,predFB)
 xlabel('Intensity')
 ylabel('Frame buffer level')
-title('Gamma Function Inverse');
+title('Power Gamma Function Inverse');
 grid on
 
 % Another way to perform this calculation is by creating a
 % look-up table that inverts the gamma function. Here is the ISETBIO way to
 % do this.
+vcNewGraphWin;
 invGamTable = ieLUTInvert(monitorGam);
 nTableLevels = size(invGamTable, 1);
 plot((1:nTableLevels)/nTableLevels,invGamTable/max(invGamTable)); grid on
 xlabel('Relative intensity')
 ylabel('Frame buffer level')
-title('Inverse Gamma Table Values');
+title('Calibration Inverse Gamma Table Values');
 
 % (We make invGamTables with more than 8 bits of resolution
 % because some of the frame buffers we have in the lab are 10

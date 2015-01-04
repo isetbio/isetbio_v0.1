@@ -87,7 +87,7 @@ switch parm
         val = d.type;
     case {'gtable','dv2intensity','gamma','gammatable'}
         if isfield(d,'gamma'), val = d.gamma; end
-    case {'inverse gamma', 'inverse gamma table'}
+    case {'inversegamma', 'inversegammatable'}
         if isfield(d, 'gamma'), val = ieLUTInvert(d.gamma); end
     case {'isemissive'}
         val = true;
