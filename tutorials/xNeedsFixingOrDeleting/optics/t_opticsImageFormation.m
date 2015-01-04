@@ -1,4 +1,4 @@
-%% Tutorial: t_ImageFormation 
+%% t_opticsImageFormation 
 %
 % Tutorial on optics and image formation
 %
@@ -10,10 +10,19 @@
 % 01.12.01   Added new graphs for ijspeert curves and Williams et al. data, BW
 % 01.18.03   Started integration with vCamera-2.0, minor changes.
 % 01.02.08   Verified with local files for single download - BW
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% NOTES:
+%   1) This is a really nice tutorial and it runs.  But it relies on data
+%   that are live under the scripts/optics directory.  We need to decide
+%   how we're going to handle those .mat files, which are not in ISET data
+%   format.  It would be nice to conver them to be so, and make the
+%   idiosyncratic data go away.  (DHB)
+
+%% Initialize
+ieInit;
 
 %% Visual Angle
-
+%
 % To think about the effect of an image on the eye, we must specify the
 % image in terms of degrees of visual angle.  As an example for how to
 % compute spacing in terms of degrees of visual angle, consider a printer
@@ -24,7 +33,6 @@ dpi = 600
 viewingDistance = 12
 
 %% The viewing geometry 
-
 vcNewGraphWin;
 line([0 viewingDistance 0 0],[0 0 1 0]); 
 axis equal
@@ -32,22 +40,18 @@ set(gca,'xlim',[-2 20]), grid on
 xlabel('Viewing Distance (inch)')
 ylabel('Position between spots on paper (inch)')
 
-%% In radians, the viewing angle, phi, satisfies is 
-%   tan(phi) = (opposite/adjacent).
+%% In radians, the viewing angle, phi, satisfies tan(phi) = (opposite/adjacent).
 deg2rad = 2*pi/360;
 rad2deg = 360/(2*pi)
 phi = atan(1/viewingDistance)*rad2deg
 
 % There are 600 dots per inch, so that each dot occupies
-%
 DegPerDot = phi/dpi
 
 % There are 60 min of visual angle per deg,
-%
 MinPerDot = 60*DegPerDot
 
-% and 60 sec of visual angle per min,
-%
+% And 60 sec of visual angle per min,
 SecPerDot = 60*MinPerDot
 
 % As you will see later in the course, experiments have shown that people
@@ -57,13 +61,12 @@ SecPerDot = 60*MinPerDot
 % discriminated by the human eye.
 
 %% The Westheimer linespread function
-
+%
 % Westheimer calculated that the linespread function of the human
 % eye, specified in terms of minutes of arc and using a 3mm
 % pupil, should be approximated using the following formula
 %
 % LineSpread = 0.47*exp(-3.3 *(x.^2)) + 0.53*exp(-0.93*abs(x));
-%
 
 % Suppose we wish to plot the function by defining the spatial
 % variable, x, in terms of seconds of arc,
@@ -88,9 +91,9 @@ xlabel('Arc sec'), ylabel('Responsivity'), title('Westheimer Linespread')
 % their appearance.
 
 %% Another way to calculate and plot the Westheimer function
-
 xSec = -300:300;    % 600 sec, total = 10 min
 westheimerOTF = abs(fft(westheimerLSF(xSec)));
+
 % One cycle spans 10 min of arc, so freq=1 is 6 c/deg
 freq = [0:11]*6;
 vcNewGraphWin; 
@@ -98,13 +101,11 @@ semilogy(freq,westheimerOTF([1:12])); grid on;
 xlabel('Freq (cpd)'); ylabel('Relative contrast');
 set(gca,'ylim',[-.1 1.1])
 
-
 %% Convolution of the image and linespread
-
+%
 % We can estimate the visual image created by an image printed at 600 dpi
 % using the following simple convolution calculation. Let's create an image
 % that spans 0.2 deg and has a dot every 30 sec. (i.e., roughly 28.58)
-
 dotSpacing = 30;
 secPerDeg = 60*60;
 x = 1:0.2*secPerDeg;
@@ -122,7 +123,6 @@ title('Image of line stimulus');
 % the image with the Westheimer linespread function.  Remember: we sampled
 % the linespread once every sec of arc. So, we can simply convolve the
 % image and the linespread function now as:
-
 retIm = conv2(ls,im,'full');
 
 vcNewGraphWin;
@@ -143,7 +143,6 @@ xlabel('Sec of arc'), ylabel('Image intensity')
 % In fact, the dots placed on the page are not perfect line samples.  Each
 % ink line has some width.  So, a more realistic input image might be
 % created by blurring the stimulus and then convolving with the linespread.
-
 gKernel = fspecial('gaussian',[1,30],2);  % This produces a little Gaussian window for filtering
 blurIm = conv2(im,gKernel,'full');
 blurIm = ieScale(blurIm,1,32);
@@ -170,11 +169,10 @@ xlabel('Sec of arc'), ylabel('Intensity')
 % back to the eye?
 
 %% Defocus in the frequency domain
-
+%
 % First, make a new linespread function that is smaller and
 % easier to compute with.  Have it extend over 1 deg (60 min) so
 % the Fourier Transform is easier to interpret
-
 xMin = -30:1:29;	
 ls = 0.47*exp(-3.3 *(xMin.^2)) + 0.53*exp(-0.93*abs(xMin));
 ls = ls / sum(ls);
@@ -186,7 +184,6 @@ xlabel('Min of arc'),ylabel('Linespread value')
 % Now, consider the retinal image that is formed by some simple
 % harmonic functions.  Here is a sinusoid that varies at 1 cycle
 % per degree of visual angle.
-
 nSamples = length(xMin);
 f = 1;
 harmonic = cos(2*pi*f*xMin/nSamples);
@@ -197,11 +194,10 @@ title('Sampled cosinusoid')
 xlabel('Arc sec'), ylabel('Intensity')
 
 %% What happens to cosinusoids at different spatial frequencies.  
-
+%
 % Notice that the amplitude of the cosinusoid falls off as the spatial
 % frequency increases.  We will store the amplitude of the cosinusoid in
 % the variable "peak".
-
 vcNewGraphWin;
 freq =[1 5 10 15]; 
 peak = zeros(1,length(freq)); 
@@ -218,7 +214,6 @@ end
 % amplitude decreases with the input frequency.  I also use the
 % fact that at f = 0 the amplitude = 1 (because the area under
 % the linespread is 1).
-
 vcNewGraphWin;
 plot([0 freq],[1 peak],'-')
 set(gca,'ylim',[0 1])
@@ -229,7 +224,6 @@ grid on
 
 % Remember, the linespread was built so that it spans 1 deg, hence
 % frequency is in cycles per degree.
-
 mtf = abs(fft(ls));
 hold on, plot(freq,mtf(freq + 1),'ro');
 hold off
@@ -249,7 +243,6 @@ hold off
 % the pointspread function of the human eye for a 3mm pupil is
 % also provided by Westheimer.  We can compare the linespread and
 % the cross-section of the pointspread in the following graphs.
-
 xSec = -300:300;
 xMin = xSec/60;
 ls = 0.47*exp(-3.3 *(xMin.^2)) + 0.53*exp(-0.93*abs(xMin));
@@ -263,7 +256,6 @@ legend(p,'Pointspread','Linespread')
 
 % Next, we can create a graph of the pointspread.  First, create
 % a matrix whose entries are the distance from the origin
-
 xSec = -240:10:240;
 xMin = xSec/60;
 X = xMin(ones(1,length(xMin)),:); Y = X';
@@ -273,7 +265,6 @@ D = X.^2 + Y.^2; D = D.^0.5;
 % this image: colormap(gray(32)),imagesc(D), axis image
 
 % Then, compute the pointspread function and make a picture of it
-%
 ps = 0.952*exp(-2.59*abs(D).^1.36) + 0.048*exp(-2.43*abs(D).^1.74);
 vcNewGraphWin;
 colormap(cool(64)), mesh(ps)
@@ -282,7 +273,7 @@ colormap(cool(64)), mesh(ps)
 % you might make this figure: colormap(gray(32)),imagesc(ps), axis image
 
 %% Chromatic aberration:  How the linespread varies with wavelength
-
+%
 % The linespread varies quite strongly with wavelength.  When the
 % eye is in good focus at 580 nm (yellow-part of the spectrum)
 % the light in the short-wavelength (400-450nm) is blurred quite
@@ -291,7 +282,6 @@ colormap(cool(64)), mesh(ps)
 % linespread as a function of wavelength (Marimont and Wandell,
 % 1993) from basic principles.  The linespreads a various
 % wavelengths are contained in the data file:
-
 load lineSpread;
 
 % linespread 370-730nm, in 1nm steps.
@@ -311,7 +301,6 @@ xlabel('Degrees'); ylabel('Image Intensity');
 title('Linespread functions for three wavelengths');
 
 %  Look at the line spread functions for all wavelengths
-
 lw = 1:10:length(wave);
 vcNewGraphWin;
 colormap(hot(32));
@@ -326,7 +315,6 @@ ylabel('wavelength (nm)'); xlabel('degrees'); zlabel('intensity');
 % 730 nm.
 
 % Here, we create and display the image of sample lines.
-
 im = reshape([0 0 0 1 0 0 0 0]' * ones(1, 16), 1, 128);
 imshow(im(ones(100,1), 1:128));
 
@@ -337,7 +325,6 @@ imshow(im(ones(100,1), 1:128));
 % of the linespread functions in lineSpread size(lineSpread =
 % 361,65).  This results in 361 images (one for each
 % wavelength).  
-
 retIm = conv2(im, lineSpread, 'full');
 
 % We must remember the size (in deg) of each sample point this way.
@@ -346,7 +333,6 @@ X = (-size(retIm,2)/2 : ((size(retIm, 2)/2) - 1)) / 64;
 
 % We can plot the retinal image corresponding to two wavelengths
 % this way.
-
 vcNewGraphWin;
 subplot(2,1,1)
 plot(X,retIm(201,:),'g-')
@@ -363,7 +349,6 @@ grid on
 % Notice that the two images have the same mean, they only differ
 % in terms of the contrast:  the green image has a lot more
 % contrast, but the same mean.
-
 mean(retIm(50,:),2)
 mean(retIm(200,:),2)
 
@@ -387,11 +372,9 @@ mean(retIm(200,:),2)
 % Load the MTFs for wavelengths from 370-730nm.  These were
 % calculated using the methods in Marimont and Wandell that are
 % in a script in the /local/class/psych221/tutorials/chromAb sub-directory.
-
 load combinedOtf;
 
 % Here is a graph of a few of the MTFs
-% 
 vcNewGraphWin;
 plot(sampleSf, combinedOtf(81, :), 'b-', ...
     sampleSf, combinedOtf(201,:), ...
@@ -408,9 +391,8 @@ title('Modulation transfer functions for 3 wavelengths');
 % class using the slide projector, and the phenomenon is called
 % "spurious resolution."
 
-
 %% More modern Linespreads, Pointspreads, and MTFs 
-
+%
 % In recent years, Ijspeert and others in the Netherlands
 % developed a more extensive set of functions to predict the
 % basic image formation variables in the average human eye.  The
@@ -423,15 +405,13 @@ title('Modulation transfer functions for 3 wavelengths');
 
 % A student in Psych 221 developed the code to compute these
 % values in the function "ijspeert."  Here is an example
-% 
 age = 20; 				    % Subject's age
 pupil = 1.5; 				% diameter in mm
 pigmentation = 0.142; 		% Caucasian
 freqIndexRange = 1:50; 		% The spatial frequency range
 
 % Set the span to be 1 deg, so we know that 1 cycle in the MTF
-% corresponds to 1 cycle per deg
-% 
+% corresponds to 1 cycle per deg 
 angleInDeg = (-.25:.005:.25);
 angleInSec = angleInDeg*3600;
 angleInRad = angleInDeg*deg2rad;
@@ -441,7 +421,6 @@ angleInRad = angleInDeg*deg2rad;
 
 % The functions should be normalized so that the area under the
 % linespread and the first value of the MTF are one.
-% 
 iMTF = iMTF/iMTF(1);
 iLSF = iLSF/sum(iLSF);
 
@@ -455,7 +434,6 @@ ylabel('Amplitude');
 title('MTF')
 
 % Here is the linespread function
-
 subplot(1,2,2), plot(angleInSec,iLSF); grid on
 xlabel('Position (sec)');
 ylabel('Intensity');
@@ -463,7 +441,6 @@ set(gca,'xtick',(-500:250:500),'xlim',[-500 500]);
 title('Line spread')
 
 % We can compare the ijspeert and westheimer linespread functions 
-%
 xMin = angleInSec/60;
 ls = 0.47*exp(-3.3 *(xMin.^2)) + 0.53*exp(-0.93*abs(xMin));
 ls = ls / sum(ls);
@@ -477,7 +454,6 @@ xlabel('Position (min)'), ylabel('Intensity'), title('Linespread')
 grid on
 
 %% Comparison of the MTFs with the Williams data 
-
 load williams
 
 subplot(1,2,2) 
@@ -506,12 +482,10 @@ nSamples = length(angleInRad2D);
 % Try plotting this distance matrix using the command:
 %
 %   imagesc(D); colorbar; axis image
-%
 D = sqrt(X.^2 + Y.^2);
 
 % Now, loop through the rows of D to calculate the pointspread values
 % as a function of angle.
-%
 iPSF2D = zeros(size(D));
 for ii=1:nSamples
    a = D(ii,:);
@@ -519,10 +493,9 @@ for ii=1:nSamples
       freqIndexRange, a);
 end
 
-vcNewGraphWin
+vcNewGraphWin;
 colormap(cool(64));
 surf(angleInRad2D,angleInRad2D,iPSF2D);
 
-%% END OF TUTORIAL
-
+%% End
 
