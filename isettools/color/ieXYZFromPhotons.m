@@ -14,13 +14,16 @@ function XYZ = ieXYZFromPhotons(photons,wave)
 %
 % Copyright ImagEval Consultants, LLC, 2003.
 
-% A simple way to do this is to call Quanta2photons and ieXYZFromphotons
-% Example: 
+% Programming Notes:
+%
+% A simple way to do this is to call Quanta2photons and ieXYZFromphotons,
+% i.e.
 %   XYZ = ieXYZFromEnergy(Quanta2Energy(wave,photons),wave);
 % However, for large input size (e.g. 1k x 1k x 100). This method could be
-% a little slow. Another option is to compute the XYZ curve for Quanta and
-% apply that to input photons directly 
-% HJ, 2014 
+% very slow. Another option is to compute the XYZ responsivity curve for
+% Quanta units and apply that to input photons directly
+%
+%(HJ) ISETBIO TEAM, 2014
 
 % Force data into XW format.
 iFormat = vcGetImageFormat(photons, wave);

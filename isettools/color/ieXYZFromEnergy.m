@@ -67,9 +67,8 @@ if size(xwData,2) ~= length(wave)
     error('Problem converting input variable energy into XW format.');
 end
 
-% IF we are OK to here, then the spectra of the energy points are in the
-% rows of xwData.  We ready the XYZ color matching functions into the
-% columns of S.
+% The spectra of the energy points are in the rows of xwData. We load the
+% XYZ color matching functions into the columns of S.
 S = ieReadSpectra('XYZ',wave);
 if numel(wave) > 1,  dWave = wave(2) - wave(1);
 else                 dWave = 10;   disp('10 nm band assumed');
