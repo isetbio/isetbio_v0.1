@@ -6,8 +6,9 @@ function lut = ieLUTInvert(inLUT, resolution)
 % Inputs:
 %   inLUT:      gamma table that converts linear DAC values to linear RGB.
 %   resolution: sampling resolution, the returned gamma table is sampled at
-%               points 0:1/resolution:2^nbits. If resolution = 2, then we
-%               have twice the number of levels in the returned table
+%               the number of points specified by resolution.  If resolution
+%               is not passed, then default is the number of samples in 
+%               inLUT.
 %
 % Outputs:
 %   lut:  The returned lookup table.
@@ -22,16 +23,21 @@ function lut = ieLUTInvert(inLUT, resolution)
 %   ieLUTDigital, ieLUTLinear
 %
 % (c) Imageval Consulting, LLC 2013
+%
+% 1/7/15  dhb  Changed convention for passed resolution to be the number of
+%              samples in the returned table.
+
+%% Get input size
+nSteps = size(inLUT, 1);
 
 %% Check inputs
 if notDefined('inLUT'), error('input lut required'); end
-if notDefined('resolution'), resolution = 1; end
+if notDefined('resolution'), resolution = nSteps; end
 
-%% Computes invert gamma table
+%% Computes inverse gamma table
 %  Loop over primaries
-nSteps = size(inLUT, 1);
 y  = 1 : nSteps;
-iY = (0 : (1/resolution): nSteps - 1)/nSteps;
+iY = linspace(0,(nSteps-1)/nSteps,nSteps);
 lut = zeros(length(iY), size(inLUT, 2));
 for ii = 1 : size(inLUT, 2)
     % sort inLUT, theoretically, inLUT should be monochrome increasing, but
