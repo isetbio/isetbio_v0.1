@@ -1,17 +1,16 @@
-function lut = ieLUTInvert(inLUT, resolution)
-%% Calculate inverse lookup table (lut) at a specified sampling resolution
+function lut = ieLUTInvert(inLUT, nSteps)
+%% Calculate inverse lookup table (lut) at certain sampling steps
 %
 %    lut = ieLUTInvert(inLUT,resolution)
 %
 % Inputs:
 %   inLUT:      gamma table that converts linear DAC values to linear RGB.
-%   resolution: sampling resolution, the returned gamma table is sampled at
-%               the number of points specified by resolution.  If resolution
-%               is not passed, then default is the number of samples in 
-%               inLUT.
+%   nSteps:     samling steps, the returned gamma table is sampled at
+%               the number of points specified by nSteps.  If it is not
+%               passed in, the default is the number of samples in inLUT.
 %
 % Outputs:
-%   lut:  The returned lookup table.
+%   lut:  The returned lookup table
 %   
 % Example:
 %   d = displayCreate('OLED-Sony');
@@ -27,12 +26,9 @@ function lut = ieLUTInvert(inLUT, resolution)
 % 1/7/15  dhb  Changed convention for passed resolution to be the number of
 %              samples in the returned table.
 
-%% Get input size
-nSteps = size(inLUT, 1);
-
 %% Check inputs
 if notDefined('inLUT'), error('input lut required'); end
-if notDefined('resolution'), resolution = nSteps; end
+if notDefined('nSteps'), nSteps = size(inLUT, 1); end
 
 %% Computes inverse gamma table
 %  Loop over primaries
