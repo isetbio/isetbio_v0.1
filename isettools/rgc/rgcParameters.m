@@ -1,55 +1,53 @@
 classdef rgcParameters < handle
-    % Creates a class definition (structure) of the RGC parameters
-    %
-    %   rgcParameters
-    %
-    % The RGC parameters creation makes most of what you need for an RGC
-    % simulation, but it does not create a layer.  Thus, you must follow the
-    % parameter creation call with a call to add layers. See the example below.
-    %
-    % To see the list of rgcParameters, use:
-    %
-    %   properties('rgcParameters')   or
-    %   methodsview('rgcParameters')
-    %
-    % When you edit this file, you must clear the class definitions before
-    % re-running functions or scripts that use this class.  To reset, use
-    %
-    %   clear rgcParameters
-    %
-    % More explanations of the  rgcParameters are below. The functions that
-    % implement getting and setting most of the parameters are rgcGet
-    % and rgcSet.m. Some of the functions are also implemented here.
-    %
-    %% Discussion
-    %
-    %  Talk about how rgcP contains scene, oi, and sensor data
-    %  Talk about how to set and get parameters
-    %  Talk about the compute routines
-    %
-    %% Examples:
-    %
-    %   rgcP = rgcParameters;
-    %
-    % You can create several type of layers, using rgcP.addLayer(cellType)
-    % where the parameters for cellType are established in layerSetCellType.
-    % Current options include 'on midget','off midget', and so forth.
-    %
-    %  rgcP.addLayer('on midget');
-    %
-    % See the examples in s_rgcScene2Cones and s_rgcCones2RGC for examples of
-    % how to set the properties.
-    %
-    %
-    % (c) 2010 Stanford Synapse Team
+%% Creates a class definition (structure) of the RGC parameters
+%
+%   rgcParameters
+%
+% The RGC parameters creation makes most of what you need for an RGC
+% simulation, but it does not create a layer.  Thus, you must follow the
+% parameter creation call with a call to add layers. See the example below.
+%
+% To see the list of rgcParameters, use:
+%
+%   properties('rgcParameters')   or methodsview('rgcParameters')
+%
+% When you edit this file, you must clear the class definitions before
+% re-running functions or scripts that use this class.  To reset, use
+%
+%   clear rgcParameters
+%
+% More explanations of the  rgcParameters are below. The functions that
+% implement getting and setting most of the parameters are rgcGet and
+% rgcSet.m. Some of the functions are also implemented here.
+%
+% Discussion
+%
+%  Talk about how rgcP contains scene, oi, and sensor data Talk about how
+%  to set and get parameters Talk about the compute routines
+%
+% Examples:
+%
+%   rgcP = rgcParameters;
+%
+% You can create several type of layers, using rgcP.addLayer(cellType)
+% where the parameters for cellType are established in layerSetCellType.
+% Current options include 'on midget','off midget', and so forth.
+%
+%  rgcP.addLayer('on midget');
+%
+% See the examples in s_rgcScene2Cones and s_rgcCones2RGC for examples of
+% how to set the properties.
+%
+%
+% (c) 2010 Stanford Synapse Team
     
-    %% Initialize the rgcParameters object
-    %
-    % We are organized in terms of public, private, methods
-    % I am not sure why the methods are broken up instead of grouped into one
-    % big methods block.
-    % Also, note that there is a function at the bottom.
-    %
+%% Initialize the rgcParameters object
+%
+% We are organized in terms of public, private, methods
+% I am not sure why the methods are broken up instead of grouped into one
+% big methods block.
+% Also, note that there is a function at the bottom.
+%
     
     % These parameters can be set or get by any function
     properties(GetAccess = 'public', SetAccess = 'public')
@@ -58,22 +56,23 @@ classdef rgcParameters < handle
         name = sprintf('rgcSimulation-%s',date);  % Simulation name
         
         absorptions = [];  % 3D array of cone absorptions (x,y,t)
-        cVolts = [];       % Cone voltages (x,y,t).  Should replace absorptions.
+        cVolts = [];       % Cone voltages (x,y,t). Should replace absorptions.
         scene  = [];       % ISET scene
         oi     = [];       % Optical image
         
-        % We always need a sensor to determine some parameters.  Typically,
+        % We always need a sensor to determine some parameters. Typically,
         % this field is over-written by the calling script.
         sensor = sensorCreate('human');
         
         % The temporal response is slow, so we always run to about 150 ms
-        trDur = 150;              % Input response function duration (ms)
+        trDur = 150; % Input response function duration (ms)
         
         % Change these parameters to be named noiseMeanV and noiseSDV Or, just
         % get rid of them.  We should add rgc noise using a separate noise
-        % process.
-        %     meanV       = 0.002; % The mean of the RGC noise (volts)
-        %     stdV        = 0.001; % The standard-deviation of the RGC noise (volts)
+        % process
+        %
+        % meanV = 0.002; % The mean of the RGC noise (volts)
+        % stdV  = 0.001; % The standard-deviation of the RGC noise (volts)
         layers      =  {};   % Empty cell array of layers
     end
     
@@ -277,11 +276,8 @@ end  % rgcP methods.
 
 %% Functions for creating default structures
 function noise = defaultNoise()
-noise = struct();
-
 % Noise function and function parameters
-noise.nsFunc    = @(S, s, m)randn(S) * s + m;
-noise.nFrame    = 0;        % Number of different noise frames
+% Gaussian noise with size S, mean m and standard deviation s
+noise.nsFunc = @(S, s, m)randn(S) * s + m;
+noise.nFrame = 0;        % Number of different noise frames
 end
-
-
