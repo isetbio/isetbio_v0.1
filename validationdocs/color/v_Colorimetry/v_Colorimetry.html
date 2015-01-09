@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_Colorimetry</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-12-22"><meta name="DC.source" content="v_Colorimetry.m"><style type="text/css">
+      --><title>v_Colorimetry</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-09"><meta name="DC.source" content="v_Colorimetry.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -70,12 +70,12 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <span class="comment">%</span>
 <span class="comment">%  Validate ISETBIO-based colorimetric computations by comparing to PTB-based colorimetric computations.</span>
 <span class="comment">%</span>
+<span class="comment">% Hi James!!!</span>
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 <span class="keyword">end</span>
 </pre><h2>Function implementing the isetbio validation code<a name="2"></a></h2><pre class="codeinput"><span class="keyword">function</span> ValidationFunction(runTimeParams)
-</pre><h2>Path stuff<a name="4"></a></h2><p>Use ISETBIO's version of lab2xyz, otherwise the new Matlab function of the same name clobbers this and we get screwy answers.</p><p>Probably in the longer run should just use Matlab's version if it gives the same answers.</p><pre class="codeinput">    lab2xyz = overrideBuiltInFunction(<span class="string">'lab2xyz'</span>, <span class="string">'isetbio'</span>);
-</pre><h2>SETUP<a name="5"></a></h2><pre class="codeinput">    isetbioPath = fileparts(which(<span class="string">'colorTransformMatrix'</span>));
+</pre><h2>Path stuff<a name="4"></a></h2><p>Use ISETBIO's version of lab2xyz, otherwise the new Matlab function of the same name clobbers this and we get screwy answers.</p><p>Probably in the longer run should just use Matlab's version if it gives the same answers. (Changed isetbio to ieLAB2XYZ). lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');</p><h2>SETUP<a name="5"></a></h2><pre class="codeinput">    isetbioPath = fileparts(which(<span class="string">'colorTransformMatrix'</span>));
     curDir = pwd;
     tolerance = 1e-12;
 </pre><h2>XYZ-related colorimetry<a name="6"></a></h2><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'SIMPLE_MESSAGE'</span>, <span class="string">'***** Basic XYZ *****'</span>);
@@ -151,7 +151,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><h2>CIELAB<a name="10"></a></h2><pre class="codeinput">    whiteXYZ = [3,4,3]';
     ptbLabs = XYZToLab(testXYZs,whiteXYZ);
     cd(isetbioPath);
-    isetLabs = xyz2lab(testXYZs',whiteXYZ')';
+    isetLabs = ieXYZ2LAB(testXYZs',whiteXYZ')';
     cd(curDir);
     <span class="keyword">if</span> (any(abs(ptbLabs-isetLabs) &gt; tolerance))
         message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)'</span>, tolerance);
@@ -164,7 +164,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     UnitTest.validationData(<span class="string">'isetLabs'</span>, isetLabs);
 
     ptbXYZCheck = LabToXYZ(ptbLabs,whiteXYZ);
-    isetXYZCheck = lab2xyz(isetLabs',whiteXYZ')';
+    isetXYZCheck = ieLAB2XYZ(isetLabs',whiteXYZ')';
     <span class="keyword">if</span> (any(abs(testXYZs-ptbXYZCheck) &gt; tolerance ))
         message = sprintf(<span class="string">'PTB FAILS XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
         UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
@@ -372,8 +372,9 @@ function varargout = v_Colorimetry(varargin)
 %
 %  Validate ISETBIO-based colorimetric computations by comparing to PTB-based colorimetric computations.
 %
+% Hi James!!!
 
-    varargout = UnitTest.runValidationRun(@ValidationFunction, varargin);
+    varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
 
 %% Function implementing the isetbio validation code
@@ -385,8 +386,9 @@ function ValidationFunction(runTimeParams)
     % get screwy answers.
     %
     % Probably in the longer run should just use Matlab's version if it gives
-    % the same answers.
-    lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');
+    % the same answers. 
+    % (Changed isetbio to ieLAB2XYZ).
+    % lab2xyz = overrideBuiltInFunction('lab2xyz', 'isetbio');
     
     %% SETUP
     isetbioPath = fileparts(which('colorTransformMatrix'));
@@ -476,7 +478,7 @@ function ValidationFunction(runTimeParams)
     whiteXYZ = [3,4,3]';
     ptbLabs = XYZToLab(testXYZs,whiteXYZ);
     cd(isetbioPath);
-    isetLabs = xyz2lab(testXYZs',whiteXYZ')';
+    isetLabs = ieXYZ2LAB(testXYZs',whiteXYZ')';
     cd(curDir);
     if (any(abs(ptbLabs-isetLabs) > tolerance))
         message = sprintf('PTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)', tolerance);
@@ -489,7 +491,7 @@ function ValidationFunction(runTimeParams)
     UnitTest.validationData('isetLabs', isetLabs);
     
     ptbXYZCheck = LabToXYZ(ptbLabs,whiteXYZ);
-    isetXYZCheck = lab2xyz(isetLabs',whiteXYZ')';
+    isetXYZCheck = ieLAB2XYZ(isetLabs',whiteXYZ')';
     if (any(abs(testXYZs-ptbXYZCheck) > tolerance ))
         message = sprintf('PTB FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
         UnitTest.validationRecord('FAILED', message);
