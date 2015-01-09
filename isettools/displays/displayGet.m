@@ -10,7 +10,7 @@ function val = displayGet(d, parm, varargin)
 %
 % Transduction
 %     {'gamma table'}   - nLevels x nPrimaries
-%     {'inverse gamma'} - invert gamma table, see ieLUTInvert
+%     {'inverse gamma',[nSteps]} - invert gamma table, see ieLUTInvert
 %     {'dacsize'}       - number of bits (log2(nSamples))
 %     {'nlevels'}       - number of levels
 %     {'levels'}        - list of levels
@@ -88,7 +88,14 @@ switch parm
     case {'gtable','dv2intensity','gamma','gammatable'}
         if isfield(d,'gamma'), val = d.gamma; end
     case {'inversegamma', 'inversegammatable'}
-        if isfield(d, 'gamma'), val = ieLUTInvert(d.gamma); end
+        if isfield(d, 'gamma')
+            % Optional nSteps arg for inverse gamma table
+            if (isempty(varargin))
+                val = ieLUTInvert(d.gamma);
+            else
+                val = ieLUTInvert(d.gamma,varargin{1});
+            end
+        end
     case {'isemissive'}
         val = true;
         if isfield(d, 'isEmissive'), val = d.isEmissive; end
