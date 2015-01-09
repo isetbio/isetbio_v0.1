@@ -1,36 +1,46 @@
-function lut = ieLUTInvert(inLUT,resolution)
-% Calculate an inverse lookup table (lut) at a specified sampling resolution
+function lut = ieLUTInvert(inLUT, nSteps)
+%% Calculate inverse lookup table (lut) at certain sampling steps
 %
 %    lut = ieLUTInvert(inLUT,resolution)
 %
-% inLUT:      A gamma table that converts linear DAC values to linear RGB.
-% resolution: The display bit depth is log2(size(DAC,1)).  We are going to
-%   make an inverse table with finer resolution.  
+% Inputs:
+%   inLUT:      gamma table that converts linear DAC values to linear RGB.
+%   nSteps:     samling steps, the returned gamma table is sampled at
+%               the number of points specified by nSteps.  If it is not
+%               passed in, the default is the number of samples in inLUT.
 %
-% lut:  The returned lookup table.
-% If resolution = 2, then we have twice the number of levels in the
-% returned table.
-%
+% Outputs:
+%   lut:  The returned lookup table
+%   
 % Example:
-%   d = displayCreate;
-%   inLUT = d.gamma.^0.6;
-%   lut = ieLUTInvert(inLUT,3);
+%   d = displayCreate('OLED-Sony');
+%   inLUT = displayGet(d, 'gamma');
+%   lut = ieLUTInvert(inLUT, 2);
 %   vcNewGraphWin; plot(lut)
 %
-% See also:  ieLUTDigital, ieLUTLinear
+% See also:
+%   ieLUTDigital, ieLUTLinear
 %
 % (c) Imageval Consulting, LLC 2013
+%
+% 1/7/15  dhb  Changed convention for passed resolution to be the number of
+%              samples in the returned table.
 
+%% Check inputs
 if notDefined('inLUT'), error('input lut required'); end
-if notDefined('resolution'), resolution = 0.5; end
+if notDefined('nSteps'), nSteps = size(inLUT, 1); end
 
-x = 1:size(inLUT,1);
-y = inLUT(:,1);
-
-nbits = log2(length(y));
-m = 2^nbits - 1;
-
-iY = (0:(1/resolution):m)/(2^nbits);
-lut = interp1(y(:),x(:),iY(:),'pchip',m);
+%% Computes inverse gamma table
+%  Loop over primaries
+y  = 1 : nSteps;
+iY = linspace(0,(nSteps-1)/nSteps,nSteps);
+lut = zeros(length(iY), size(inLUT, 2));
+for ii = 1 : size(inLUT, 2)
+    % sort inLUT, theoretically, inLUT should be monochrome increasing, but
+    % sometimes, the intensity at very low light levels cannot be measured
+    % and we just set all of them to 0
+    [x, indx] = unique(inLUT(:, ii));
+    lut(:, ii) = interp1(x, y(indx), iY(:), 'pchip', nSteps-1);
+end
 
 end

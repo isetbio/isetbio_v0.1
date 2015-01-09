@@ -1,7 +1,8 @@
 % t_oiCompute
 %
-% Walk through the calculations in oiCompute. Illustrates how scene
-% radiance is converted through a lens to an optical image (irradiance)
+% Walk through the calculations in oiCompute.
+%
+% Illustrates how scene radiance is converted through a lens to an optical image (irradiance)
 %
 % Copyright ImagEval Consultants, LLC, 2010.
 
@@ -18,7 +19,6 @@ oi = oiCreate;
 oi = oiCompute(scene,oi);
 vcAddAndSelectObject(oi); oiWindow;
 
-
 %% Make a bigger f-number, compute and show
 optics = oiGet(oi,'optics');
 fnSmall = opticsGet(optics,'f number');
@@ -31,46 +31,45 @@ oi2 = oiCompute(scene,oi2);
 vcAddAndSelectObject(oi2); oiWindow;
 
 %% Plot the psf of the optics
-
-vcNewGraphWin
+vcNewGraphWin;
 thisWave = 600;
 plotOI(oi,'psf',[],thisWave);
 set(gca,'xlim',[-20 20],'ylim',[-20 20]);
 colormap(0.5*copper + 0.5*ones(size(copper)));
 
-
-%%
-vcNewGraphWin
+%% Plot irradiance image
+vcNewGraphWin;
 gridSpacing = 5; % um
 plotOI(oi,'irradiance image with grid',[],gridSpacing);
 set(gca,'xlim',[-20 20],'ylim',[-20 20])
 title(sprintf('F-number = %d',fnSmall))
 
 %% What happens if we change the f/# of the optics and replot?
-
-vcNewGraphWin
+vcNewGraphWin;
 plotOI(oi2,'psf',[],thisWave);
 set(gca,'xlim',[-20 20],'ylim',[-20 20])
 
 colormap(0.5*copper + 0.5*ones(size(copper)))
 title(sprintf('F-number = %d',fnBig))
 
-%%
-vcNewGraphWin
+%% Plot new irradiance image
+vcNewGraphWin;
 gridSpacing = 5;
 plotOI(oi2,'irradiance image with grid',[],gridSpacing);
 set(gca,'xlim',[-20 20],'ylim',[-20 20])
 title(sprintf('F-number = %d',fnBig))
 
 %% Here is the psf plot method, including the OTF and PSF
+%
 % This is just copied from the plotOI code, really.
 
+% Specify units
 units = 'um';
+
 % Calling conventions should be specified here.
 % The opticsGet() for diffraction limited should be
 % adjusted so that this code becomes shorter.
 % idx  = ieFindWaveIndex(wavelength,thisWave);
-
 nSamp = 100;   % Number of frequency steps from 0 to incoherent cutoff
 val = opticsGet(optics,'dlFSupport',thisWave,units,nSamp);
 [fSupport(:,:,1),fSupport(:,:,2)] = meshgrid(val{1},val{2});

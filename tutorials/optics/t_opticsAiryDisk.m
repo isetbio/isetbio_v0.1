@@ -4,8 +4,10 @@
 %
 % Copyright ImagEval Consultants, LLC, 2010.
 
-%% Build up the spatial structure in an optical image
+%% Initialize
+ieInit;
 
+%% Build up the spatial structure in an optical image
 scene = sceneCreate;
 oi    = oiCreate;
 oi    = oiCompute(scene,oi); 
@@ -20,15 +22,14 @@ clear fSupport
 val = opticsGet(optics,'dlFSupport',thisWave,units,nSamp);
 [fSupport(:,:,1),fSupport(:,:,2)] = meshgrid(val{1},val{2});
 
-%Over sample to make a smooth image. This move increases the spatial
-%frequency resolution (highest spatial frequency) by a factor of 4.
+% Over sample to make a smooth image. This move increases the spatial
+% frequency resolution (highest spatial frequency) by a factor of 4.
 fSupport = fSupport*4;  
 
 % Frequency units are cycles/micron. The spatial frequency support runs
 % from -Nyquist:Nyquist. With this support, the Nyquist frequency is
 % actually the highest (peak) frequency value. There are two samples per
 % Nyquist, so the sample spacing is 1/(2*peakF)
-%
 peakF = max(fSupport(:));
 deltaSpace = 1/(2*peakF);
 

@@ -8,18 +8,17 @@
 % objects. By using these objects properly, the code and analysis are much
 % easier to understand.
 %
-% This script introduces the ISET object "optical image" or OI. The OI
+% This tutorial introduces the ISET object "optical image" or OI. The OI
 % describes the irradiance field at the sensor surface.  It is computed
 % from the scene (radiance), and the optics.  The optics object is stored
 % in a slot within the optical image.
 % 
 % Use t_"TAB KEY" to see the list of tutorials 
-% Use s_"TAB KEY" to see the list of ISET scripts.
 %
 % Copyright ImagEval Consultants, LLC, 2012.
 
 %% Initialize ISET 
-s_initISET
+ieInit;
 
 %% Create a point array scene
 % This and other simple synthetic scenes are useful for examining simple optical properties
@@ -88,7 +87,6 @@ gSpacing = 17;  % The grid spacing in microns
 plotOI(oi,'irradiance image with grid',xy,gSpacing);
 title(sprintf('F-number = %d',fnSmall))
 
-
 %% Plot an RGB representation of the new irradiance field  
 xy = []; gSpacing = 17;
 plotOI(oiBigF,'irradiance image with grid',xy,gSpacing);
@@ -102,5 +100,7 @@ oiHuman     = oiCreate('human');
 oiHuman = oiCompute(scene,oiHuman);
 oiHuman = oiSet(oiHuman,'name','human optics');
 vcAddAndSelectObject(oiHuman); oiWindow;
+
+%% End
 
 

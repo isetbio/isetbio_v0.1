@@ -1,7 +1,6 @@
-% Script: t_BarrelDistortion.m
+%% t_BarrelDistortion.m
 %
-% Demonstrates the Blasinski algorithm for barrel distortion removal from
-% wide-angle lenses. 
+% Demonstrates the Blasinski algorithm for barrel distortion removal from wide-angle lenses. 
 %
 % The barrel distortion is removed in two ways:
 %
@@ -12,6 +11,9 @@
 %
 % Author: Henryk Blasinski, 2012
 %
+% NOTES:
+%  1) This is broken with a message from opticsRayTrace that says "Ray
+%  Trace routines not found"
 
 %% Run the wide-angle lens simulation
 s_initISET

@@ -20,7 +20,8 @@ function d = displaySet(d,parm,val,varargin)
 %  d = displaySet(d,'gTable','linear');
 %  d = displaySet(d,'name','My Display Type');
 %
-% See also: displayGet, displayCreate, ieLUTDigital, ieLUTLinear
+% See also: 
+%   displayGet, displayCreate, ieLUTDigital, ieLUTLinear
 %
 % Copyright ImagEval 2011
 

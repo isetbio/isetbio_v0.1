@@ -1,4 +1,6 @@
 %% t_Startup.m
+%
+% Demonstrate path control in Matlab.
 %   
 %  When you start Matlab, it looks for a file called startup.m on your path
 %  and runs it. Many users have a personal startup.m file on their Matlab
@@ -9,6 +11,11 @@
 %  in that directory.
 %
 %  This tutorial describes some simple ways to organize a startup.m file.
+%
+% NOTES:
+%  1) Broken becuase it has Windows stuff hard coded into it.
+%  2) Breaks whatever path the user had set before it was run.n  Indeed, I had
+%  to force quit Matlab after I ran this part way and exited out.
 %
 % Copyright ImagEval Consultants, LLC, 2012.
 

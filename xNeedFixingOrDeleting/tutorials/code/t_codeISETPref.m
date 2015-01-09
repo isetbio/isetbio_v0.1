@@ -1,9 +1,14 @@
 %% t_codeISETPref.m
+%
+% ISETBIO preferences
 %   
-%  Matlab preserves information for you in environmental variables.
-%  ISET uses these variables to remember certain preferences.  These
-%  preferences are accessed using the ieSessionGet and ieSessionSet
-%  functions.
+% Matlab preserves information for you in environmental preference variables.
+% ISETBIO uses these variables to remember certain preferences.  These
+% preferences are accessed using the ieSessionGet and ieSessionSet
+% functions.
+%
+% NOTES:
+%   1) Currently broken because it calls a script that no longer exists.
 %
 % Copyright ImagEval Consultants, LLC, 2013
 
@@ -73,9 +78,7 @@ sceneWindow
 drawnow
 pause(2)
 
-
 %% Finally, you can see the pref list using the Matlab command getpref
-
 iePref = getpref('ISET')
 
 % But don't do it directly.  Use ieSessionSet/Get as above.

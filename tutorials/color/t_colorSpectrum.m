@@ -6,40 +6,39 @@
 % create an image approaching the appearance the rainbow (the spectral
 % colors) on your display.
 %
-% Class:     Psych 221/EE 362 Tutorial:  Spectrum Author:    Wandell
-% Purpose:   An example calculation: making a desaturated rainbow. Date:
-% 01.12.98 Duration:  20 minutes
+% Class:       Psych 221 - Applied Vision and Image Systems
+% Tutorial:    Color Spectrum 
+% Author:      Wandell
+% Purpose:     An example calculation: making a desaturated rainbow
+% Last Update: 01.05.15 (HJ)
+% Duration:    20 minutes
 %
 % 12/29/14  dhb  Updated for isetbio, and cleaned a bit.
 
 %% Initialize
-s_initISET;
+ieInit;
 
 %% Get display primaries
 %
 % Let's suppose that we know the spectral power distributions of your
-% monitor's primaries.  For this example, we will use the SPDs for a sample
+% monitor's primaries. For this example, we will use the SPDs for a sample
 % display description provided with isetbio.
-wave = 400:5:700;
-displayCalFile = 'LCD-Apple.mat';
-d = displayCreate(displayCalFile, wave);
+wave = (400:5:700)'; % wavelength samples
+dWave = wave(2) - wave(1); % bin size
+d = displayCreate('LCD-Apple', wave);
 wave = displayGet(d,'wave');
-primaries = displayGet(d,'spd primaries');
+primaries = displayGet(d, 'spd primaries');
 
 % Here is a plot of the primaries.
-vcNewGraphWin;
-plot(wave,primaries(:,1),'r', ...
-    wave,primaries(:,2),'g', ...
-    wave,primaries(:,3),'b');
-xlabel('Wavelength (nm)');
-ylabel('Primary power');
+vcNewGraphWin; plot(wave,primaries(:,3:-1:1));
+xlabel('Wavelength (nm)'); ylabel('Primary power');
 
 %% Get color matching functions
 %
 % We use the CIE XYZ color matching functions for creating calibrated
-% signals.  So, we load them first.  The ieReadSpectra function splines
+% signals. We load them first.  The ieReadSpectra function splines
 % these to match the passed wavelength sampling.
-XYZ = ieReadSpectra('XYZ',wave);
+XYZ = ieReadSpectra('XYZ', wave);
 
 %% Compute color transfomration matrix
 %
@@ -48,14 +47,17 @@ XYZ = ieReadSpectra('XYZ',wave);
 % XYZ values for each of the individual primaries.  The columns of this
 % matrix represent the XYZ values of the red, green and blue primaries,
 % respectively.  These values should be relatively easy to interpret.
-rgb2xyz = XYZ'*primaries
+rgb2xyz = 683 * dWave * XYZ' * primaries; %#ok
+
+% Alternatively,
+rgb2xyz = displayGet(d, 'rgb2xyz')';
 
 % Invert the rgb2xyz matrix so that we can compute from XYZ back to linear
 % RGB values.
 %
 % Notice that the values of the xyz2rgb matrix contain negative values and
 % are difficult to interpret directly. Such is life.
-xyz2rgb = inv(rgb2xyz)
+xyz2rgb = inv(rgb2xyz);
 
 %% Get RGB values for the spectrum locus
 %
@@ -63,7 +65,7 @@ xyz2rgb = inv(rgb2xyz)
 % Remember that the XYZ values of each spectral light are contained in the
 % rows of the XYZ matrix.  So, we need only to multiply the two matrices as
 % in:
-rgbSpectrum = xyz2rgb*XYZ'; %#ok<MINV>
+rgbSpectrum = xyz2rgb * XYZ'; %#ok 
 
 % This calculation would produce the rgbSpectrum for monochrome lights of
 % equal energy.  But, equal energy monochrome lights do not appear equally
@@ -99,9 +101,9 @@ xlabel('Wavelength (nm)');
 ylabel('Normalizing factors');
 
 % And here is a graph of the R,G and B values we need for each of the
-% individual wavelengths when they are presented at approximately equal brightness.
-% The horizontal axis shows wavelength and the three colored curves show
-% the linear intensity values needed for the primaries.
+% individual wavelengths when they are presented at approximately equal
+% brightness. The horizontal axis shows wavelength and the three colored
+% curves show the linear intensity values needed for the primaries.
 vcNewGraphWin;
 plot(wave,rgbSpectrum(:,1),'r', ...
     wave,rgbSpectrum(:,2),'g', ...
@@ -165,8 +167,8 @@ ylabel('Linear RGB values (scaled and normalized)');
 % 1, because that is what the image show routines in Matlab want.
 bitDepth      = 10;
 gammaTable    = displayGet(d,'gamma table');
-invGammaTable = ieLUTInvert(gammaTable,bitDepth);
-DAC           = ieLUTLinear(rgbSpectrum,invGammaTable);
+invGammaTable = ieLUTInvert(gammaTable);
+DAC           = ieLUTLinear(rgbSpectrum, invGammaTable);
 normalizedDAC = DAC/(2^bitDepth);
 
 % Here is a plot of the DAC values we ended up with.

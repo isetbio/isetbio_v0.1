@@ -9,10 +9,11 @@ function val = displayGet(d, parm, varargin)
 %     {'is emissive'} - true (emissive) or false (reflective)
 %
 % Transduction
-%     {'gamma table'}  - nLevels x nPrimaries
-%     {'dacsize'}      - number of bits (log2(nSamples))
-%     {'nlevels'}      - number of levels
-%     {'levels'}       - list of levels
+%     {'gamma table'}   - nLevels x nPrimaries
+%     {'inverse gamma'} - invert gamma table, see ieLUTInvert
+%     {'dacsize'}       - number of bits (log2(nSamples))
+%     {'nlevels'}       - number of levels
+%     {'levels'}        - list of levels
 %
 % SPD calculations
 %     {'wave'}                - wavelength samples in nanometers
@@ -86,6 +87,8 @@ switch parm
         val = d.type;
     case {'gtable','dv2intensity','gamma','gammatable'}
         if isfield(d,'gamma'), val = d.gamma; end
+    case {'inversegamma', 'inversegammatable'}
+        if isfield(d, 'gamma'), val = ieLUTInvert(d.gamma); end
     case {'isemissive'}
         val = true;
         if isfield(d, 'isEmissive'), val = d.isEmissive; end
