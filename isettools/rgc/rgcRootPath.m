@@ -10,6 +10,6 @@ function rootPath=rgcRootPath()
 
 rootPath=which('rgcRootPath');
 
-[rootPath,fName,ext]=fileparts(rootPath);
+[rootPath, ~, ~]=fileparts(rootPath);
 
 return

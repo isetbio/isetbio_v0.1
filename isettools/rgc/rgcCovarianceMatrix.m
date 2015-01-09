@@ -1,4 +1,4 @@
-function cMatrx = rgcCovarianceMatrix(sxx,syy,theta)
+function cMatrx = rgcCovarianceMatrix(sxx, syy, theta)
 % Builds a covariance matrix with sxx and syy as specified, then rotates it
 % with an angle theta (in radians)
 %

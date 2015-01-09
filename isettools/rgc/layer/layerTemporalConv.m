@@ -1,5 +1,5 @@
-function [linTS componentTS] = layerTemporalConv(absBlurred, layer)
-% Calculate the linear component of the time series, linTS, for one layer
+function [linTS, componentTS] = layerTemporalConv(absBlurred, layer)
+%% Calculate the linear component of the time series, linTS, for one layer
 %  
 %   [linTS componentTS] = layerTemporalConv(absBlurred, layer)
 %
@@ -16,8 +16,8 @@ function [linTS componentTS] = layerTemporalConv(absBlurred, layer)
 %   linTS:       the sum of the component TS, i.e., the total cone-driven
 %     inputs to the RGCs 
 %
-% absBlurred is a 4D matrix.  The first two dimension are rows and columns of
-% the cone matrix.  The third dimension is time.  The 4th dimension
+% absBlurred is a 4D matrix.  The first two dimension are rows and columns
+% of the cone matrix.  The third dimension is time.  The 4th dimension
 % indicates which component of the receptive field (center, surround) is
 % represented.  These data are obtained by spatial convolution of the cone
 % absorptions with the rf-component (center/surround).
@@ -29,8 +29,10 @@ function [linTS componentTS] = layerTemporalConv(absBlurred, layer)
 % (c) 2010 Stanford Synapse Team 
 
 %% Input format checking
-if notDefined('absBlurred'), error('Input blurred absorptions required'); end;
-if (notDefined('layer') || ~isequal(class(layer),'rgcLayer'))
+if notDefined('absBlurred')
+    error('Input blurred absorptions required');
+end
+if notDefined('layer') || ~isequal(class(layer),'rgcLayer')
     error('layer has to belong to the rgcLayer class');
 end
 
@@ -74,4 +76,4 @@ for cc = 1:nComponents  % For the center and surround
     linTS = linTS + componentTS{cc}; %componentTS{cc}(:,1:tsLength);
 end
 
-return
+end

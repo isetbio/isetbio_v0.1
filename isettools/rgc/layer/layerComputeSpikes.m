@@ -1,4 +1,4 @@
-function [spkTimes rgcV, rgcThresh] = layerComputeSpikes(layer)
+function [spkTimes, rgcV, rgcThresh] = layerComputeSpikes(layer)
 % Compute spikes for a layer
 % 
 %  [spkTimes, rgcV, rgcThresh] = layerComputeSpikes(layer)

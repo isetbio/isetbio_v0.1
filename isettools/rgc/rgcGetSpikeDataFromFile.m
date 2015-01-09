@@ -1,4 +1,3 @@
-
 function spikeData = rgcGetSpikeDataFromFile(filename, SRG, cpd, contrast)
    % This reads spikeData from files, provided they have a regular name (it is not very robust.)
    % Only the contrast argument is actually used for now, put the other

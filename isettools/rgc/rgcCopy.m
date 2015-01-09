@@ -1,4 +1,4 @@
-function rgcCopy(h1,h2)
+function rgcCopy(h1, h2)
 % for two objects of the same class h1 and h2 that are subclases of
 % handle, copies all the fields of h1 in the fields of h2
 % only works with properties such that (GetAccess = 'public', SetAccess = 'public')
