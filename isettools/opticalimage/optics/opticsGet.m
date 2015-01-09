@@ -227,7 +227,7 @@ switch parm
             % optics/lens as a pinhole, you must have a scene and in that
             % case we use the proper distance (half the scene distance). 
             % When you are just skipping to save time, you may not have a
-            % scene.  In that case, use the optics focal length.
+            % scene. In that case, use the optics focal length.
             scene = vcGetObject('scene');
             if isempty(scene), val = optics.focalLength;
             else               val = sceneGet(scene,'distance')/2;
@@ -235,7 +235,9 @@ switch parm
             
         else   val = optics.focalLength;
         end
-        if ~isempty(varargin), val = val*ieUnitScaleFactor(varargin{1}); end
+        if ~isempty(varargin)
+            val = val*ieUnitScaleFactor(varargin{1});
+        end
 
     case {'power','diopters'}
         % opticsGet(optics,'power','mm')
@@ -252,7 +254,7 @@ switch parm
         % assume infinite distance
         %
         % opticsGet(optics,'focalplane',sDist); -- sDist is sourceDistance
-        % opticsGet(optics,'focalplanedistance');  --   Infinite source dist
+        % opticsGet(optics,'focalplanedistance');  -- Infinite source dist
 
         % No need to check rt because focalLength parameter does
         % What about 'skip' case?  Should 'focalLength' call set this to
@@ -588,15 +590,29 @@ switch parm
         val{2} = opticsGet(optics,'otf fx',units);
 
     case {'otffx'}
-        % cycles/mm!!! Non-standard unit.  Must fix up some day.
+        % cycles/mm!!! Non-standard unit. Must fix up some day.
         if checkfields(optics,'OTF','fx'), val = optics.OTF.fx; end
-        % Put into meters and then apply scale factor
-        if ~isempty(varargin), val = (val*10^3)/ieUnitScaleFactor(varargin{1}); end
+        % Transform into other units if required
+        if ~isempty(varargin)
+            unit = ieParamFormat(varargin{1});
+            if strcmp(unit, 'cycles/deg') || strcmp(unit, 'cyclesperdeg')
+                val = val*tand(1)*opticsGet(optics, 'focal length', 'mm');
+            else
+                val = (val*10^3)/ieUnitScaleFactor(unit);
+            end
+        end
     case {'otffy'}
-        % cycles/mm!!! Non-standard unit.  Must fix up some day.
+        % cycles/mm!!! Non-standard unit. Must fix up some day.
         if checkfields(optics,'OTF','fy'), val= optics.OTF.fy; end
         % Put into meters and then apply scale factor
-        if ~isempty(varargin), val = (val*10^3)/ieUnitScaleFactor(varargin{1}); end
+        if ~isempty(varargin), 
+            unit = ieParamFormat(varargin{1});
+            if strcmp(unit, 'cycles/deg') || strcmp(unit, 'cyclesperdeg')
+                val = val*tand(1)*opticsGet(optics, 'focal length', 'mm');
+            else
+                val = (val*10^3)/ieUnitScaleFactor(unit);
+            end
+        end
     case {'otfsize'}
         % Row and col samples
         if checkfields(optics,'OTF','OTF'),
