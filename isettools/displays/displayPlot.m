@@ -49,6 +49,10 @@ switch param
         XYZ = ieXYZFromEnergy(spd', wave);
         xy = chromaticity(XYZ);
         
+        % eliminate black primary
+        indx = (sum(xy, 2) < 0.1);
+        xy(indx, :) = [];
+        
         g = chromaticityPlot(xy, 'gray', 256);
         xy = [xy; xy(1,:)];
         l = line(xy(:,1),xy(:,2));
