@@ -30,7 +30,7 @@ else
     % Select scene popup contents
     set(handles.popupSelectDisplay,...
         'String',vcGetObjectNames('DISPLAY'),...
-        'Value',vcGetSelectedObject('DISPLAY'));    
+        'Value',vcGetSelectedObject('DISPLAY'));
 end
 
 %% Description box on upper right
@@ -38,6 +38,7 @@ set(handles.txtSummary,'String', displayDescription(d));
 
 %% Redraw the main image 
 displayShowImage(d, [], handles.axes1);
+set(handles.txtMessage, 'String', 'Original Image');
 
 %% Set subpixel figure
 dixel_image = displayGet(d, 'dixel image');

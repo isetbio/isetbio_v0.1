@@ -74,9 +74,12 @@ if ~checkfields(vcSESSION, 'GUI', 'vcDisplayWindow')
 end
 
 % Refresh image window
-I = imread(fullfile(isetRootPath, 'data', 'images', 'rgb', 'macbeth.tif'));
-I = im2double(I);
-vcSESSION.imgData = I;
+if ~isfield(vcSESSION, 'imgData') || isempty(vcSESSION.imgData)
+    I = imread(fullfile(isetRootPath, ...
+                'data', 'images', 'rgb', 'macbeth.tif'));
+    I = im2double(I);
+    vcSESSION.imgData = I;
+end
 
 % Refresh other components
 displayRefresh(hObject, eventdata, handles);
@@ -132,7 +135,7 @@ if isempty(psfs)
     disp('no psfs in display model');
     return;
 else
-    figure;
+    vcNewGraphWin;
     if size(psfs,3) == 3
         imshow(psfs / max(psfs(:)));
     else
@@ -148,18 +151,38 @@ return;
 % --------------------------------------------------------------------
 function menuAnalyzeOutputImage_Callback(~, ~, handles)
 % Analyze | Output image (by units)
+ind = vcGetSelectedObject('display');
+d = vcGetObject('display', ind);
+if isempty(ind), disp('No display selected'); return; end
+
 h = get(handles.axes1, 'Children');
 I = get(h, 'CData');
-ind = vcGetSelectedObject('display');
-if isempty(ind), disp('No display selected'); return; end
-d = vcGetObject('display', ind);
-subI = displayCompute(d, I);
-figure; imshow(subI / max(subI(:)));
+
+% select region
+set(handles.txtMessage, 'String', 'Select Region in Image');
+rect = floor(getrect);
+set(handles.txtMessage, 'String', 'Original Image');
+
+% round width and height to multiple of pixelsperdixel
+ppd = displayGet(d, 'pixels per dixel');
+rect(3:4) = ppd .* ceil(rect(3:4) ./ ppd);
+I = I(rect(2): rect(2)+rect(4)-1, rect(1) : rect(1) + rect(3)-1, :);
+
+% create a scene
+% For rgb image, we can use displayCompute the generate the output image
+% However, the output image will have same number of primaries as the
+% display (could be more than 3) and then imshow will not work. Thus, we
+% compute the scene radiance and get the srgb of the scene and show to the
+% window
+scene = sceneFromFile(I, 'rgb', [], d, [], 1, [], [20 20]);
+vcNewGraphWin; imshow(sceneGet(scene, 'rgb image'));
+
+
 return;
 
 
 % --------------------------------------------------------------------
-function menuAnalyzeSceneSubpixel_Callback(~, ~, ~)
+function menuAnalyzeSceneSubpixel_Callback(~, ~, handles)
 % Analyze | Scene
 % Opens up a Scene Window
 ind = vcGetSelectedObject('display');
@@ -175,7 +198,9 @@ else
 end
 
 % select region
+set(handles.txtMessage, 'String', 'Select Region in Image');
 rect = floor(getrect);
+set(handles.txtMessage, 'String', 'Original Image');
 % round width and height to multiple of pixelsperdixel
 ppd = displayGet(d, 'pixels per dixel');
 rect(3:4) = ppd .* ceil(rect(3:4) ./ ppd);
@@ -258,7 +283,7 @@ function menuSaveDisplayModel_Callback(~, ~, ~)
 % File | Save Display
 ind = vcGetSelectedObject('display');
 if isempty(ind), disp('no display selected'); return; end
-d = vcGetObject('display', ind); 
+d = vcGetObject('display', ind); %#ok
 fname = uiputfile('*.mat');
 if fname == 0, return; end
 save(fname, 'd');
@@ -523,3 +548,11 @@ ind = vcGetSelectedObject('display');
 if isempty(ind), disp('no display selected'); end
 d = vcGetObject('display', ind);
 displayPlot(d, 'gamut3d');
+
+
+% --- Executes on button press in Create Scene
+function pushbutton9_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton9 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+menuAnalyzeSceneSubpixel_Callback(hObject, eventdata, handles);
