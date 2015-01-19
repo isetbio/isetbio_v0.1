@@ -10,10 +10,8 @@
 % BW, ISETBIO Team, Copyright 2015
 
 %% Check if there is a running instance, closes it, and clears workspace
-if exist('vcSESSION','var')
-  ieMainClose;   % Closes open ISETBIO windows
-  clx
-end
+ieMainClose;   % Closes open ISETBIO windows
+
 
 %% Initialize variables
 
