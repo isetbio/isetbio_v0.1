@@ -20,6 +20,9 @@ end
 
 %% Compute the high resolution display image
 paddedBitmap = fontGet(font,'padded bitmap');
+np = displayGet(display, 'n primaries');
+paddedBitmap = padarray(paddedBitmap, ...
+                    [0 0 np - size(paddedBitmap, 3)], 'post');
 dRGB       = displayCompute(display,paddedBitmap);
 [dRGB,r,c] = RGB2XWFormat(dRGB);
 spd  = displayGet(display,'spd');
