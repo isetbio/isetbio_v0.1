@@ -8,7 +8,6 @@ function initializeUnitTest(obj)
     % setup default directories
     obj.rootDir             = getpref('isetbioValidation', 'validationRootDir');
     obj.htmlDir             = fullfile(obj.rootDir, 'HTMLpublishedData', filesep);
-    obj.validationDataDir   = fullfile(obj.rootDir, 'validationdata', filesep);
     
     % initialize validation params to default params
     obj.validationParams = obj.defaultValidationParams;
