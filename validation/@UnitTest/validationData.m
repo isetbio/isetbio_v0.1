@@ -43,7 +43,9 @@ function data = validationData(varargin)
                 %fprintf('NOT ADDING CHAR FIELD %s TO HASH DATA', fieldName); 
             end
         else
-            validationData.hashData.(fieldName) = fieldValue;
+            class(fieldValue)
+            error('Do not know how to round this class type');
+            %validationData.hashData.(fieldName) = fieldValue;
         end
  
     end

@@ -3,7 +3,7 @@ classdef UnitTest < handle
     
     % Public properties (Read/write by all)
     properties
-       
+
     end
     
     % Read-only public properties
@@ -15,7 +15,7 @@ classdef UnitTest < handle
         % directed
         htmlDir;
         
-        % Path to directory where all validation data will be stored
+        % Path to  validation data directory
         validationDataDir;
         
         % results of current validation session

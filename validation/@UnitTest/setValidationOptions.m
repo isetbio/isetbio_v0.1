@@ -19,6 +19,12 @@ function setValidationOptions(obj,varargin)
     % Ensure params have valid values
     checkValidationParams(obj.validationParams);
     
+    if strcmp(obj.validationParams.type, 'FAST')
+        obj.validationDataDir   = fullfile(obj.rootDir, 'data', 'fast', filesep);
+    else
+        obj.validationDataDir   = fullfile(obj.rootDir, 'data', 'full', filesep);
+    end
+    
     % Ensure directories exist, and generate them if they do not
     obj.checkDirectories();    
 end

@@ -97,9 +97,9 @@ return;
 function menuFileLoadImage_Callback(hObject, eventdata, handles)
 % File | Load Image
 %
-fname = uigetfile('*.*', 'Choose Image File');
+[fname,p] = uigetfile('*.*', 'Choose Image File');
 if fname == 0, return; end
-I = im2double(imread(fname));
+I = im2double(imread(fullfile(p,fname)));
 
 global vcSESSION;
 vcSESSION.imgData = I;

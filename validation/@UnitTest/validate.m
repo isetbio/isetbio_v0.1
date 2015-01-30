@@ -246,6 +246,9 @@ function validate(obj, vScriptsToRunList)
     if (closeFigsOnExit)
        UnitTest.closeAllNonDataMismatchFigures(); 
     end
+    
+    % cd to validation root dir
+    cd(obj.rootDir);
 end
 
 
