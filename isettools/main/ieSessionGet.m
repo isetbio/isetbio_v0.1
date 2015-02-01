@@ -148,7 +148,7 @@ switch param
         if isfield(vcSESSION, 'imagesizethreshold')
             val = vcSESSION.imagesizethreshold;
         else
-            val = inf;
+            val = 1e6;
         end
     case {'graphwinstructure'}
         val = vcSESSION.GRAPHWIN;
