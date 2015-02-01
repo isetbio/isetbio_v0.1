@@ -54,7 +54,8 @@ switch param
         xy(indx, :) = [];
         
         g = chromaticityPlot(xy, 'gray', 256);
-        xy = [xy; xy(1,:)];
+        indx = convhull(xy(:,1), xy(:,2));
+        xy = xy(indx, :);
         l = line(xy(:,1),xy(:,2));
         set(l,'color',[.6 .6 .6]);
         
