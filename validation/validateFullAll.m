@@ -23,11 +23,25 @@ close all;  % Is this necessary?
 % clc - I prefer controlling my command line. I leave stuff in there
 % sometimes.
 
+%% We will use preferences for the 'isetbio' project - this is project specific
+UnitTest.usePreferencesForProject('isetbioValidation');
+    
 %% Initialize @UnitTest preferences
 UnitTest.initializePrefs();
 
 %% Reset prefs to the default values
 UnitTest.initializePrefs('reset');
+
+%% Set path for the validation root directory - this is project specific
+UnitTest.setPref('validationRootDir',     fullfile(isetbioRootPath, 'validation'));
+
+%% Set paths for the directories where the wiki, and the ghPages are cloned - these are project specific
+UnitTest.setPref('clonedWikiLocation',    fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_Wiki', 'isetbio.wiki'));
+UnitTest.setPref('clonedGhPagesLocation', fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_GhPages', 'isetbio'));
+
+%% Set the URL for the project - this is project specific
+UnitTest.setPref('githubRepoURL', 'http://isetbio.github.io/isetbio');
+    
 
 %% Set default preferences for this function
 
@@ -72,15 +86,9 @@ elseif ~isodd(length(varargin))
                 error('Unknown validation string %s\n',varargin{ii+1});
         end
     end
-else error('Odd number of arguments, must be param/val pairs');
+else
+    error('Odd number of arguments, must be param/val pairs');
 end
-
-%% Path preferences (these are only relevant to github integration)
-% Change to match configuration on the host machine
-%UnitTest.setPref('validationRootDir',       fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'isetbio', 'validation'));
-%UnitTest.setPref('clonedWikiLocation',      fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_Wiki', 'isetbio.wiki'));
-%UnitTest.setPref('clonedGhPagesLocation',   fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_GhPages', 'isetbio'));
-
 
 %% Print current values of isetbioValidation prefs
 UnitTest.listPrefs();

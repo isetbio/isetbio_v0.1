@@ -6,13 +6,27 @@ function validateFastAll
     close all
     clc
     
+    %% We will use preferences for the 'isetbio' project - this is project specific
+    UnitTest.usePreferencesForProject('isetbioValidation');
+    
     %% Initialize @UnitTest preferences
     UnitTest.initializePrefs();
     
     %% Optionally, reset prefs to the default values
     UnitTest.initializePrefs('reset');
     
-    %% Change some preferences:
+    %% Set path for the validation root directory - this is project specific
+    UnitTest.setPref('validationRootDir',     fullfile(isetbioRootPath, 'validation'));
+    
+    %% Set paths for the directories where the wiki, and the ghPages are cloned - these are project specific
+    UnitTest.setPref('clonedWikiLocation',    fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_Wiki', 'isetbio.wiki'));
+    UnitTest.setPref('clonedGhPagesLocation', fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_GhPages', 'isetbio'));
+    
+    %% Set the URL for the project - this is project specific
+    UnitTest.setPref('githubRepoURL', 'http://isetbio.github.io/isetbio');                         
+                                       
+    %% Set default preferences for this function
+    
     %% Whether to update the histories of validation and ground truth data sets
     UnitTest.setPref('updateValidationHistory', false);
     UnitTest.setPref('updateGroundTruth', false);
@@ -38,13 +52,6 @@ function validateFastAll
     
     %% Whether to plot data that do not agree with the ground truth
     UnitTest.setPref('graphMismatchedData', false);
-    
-    %% Path preferences (these are only relevant to github integration)
-    % Change to match configuration on the host machine
-    %UnitTest.setPref('validationRootDir',       fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'isetbio', 'validation'));
-    %UnitTest.setPref('clonedWikiLocation',      fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_Wiki', 'isetbio.wiki'));
-    %UnitTest.setPref('clonedGhPagesLocation',   fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_GhPages', 'isetbio'));
-
 
     %% Print current values of isetbioValidation prefs
     UnitTest.listPrefs();

@@ -1,7 +1,6 @@
 function varargout = v_stockman2xyz(varargin)
 %
-% Test that colorTransformMatrix does the right thing for
-% Stockman-Sharpe to XYZ and back.
+% Test that colorTransformMatrix does the right thing for Stockman-Sharpe to XYZ and back.
 %
     varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end

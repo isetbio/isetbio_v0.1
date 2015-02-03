@@ -8,12 +8,25 @@ function validateDemo
     close all
     clc
     
+    %% We will use preferences for the 'isetbio' project - this is project specific
+    UnitTest.usePreferencesForProject('isetbioValidation');
+
     %% Initialize @UnitTest preferences
     UnitTest.initializePrefs();
     
     %% Optionally, reset prefs to the default values
     UnitTest.initializePrefs('reset');
     
+    %% Set path for the validation root directory - this is project specific
+    UnitTest.setPref('validationRootDir',     fullfile(isetbioRootPath, 'validation'));
+
+    %% Set paths for the directories where the wiki, and the ghPages are cloned - these are project specific
+    UnitTest.setPref('clonedWikiLocation',    fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_Wiki', 'isetbio.wiki'));
+    UnitTest.setPref('clonedGhPagesLocation', fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_GhPages', 'isetbio'));
+
+    %% Set the URL for the project - this is project specific
+    UnitTest.setPref('githubRepoURL', 'http://isetbio.github.io/isetbio');
+
     %% Change some preferences:
     %% Whether to update the histories of validation and ground truth data sets
     UnitTest.setPref('updateValidationHistory', false);
@@ -27,8 +40,7 @@ function validateDemo
     UnitTest.setPref('generatePlots',  true); 
     UnitTest.setPref('closeFigsOnInit', true);
     
-    %% Verbosity Level3
-    
+    %% Verbosity Level
     %UnitTest.setPref('verbosity', 'none');
     %UnitTest.setPref('verbosity', 'min');
     %UnitTest.setPref('verbosity', 'low');
@@ -42,17 +54,11 @@ function validateDemo
     %% Whether to plot data that do not agree with the ground truth
     UnitTest.setPref('graphMismatchedData', true);
     
-    %% Path preferences (these are only relevant to github integration)
-    % Change to match configuration on the host machine
-    %UnitTest.setPref('validationRootDir',       fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'isetbio', 'validation'));
-    %UnitTest.setPref('clonedWikiLocation',      fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_Wiki', 'isetbio.wiki'));
-    %UnitTest.setPref('clonedGhPagesLocation',   fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_GhPages', 'isetbio'));
-
     %% Print current values of isetbioValidation prefs
     UnitTest.listPrefs();
     
     %% What to validate
-    validateAllDirs = true;
+    validateAllDirs = false;
     if (validateAllDirs)
         % List of script directories to validate. Each entry contains a cell array with 
         % with a validation script directory and an optional struct with
@@ -64,25 +70,32 @@ function validateDemo
         % 
         % Note that the exampleScripts directory contains some scripts that
         % intentionally fail in various ways.
+        
+        % Get rootDir
+        rootDir = UnitTest.getPref('validationRootDir');
+
         vScriptsList = {...
-            {fullfile('scripts', 'color')} ... 
-            {fullfile('scripts', 'cones')} ... 
-            {fullfile('scripts', 'human')} ... 
-            {fullfile('scripts', 'optics')} ... 
-            {fullfile('scripts', 'radiometry')} ... 
-            {fullfile('scripts', 'scene')} ... 
-            {fullfile('scripts', 'codedevscripts'), struct('generatePlots', true) } ...
-        };
+                {fullfile(rootDir, 'scripts', 'color')} ... 
+                {fullfile(rootDir, 'scripts', 'cones')} ... 
+                {fullfile(rootDir, 'scripts', 'human')} ... 
+                {fullfile(rootDir, 'scripts', 'optics')} ... 
+                {fullfile(rootDir, 'scripts', 'radiometry')} ... 
+                {fullfile(rootDir, 'scripts', 'scene')} ... 
+                {fullfile(rootDir, 'scripts', 'codedevscripts'), struct('generatePlots', true) } ...
+            };
     else
         % Alternatively, you can provide a list of scripts to validate. 
         % In this case each entry contains a cell array with 
         % with a script name and an optional struct with
         % prefs that override the corresponding isetbioValidation prefs.
         % At the moment only the generatePlots pref can be overriden.
+        
+        % Get rootDir
+        rootDir = UnitTest.getPref('validationRootDir');
+        
         vScriptsList = {...
-           % {'v_stockman2xyz'} ...
-           % {'v_IrradianceIsomerizations', struct('generatePlots', true)}  ...
-           {'v_skeleton'}
+           {fullfile(rootDir, 'scripts', 'color', 'v_stockman2xyz.m'), struct('generatePlots', true) }
+           {fullfile(rootDir, 'scripts', 'codedevscripts', 'v_skeleton.m'), struct('generatePlots', true) }
         };
     end
     
@@ -91,7 +104,7 @@ function validateDemo
     % UnitTest.runValidationSession(vScriptsList, 'RUN_TIME_ERRORS_ONLY')
     
     % Run a FAST validation session (comparing SHA-256 hash keys of the data)
-    % UnitTest.runValidationSession(vScriptsList, 'FAST');
+    %UnitTest.runValidationSession(vScriptsList, 'FAST');
     
     % Run a FULL validation session (comparing actual data)
     % UnitTest.runValidationSession(vScriptsList, 'FULL');
