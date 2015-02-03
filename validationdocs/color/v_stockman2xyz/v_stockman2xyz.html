@@ -68,8 +68,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
   </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Actual validation code</a></li><li><a href="#4">Ihitialize</a></li><li><a href="#5">Get Stockman-Sharpe and XYZ functions</a></li><li><a href="#6">Make matrix that transforms XYZ to Stockman-Sharpe</a></li><li><a href="#7">Make the one that goes the other way.</a></li><li><a href="#8">Get the same things out of colorTransformMatrix</a></li><li><a href="#9">Check for self inversion</a></li><li><a href="#10">End</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_stockman2xyz(varargin)
 <span class="comment">%</span>
-<span class="comment">% Test that colorTransformMatrix does the right thing for</span>
-<span class="comment">% Stockman-Sharpe to XYZ and back.</span>
+<span class="comment">% Test that colorTransformMatrix does the right thing for Stockman-Sharpe to XYZ and back.</span>
 <span class="comment">%</span>
     varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 <span class="keyword">end</span>
@@ -148,8 +147,7 @@ ans =
 ##### SOURCE BEGIN #####
 function varargout = v_stockman2xyz(varargin)
 %
-% Test that colorTransformMatrix does the right thing for
-% Stockman-Sharpe to XYZ and back.
+% Test that colorTransformMatrix does the right thing for Stockman-Sharpe to XYZ and back.
 %
     varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
 end
