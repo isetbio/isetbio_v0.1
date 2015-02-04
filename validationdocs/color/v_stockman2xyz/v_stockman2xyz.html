@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_stockman2xyz</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-02-03"><meta name="DC.source" content="v_stockman2xyz.m"><style type="text/css">
+      --><title>v_stockman2xyz</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-02-04"><meta name="DC.source" content="v_stockman2xyz.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -78,26 +78,13 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     xyz = ieReadSpectra(<span class="string">'XYZ'</span>,wave);
     stock = ieReadSpectra(<span class="string">'stockman'</span>,wave);
     <span class="keyword">if</span> (runTimeParams.generatePlots)
-        vcNewGraphWin
+        vcNewGraphWin;
         plot(wave, stock)
         plot(wave,xyz)
     <span class="keyword">end</span>
     UnitTest.validationData(<span class="string">'wave'</span>, wave);
     UnitTest.validationData(<span class="string">'xyz'</span>, xyz);
     UnitTest.validationData(<span class="string">'stockman'</span>, stock);
-</pre><pre class="codeoutput">
-ans = 
-
-  Figure (2: ISET GraphWin) with properties:
-
-      Number: 2
-        Name: 'ISET GraphWin'
-       Color: [1 1 1]
-    Position: [0.0070 0.5500 0.2800 0.3600]
-       Units: 'normalized'
-
-  Use GET to show all properties
-
 </pre><img vspace="5" hspace="5" src="v_stockman2xyz_01.png" alt=""> <h2>Make matrix that transforms XYZ to Stockman-Sharpe<a name="6"></a></h2><p>Isetbio keeps sensitivities in columns and matrices are applied to the right to transform.</p><p>Note (sigh) that PTB keeps sensitivities in rows and that matrices are appplied from the left, so if you are going to use PTB routines you need to think about this.</p><pre class="codeinput">    T_xyz2ss = xyz \ stock;
     pred = xyz*T_xyz2ss;
     <span class="keyword">if</span> (runTimeParams.generatePlots)
@@ -163,7 +150,7 @@ function ValidationFunction(runTimeParams)
     xyz = ieReadSpectra('XYZ',wave);
     stock = ieReadSpectra('stockman',wave);
     if (runTimeParams.generatePlots)
-        vcNewGraphWin
+        vcNewGraphWin;
         plot(wave, stock)
         plot(wave,xyz)
     end
