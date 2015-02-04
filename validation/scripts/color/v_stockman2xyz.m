@@ -16,7 +16,7 @@ function ValidationFunction(runTimeParams)
     xyz = ieReadSpectra('XYZ',wave);
     stock = ieReadSpectra('stockman',wave);
     if (runTimeParams.generatePlots)
-        vcNewGraphWin
+        vcNewGraphWin;
         plot(wave, stock)
         plot(wave,xyz)
     end
