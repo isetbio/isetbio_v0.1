@@ -1,6 +1,7 @@
 % Method to set ISETBIO-specific preferences. Generally, this script should be run once only.
 function setProjectSpecificUnitTestPreferences
 
+    % Specify project-specific preferences
     p = struct(...
             'projectName',           'isetbioValidation', ...                                                                         % The project's name (also the preferences group name)
             'validationRootDir',     fullfile(isetbioRootPath, 'validation'), ...                                                     % The directory that contains the 'scripts' directory.
@@ -17,6 +18,6 @@ function setProjectSpecificUnitTestPreferences
     end
     
     % generate and save the project-specific preferences
-    setpref(p.projectName, 'projectSpecificOptions', p);
+    setpref(p.projectName, 'projectSpecificPreferences', p);
     fprintf('Generated and saved preferences specific to the ''%s'' project.\n', p.projectName);
 end
