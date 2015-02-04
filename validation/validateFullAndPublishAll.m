@@ -1,11 +1,11 @@
-function validateAndPublishAll
+function validateFullAndPublishAll
 %
 % Validation and publish our full list of validation programs
 
     close all
     clc
     
-    %% We will use preferences for the 'isetbio' project - this is project specific
+    %% Select the 'isetbioValidation' project preferences
     UnitTest.usePreferencesForProject('isetbioValidation');
 
     %% Initialize @UnitTest preferences
@@ -13,25 +13,14 @@ function validateAndPublishAll
     
     %% Optionally, reset prefs to the default values
     UnitTest.initializePrefs('reset');
-    
-    %% Set path for the validation root directory - this is project specific
-    UnitTest.setPref('validationRootDir',     fullfile(isetbioRootPath, 'validation'));
 
-    %% Set paths for the directories where the wiki, and the ghPages are cloned - these are project specific
-    UnitTest.setPref('clonedWikiLocation',    fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_Wiki', 'isetbio.wiki'));
-    UnitTest.setPref('clonedGhPagesLocation', fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_GhPages', 'isetbio'));
-
-    %% Set the URL for the project - this is project specific
-    UnitTest.setPref('githubRepoURL', 'http://isetbio.github.io/isetbio');
-
-
-    %% Change some preferences:
+    %% Set some preferences:
     %% Whether to update the histories of validation and ground truth data sets
     UnitTest.setPref('updateValidationHistory', false);
     UnitTest.setPref('updateGroundTruth', false);
     
     %% Run time error behavior
-    %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExceptionAndAbort');
+    % valid options are: 'rethrowExceptionAndAbort', 'catchExceptionAndContinue'
     UnitTest.setPref('onRunTimeErrorBehavior', 'catchExceptionAndContinue');
     
     %% Plot generation
@@ -39,12 +28,8 @@ function validateAndPublishAll
     UnitTest.setPref('closeFigsOnInit', true);
     
     %% Verbosity Level
-    %UnitTest.setPref('verbosity', 'none');
-    %UnitTest.setPref('verbosity', 'min');
-    %UnitTest.setPref('verbosity', 'low');
+    % valid options are: 'none', min', 'low', 'med', 'high', 'max'
     UnitTest.setPref('verbosity', 'med');
-    %UnitTest.setPref('verbosity', 'high');
-    %UnitTest.setPref('verbosity', 'max');
     
     %% Numeric tolerance for comparison to ground truth data
     UnitTest.setPref('numericTolerance', 500*eps);
@@ -73,6 +58,6 @@ function validateAndPublishAll
     
     % Run a validation session without a specified mode. You will be
     % promped to select one of the available modes.
-    %UnitTest.runValidationSession(vScriptsList);
+    % UnitTest.runValidationSession(vScriptsList);
 
 end

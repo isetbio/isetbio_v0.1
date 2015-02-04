@@ -30,26 +30,16 @@ UnitTest.usePreferencesForProject('isetbioValidation');
 UnitTest.initializePrefs();
 
 %% Reset prefs to the default values
-UnitTest.initializePrefs('reset');
+UnitTest.initializePrefs('reset');   
 
-%% Set path for the validation root directory - this is project specific
-UnitTest.setPref('validationRootDir',     fullfile(isetbioRootPath, 'validation'));
-
-%% Set paths for the directories where the wiki, and the ghPages are cloned - these are project specific
-UnitTest.setPref('clonedWikiLocation',    fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_Wiki', 'isetbio.wiki'));
-UnitTest.setPref('clonedGhPagesLocation', fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_GhPages', 'isetbio'));
-
-%% Set the URL for the project - this is project specific
-UnitTest.setPref('githubRepoURL', 'http://isetbio.github.io/isetbio');
-    
-
-%% Set default preferences for this function
+%% Set preferences for this function
 
 % Whether to update the histories of validation and ground truth data sets
 UnitTest.setPref('updateValidationHistory', false);
 UnitTest.setPref('updateGroundTruth', false);
 
 % Run time error behavior
+% valid options are: 'rethrowExceptionAndAbort', 'catchExceptionAndContinue'
 UnitTest.setPref('onRunTimeErrorBehavior', 'catchExceptionAndContinue');
 
 % Plot generation
@@ -73,7 +63,7 @@ elseif ~isodd(length(varargin))
         val   = varargin{ii+1};
         switch(param)
             case 'verbosity'
-                UnitTest.setPref('verbosity',val );
+                UnitTest.setPref('verbosity',val);
             case 'numerictolerance'
                 UnitTest.setPref('numericTolerance', val);
             case 'graphMismatchedData'
@@ -97,20 +87,7 @@ UnitTest.listPrefs();
 vScriptsList = validateListAllValidationDirs;
 
 %% How to validate
-% Run a RUN_TIME_ERRORS_ONLY validation session
-% UnitTest.runValidationSession(vScriptsList, 'RUN_TIME_ERRORS_ONLY')
-
-% Run a FAST validation session (comparing SHA-256 hash keys of the data)
-% UnitTest.runValidationSession(vScriptsList, 'FAST');
-
 % Run a FULL validation session (comparing actual data)
 UnitTest.runValidationSession(vScriptsList, 'FULL');
-
-% Run a PUBLISH validation session (comparing actual data and update github wiki)
-%UnitTest.runValidationSession(vScriptsList, 'PUBLISH');
-
-% Run a validation session without a specified mode. You will be
-% promped to select one of the available modes.
-%UnitTest.runValidationSession(vScriptsList);
 
 end

@@ -16,16 +16,6 @@ function validateDemo
     
     %% Optionally, reset prefs to the default values
     UnitTest.initializePrefs('reset');
-    
-    %% Set path for the validation root directory - this is project specific
-    UnitTest.setPref('validationRootDir',     fullfile(isetbioRootPath, 'validation'));
-
-    %% Set paths for the directories where the wiki, and the ghPages are cloned - these are project specific
-    UnitTest.setPref('clonedWikiLocation',    fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_Wiki', 'isetbio.wiki'));
-    UnitTest.setPref('clonedGhPagesLocation', fullfile(filesep,'Users', 'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_GhPages', 'isetbio'));
-
-    %% Set the URL for the project - this is project specific
-    UnitTest.setPref('githubRepoURL', 'http://isetbio.github.io/isetbio');
 
     %% Change some preferences:
     %% Whether to update the histories of validation and ground truth data sets
@@ -33,20 +23,16 @@ function validateDemo
     UnitTest.setPref('updateGroundTruth', false);
     
     %% Run time error behavior
-    %UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExceptionAndAbort');
+    % valid options are: 'rethrowExceptionAndAbort', 'catchExceptionAndContinue'
     UnitTest.setPref('onRunTimeErrorBehavior', 'catchExceptionAndContinue');
     
     %% Plot generation
-    UnitTest.setPref('generatePlots',  true); 
+    UnitTest.setPref('generatePlots',  false); 
     UnitTest.setPref('closeFigsOnInit', true);
     
     %% Verbosity Level
-    %UnitTest.setPref('verbosity', 'none');
-    %UnitTest.setPref('verbosity', 'min');
-    %UnitTest.setPref('verbosity', 'low');
+    % valid options are: 'none', min', 'low', 'med', 'high', 'max'
     UnitTest.setPref('verbosity', 'med');
-    %UnitTest.setPref('verbosity', 'high');
-    %UnitTest.setPref('verbosity', 'max');
     
     %% Numeric tolerance for comparison to ground truth data
     UnitTest.setPref('numericTolerance', 500*eps);
@@ -94,7 +80,7 @@ function validateDemo
         rootDir = UnitTest.getPref('validationRootDir');
         
         vScriptsList = {...
-           {fullfile(rootDir, 'scripts', 'color', 'v_stockman2xyz.m'), struct('generatePlots', true) }
+           {fullfile(rootDir, 'scripts', 'color', 'v_stockman2xyz.m')}
            {fullfile(rootDir, 'scripts', 'codedevscripts', 'v_skeleton.m'), struct('generatePlots', true) }
         };
     end
