@@ -29,7 +29,7 @@ UnitTest.usePreferencesForProject('isetbioValidation');
 %% Initialize @UnitTest preferences
 UnitTest.initializePrefs();
 
-%% Reset prefs to the default values
+%% Alternatively, reset prefs to the default values
 UnitTest.initializePrefs('reset');   
 
 %% Set preferences for this function
@@ -47,7 +47,8 @@ UnitTest.setPref('generatePlots',  false);
 UnitTest.setPref('closeFigsOnInit', true);
 
 %% Verbosity Level
-UnitTest.setPref('verbosity', 'high');
+% valid options are: 'none', min', 'low', 'med', 'high', 'max'
+UnitTest.setPref('verbosity', 'low');
 
 %% Numeric tolerance for comparison to ground truth data
 UnitTest.setPref('numericTolerance', 500*eps);

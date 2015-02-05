@@ -12,7 +12,7 @@ function validateFastAll
     %% Initialize @UnitTest preferences
     UnitTest.initializePrefs();
     
-    %% Optionally, reset prefs to the default values
+    %% Alternatively, reset prefs to the default values
     UnitTest.initializePrefs('reset');                     
                                        
     %% Set default preferences for this function

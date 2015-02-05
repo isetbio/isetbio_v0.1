@@ -11,7 +11,7 @@ function validateFullAndPublishAll
     %% Initialize @UnitTest preferences
     UnitTest.initializePrefs();
     
-    %% Optionally, reset prefs to the default values
+    %% Alternatively, reset prefs to the default values
     UnitTest.initializePrefs('reset');
 
     %% Set some preferences:
