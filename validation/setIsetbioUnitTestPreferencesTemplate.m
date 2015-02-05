@@ -1,8 +1,12 @@
 % Method to set ISETBIO-specific preferences. Generally, this script should
 % be run once only. For different projects, copy this file to the projects' directory
 % and adapt the p-struct according to that project's specifics.
+%
+% You can just run the distributed (Template) version to accept the
+% defaults, or you can make a copy outside of the distribution and modify
+% for your own system.
 
-function setProjectSpecificUnitTestPreferences
+function setIsetboiUnitTestPreferencesTemplate
 
     % Specify project-specific preferences
     p = struct(...
