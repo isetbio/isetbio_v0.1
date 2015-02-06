@@ -7,13 +7,7 @@ function validateFastAll
     clc
     
     %% We will use preferences for the 'isetbio' project - this is project specific
-    UnitTest.usePreferencesForProject('isetbioValidation');
-    
-    %% Initialize @UnitTest preferences
-    UnitTest.initializePrefs();
-    
-    %% Alternatively, reset prefs to the default values
-    UnitTest.initializePrefs('reset');                     
+    UnitTest.usePreferencesForProject('isetbioValidation', 'reset');                
                                        
     %% Set default preferences for this function
     

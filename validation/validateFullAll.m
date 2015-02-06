@@ -24,13 +24,7 @@ close all;  % Is this necessary?
 % sometimes.
 
 %% We will use preferences for the 'isetbio' project - this is project specific
-UnitTest.usePreferencesForProject('isetbioValidation');
-    
-%% Initialize @UnitTest preferences
-UnitTest.initializePrefs();
-
-%% Alternatively, reset prefs to the default values
-UnitTest.initializePrefs('reset');   
+UnitTest.usePreferencesForProject('isetbioValidation', 'reset');
 
 %% Set preferences for this function
 
@@ -48,7 +42,7 @@ UnitTest.setPref('closeFigsOnInit', true);
 
 %% Verbosity Level
 % valid options are: 'none', min', 'low', 'med', 'high', 'max'
-UnitTest.setPref('verbosity', 'low');
+UnitTest.setPref('verbosity', 'med');
 
 %% Numeric tolerance for comparison to ground truth data
 UnitTest.setPref('numericTolerance', 500*eps);

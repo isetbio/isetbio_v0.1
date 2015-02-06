@@ -9,13 +9,7 @@ function validateDemo
     clc
     
     %% We will use preferences for the 'isetbio' project - this is project specific
-    UnitTest.usePreferencesForProject('isetbioValidation');
-
-    %% Initialize @UnitTest preferences
-    UnitTest.initializePrefs();
-    
-    %% Optionally, reset prefs to the default values
-    UnitTest.initializePrefs('reset');
+    UnitTest.usePreferencesForProject('isetbioValidation', 'reset');
 
     %% Change some preferences:
     %% Whether to update the histories of validation and ground truth data sets

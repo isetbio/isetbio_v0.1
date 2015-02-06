@@ -6,13 +6,7 @@ function validateFullAndPublishAll
     clc
     
     %% Select the 'isetbioValidation' project preferences
-    UnitTest.usePreferencesForProject('isetbioValidation');
-
-    %% Initialize @UnitTest preferences
-    UnitTest.initializePrefs();
-    
-    %% Alternatively, reset prefs to the default values
-    UnitTest.initializePrefs('reset');
+    UnitTest.usePreferencesForProject('isetbioValidation', 'reset');
 
     %% Set some preferences:
     %% Whether to update the histories of validation and ground truth data sets
