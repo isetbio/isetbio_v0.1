@@ -6,7 +6,7 @@
 % defaults, or you can make a copy outside of the distribution and modify
 % for your own system.
 
-function setIsetboiUnitTestPreferencesTemplate
+function setIsetbioUnitTestPreferencesTemplate
 
     % Specify project-specific preferences
     p = struct(...
