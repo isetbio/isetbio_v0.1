@@ -41,7 +41,8 @@ for ii = 1 : size(inLUT, 2)
     % sometimes, the intensity at very low light levels cannot be measured
     % and we just set all of them to 0
     [x, indx] = unique(inLUT(:, ii));
-    lut(:, ii) = interp1(x, y(indx), iY(:), 'pchip', nInSteps-1);
+    lut(:, ii) = interp1(x, y(indx), iY(:), 'pchip');
+    lut = ieClip(lut, 0, nSteps - 1);
 end
 
 end
