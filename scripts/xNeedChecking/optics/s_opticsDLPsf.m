@@ -6,7 +6,7 @@
 % angle.
 %
 % A main point here is that the spread as a function of angle is
-% independent of fnumber
+% independent of f-number
 %
 % The diffraction limited spread grows in space.
 %
@@ -14,26 +14,29 @@
 %
 % (c) Imageval Consulting, LLC, 2012
 
+%%
+ieInit
+close all;  % I think this should be in ieInit
 
 %% Create optical image
-oi    = oiCreate;
-optics = oiGet(oi,'optics');
-fLength = 0.017;
-fNumber = 17/3;
-optics = opticsSet(optics,'flength',fLength);  % Roughly human
-optics = opticsSet(optics,'fnumber',fNumber);   % Roughly human
-oi    = oiSet(oi,'optics',optics);
+oi     = oiCreate;
+
+fLength = 0.017;   % Meters
+fNumber = 17/3;    % Dimensionless
+oi    = oiSet(oi,'optics flength',fLength);
+oi    = oiSet(oi,'optics fnumber',fNumber);
 
 %%  Show linespread at different wavelengths
-uData = plotOI(oi,'ls wavelength');
-fNumber = opticsGet(optics,'fnumber','mm');
-fLength = opticsGet(optics,'focal length','mm');
+uData   = plotOI(oi,'ls wavelength');
+fNumber = oiGet(oi,'optics fnumber','mm');
+fLength = oiGet(oi,'optics focal length','mm');
 title(sprintf('F/# = %.2f  Foc Leng = %.2f (mm)',fNumber,fLength));
 
 %% Show the linespread in units of arc min rather than position (um)
 vcNewGraphWin
-posMM = uData.x/1000;              % Microns to mm
+posMM    = uData.x/1000;                             % Microns to mm
 aMinutes = rad2deg(atan2(posMM,fLength),'arcmin');   % Angle in radians
+
 mesh(aMinutes,uData.wavelength,uData.lsWave);
 view(30,20);
 xlabel('angle (arc min)');
@@ -48,21 +51,21 @@ AiryRingUM = (2.44*(thisWave/1000)*fNumber);
 set(gca,'xlim',[-AiryRingUM AiryRingUM],'ylim',[-AiryRingUM AiryRingUM])
 
 %% Show a slice through the psf as a function of angle
-[r,c] = size(uData.x);
+r = size(uData.x,1);
 mid = ceil(r/2);
 psfMid = uData.psf(mid,:);
-posMM = uData.x(mid,:)/1000;               % Microns to mm
+posMM  = uData.x(mid,:)/1000;               % Microns to mm
 posMinutes = rad2deg(atan2(posMM,fLength),'arcmin');
 
-vcNewGraphWin
+vcNewGraphWin;
 plot(posMinutes,psfMid)
 xlabel('Arc min')
 AiryRingMM = AiryRingUM/1000;
 AiryRingMinutes = rad2deg(atan2(AiryRingMM,fLength),'arcmin'); % Radians
 set(gca,'xlim',2*[-AiryRingMinutes AiryRingMinutes])
 
-pDiameter = opticsGet(optics,'pupil diameter','mm');
-str = sprintf('PSF Cross section: Wave %d (nm), fNumber %.2f Pupil %.1f',...
+pDiameter = oiGet(oi,'optics pupil diameter','mm');
+str = sprintf('PSF cross section: Wave %d (nm), fNumber %.2f Pupil %.1f (mm)',...
     thisWave,fNumber,pDiameter);
 title(str);
 
@@ -87,7 +90,7 @@ view(2)
 AiryRingUM = (2.44*(thisWave/1000)*fNumber);
 set(gca,'xlim',[-AiryRingUM AiryRingUM],'ylim',[-AiryRingUM AiryRingUM])
 
-[r,c] = size(uData.x);
+r = size(uData.x,1);
 mid = ceil(r/2);
 psfMid = uData.psf(mid,:);
 posMM = uData.x(mid,:)/1000;               % Microns to mm
@@ -100,19 +103,17 @@ set(gca,'xlim',[-2 2])
 
 %% Now change the f-number and plot in angle again
 fNumber = 5*(17/3);
-optics = opticsSet(optics,'fnumber',fNumber);
-oi    = oiSet(oi,'optics',optics);
+oi = oiSet(oi,'optics fnumber',fNumber);
 
 %%  Show linespread at different wavelengths
-uData = plotOI(oi,'ls wavelength');
-fNumber = opticsGet(optics,'fnumber','mm');
-fLength = opticsGet(optics,'focal length','mm');
+plotOI(oi,'ls wavelength');
+fNumber = oiGet(oi,'optics fnumber','mm');
+fLength = oiGet(oi,'optics focal length','mm');
 title(sprintf('F/# = %.2f  Foc Leng = %.2f (mm)',fNumber,fLength));
 
 %%
 fNumber = 0.5*(17/3);
-optics = opticsSet(optics,'fnumber',fNumber);
-oi    = oiSet(oi,'optics',optics);
+oi = oiSet(oi,'optics fnumber',fNumber);
 
 %%  Show linespread at different wavelengths
 uData = plotOI(oi,'ls wavelength');
@@ -122,7 +123,7 @@ title(sprintf('F/# = %.2f  Foc Leng = %.2f (mm)',fNumber,fLength));
 
 %% The psf spread in distance only cares about f number
 % We can change the f length and the functions is the same
-optics = opticsSet(optics,'flength',fLength);
+oi = oiSet(oi,'optics flength',fLength);
 uData1 = plotOI(oi,'psf 550');
 
 optics = opticsSet(optics,'flength',fLength*10);
@@ -136,7 +137,7 @@ uData2 = plotOI(oi,'psf 550');
 % TEST THIS HERE.
 
 
-aphi = sqrt(aRadians(:,:,1).^2 + aRadians(:,:,2).^2);
+aphi = sqrt(aRadians(:,1).^2 + aRadians(:,2).^2);
 vcNewGraphWin([],'tall');
 subplot(3,1,1), imagesc(aphi); axis image; colorbar
 subplot(3,1,2), plot(phi10(:),aphi(:),'.'); axis square; grid on
