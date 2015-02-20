@@ -13,7 +13,7 @@ function validateFastAll
     
     %% Whether to update the histories of validation and ground truth data sets
     UnitTest.setPref('updateValidationHistory', false);
-    UnitTest.setPref('updateGroundTruth', false);
+    UnitTest.setPref('updateGroundTruth', true);
     
     %% Run time error behavior
     % valid options are: 'rethrowExceptionAndAbort', 'catchExceptionAndContinue'
@@ -25,7 +25,7 @@ function validateFastAll
     
     %% Verbosity Level
     % valid options are: 'none', min', 'low', 'med', 'high', 'max'
-    UnitTest.setPref('verbosity', 'high');
+    UnitTest.setPref('verbosity', 'med');
     
     %% Numeric tolerance for comparison to ground truth data
     UnitTest.setPref('numericTolerance', 500*eps);
