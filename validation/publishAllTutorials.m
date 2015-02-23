@@ -2,11 +2,7 @@ function publishAllTutorials
 
     % ------- script customization. adapt to your environment/project -----
     
-    % List of scripts to be skipped from automatic publishing
-    scriptsToSkip = {...
-        't_codeROI.m' ...    % requires user input
-        };
-    
+    % user/project specific preferences
     p = struct(...
         'rootDirectory',   fileparts(which(mfilename())), ...                         % the rootDirectory
         'ghPagesCloneDir', getpref('isetbioValidation', 'clonedGhPagesLocation'), ... % local directory where the project's gh-pages branch is cloned
@@ -15,6 +11,12 @@ function publishAllTutorials
         'tutorialsHTMLsubdir', 'tutorialdocs', ...                                    % local subdirectory (of ghPagesCloneDir) where the tutorial HTML files will go
         'verbosity',       1 ...
     );
+
+    % list of scripts to be skipped from automatic publishing
+    scriptsToSkip = {...
+        't_codeROI.m' ...    % requires user input
+        };
+    
     % ----------------------- end of script customization -----------------
     
     publishProject(p, scriptsToSkip);
