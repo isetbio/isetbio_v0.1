@@ -13,10 +13,11 @@ function setIsetbioUnitTestPreferencesTemplate
             'projectName',           'isetbioValidation', ...                                                                         % The project's name (also the preferences group name)
             'validationRootDir',     fullfile(isetbioRootPath, 'validation'), ...                                                     % Directory location where the 'scripts' subdirectory resides.
             'alternateFastDataDir',  '',  ...                                                                                         % Alternate FAST (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/fast
-            'alternateFullDataDir',  '', ... % fullfile(filesep,'Users1', 'Shared', 'Dropbox', 'ISETBIOFullValidationData'), ...      % Alternate FULL data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/full
+            'alternateFullDataDir',  fullfile(filesep,'Users1', 'Shared', 'Dropbox', 'ISETBIOFullValidationData'), ...                % Alternate FULL data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/full
             'clonedWikiLocation',    fullfile(filesep,'Users',  'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_Wiki', 'isetbio.wiki'), ... % Local path to the directory where the wiki is cloned. Only relevant for publishing tutorials.
             'clonedGhPagesLocation', fullfile(filesep,'Users',  'Shared', 'Matlab', 'Toolboxes', 'ISETBIO_GhPages', 'isetbio'), ...   % Local path to the directory where the gh-pages repository is cloned. Only relevant for publishing tutorials.
-            'githubRepoURL',         'http://isetbio.github.io/isetbio' ...                                                           % Github URL for the project. This is only used for publishing tutorials.
+            'githubRepoURL',         'http://isetbio.github.io/isetbio', ...                                                          % Github URL for the project. This is only used for publishing tutorials.
+            'generateGroundTruthDataIfNotFound',   false ...                                                                          % Flag indicating whether to generate ground truth if one is not found
         );
 
     generatePreferenceGroup(p);
