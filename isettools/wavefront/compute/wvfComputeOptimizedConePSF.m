@@ -1,8 +1,9 @@
 function wvfParams = wvfComputeOptimizedConePSF(wvfParams)
 % wvfParams = wvfComputeOptimizedConePSF(wvfParams)
 %
-% Optimize the PSF seen by the cones, given the cone sensitivities, a weighting spectral power distribution, and a criterion.  Optimization is performed on
-% the defocus parameter
+% Optimize the PSF seen by the cones, given the cone sensitivities, a
+% weighting spectral power distribution, and a criterion.  Optimization is
+% performed on the defocus parameter
 %
 % 8/26/11  dhb  Wrote it.
 % 8/29/11  dhb  Don't need to center or circularly average here.
