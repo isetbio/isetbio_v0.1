@@ -12,10 +12,6 @@ function validateDemo
     UnitTest.usePreferencesForProject('isetbioValidation', 'reset');
 
     %% Change some preferences:
-    %% Whether to update the histories of validation and ground truth data sets
-    UnitTest.setPref('updateValidationHistory', false);
-    UnitTest.setPref('updateGroundTruth', false);
-    
     %% Run time error behavior
     % valid options are: 'rethrowExceptionAndAbort', 'catchExceptionAndContinue'
     UnitTest.setPref('onRunTimeErrorBehavior', 'catchExceptionAndContinue');

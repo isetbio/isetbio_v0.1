@@ -34,13 +34,22 @@ switch param
         grid on; uData.wave = wave; uData.spd = spd;
         set(g,'userdata',uData);
         
-    case {'gammatable','gamma'} % Plot display Gammut
+    case {'gammatable','gamma'} % Plot display gamma curve
         gTable = displayGet(d,'gamma table');
         g = vcNewGraphWin; plot(gTable);
         xlabel('DAC'); ylabel('Linear');
         grid on
         
         uData = gTable;
+        set(g,'userdata',uData);
+    case {'inversegamma', 'invertgamma'} % Plot invert gamma table
+        invG = displayGet(d, 'inverse gamma table');
+        steps = linspace(0,1,length(invG));
+        g = vcNewGraphWin; plot(steps, invG);
+        xlabel('Linear'); ylabel('DAC');
+        grid on;
+        
+        uData = invG;
         set(g,'userdata',uData);
         
     case 'gamut'  % Plot color gamut in chromaticity (xy) space

@@ -6,15 +6,14 @@
 %
 % Copyright ImagEval Consultants, LLC, 2011
 
-%%
-s_initISET
+%% Initialize ISET Session
+ieInit
 
 %% Make a script/function to load the scene
 
 % This file contains a scene with a depth map.  The scene was created
 % outside of ISET as part of a project being done with Andy Lin.
-fName = fullfile(isetRootPath,'data','scene3d','piano3d.mat');
-load(fName);
+load(fullfile(isetRootPath, 'data', 'scenes','piano3d.mat'));
 scene = sceneSet(scene,'fov',3);
 
 %%  Make optics with a little bigger pupil for depth of field effects
