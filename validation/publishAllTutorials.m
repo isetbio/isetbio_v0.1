@@ -11,11 +11,11 @@ function publishAllTutorials
     % Directory where the wiki is cloned
     wikiCloneDir = getpref('isetbioValidation', 'clonedWikiLocation');
     
-    % List of scripts to be skipped from automatic publishing
+    % Add here any scripts you do not wish to be run and published
     scriptsToSkip = {...
-        't_codeROI.m' ... % requires user input
-        't_coneAdapt.m' ...  % takes too long
-        };
+       % 't_codeROI.m' ... % requires user input
+       % 't_coneAdapt.m' ...  % takes too long
+    };
     
 
     % get the rootDirectory
