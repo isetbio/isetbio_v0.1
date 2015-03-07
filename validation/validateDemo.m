@@ -4,11 +4,8 @@ function validateDemo
 % - set various validation preferences
 % - validate a list of scripts or a list of script directories. 
 % - conduct a validationSession with different modes
-
-    close all
-    clc
     
-    %% We will use preferences for the 'isetbio' project - this is project specific
+    %% We will use preferences for the 'isetbioValidation' project - this is project specific
     UnitTest.usePreferencesForProject('isetbioValidation', 'reset');
 
     %% Change some preferences:
@@ -91,5 +88,4 @@ function validateDemo
     % Run a validation session without a specified mode. You will be
     % promped to select one of the available modes.
     UnitTest.runValidationSession(vScriptsList);
-
 end

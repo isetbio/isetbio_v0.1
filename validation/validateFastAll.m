@@ -6,7 +6,7 @@ function validateFastAll
     close all
     clc
     
-    %% We will use preferences for the 'isetbio' project - this is project specific
+    %% We will use preferences for the 'isetbioValidation' project - this is project specific
     UnitTest.usePreferencesForProject('isetbioValidation', 'reset');                
                                        
     %% Set default preferences for this function
