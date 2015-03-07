@@ -1,7 +1,6 @@
 function varargout = v_IrradianceIsomerizations(varargin)
 %
-% Validate ISETBIO-based irradiance/isomerization computations by comparing
-% to PTB-based irradiance/isomerization computations.
+% Validate ISETBIO-based irradiance/isomerization computations by comparing to PTB-based irradiance/isomerization computations.
 %
 % See also: v_Cones
 %
