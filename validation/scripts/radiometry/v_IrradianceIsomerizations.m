@@ -87,13 +87,8 @@ function ValidationFunction(runTimeParams)
     end
     radianceUniformityErr = (max(radianceData(:)) - min(radianceData(:)))/mean(radianceData(:));
     uniformityRadianceTolerance = 0.00001;
-    if (radianceUniformityErr > uniformityRadianceTolerance)
-        message = sprintf('Spatial uniformity of scene radiance is worse than %0.3f%% !!!', 100*uniformityRadianceTolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Spatial uniformity of scene radiance is good to at least %0.3f%%',100*uniformityRadianceTolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = radianceUniformityErr;
+    UnitTest.assertIsZero(quantityOfInterest,'Spatial uniformity of scene radiance',uniformityRadianceTolerance);
 
     %% Get wavelength and spectral irradiance spd data (averaged within the scene ROI)
     % Need to recenter roi when computing from the optical image,
@@ -122,13 +117,7 @@ function ValidationFunction(runTimeParams)
     end
     irradianceUniformityErr = (max(irradianceData(:)) - min(irradianceData(:)))/mean(irradianceData(:));
     uniformityIrradianceTolerance = 0.01;
-    if (irradianceUniformityErr > uniformityIrradianceTolerance)
-        message = sprintf('Spatial uniformity of optical image irradiance is worse than %0.1f%% !!!', 100*uniformityIrradianceTolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Spatial uniformity of optical image irradiance is good to %0.1f%%',100*uniformityIrradianceTolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    UnitTest.assertIsZero(irradianceUniformityErr, 'Spatial uniformity of optical image irradiance', uniformityIrradianceTolerance);
     UnitTest.extraData('irradianceData',irradianceData);
     UnitTest.extraData('irradianceUniformityErr',irradianceUniformityErr);
      
@@ -173,13 +162,9 @@ function ValidationFunction(runTimeParams)
     ptbMagCorrectIrradiance = ptbMagCorrectIrradiance(:);
     isetbioIrradianceEnergy = isetbioIrradianceEnergy(:);
     difference = ptbMagCorrectIrradiance-isetbioIrradianceEnergy;
-    if (max(abs(difference./isetbioIrradianceEnergy)) > tolerance)
-        message = sprintf('Difference between PTB and isetbio irradiance exceeds tolerance of %0.1f%% !!!', 100*tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB and isetbio agree about irradiance to %0.1f%%',100*tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = difference./isetbioIrradianceEnergy;
+    UnitTest.assertIsZero(quantityOfInterest,'Difference between PTB and isetbio irradiance',tolerance);
+    
     % Add validation data
     UnitTest.extraData('fov', fov);
     UnitTest.extraData('roiSize', roiSize);
@@ -214,13 +199,9 @@ function ValidationFunction(runTimeParams)
     % Compare with PTB
     coneDifference = ptbCones-isetbioCones;
     coneMean = mean(isetbioCones(:));
-    if (max(abs(coneDifference/coneMean)) > coneTolerance)
-        message = sprintf('Difference between PTB and isetbio cone quantal efficiencies exceeds %0.1f%%!!!',100*coneTolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB and isetbio agree about cone quantal efficiencies good to %0.1f%%',100*coneTolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = coneDifference/coneMean;
+    UnitTest.assertIsZero(quantityOfInterest,'Difference between PTB and isetbio quantal efficiencies',coneTolerance);
+    
     UnitTest.validationData('isetCones',isetbioCones);
     UnitTest.validationData('ptbCones',ptbCones);
     UnitTest.extraData('coneTolerance',coneTolerance);
@@ -283,13 +264,8 @@ function ValidationFunction(runTimeParams)
 
     isomerizationTolerance = 0.01;
     isomerizationDifference = ptbCorrectedIsomerizations-isetbioIsomerizations;
-    if (max(abs(isomerizationDifference./ptbCorrectedIsomerizations)) > isomerizationTolerance)
-        message = sprintf('Difference between PTB and isetbio isomerizations exceeds %0.1f%%!!!',100*isomerizationTolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Difference between PTB and isetbio isomerizations good to %0.1f%%',100*isomerizationTolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = isomerizationDifference./ptbCorrectedIsomerizations;
+    UnitTest.assertIsZero(quantityOfInterest,'Difference between PTB and isetbio isomerizations',isomerizationTolerance);
     
     % Add validation data
     UnitTest.extraData('isomerizationTolerance',isomerizationTolerance);
