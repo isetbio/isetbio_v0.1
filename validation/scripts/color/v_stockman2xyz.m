@@ -55,20 +55,11 @@ function ValidationFunction(runTimeParams)
     T1 = colorTransformMatrix('stockman 2 xyz');
     T2 = colorTransformMatrix('xyz 2 stockman');
     tolerance = 1e-3;
-    if (max(abs(T1-T_ss2xyz) > tolerance))
-        message = sprintf('Matrix T_ss2xyz returned by colorTransformMatrix does not agree with first principles calculation (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Matrix T_ss2xyz returned by colorTransformMatrix agrees with first principles calculation (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
-    if (max(abs(T2-T_xyz2ss) > tolerance))
-        message = sprintf('Matrix T_xyz2ss returned by colorTransformMatrix does not agree with first principles calculation (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Matrix T_xyz2ss returned by colorTransformMatrix agrees with first principles calculation (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = T1-T_ss2xyz;
+    UnitTest.assertIsZero(quantityOfInterest,'Matrix T_ss2xyz returned by colorTransformMatrix',tolerance);
+    
+    quantityOfInterest = T2-T_xyz2ss;
+    UnitTest.assertIsZero(quantityOfInterest,'Matrix T_xyz2ss returned by colorTransformMatrix',tolerance);
     UnitTest.validationData('T1', T1);
     UnitTest.validationData('T2', T2);
 
@@ -78,14 +69,7 @@ function ValidationFunction(runTimeParams)
     % transformatinos of each other.
     tolerance = 0.02;
     identityCheck = T1*T2;
-    if (max(abs(identityCheck-eye(3))) > tolerance)
-        message = sprintf('Conversions do not self invert to (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Conversions self invert to (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
-
-
+    quantityOfInterest = identityCheck-eye(3);
+    UnitTest.assertIsZero(quantityOfInterest,'Conversion self-inversion',tolerance);
     %% End
 end
