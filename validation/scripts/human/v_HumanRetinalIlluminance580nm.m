@@ -53,22 +53,16 @@ function ValidationFunction(runTimeParams)
     roi = round(size(oi.depthMap) ./ 2 );
     photonIrradiance = oiGet(oi,'roi mean photons',roi);
     
-    
     %% Compute difference from expected value
     expectedPhotonIrradiance = 10^19;
     percentDifference = (photonIrradiance - expectedPhotonIrradiance)/expectedPhotonIrradiance;
     
     %% Validate against a 3% error
     tolerance = 0.03;
-    if (abs(percentDifference) < tolerance)
-        message = sprintf('Validation PASSED: Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%', ...
+    quantityOfInterest = percentDifference;
+    resultString = sprintf('Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%', ...
                            monoChromaticWavelength, photonIrradiance, expectedPhotonIrradiance, percentDifference*100);
-       UnitTest.validationRecord('PASSED', message); 
-    else
-        message = sprintf('Validation FAILED: Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%', ...
-                           monoChromaticWavelength, photonIrradiance, expectedPhotonIrradiance, percentDifference*100);
-        UnitTest.validationRecord('FAILED', message);
-    end
+    UnitTest.assertIsZero(quantityOfInterest, resultString,tolerance);
     
     % append to validationData
     UnitTest.validationData('fov', sceneFOV);
