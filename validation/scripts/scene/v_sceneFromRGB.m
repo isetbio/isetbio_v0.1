@@ -80,14 +80,10 @@ function ValidationFunction(runTimeParams)%% s_sceneFromRGB
     testByHand.hSceneDots = sceneGet(scene,'cols');
     testByHand.hFovMeters = testByHand.displayMetersPerDot*testByHand.hSceneDots;
     testByHand.hFovDegreeesCheck = testByHand.hSceneDots*testByHand.degreesPerDot;
+    
     tolerance = 1e-12;
-    if (max(abs(testByHand.hFovDegreesFromScene-testByHand.hFovDegreeesCheck) > tolerance))
-        message = sprintf('Hand check of h fov exceeds specified tolerance (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Hand check of h fov is within the specified tolerance (%0.1g).', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = testByHand.hFovDegreesFromScene-testByHand.hFovDegreeesCheck;
+    UnitTest.assertIsZero(quantityOfInterest,'Hand check of h fov',tolerance);
     UnitTest.validationData('testByHand', testByHand);
 
     %% Change the illuminant to 4000 K

@@ -70,14 +70,9 @@ function ValidationFunction(runTimeParams)
     %% Internal validation
     % Reflectance range is [0 .. 1]. Specify tolerance as 0.1%
     tolerance = 1E-6;
-    maxDiff = max(abs(reflectanceMap2(:)-reflectanceMap(:)));
-    if (maxDiff > tolerance)
-        message = sprintf('Scene reflectance before and after re-illumination do not agree to %g. Max diff: %g', tolerance, maxDiff);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message= sprintf('Scene reflectance before and after re-illumination agree to %g. Max diff: %g', tolerance, maxDiff);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = reflectanceMap2(:)-reflectanceMap(:);
+    UnitTest.assertIsZero(quantityOfInterest,'Scene reflectance before and after re-illumination',tolerance);
+    
     % append to validationData
     UnitTest.validationData('originalScene', originalScene);
     UnitTest.validationData('scene', scene);
