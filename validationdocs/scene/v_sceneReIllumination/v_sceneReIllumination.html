@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_sceneReIllumination</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-02-27"><meta name="DC.source" content="v_sceneReIllumination.m"><style type="text/css">
+      --><title>v_sceneReIllumination</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-09"><meta name="DC.source" content="v_sceneReIllumination.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -109,14 +109,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         <span class="keyword">end</span>
     <span class="keyword">end</span>
 </pre><h2>Internal validation<a name="14"></a></h2><p>Reflectance range is [0 .. 1]. Specify tolerance as 0.1%</p><pre class="codeinput">    tolerance = 1E-6;
-    maxDiff = max(abs(reflectanceMap2(:)-reflectanceMap(:)));
-    <span class="keyword">if</span> (maxDiff &gt; tolerance)
-        message = sprintf(<span class="string">'Scene reflectance before and after re-illumination do not agree to %g. Max diff: %g'</span>, tolerance, maxDiff);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message= sprintf(<span class="string">'Scene reflectance before and after re-illumination agree to %g. Max diff: %g'</span>, tolerance, maxDiff);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = reflectanceMap2(:)-reflectanceMap(:);
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'Scene reflectance before and after re-illumination'</span>,tolerance);
+
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'originalScene'</span>, originalScene);
     UnitTest.validationData(<span class="string">'scene'</span>, scene);
@@ -291,14 +286,9 @@ function ValidationFunction(runTimeParams)
     %% Internal validation
     % Reflectance range is [0 .. 1]. Specify tolerance as 0.1%
     tolerance = 1E-6;
-    maxDiff = max(abs(reflectanceMap2(:)-reflectanceMap(:)));
-    if (maxDiff > tolerance)
-        message = sprintf('Scene reflectance before and after re-illumination do not agree to %g. Max diff: %g', tolerance, maxDiff);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message= sprintf('Scene reflectance before and after re-illumination agree to %g. Max diff: %g', tolerance, maxDiff);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = reflectanceMap2(:)-reflectanceMap(:);
+    UnitTest.assertIsZero(quantityOfInterest,'Scene reflectance before and after re-illumination',tolerance);
+    
     % append to validationData
     UnitTest.validationData('originalScene', originalScene);
     UnitTest.validationData('scene', scene);

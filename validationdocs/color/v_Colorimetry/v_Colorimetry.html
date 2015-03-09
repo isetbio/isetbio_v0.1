@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_Colorimetry</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-02-27"><meta name="DC.source" content="v_Colorimetry.m"><style type="text/css">
+      --><title>v_Colorimetry</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-09"><meta name="DC.source" content="v_Colorimetry.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -82,38 +82,24 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     ptbxyYs = XYZToxyY(testXYZs);
     ptbxys  = ptbxyYs(1:2,:);
     isetxys = chromaticity(testXYZs')';
-    <span class="keyword">if</span> (any(abs(ptbxys-isetxys) &gt; tolerance))
-        message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to xy (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB-ISET AGREE for XYZ to xy (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = ptbxys-isetxys;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'PTB-ISET DIFFERENCE for XYZ to xy'</span>,tolerance);
 
     <span class="comment">% Append to validationData</span>
     UnitTest.validationData(<span class="string">'testXYZs'</span>, testXYZs);
     UnitTest.validationData(<span class="string">'ptbxys'</span>, ptbxys);
     UnitTest.validationData(<span class="string">'isetxys'</span>,isetxys);
 </pre><h2>xyY<a name="7"></a></h2><pre class="codeinput">    ptbXYZs = xyYToXYZ(ptbxyYs);
-    <span class="keyword">if</span> (any(abs(testXYZs-ptbXYZs) &gt; tolerance))
-        message = sprintf(<span class="string">'PTB FAILS XYZ to xyY to XYZ (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB PASSES XYZ to xyY to XYZ (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = testXYZs-ptbXYZs;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'PTB XYZ to xyY to XYZ'</span>,tolerance);
+
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'ptbXYZs'</span>, ptbXYZs);
 
-
     isetXYZs = xyy2xyz(ptbxyYs')';
-    <span class="keyword">if</span> (any(abs(testXYZs-isetXYZs) &gt; tolerance))
-        message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for xyY to XYZ (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB-ISET AGREE for xyY to XYZ (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = testXYZs-isetXYZs;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'PTB-ISET DIFFERENCE for xyY to XYZ'</span>,tolerance);
+
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'isetXYZs'</span>, isetXYZs);
 </pre><h2>CIE uv chromaticity<a name="8"></a></h2><pre class="codeinput">    ptbuvYs = XYZTouvY(testXYZs);
@@ -152,35 +138,26 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     cd(isetbioPath);
     isetLabs = ieXYZ2LAB(testXYZs',whiteXYZ')';
     cd(curDir);
-    <span class="keyword">if</span> (any(abs(ptbLabs-isetLabs) &gt; tolerance))
-        message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+
+    quantityOfInterest = ptbLabs-isetLabs;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'PTB-ISET DIFFERENCE for XYZ to Lab'</span>,tolerance);
+
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'ptbLabs'</span>,  ptbLabs);
     UnitTest.validationData(<span class="string">'isetLabs'</span>, isetLabs);
 
     ptbXYZCheck = LabToXYZ(ptbLabs,whiteXYZ);
     isetXYZCheck = ieLAB2XYZ(isetLabs',whiteXYZ')';
-    <span class="keyword">if</span> (any(abs(testXYZs-ptbXYZCheck) &gt; tolerance ))
-        message = sprintf(<span class="string">'PTB FAILS XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB PASSES XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+
+    quantityOfInterest = testXYZs-ptbXYZCheck;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'PTB XYZ to Lab to XYZ'</span>,tolerance);
+
     <span class="comment">% update to validationData</span>
     UnitTest.validationData(<span class="string">'ptbXYZCheck'</span>, ptbXYZCheck);
 
-    <span class="keyword">if</span> (any(abs(testXYZs-isetXYZCheck) &gt; tolerance))
-        message = sprintf(<span class="string">'ISET FAILS XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'ISET PASSES XYZ to Lab to XYZ (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = testXYZs-isetXYZCheck;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'ISET XYZ to Lab to XYZ'</span>,tolerance);
+
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'isetXYZCheck'</span>, isetXYZCheck);
 </pre><h2>sRGB<a name="11"></a></h2><p>The iset routines seem to use a matrix that is 1/100 of the standard definition.  Or, at least, 1/100 of what the PTB routines use.  To account for this, I multiply XYZ values by 100 before passing them to the iset routines.</p><p>The iset routines take an exponent argument for the sRGB gamma transform. At <a href="http://www.w3.org/Graphics/Color/sRGB">http://www.w3.org/Graphics/Color/sRGB</a> this is specified as 2.4.  The iset routine xyz2srgb uses 2.2, with a comment that an update at www.srgb.com changed this from 2.4 to 2.2.  I think this is wrong, though.  The text I can find on the web says that the 2.4 exponent, plus the linear initial region, is designed to approximate a gamma of 2.2. That is, you want 2.4 in the formulae to approximate the 2.2 industry standard gamma.  Site www.srgb.com now appears gone, by the way, but all the other sites I find seem to be the same in this regard.</p><p>Also note that if you change the exponent in the iset sRGB formulae, you also should probably change the cutoff used at the low-end, where the sRGB standard special cases the functional form of the gamma curve.  Here the test is set for 2.4.</p><p>Finally,the default gamma used by iset lrgb2srgb and by xzy2srgb currently differ, so you really want to be careful using these.  The inverse routine srgb2lrgb doesn't allow passing of the exponent, and it is hard coded as 2.4.  This causes a failure of the iset sRGB gamma routines to self-invert for gamma other than 2.4, and with their defaults.</p><p>One other convention difference is that the PTB routine rounds to integers for the settings, while the iset routine leaves the rounding up to the caller.</p><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'SIMPLE_MESSAGE'</span>, <span class="string">'***** sRGB *****'</span>);
@@ -211,39 +188,25 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     UnitTest.validationData(<span class="string">'ptbXYZs_2'</span>, ptbXYZs);
 
     <span class="comment">% PTB testing of inversion</span>
-    <span class="keyword">if</span> (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) &gt; tolerance))
-        message = sprintf(<span class="string">'PTB FAILS linear sRGB to XYZ to linear sRGB (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'PTB linear sRGB to XYZ to linear sRGB'</span>,tolerance);
+
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'ptbSRGBPrimary'</span>, ptbSRGBPrimary);
 
+    quantityOfInterest = SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'sRGB to linear sRGB to sRGB'</span>,tolerance);
 
-    <span class="keyword">if</span> (any(abs(SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs) &gt; tolerance))
-        message = sprintf(<span class="string">'PTB FAILS sRGB to linear sRGB to sRGB (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB PASSES sRGB to linear sRGB to sRGB (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'ptbSRGBs'</span>, ptbSRGBs);
-
 
     <span class="comment">% Compare sRGB matrices</span>
     [nil,ptbSRGBMatrix] = XYZToSRGBPrimary([]);
     isetSRGBMatrix = colorTransformMatrix(<span class="string">'xyz2srgb'</span>)';
 
-    <span class="keyword">if</span> (any(abs(ptbSRGBMatrix-isetSRGBMatrix) &gt; tolerance))
-        message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for sRGB transform matrix (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB-ISET AGREE for sRGB transform matrix (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = ptbSRGBMatrix-isetSRGBMatrix;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'PTB-ISET DIFFERENCE for sRGB transform matrix'</span>,tolerance);
+
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'ptbSRGBMatrix'</span>, ptbSRGBMatrix);
     UnitTest.validationData(<span class="string">'isetSRGBMatrix'</span>, isetSRGBMatrix);
@@ -275,13 +238,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
     <span class="comment">% ISET/PTB sRGB comparison in integer gamma corrected space</span>
-    <span class="keyword">if</span> (any(abs(round(isetSRGBs*255)-ptbSRGBs) &gt; tolerance))
-        message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for XYZ to sRGB (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB-ISET AGREE for XYZ to sRGB (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = round(isetSRGBs*255)-ptbSRGBs;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'PTB-ISET DIFFERENCE for XYZ to sRGB'</span>,tolerance);
+
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'isetSRGBs'</span>, isetSRGBs*255);
     UnitTest.validationData(<span class="string">'ptbSRGBs_2'</span>, ptbSRGBs);
@@ -290,13 +249,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="comment">% lrgb -&gt; srgb -&gt; lrgb in ISET</span>
     isetSRGBPrimaryCheckImage = srgb2lrgb(isetSRGBImage);
     isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
-    <span class="keyword">if</span> (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) &gt;  tolerance))
-        message = sprintf(<span class="string">'ISET FAILS linear sRGB to sRGB to linear sRGB (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'ISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = isetSRGBPrimaryCheck-isetSRGBPrimary;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'ISET linear sRGB to sRGB to linear sRGB'</span>,tolerance);
+
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'isetSRGBPrimaryCheck'</span>, isetSRGBPrimaryCheck);
     UnitTest.validationData(<span class="string">'isetSRGBPrimary'</span>, isetSRGBPrimary);
@@ -320,24 +275,16 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     UnitTest.validationData(<span class="string">'ptbQuanta'</span>, ptbQuanta);
     UnitTest.validationData(<span class="string">'isetQuanta'</span>, isetQuanta);
 
-    <span class="keyword">if</span> (any(abs(QuantaToEnergy(wlsTest,ptbQuanta)-spdEnergyTest) &gt; tolerance))
-        message = sprintf(<span class="string">'PTB FAILS energy to quanta to energy (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB PASSES energy to quanta to energy (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = QuantaToEnergy(wlsTest,ptbQuanta)-spdEnergyTest;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'PTB energy to quanta to energy'</span>,tolerance);
+
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'ptbEnergyFromQuanta'</span>, QuantaToEnergy(wlsTest,ptbQuanta));
     UnitTest.validationData(<span class="string">'spdEnergyTest'</span>, spdEnergyTest);
 
-    <span class="keyword">if</span> (any(abs(Quanta2Energy(wlsTest,isetQuanta')'- spdEnergyTest) &gt; tolerance))
-        message = sprintf(<span class="string">'ISET FAILS energy to quanta to energy (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'ISET PASSES energy to quanta to energy (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = Quanta2Energy(wlsTest,isetQuanta')'- spdEnergyTest;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'ISET energy to quanta to energy'</span>,tolerance);
+
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'isetEnergyFromQuanta'</span>, Quanta2Energy(wlsTest,isetQuanta')');
 </pre><h2>CIE daylights<a name="13"></a></h2><p>These routines are now running in ISET and everything agrees.</p><pre class="codeinput">    UnitTest.validationRecord(<span class="string">'SIMPLE_MESSAGE'</span>, <span class="string">'***** CIE Daylights *****'</span>);
@@ -351,13 +298,10 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="comment">% Iset version of normalized daylight</span>
     isetDaySpd = daylight(testWls,testTemp);
     isetDaySpd = isetDaySpd/max(isetDaySpd(:));
-    <span class="keyword">if</span> (any(abs(isetDaySpd-ptbDaySpd) &gt; tolerance))
-        message = sprintf(<span class="string">'PTB-ISET DIFFERENCE for daylight (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB-ISET AGREE for for daylight (tolerance: %g)'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+
+    quantityOfInterest = isetDaySpd-ptbDaySpd;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'PTB-ISET DIFFERENCE for daylight'</span>,tolerance);
+
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'isetDaySpd'</span>, isetDaySpd);
     UnitTest.validationData(<span class="string">'ptbDaySpd'</span>,  ptbDaySpd);
@@ -399,13 +343,8 @@ function ValidationFunction(runTimeParams)
     ptbxyYs = XYZToxyY(testXYZs);
     ptbxys  = ptbxyYs(1:2,:);
     isetxys = chromaticity(testXYZs')';
-    if (any(abs(ptbxys-isetxys) > tolerance))
-        message = sprintf('PTB-ISET DIFFERENCE for XYZ to xy (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB-ISET AGREE for XYZ to xy (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = ptbxys-isetxys;
+    UnitTest.assertIsZero(quantityOfInterest,'PTB-ISET DIFFERENCE for XYZ to xy',tolerance);
     
     % Append to validationData 
     UnitTest.validationData('testXYZs', testXYZs);
@@ -414,29 +353,19 @@ function ValidationFunction(runTimeParams)
     
     %% xyY
     ptbXYZs = xyYToXYZ(ptbxyYs);
-    if (any(abs(testXYZs-ptbXYZs) > tolerance))
-        message = sprintf('PTB FAILS XYZ to xyY to XYZ (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB PASSES XYZ to xyY to XYZ (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = testXYZs-ptbXYZs;
+    UnitTest.assertIsZero(quantityOfInterest,'PTB XYZ to xyY to XYZ',tolerance);
+
     % append to validationData 
     UnitTest.validationData('ptbXYZs', ptbXYZs);
     
-    
     isetXYZs = xyy2xyz(ptbxyYs')';
-    if (any(abs(testXYZs-isetXYZs) > tolerance))
-        message = sprintf('PTB-ISET DIFFERENCE for xyY to XYZ (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB-ISET AGREE for xyY to XYZ (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end 
+    quantityOfInterest = testXYZs-isetXYZs;
+    UnitTest.assertIsZero(quantityOfInterest,'PTB-ISET DIFFERENCE for xyY to XYZ',tolerance);
+    
     % append to validationData 
     UnitTest.validationData('isetXYZs', isetXYZs);
-
-    
+ 
     %% CIE uv chromaticity
     ptbuvYs = XYZTouvY(testXYZs);
     ptbuvs = ptbuvYs(1:2,:);
@@ -478,35 +407,26 @@ function ValidationFunction(runTimeParams)
     cd(isetbioPath);
     isetLabs = ieXYZ2LAB(testXYZs',whiteXYZ')';
     cd(curDir);
-    if (any(abs(ptbLabs-isetLabs) > tolerance))
-        message = sprintf('PTB-ISET DIFFERENCE for XYZ to Lab (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        UnitTest.validationRecord('PASSED', message);
-    end
+    
+    quantityOfInterest = ptbLabs-isetLabs;
+    UnitTest.assertIsZero(quantityOfInterest,'PTB-ISET DIFFERENCE for XYZ to Lab',tolerance);
+
     % append to validationData
     UnitTest.validationData('ptbLabs',  ptbLabs);
     UnitTest.validationData('isetLabs', isetLabs);
     
     ptbXYZCheck = LabToXYZ(ptbLabs,whiteXYZ);
     isetXYZCheck = ieLAB2XYZ(isetLabs',whiteXYZ')';
-    if (any(abs(testXYZs-ptbXYZCheck) > tolerance ))
-        message = sprintf('PTB FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB PASSES XYZ to Lab to XYZ (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    
+    quantityOfInterest = testXYZs-ptbXYZCheck;
+    UnitTest.assertIsZero(quantityOfInterest,'PTB XYZ to Lab to XYZ',tolerance);
+  
     % update to validationData
     UnitTest.validationData('ptbXYZCheck', ptbXYZCheck);
     
-    if (any(abs(testXYZs-isetXYZCheck) > tolerance))
-        message = sprintf('ISET FAILS XYZ to Lab to XYZ (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('ISET PASSES XYZ to Lab to XYZ (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = testXYZs-isetXYZCheck;
+    UnitTest.assertIsZero(quantityOfInterest,'ISET XYZ to Lab to XYZ',tolerance);
+   
     % append to validationData
     UnitTest.validationData('isetXYZCheck', isetXYZCheck);
 
@@ -571,39 +491,25 @@ function ValidationFunction(runTimeParams)
     UnitTest.validationData('ptbXYZs_2', ptbXYZs);
     
     % PTB testing of inversion
-    if (any(abs(XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary) > tolerance))
-        message = sprintf('PTB FAILS linear sRGB to XYZ to linear sRGB (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB PASSES linear sRGB to XYZ to linear sRGB (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = XYZToSRGBPrimary(ptbXYZs)-ptbSRGBPrimary;
+    UnitTest.assertIsZero(quantityOfInterest,'PTB linear sRGB to XYZ to linear sRGB',tolerance);
+
     % append to validationData
     UnitTest.validationData('ptbSRGBPrimary', ptbSRGBPrimary);
     
+    quantityOfInterest = SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs;
+    UnitTest.assertIsZero(quantityOfInterest,'sRGB to linear sRGB to sRGB',tolerance);
     
-    if (any(abs(SRGBGammaCorrect(ptbSRGBPrimary)-ptbSRGBs) > tolerance))
-        message = sprintf('PTB FAILS sRGB to linear sRGB to sRGB (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB PASSES sRGB to linear sRGB to sRGB (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
     % append to validationData
     UnitTest.validationData('ptbSRGBs', ptbSRGBs);
-    
     
     % Compare sRGB matrices
     [nil,ptbSRGBMatrix] = XYZToSRGBPrimary([]);
     isetSRGBMatrix = colorTransformMatrix('xyz2srgb')';
 
-    if (any(abs(ptbSRGBMatrix-isetSRGBMatrix) > tolerance))
-        message = sprintf('PTB-ISET DIFFERENCE for sRGB transform matrix (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB-ISET AGREE for sRGB transform matrix (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = ptbSRGBMatrix-isetSRGBMatrix;
+    UnitTest.assertIsZero(quantityOfInterest,'PTB-ISET DIFFERENCE for sRGB transform matrix',tolerance);
+
     % append to validationData
     UnitTest.validationData('ptbSRGBMatrix', ptbSRGBMatrix);
     UnitTest.validationData('isetSRGBMatrix', isetSRGBMatrix);
@@ -635,13 +541,9 @@ function ValidationFunction(runTimeParams)
     
     
     % ISET/PTB sRGB comparison in integer gamma corrected space
-    if (any(abs(round(isetSRGBs*255)-ptbSRGBs) > tolerance))
-        message = sprintf('PTB-ISET DIFFERENCE for XYZ to sRGB (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB-ISET AGREE for XYZ to sRGB (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = round(isetSRGBs*255)-ptbSRGBs;
+    UnitTest.assertIsZero(quantityOfInterest,'PTB-ISET DIFFERENCE for XYZ to sRGB',tolerance);
+
     % append to validationData
     UnitTest.validationData('isetSRGBs', isetSRGBs*255);
     UnitTest.validationData('ptbSRGBs_2', ptbSRGBs);
@@ -650,13 +552,9 @@ function ValidationFunction(runTimeParams)
     % lrgb -> srgb -> lrgb in ISET
     isetSRGBPrimaryCheckImage = srgb2lrgb(isetSRGBImage);
     isetSRGBPrimaryCheck = ImageToCalFormat(isetSRGBPrimaryCheckImage);
-    if (any(abs(isetSRGBPrimaryCheck-isetSRGBPrimary) >  tolerance))
-        message = sprintf('ISET FAILS linear sRGB to sRGB to linear sRGB (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('ISET PASSES linear sRGB to sRGB to linear sRGB (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = isetSRGBPrimaryCheck-isetSRGBPrimary;
+    UnitTest.assertIsZero(quantityOfInterest,'ISET linear sRGB to sRGB to linear sRGB',tolerance);
+
     % append to validationData
     UnitTest.validationData('isetSRGBPrimaryCheck', isetSRGBPrimaryCheck);
     UnitTest.validationData('isetSRGBPrimary', isetSRGBPrimary);
@@ -686,24 +584,16 @@ function ValidationFunction(runTimeParams)
     UnitTest.validationData('ptbQuanta', ptbQuanta);
     UnitTest.validationData('isetQuanta', isetQuanta);
     
-    if (any(abs(QuantaToEnergy(wlsTest,ptbQuanta)-spdEnergyTest) > tolerance))
-        message = sprintf('PTB FAILS energy to quanta to energy (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB PASSES energy to quanta to energy (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = QuantaToEnergy(wlsTest,ptbQuanta)-spdEnergyTest;
+    UnitTest.assertIsZero(quantityOfInterest,'PTB energy to quanta to energy',tolerance);
+
     % append to validationData
     UnitTest.validationData('ptbEnergyFromQuanta', QuantaToEnergy(wlsTest,ptbQuanta));
     UnitTest.validationData('spdEnergyTest', spdEnergyTest);
     
-    if (any(abs(Quanta2Energy(wlsTest,isetQuanta')'- spdEnergyTest) > tolerance))
-        message = sprintf('ISET FAILS energy to quanta to energy (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('ISET PASSES energy to quanta to energy (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = Quanta2Energy(wlsTest,isetQuanta')'- spdEnergyTest;
+    UnitTest.assertIsZero(quantityOfInterest,'ISET energy to quanta to energy',tolerance);
+    
     % append to validationData
     UnitTest.validationData('isetEnergyFromQuanta', Quanta2Energy(wlsTest,isetQuanta')');
     
@@ -721,13 +611,10 @@ function ValidationFunction(runTimeParams)
     % Iset version of normalized daylight
     isetDaySpd = daylight(testWls,testTemp);
     isetDaySpd = isetDaySpd/max(isetDaySpd(:));
-    if (any(abs(isetDaySpd-ptbDaySpd) > tolerance))
-        message = sprintf('PTB-ISET DIFFERENCE for daylight (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB-ISET AGREE for for daylight (tolerance: %g)', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    
+    quantityOfInterest = isetDaySpd-ptbDaySpd;
+    UnitTest.assertIsZero(quantityOfInterest,'PTB-ISET DIFFERENCE for daylight',tolerance);
+    
     % append to validationData
     UnitTest.validationData('isetDaySpd', isetDaySpd);
     UnitTest.validationData('ptbDaySpd',  ptbDaySpd);

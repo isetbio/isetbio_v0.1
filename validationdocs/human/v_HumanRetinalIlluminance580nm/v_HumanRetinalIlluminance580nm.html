@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_HumanRetinalIlluminance580nm</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-02-27"><meta name="DC.source" content="v_HumanRetinalIlluminance580nm.m"><style type="text/css">
+      --><title>v_HumanRetinalIlluminance580nm</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-09"><meta name="DC.source" content="v_HumanRetinalIlluminance580nm.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -108,15 +108,10 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><h2>Compute difference from expected value<a name="10"></a></h2><pre class="codeinput">    expectedPhotonIrradiance = 10^19;
     percentDifference = (photonIrradiance - expectedPhotonIrradiance)/expectedPhotonIrradiance;
 </pre><h2>Validate against a 3% error<a name="11"></a></h2><pre class="codeinput">    tolerance = 0.03;
-    <span class="keyword">if</span> (abs(percentDifference) &lt; tolerance)
-        message = sprintf(<span class="string">'Validation PASSED: Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%'</span>, <span class="keyword">...</span>
+    quantityOfInterest = percentDifference;
+    resultString = sprintf(<span class="string">'Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%'</span>, <span class="keyword">...</span>
                            monoChromaticWavelength, photonIrradiance, expectedPhotonIrradiance, percentDifference*100);
-       UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'Validation FAILED: Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%'</span>, <span class="keyword">...</span>
-                           monoChromaticWavelength, photonIrradiance, expectedPhotonIrradiance, percentDifference*100);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">end</span>
+    UnitTest.assertIsZero(quantityOfInterest, resultString,tolerance);
 
     <span class="comment">% append to validationData</span>
     UnitTest.validationData(<span class="string">'fov'</span>, sceneFOV);
@@ -193,22 +188,16 @@ function ValidationFunction(runTimeParams)
     roi = round(size(oi.depthMap) ./ 2 );
     photonIrradiance = oiGet(oi,'roi mean photons',roi);
     
-    
     %% Compute difference from expected value
     expectedPhotonIrradiance = 10^19;
     percentDifference = (photonIrradiance - expectedPhotonIrradiance)/expectedPhotonIrradiance;
     
     %% Validate against a 3% error
     tolerance = 0.03;
-    if (abs(percentDifference) < tolerance)
-        message = sprintf('Validation PASSED: Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%', ...
+    quantityOfInterest = percentDifference;
+    resultString = sprintf('Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%', ...
                            monoChromaticWavelength, photonIrradiance, expectedPhotonIrradiance, percentDifference*100);
-       UnitTest.validationRecord('PASSED', message); 
-    else
-        message = sprintf('Validation FAILED: Irradiance (q/sec/m^2/nm) at %.0f nm = %g, Expected = %g, Residual = %g %%', ...
-                           monoChromaticWavelength, photonIrradiance, expectedPhotonIrradiance, percentDifference*100);
-        UnitTest.validationRecord('FAILED', message);
-    end
+    UnitTest.assertIsZero(quantityOfInterest, resultString,tolerance);
     
     % append to validationData
     UnitTest.validationData('fov', sceneFOV);

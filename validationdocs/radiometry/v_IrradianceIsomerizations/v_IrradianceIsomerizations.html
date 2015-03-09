@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_IrradianceIsomerizations</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-02-27"><meta name="DC.source" content="v_IrradianceIsomerizations.m"><style type="text/css">
+      --><title>v_IrradianceIsomerizations</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-09"><meta name="DC.source" content="v_IrradianceIsomerizations.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -68,8 +68,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
   </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Function implementing the isetbio validation code</a></li><li><a href="#4">Initialize ISETBIO</a></li><li><a href="#5">Set computation params</a></li><li><a href="#6">Create a radiance image in ISETBIO</a></li><li><a href="#7">Compute the irradiance in ISETBIO</a></li><li><a href="#8">Define a region of interest starting at the scene's center with size</a></li><li><a href="#9">Get wavelength and spectral radiance spd data (averaged within the scene ROI)</a></li><li><a href="#10">Check spatial uniformity of scene radiance data.</a></li><li><a href="#11">Get wavelength and spectral irradiance spd data (averaged within the scene ROI)</a></li><li><a href="#12">Check spatial uniformity of optical image irradiance data.</a></li><li><a href="#13">Get the underlying parameters that are needed from the ISETBIO structures.</a></li><li><a href="#14">Compute the irradiance in PTB</a></li><li><a href="#15">Compare irradiances computed by ISETBIO vs. PTB</a></li><li><a href="#16">Numerical check to decide whether we passed.</a></li><li><a href="#17">Compare spectral sensitivities used by ISETBIO and PTB.</a></li><li><a href="#18">Compute quantal absorptions</a></li><li><a href="#19">Adjust answer for differences in collecting area in the two calculations</a></li><li><a href="#20">Also need to correct for magnification difference</a></li><li><a href="#21">Plotting</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = v_IrradianceIsomerizations(varargin)
 <span class="comment">%</span>
-<span class="comment">% Validate ISETBIO-based irradiance/isomerization computations by comparing</span>
-<span class="comment">% to PTB-based irradiance/isomerization computations.</span>
+<span class="comment">% Validate ISETBIO-based irradiance/isomerization computations by comparing to PTB-based irradiance/isomerization computations.</span>
 <span class="comment">%</span>
 <span class="comment">% See also: v_Cones</span>
 <span class="comment">%</span>
@@ -133,13 +132,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="keyword">end</span>
     radianceUniformityErr = (max(radianceData(:)) - min(radianceData(:)))/mean(radianceData(:));
     uniformityRadianceTolerance = 0.00001;
-    <span class="keyword">if</span> (radianceUniformityErr &gt; uniformityRadianceTolerance)
-        message = sprintf(<span class="string">'Spatial uniformity of scene radiance is worse than %0.3f%% !!!'</span>, 100*uniformityRadianceTolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'Spatial uniformity of scene radiance is good to at least %0.3f%%'</span>,100*uniformityRadianceTolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = radianceUniformityErr;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'Spatial uniformity of scene radiance'</span>,uniformityRadianceTolerance);
 </pre><h2>Get wavelength and spectral irradiance spd data (averaged within the scene ROI)<a name="11"></a></h2><p>Need to recenter roi when computing from the optical image, because the optical image is padded to deal with optical blurring at its edge.</p><pre class="codeinput">    sz         = oiGet(oi,<span class="string">'size'</span>);
     rect       = [sz(2)/2,sz(1)/2,roiSize,roiSize];
     oiRoiLocs  = ieRoi2Locs(rect);
@@ -156,13 +150,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="keyword">end</span>
     irradianceUniformityErr = (max(irradianceData(:)) - min(irradianceData(:)))/mean(irradianceData(:));
     uniformityIrradianceTolerance = 0.01;
-    <span class="keyword">if</span> (irradianceUniformityErr &gt; uniformityIrradianceTolerance)
-        message = sprintf(<span class="string">'Spatial uniformity of optical image irradiance is worse than %0.1f%% !!!'</span>, 100*uniformityIrradianceTolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'Spatial uniformity of optical image irradiance is good to %0.1f%%'</span>,100*uniformityIrradianceTolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    UnitTest.assertIsZero(irradianceUniformityErr, <span class="string">'Spatial uniformity of optical image irradiance'</span>, uniformityIrradianceTolerance);
     UnitTest.extraData(<span class="string">'irradianceData'</span>,irradianceData);
     UnitTest.extraData(<span class="string">'irradianceUniformityErr'</span>,irradianceUniformityErr);
 </pre><h2>Get the underlying parameters that are needed from the ISETBIO structures.<a name="13"></a></h2><pre class="codeinput">    optics = oiGet(oi,<span class="string">'optics'</span>);
@@ -179,13 +167,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     ptbMagCorrectIrradiance = ptbMagCorrectIrradiance(:);
     isetbioIrradianceEnergy = isetbioIrradianceEnergy(:);
     difference = ptbMagCorrectIrradiance-isetbioIrradianceEnergy;
-    <span class="keyword">if</span> (max(abs(difference./isetbioIrradianceEnergy)) &gt; tolerance)
-        message = sprintf(<span class="string">'Difference between PTB and isetbio irradiance exceeds tolerance of %0.1f%% !!!'</span>, 100*tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB and isetbio agree about irradiance to %0.1f%%'</span>,100*tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = difference./isetbioIrradianceEnergy;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'Difference between PTB and isetbio irradiance'</span>,tolerance);
+
     <span class="comment">% Add validation data</span>
     UnitTest.extraData(<span class="string">'fov'</span>, fov);
     UnitTest.extraData(<span class="string">'roiSize'</span>, roiSize);
@@ -211,13 +195,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <span class="comment">% Compare with PTB</span>
     coneDifference = ptbCones-isetbioCones;
     coneMean = mean(isetbioCones(:));
-    <span class="keyword">if</span> (max(abs(coneDifference/coneMean)) &gt; coneTolerance)
-        message = sprintf(<span class="string">'Difference between PTB and isetbio cone quantal efficiencies exceeds %0.1f%%!!!'</span>,100*coneTolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'PTB and isetbio agree about cone quantal efficiencies good to %0.1f%%'</span>,100*coneTolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = coneDifference/coneMean;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'Difference between PTB and isetbio quantal efficiencies'</span>,coneTolerance);
+
     UnitTest.validationData(<span class="string">'isetCones'</span>,isetbioCones);
     UnitTest.validationData(<span class="string">'ptbCones'</span>,ptbCones);
     UnitTest.extraData(<span class="string">'coneTolerance'</span>,coneTolerance);
@@ -258,13 +238,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
     isomerizationTolerance = 0.01;
     isomerizationDifference = ptbCorrectedIsomerizations-isetbioIsomerizations;
-    <span class="keyword">if</span> (max(abs(isomerizationDifference./ptbCorrectedIsomerizations)) &gt; isomerizationTolerance)
-        message = sprintf(<span class="string">'Difference between PTB and isetbio isomerizations exceeds %0.1f%%!!!'</span>,100*isomerizationTolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'Difference between PTB and isetbio isomerizations good to %0.1f%%'</span>,100*isomerizationTolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = isomerizationDifference./ptbCorrectedIsomerizations;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'Difference between PTB and isetbio isomerizations'</span>,isomerizationTolerance);
 
     <span class="comment">% Add validation data</span>
     UnitTest.extraData(<span class="string">'isomerizationTolerance'</span>,isomerizationTolerance);
@@ -331,8 +306,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 ##### SOURCE BEGIN #####
 function varargout = v_IrradianceIsomerizations(varargin)
 %
-% Validate ISETBIO-based irradiance/isomerization computations by comparing
-% to PTB-based irradiance/isomerization computations.
+% Validate ISETBIO-based irradiance/isomerization computations by comparing to PTB-based irradiance/isomerization computations.
 %
 % See also: v_Cones
 %
@@ -419,13 +393,8 @@ function ValidationFunction(runTimeParams)
     end
     radianceUniformityErr = (max(radianceData(:)) - min(radianceData(:)))/mean(radianceData(:));
     uniformityRadianceTolerance = 0.00001;
-    if (radianceUniformityErr > uniformityRadianceTolerance)
-        message = sprintf('Spatial uniformity of scene radiance is worse than %0.3f%% !!!', 100*uniformityRadianceTolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Spatial uniformity of scene radiance is good to at least %0.3f%%',100*uniformityRadianceTolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = radianceUniformityErr;
+    UnitTest.assertIsZero(quantityOfInterest,'Spatial uniformity of scene radiance',uniformityRadianceTolerance);
 
     %% Get wavelength and spectral irradiance spd data (averaged within the scene ROI)
     % Need to recenter roi when computing from the optical image,
@@ -454,13 +423,7 @@ function ValidationFunction(runTimeParams)
     end
     irradianceUniformityErr = (max(irradianceData(:)) - min(irradianceData(:)))/mean(irradianceData(:));
     uniformityIrradianceTolerance = 0.01;
-    if (irradianceUniformityErr > uniformityIrradianceTolerance)
-        message = sprintf('Spatial uniformity of optical image irradiance is worse than %0.1f%% !!!', 100*uniformityIrradianceTolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Spatial uniformity of optical image irradiance is good to %0.1f%%',100*uniformityIrradianceTolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    UnitTest.assertIsZero(irradianceUniformityErr, 'Spatial uniformity of optical image irradiance', uniformityIrradianceTolerance);
     UnitTest.extraData('irradianceData',irradianceData);
     UnitTest.extraData('irradianceUniformityErr',irradianceUniformityErr);
      
@@ -505,13 +468,9 @@ function ValidationFunction(runTimeParams)
     ptbMagCorrectIrradiance = ptbMagCorrectIrradiance(:);
     isetbioIrradianceEnergy = isetbioIrradianceEnergy(:);
     difference = ptbMagCorrectIrradiance-isetbioIrradianceEnergy;
-    if (max(abs(difference./isetbioIrradianceEnergy)) > tolerance)
-        message = sprintf('Difference between PTB and isetbio irradiance exceeds tolerance of %0.1f%% !!!', 100*tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB and isetbio agree about irradiance to %0.1f%%',100*tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = difference./isetbioIrradianceEnergy;
+    UnitTest.assertIsZero(quantityOfInterest,'Difference between PTB and isetbio irradiance',tolerance);
+    
     % Add validation data
     UnitTest.extraData('fov', fov);
     UnitTest.extraData('roiSize', roiSize);
@@ -546,13 +505,9 @@ function ValidationFunction(runTimeParams)
     % Compare with PTB
     coneDifference = ptbCones-isetbioCones;
     coneMean = mean(isetbioCones(:));
-    if (max(abs(coneDifference/coneMean)) > coneTolerance)
-        message = sprintf('Difference between PTB and isetbio cone quantal efficiencies exceeds %0.1f%%!!!',100*coneTolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('PTB and isetbio agree about cone quantal efficiencies good to %0.1f%%',100*coneTolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = coneDifference/coneMean;
+    UnitTest.assertIsZero(quantityOfInterest,'Difference between PTB and isetbio quantal efficiencies',coneTolerance);
+    
     UnitTest.validationData('isetCones',isetbioCones);
     UnitTest.validationData('ptbCones',ptbCones);
     UnitTest.extraData('coneTolerance',coneTolerance);
@@ -615,13 +570,8 @@ function ValidationFunction(runTimeParams)
 
     isomerizationTolerance = 0.01;
     isomerizationDifference = ptbCorrectedIsomerizations-isetbioIsomerizations;
-    if (max(abs(isomerizationDifference./ptbCorrectedIsomerizations)) > isomerizationTolerance)
-        message = sprintf('Difference between PTB and isetbio isomerizations exceeds %0.1f%%!!!',100*isomerizationTolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Difference between PTB and isetbio isomerizations good to %0.1f%%',100*isomerizationTolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = isomerizationDifference./ptbCorrectedIsomerizations;
+    UnitTest.assertIsZero(quantityOfInterest,'Difference between PTB and isetbio isomerizations',isomerizationTolerance);
     
     % Add validation data
     UnitTest.extraData('isomerizationTolerance',isomerizationTolerance);

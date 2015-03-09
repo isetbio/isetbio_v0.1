@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>v_stockman2xyz</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-02-27"><meta name="DC.source" content="v_stockman2xyz.m"><style type="text/css">
+      --><title>v_stockman2xyz</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-09"><meta name="DC.source" content="v_stockman2xyz.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -104,31 +104,17 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><img vspace="5" hspace="5" src="v_stockman2xyz_03.png" alt=""> <h2>Get the same things out of colorTransformMatrix<a name="8"></a></h2><pre class="codeinput">    T1 = colorTransformMatrix(<span class="string">'stockman 2 xyz'</span>);
     T2 = colorTransformMatrix(<span class="string">'xyz 2 stockman'</span>);
     tolerance = 1e-3;
-    <span class="keyword">if</span> (max(abs(T1-T_ss2xyz) &gt; tolerance))
-        message = sprintf(<span class="string">'Matrix T_ss2xyz returned by colorTransformMatrix does not agree with first principles calculation (%0.1g). !!!'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'Matrix T_ss2xyz returned by colorTransformMatrix agrees with first principles calculation (%0.1g). !!!'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
-    <span class="keyword">if</span> (max(abs(T2-T_xyz2ss) &gt; tolerance))
-        message = sprintf(<span class="string">'Matrix T_xyz2ss returned by colorTransformMatrix does not agree with first principles calculation (%0.1g). !!!'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'Matrix T_xyz2ss returned by colorTransformMatrix agrees with first principles calculation (%0.1g). !!!'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = T1-T_ss2xyz;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'Matrix T_ss2xyz returned by colorTransformMatrix'</span>,tolerance);
+
+    quantityOfInterest = T2-T_xyz2ss;
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'Matrix T_xyz2ss returned by colorTransformMatrix'</span>,tolerance);
     UnitTest.validationData(<span class="string">'T1'</span>, T1);
     UnitTest.validationData(<span class="string">'T2'</span>, T2);
 </pre><h2>Check for self inversion<a name="9"></a></h2><p>This matrix should be close to but not exactly the identity matrix.  The differnce comes in because Stockman-Sharpe and XYZ are not exact linear transformatinos of each other.</p><pre class="codeinput">    tolerance = 0.02;
     identityCheck = T1*T2;
-    <span class="keyword">if</span> (max(abs(identityCheck-eye(3))) &gt; tolerance)
-        message = sprintf(<span class="string">'Conversions do not self invert to (%0.1g). !!!'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'FAILED'</span>, message);
-    <span class="keyword">else</span>
-        message = sprintf(<span class="string">'Conversions self invert to (%0.1g). !!!'</span>, tolerance);
-        UnitTest.validationRecord(<span class="string">'PASSED'</span>, message);
-    <span class="keyword">end</span>
+    quantityOfInterest = identityCheck-eye(3);
+    UnitTest.assertIsZero(quantityOfInterest,<span class="string">'Conversion self-inversion'</span>,tolerance);
 </pre><h2>End<a name="10"></a></h2><pre class="codeinput"><span class="keyword">end</span>
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -189,20 +175,11 @@ function ValidationFunction(runTimeParams)
     T1 = colorTransformMatrix('stockman 2 xyz');
     T2 = colorTransformMatrix('xyz 2 stockman');
     tolerance = 1e-3;
-    if (max(abs(T1-T_ss2xyz) > tolerance))
-        message = sprintf('Matrix T_ss2xyz returned by colorTransformMatrix does not agree with first principles calculation (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Matrix T_ss2xyz returned by colorTransformMatrix agrees with first principles calculation (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
-    if (max(abs(T2-T_xyz2ss) > tolerance))
-        message = sprintf('Matrix T_xyz2ss returned by colorTransformMatrix does not agree with first principles calculation (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Matrix T_xyz2ss returned by colorTransformMatrix agrees with first principles calculation (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
+    quantityOfInterest = T1-T_ss2xyz;
+    UnitTest.assertIsZero(quantityOfInterest,'Matrix T_ss2xyz returned by colorTransformMatrix',tolerance);
+    
+    quantityOfInterest = T2-T_xyz2ss;
+    UnitTest.assertIsZero(quantityOfInterest,'Matrix T_xyz2ss returned by colorTransformMatrix',tolerance);
     UnitTest.validationData('T1', T1);
     UnitTest.validationData('T2', T2);
 
@@ -212,15 +189,8 @@ function ValidationFunction(runTimeParams)
     % transformatinos of each other.
     tolerance = 0.02;
     identityCheck = T1*T2;
-    if (max(abs(identityCheck-eye(3))) > tolerance)
-        message = sprintf('Conversions do not self invert to (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('FAILED', message);
-    else
-        message = sprintf('Conversions self invert to (%0.1g). !!!', tolerance);
-        UnitTest.validationRecord('PASSED', message);
-    end
-
-
+    quantityOfInterest = identityCheck-eye(3);
+    UnitTest.assertIsZero(quantityOfInterest,'Conversion self-inversion',tolerance);
     %% End
 end
 
