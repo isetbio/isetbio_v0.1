@@ -1,4 +1,4 @@
-[THIS IS AN ARCHIVAL VERSION OF ISETBIO.  YOU WANT TO BE LOOKING AT THE CURRENT VERSION, WHICH IS AT https://github.com/isetbio/isetbio.]
+[THIS IS AN ARCHIVAL VERSION OF ISETBIO.  YOU WANT TO BE LOOKING AT THE CURRENT VERSION, WHICH IS AT https://github.com/isetbio/isetbio]
 
 ****************************************************
 
